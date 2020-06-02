@@ -1,0 +1,55 @@
+{
+    "red_veil": [
+        {
+            "name": "Gleaming Blight",
+            "id": "54a74454e779892d5e5155d5",
+            "price": 15
+        },
+        {
+            "name": "Eroding Blight",
+            "id": "54a74454e779892d5e5155a0",
+            "price": 15
+        },
+        {
+            "name": "Stockpiled Blight",
+            "id": "5911f11d97a0add8e9d5da4f",
+            "price": 15
+        },
+        {
+            "name": "Toxic Blight",
+            "id": "54a74454e779892d5e5155bb",
+            "price": 15
+        },
+        {
+            "name": "Seeking shuriken",
+            "id": "54e0c9eee7798903744178aa",
+            "price": 15
+        },
+        {
+            "name": "Smoke shadow",
+            "id": "54a74454e779892d5e515685",
+            "price": 15
+        },
+        {
+            "name": "Fatal teleport",
+            "id": "5740c1999d238d4a03d2851a",
+            "price": 15
+        },
+        {
+            "name": "Rising storm",
+            "id": "5526aec1e779896af9418264",
+            "price": 15
+        },
+        {
+            "name": "Path of statues",
+            "id": "57c20990022d3f62c0d81aa9",
+            "price": 15
+        },
+        {
+            "name": "Tectonic fracture",
+            "id": "56b656d1ef0390c7e4006381",
+            "price": 15
+        }
+    ]
+        
+}
