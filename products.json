@@ -49,6 +49,96 @@
             "name": "Tectonic fracture",
             "id": "56b656d1ef0390c7e4006381",
             "price": 15
+        },
+        {
+            "name": "Ore gaze",
+            "id": "56b656cbef0390c7e4006380",
+            "price": 15
+        },
+        {
+            "name": "Titanic rumbler",
+            "id": "56b656d9ef0390c7e4006382",
+            "price": 15
+        },
+        {
+            "name": "Fireball frenzy",
+            "id": "54a74454e779892d5e515617",
+            "price": 15
+        },
+        {
+            "name": "Immolated radiance",
+            "id": "57c73be094b4b0f159ab5e15",
+            "price": 15
+        },
+        {
+            "name": "Healing flame",
+            "id": "54e0c9eee7798903744178ae",
+            "price": 15
+        },
+        {
+            "name": "Exothermic",
+            "id": "5526aec1e779896af9418266",
+            "price": 15
+        },
+        {
+            "name": "Dread ward",
+            "id": "5cb04868fc2db2068006980d",
+            "price": 15
+        },
+        {
+            "name": "Blood forge",
+            "id": "5e4145907b0275011bc5b7cd",
+            "price": 15
+        },
+        {
+            "name": "Catapult",
+            "id": "5ea087d1c160d001303f9ed8",
+            "price": 15
+        },
+        {
+            "name": "Tribunal",
+            "id": "5ea087d1c160d001303f9ed7",
+            "price": 15
+        },
+        {
+            "name": "Warding thurible",
+            "id": "5b50a3ad3a84fd02a782324c",
+            "price": 15
+        },
+        {
+            "name": "Lasting covenant",
+            "id": "5a6b495b7f2bca025fde2b57",
+            "price": 15
+        },
+        {
+            "name": "Accumulating whipclaw",
+            "id": "5b91784d0566c80216658cea",
+            "price": 15
+        },
+        {
+            "name": "Venari bodyguard",
+            "id": "5c3892672cc6ce00f238139e",
+            "price": 15
+        },
+        {
+            "name": "Pilfering strangledome",
+            "id": "5cb04868fc2db2068006980e",
+            "price": 15
+        },
+        {
+            "name": "Savior decoy",
+            "id": "584470092c2ada00787e0888",
+            "price": 15
+        },
+        {
+            "name": "Hushed invisibility",
+            "id": "5526aec1e779896af9418260",
+            "price": 15
+        },
+        {
+            "name": "Safeguard switch",
+            "id": "54a74455e779892d5e5156c3",
+            "price": 15
         }
     ]
         
