@@ -253,8 +253,310 @@
     ],
     "new_loka": [
         {
-            "name": "",
-            "id": "",
+            "name": "Winds of purity",
+            "id": "54a74455e779892d5e51569a",
+            "price": 15
+        },
+        {
+            "name": "Disarming purity",
+            "id": "5911f11d97a0add8e9d5da4c",
+            "price": 15
+        },
+        {
+            "name": "Bright purity",
+            "id": "54a74454e779892d5e51568a",
+            "price": 15
+        },
+        {
+            "name": "Lasting purity",
+            "id": "54a74454e779892d5e5155b8",
+            "price": 15
+        },
+        {
+            "name": "Duality",
+            "id": "56b656e0ef0390c7e4006383",
+            "price": 15
+        },
+        {
+            "name": "Calm and frenzy",
+            "id": "56b656e5ef0390c7e4006384",
+            "price": 15
+        },
+        {
+            "name": "Peaceful provocation",
+            "id": "56b656edef0390c7e4006385",
+            "price": 15
+        },
+        {
+            "name": "Energy transfer",
+            "id": "5ada1ab4b2b6a80bb33793f6",
+            "price": 15
+        },
+        {
+            "name": "Mending splinters",
+            "id": "5b91784d0566c80216658ce7",
+            "price": 15
+        },
+        {
+            "name": "Corroding barrage",
+            "id": "58446f502c2ada0042b6fc3d",
+            "price": 15
+        },
+        {
+            "name": "Tidal impunity",
+            "id": "54e0c9eee7798903744178ad",
+            "price": 15
+        },
+        {
+            "name": "Curative undertow",
+            "id": "54a74455e779892d5e5156d7",
+            "price": 15
+        },
+        {
+            "name": "Pilfering swarm",
+            "id": "5526aec1e779896af9418261",
+            "price": 15
+        },
+        {
+            "name": "Greedy pull",
+            "id": "54a74454e779892d5e5155c5",
+            "price": 15
+        },
+        {
+            "name": "Magnetized discharge",
+            "id": "59385f6716efa3a742b15f5f",
+            "price": 15
+        },
+        {
+            "name": "Counter pulse",
+            "id": "54e0c9eee7798903744178a7",
+            "price": 15
+        },
+        {
+            "name": "Fracturing crush",
+            "id": "5526aec0e779896af9418259",
+            "price": 15
+        },
+        {
+            "name": "Mind freak",
+            "id": "54e644ffe779897594fa68ce",
+            "price": 15
+        },
+        {
+            "name": "Pacifying bolts",
+            "id": "54a74454e779892d5e5155b4",
+            "price": 15
+        },
+        {
+            "name": "Chaos sphere",
+            "id": "5615432bb66f8371035bfa26",
+            "price": 15
+        },
+        {
+            "name": "Assimilate",
+            "id": "57c20990022d3f62c0d81aa7",
+            "price": 15
+        },
+        {
+            "name": "Smite infusion",
+            "id": "54a74455e779892d5e5156aa",
+            "price": 15
+        },
+        {
+            "name": "Hallowed eruption",
+            "id": "54e64500e779897594fa68d4",
+            "price": 15
+        },
+        {
+            "name": "Phoenix renewal",
+            "id": "5754a312e701ef5844257da9",
+            "price": 15
+        },
+        {
+            "name": "Hallowed reckoning",
+            "id": "5615432cb66f8371035bfa34",
+            "price": 15
+        },
+        {
+            "name": "Partitioned mallet",
+            "id": "5b50a3b23a84fd02a7823252",
+            "price": 15
+        },
+        {
+            "name": "Conductor",
+            "id": "5b91784d0566c80216658ce8",
+            "price": 15
+        },
+        {
+            "name": "Spellbound harvest",
+            "id": "5ea087d3c160d001303f9eda",
+            "price": 15
+        },
+        {
+            "name": "Beguiling lantern",
+            "id": "58f0ee99aa4b70452a173072",
+            "price": 15
+        },
+        {
+            "name": "Razorwing blitz",
+            "id": "5a6b495c7f2bca025fde2b59",
+            "price": 15
+        },
+        {
+            "name": "Pool of life",
+            "id": "54a74454e779892d5e51564c",
+            "price": 15
+        },
+        {
+            "name": "Vampire leech",
+            "id": "5526aec0e779896af941825b",
+            "price": 15
+        },
+        {
+            "name": "Abating link",
+            "id": "54e644ffe779897594fa68d2",
+            "price": 15
+        },
+        {
+            "name": "Swing line",
+            "id": "54e644ffe779897594fa68d0",
+            "price": 15
+        },
+        {
+            "name": "Eternal war",
+            "id": "5526aec1e779896af9418263",
+            "price": 15
+        },
+        {
+            "name": "Prolongued paralysis",
+            "id": "54a74454e779892d5e515662",
+            "price": 15
+        },
+        {
+            "name": "Hysterical assault",
+            "id": "57c73be094b4b0f159ab5e13",
+            "price": 15
+        },
+        {
+            "name": "Target fixation",
+            "id": "54a74454e779892d5e5155cd",
+            "price": 15
+        },
+        {
+            "name": "Jet stream",
+            "id": "54e644ffe779897594fa68d1",
+            "price": 15
+        },
+        {
+            "name": "Funnel clouds",
+            "id": "554d3f0ce779894445a848fb",
+            "price": 15
+        },
+        {
+            "name": "Celestial stomp",
+            "id": "576459b43ae92d545fd1e7b8",
+            "price": 15
+        },
+        {
+            "name": "Enveloping cloud",
+            "id": "5b91784d0566c80216658ce9",
+            "price": 15
+        },
+        {
+            "name": "Primal rage",
+            "id": "576459af3ae92d545fd1e7b7",
+            "price": 15
+        }
+    ],
+    "perrin_sequence":[
+        {
+            "name": "Toxic sequence",
+            "id": "54a74454e779892d5e5155e3",
+            "price": 15
+        },
+        {
+            "name": "Deadly sequence",
+            "id": "54a74454e779892d5e515666",
+            "price": 15
+        },
+        {
+            "name": "Voltage sequence",
+            "id": "5911f11d97a0add8e9d5da4e",
+            "price": 15
+        },
+        {
+            "name": "Sequence burn",
+            "id": "54a74455e779892d5e515699",
+            "price": 15
+        },
+        {
+            "name": "Sonic fracture",
+            "id": "5615432bb66f8371035bfa2a",
+            "price": 15
+        },
+        {
+            "name": "Resonance",
+            "id": "54e0c9eee7798903744178a9",
+            "price": 15
+        },
+        {
+            "name": "Savage silence",
+            "id": "54a74455e779892d5e515690",
+            "price": 15
+        },
+        {
+            "name": "Resonating quake",
+            "id": "5754a307e701ef5844257da7",
+            "price": 15
+        },
+        {
+            "name": "Afterburn",
+            "id": "5526aec1e779896af9418262",
+            "price": 15
+        },
+        {
+            "name": "Everlasting ward",
+            "id": "5754a30de701ef5844257da8",
+            "price": 15
+        },
+        {
+            "name": "Vexing retaliation",
+            "id": "554d3b75e77989423ccdf0da",
+            "price": 15
+        },
+        {
+            "name": "Guided effigy",
+            "id": "59385f6716efa3a742b15f61",
+            "price": 15
+        },
+        {
+            "name": "Balefire surge",
+            "id": "5e4145907b0275011bc5b7ce",
+            "price": 15
+        },
+        {
+            "name": "Blazing pillage",
+            "id": "5ea087d2c160d001303f9ed9",
+            "price": 15
+        },
+        {
+            "name": "Elemental sandstorm",
+            "id": "57c73be094b4b0f159ab5e14",
+            "price": 15
+        },
+        {
+            "name": "Negation swarm",
+            "id": "58f0ee99aa4b70452a173071",
+            "price": 15
+        },
+        {
+            "name": "Empowered quiver",
+            "id": "5b50a3aa3a84fd02a7823246",
+            "price": 15
+        },
+        {
+            "name": "Piercing navigator",
+            "id": "58f0ee99aa4b70452a173073",
             "price": 15
         }
     ]
