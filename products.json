@@ -658,6 +658,46 @@
             "name": "Vampire leech",
             "id": "5526aec0e779896af941825b",
             "price": 15
+        },
+        {
+            "name": "Abating link",
+            "id": "54e644ffe779897594fa68d2",
+            "price": 15
+        },
+        {
+            "name": "Swing line",
+            "id": "54e644ffe779897594fa68d0",
+            "price": 15
+        },
+        {
+            "name": "Eternal war",
+            "id": "5526aec1e779896af9418263",
+            "price": 15
+        },
+        {
+            "name": "Prolongued paralysis",
+            "id": "54a74454e779892d5e515662",
+            "price": 15
+        },
+        {
+            "name": "Hysterical assault",
+            "id": "57c73be094b4b0f159ab5e13",
+            "price": 15
+        },
+        {
+            "name": "Tesla bank",
+            "id": "54a74454e779892d5e51562b",
+            "price": 15
+        },
+        {
+            "name": "Repelling bastille",
+            "id": "54e644ffe779897594fa68cc",
+            "price": 15
+        },
+        {
+            "name": "Photon repeater",
+            "id": "55397302e77989047f88411c",
+            "price": 15
         }
     ]
 }
