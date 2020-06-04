@@ -608,6 +608,56 @@
             "name": "Shield of shadows",
             "id": "554d3d13e77989430b114cb1",
             "price": 15
+        },
+        {
+            "name": "Teeming virulence",
+            "id": "5cb04869fc2db2068006980f",
+            "price": 15
+        },
+        {
+            "name": "Larva burst",
+            "id": "5a6b495c7f2bca025fde2b58",
+            "price": 15
+        },
+        {
+            "name": "Insatiable",
+            "id": "5b50a3ac3a84fd02a782324b",
+            "price": 15
+        },
+        {
+            "name": "Blinding reave",
+            "id": "5cb04868fc2db2068006980c",
+            "price": 15
+        },
+        {
+            "name": "Ironclad charge",
+            "id": "54a74454e779892d5e515615",
+            "price": 15
+        },
+        {
+            "name": "Iron shrapnel",
+            "id": "54e64500e779897594fa68d5",
+            "price": 15
+        },
+        {
+            "name": "Piercing roar",
+            "id": "5526aec1e779896af941825f",
+            "price": 15
+        },
+        {
+            "name": "Reinforcing stomp",
+            "id": "58446fd52c2ada006a40630c",
+            "price": 15
+        },
+        {
+            "name": "Pool of life",
+            "id": "54a74454e779892d5e51564c",
+            "price": 15
+        },
+        {
+            "name": "Vampire leech",
+            "id": "5526aec0e779896af941825b",
+            "price": 15
         }
     ]
 }
