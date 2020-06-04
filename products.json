@@ -558,6 +558,56 @@
             "name": "Piercing navigator",
             "id": "58f0ee99aa4b70452a173073",
             "price": 15
+        },
+        {
+            "name": "Infiltrate",
+            "id": "576459d33ae92d545fd1e7ba",
+            "price": 15
+        },
+        {
+            "name": "Concentrated arrow",
+            "id": "5ada1ab4b2b6a80bb33793f5",
+            "price": 15
+        },
+        {
+            "name": "Greedy pull",
+            "id": "54a74454e779892d5e5155c5",
+            "price": 15
+        },
+        {
+            "name": "Magnetized discharge",
+            "id": "59385f6716efa3a742b15f5f",
+            "price": 15
+        },
+        {
+            "name": "Counter pulse",
+            "id": "54e0c9eee7798903744178a7",
+            "price": 15
+        },
+        {
+            "name": "Fracturing crush",
+            "id": "5526aec0e779896af9418259",
+            "price": 15
+        },
+        {
+            "name": "Soul survivor",
+            "id": "54a74454e779892d5e515604",
+            "price": 15
+        },
+        {
+            "name": "Creeping terrify",
+            "id": "576459bc3ae92d545fd1e7b9",
+            "price": 15
+        },
+        {
+            "name": "Despoil",
+            "id": "54e644ffe779897594fa68cd",
+            "price": 15
+        },
+        {
+            "name": "Shield of shadows",
+            "id": "554d3d13e77989430b114cb1",
+            "price": 15
         }
     ]
 }
