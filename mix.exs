@@ -10,7 +10,7 @@ defmodule MarketManager.MixProject do
       deps: deps(),
       escript: [
         main_module: MarketManager.CLI,
-        comment: "Makes requests to warframe market.",
+        comment: "Makes requests to warframe market."
       ]
     ]
   end
