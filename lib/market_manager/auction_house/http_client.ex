@@ -85,14 +85,14 @@ defmodule MarketManager.AuctionHouse.HTTPClient do
 
   defp map_error(%{"error" => %{"_err" => _error}}), do: {:error, :order_non_existent}
 
-  @spec get_id(map) :: String.t
+  @spec get_id(map) :: String.t()
   defp get_id(%{"payload" => %{"order" => %{"id" => id}}}), do: id
 
-  #TODO: Add spec
+  # TODO: Add spec
   defp build_response(id), do: {:ok, id}
 
   defp build_response(tuple, data), do: Tuple.append(tuple, data)
 
-  @spec build_delete_url(String.t) :: String.t
+  @spec build_delete_url(String.t()) :: String.t()
   defp build_delete_url(id), do: @url <> "/" <> id
 end

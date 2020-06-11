@@ -8,6 +8,7 @@ defmodule MarketManager.MixProject do
       elixir: "~> 1.9",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
+      elixirc_paths: elixirc_paths(Mix.env),
       escript: [
         main_module: MarketManager.CLI,
         comment: "Makes requests to warframe market."
@@ -30,8 +31,12 @@ defmodule MarketManager.MixProject do
       {:jason, "~> 1.2"},
 
       # Testing and Dev
-      {:mox, "~> 0.5", only: :test},
+      {:hammox, "~> 0.2", only: :test},
       {:mix_test_watch, "~> 1.0", only: :dev, runtime: false}
     ]
   end
+
+  defp elixirc_paths(:test), do: ["test/support", "lib"]
+  defp elixirc_paths(_),     do: ["lib"]
+
 end

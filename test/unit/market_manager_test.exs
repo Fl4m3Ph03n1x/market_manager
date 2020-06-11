@@ -2,7 +2,7 @@ defmodule MarketManagerTest do
   use ExUnit.Case
   doctest MarketManager
 
-  import Mox
+  import Hammox
 
   alias MarketManager.{AuctionHouseMock, StoreMock}
 
@@ -47,8 +47,8 @@ defmodule MarketManagerTest do
 
       StoreMock
       |> expect(:get_products_from_syndicate, fn ^syndicate -> {:ok, products} end)
-      |> expect(:save_order, fn ^id1 -> {:ok, :order_saved} end)
-      |> expect(:save_order, fn ^id2 -> {:ok, :order_saved} end)
+      |> expect(:save_order, fn ^id1, ^syndicate -> {:ok, id1} end)
+      |> expect(:save_order, fn ^id2, ^syndicate -> {:ok, id1} end)
 
       AuctionHouseMock
       |> expect(:place_order, fn ^order1 -> {:ok, id1} end)
@@ -100,7 +100,7 @@ defmodule MarketManagerTest do
 
       StoreMock
       |> expect(:get_products_from_syndicate, fn ^syndicate -> {:ok, products} end)
-      |> expect(:save_order, fn ^id1 -> {:ok, :order_saved} end)
+      |> expect(:save_order, fn ^id1, ^syndicate -> {:ok, id1} end)
 
       AuctionHouseMock
       |> expect(:place_order, fn ^order1 -> {:ok, id1} end)
@@ -182,8 +182,8 @@ defmodule MarketManagerTest do
 
       StoreMock
       |> expect(:list_orders, fn ^syndicate -> {:ok, [order_id1, order_id2]} end)
-      |> expect(:delete_order, fn ^order_id1 -> {:ok, order_id1} end)
-      |> expect(:delete_order, fn ^order_id2 -> {:ok, order_id2} end)
+      |> expect(:delete_order, fn ^order_id1, ^syndicate -> {:ok, order_id1} end)
+      |> expect(:delete_order, fn ^order_id2, ^syndicate -> {:ok, order_id2} end)
 
       AuctionHouseMock
       |> expect(:delete_order, fn ^order_id1 -> {:ok, order_id1} end)
@@ -197,6 +197,5 @@ defmodule MarketManagerTest do
       # Assertion
       assert actual == expected
     end
-
   end
 end

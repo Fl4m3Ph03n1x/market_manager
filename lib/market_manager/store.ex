@@ -3,17 +3,20 @@ defmodule MarketManager.Store do
   Port for the persistency layer.
   """
 
-  @callback get_products_from_syndicate(String.t()) ::
+  @type order_id :: String.t
+  @type syndicate :: String.t
+
+  @callback get_products_from_syndicate(syndicate) ::
               {:ok, [map]}
               | {:error, any}
 
-  @callback list_orders(String.t) :: {:ok, [String.t]}
+  @callback list_orders(syndicate) :: {:ok, [order_id]}
 
-  @callback save_order(String.t()) ::
-              {:ok, :order_saved}
+  @callback save_order(order_id, syndicate) ::
+              {:ok, order_id}
               | {:error, any}
 
-  @callback delete_order(String.t()) ::
-              {:ok, :order_deleted}
+  @callback delete_order(order_id, syndicate) ::
+              {:ok, order_id}
               | {:error, any}
 end

@@ -14,7 +14,7 @@ defmodule MarketManager.Implementation do
          {success_resps, failed_resps} <- make_requests(syndicate_products) do
       success_resps
       |> Enum.map(fn {:ok, order_id} -> order_id end)
-      |> Enum.each(&@store_api.save_order/1)
+      |> Enum.each(&@store_api.save_order(&1, syndicate))
 
       if Enum.empty?(success_resps) do
         {:error, :unable_to_place_requests, failed_resps}
@@ -30,10 +30,9 @@ defmodule MarketManager.Implementation do
   def deactivate(syndicate) do
     with {:ok, orders} <- @store_api.list_orders(syndicate),
          {success_resps, failed_resps} <- make_delete_requests(orders) do
-
       success_resps
       |> Enum.map(fn {:ok, order_id} -> order_id end)
-      |> Enum.each(&@store_api.delete_order/1)
+      |> Enum.each(&@store_api.delete_order(&1, syndicate))
 
       if Enum.empty?(success_resps) do
         {:error, :unable_to_delete_orders, failed_resps}
@@ -66,12 +65,12 @@ defmodule MarketManager.Implementation do
       "mod_rank" => Map.get(product, "rank", 0)
     }
 
-  defp make_delete_requests(order_ids), do:
-    order_ids
-    |> Enum.map(&@auction_house_api.delete_order/1)
-    |> Enum.split_with(&request_successful?/1)
+  defp make_delete_requests(order_ids),
+    do:
+      order_ids
+      |> Enum.map(&@auction_house_api.delete_order/1)
+      |> Enum.split_with(&request_successful?/1)
 
   defp request_successful?({:ok, _data}), do: true
   defp request_successful?(_order), do: false
-
 end

@@ -3,15 +3,15 @@ defmodule MarketManager.AuctionHouse do
   Port for http client.
   """
 
-  @type order_id :: String.t
+  @type order_id :: String.t()
 
   @type order :: %{
-    order_type: String.t,
-    item_id: String.t,
-    platinum: non_neg_integer,
-    quantity: non_neg_integer,
-    mod_rank: non_neg_integer
-  }
+          String.t => String.t(),
+          String.t => String.t(),
+          String.t => non_neg_integer,
+          String.t => non_neg_integer,
+          String.t => non_neg_integer
+        }
 
   @callback place_order(order) ::
               {:ok, order_id}
