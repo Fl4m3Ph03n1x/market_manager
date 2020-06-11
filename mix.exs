@@ -27,7 +27,11 @@ defmodule MarketManager.MixProject do
   defp deps do
     [
       {:httpoison, "~> 1.6"},
-      {:jason, "~> 1.2"}
+      {:jason, "~> 1.2"},
+
+      # Testing and Dev
+      {:mox, "~> 0.5", only: :test},
+      {:mix_test_watch, "~> 1.0", only: :dev, runtime: false}
     ]
   end
 end

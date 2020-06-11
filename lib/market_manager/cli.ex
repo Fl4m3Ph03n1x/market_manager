@@ -66,12 +66,10 @@ defmodule MarketManager.CLI do
     process_action(action, syndicates)
   end
 
-  defp process_action("activate", syndicates), do:
-    Enum.map(syndicates, &MarketManager.activate/1)
+  defp process_action("activate", syndicates), do: Enum.map(syndicates, &MarketManager.activate/1)
 
-  defp process_action("deactivate", syndicates), do:
-    Enum.map(syndicates, &MarketManager.deactivate/1)
+  defp process_action("deactivate", syndicates),
+    do: Enum.map(syndicates, &MarketManager.deactivate/1)
 
   defp process_action(action, _syndicates), do: {:error, :unknown_action, action}
-
 end
