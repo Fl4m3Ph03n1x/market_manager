@@ -197,5 +197,29 @@ defmodule MarketManagerTest do
       # Assertion
       assert actual == expected
     end
+
+    test "Removes order from storage if it fails to delete it" do
+      # Setup
+      syndicate = "red_veil"
+      order_id1 = "54a74454e779892d5e5155d5"
+      order_id2 = "bad_order_id"
+
+      StoreMock
+      |> expect(:list_orders, fn ^syndicate -> {:ok, [order_id1, order_id2]} end)
+      |> expect(:delete_order, fn ^order_id1, ^syndicate -> {:ok, order_id1} end)
+      |> expect(:delete_order, fn ^order_id2, ^syndicate -> {:ok, order_id2} end)
+
+      AuctionHouseMock
+      |> expect(:delete_order, fn ^order_id1 -> {:ok, order_id1} end)
+      |> expect(:delete_order, fn ^order_id2 -> {:error, :order_non_existent, order_id2} end)
+
+      # Execution
+
+      actual = MarketManager.deactivate(syndicate)
+      expected = {:partial_success, failed_orders: [{:error, :order_non_existent, order_id2}]}
+
+      # Assertion
+      assert actual == expected
+    end
   end
 end

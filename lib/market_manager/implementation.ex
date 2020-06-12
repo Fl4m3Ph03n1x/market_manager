@@ -30,9 +30,18 @@ defmodule MarketManager.Implementation do
   def deactivate(syndicate) do
     with {:ok, orders} <- @store_api.list_orders(syndicate),
          {success_resps, failed_resps} <- make_delete_requests(orders) do
-      success_resps
-      |> Enum.map(fn {:ok, order_id} -> order_id end)
-      |> Enum.each(&@store_api.delete_order(&1, syndicate))
+
+      success_resps = Enum.map(success_resps, &get_order_id/1)
+
+      non_existent_orders =
+        failed_resps
+        |> Enum.filter(&order_non_existent?/1)
+        |> Enum.map(&get_order_id/1)
+
+      Enum.each(
+        success_resps ++ non_existent_orders,
+        &@store_api.delete_order(&1, syndicate)
+      )
 
       if Enum.empty?(success_resps) do
         {:error, :unable_to_delete_orders, failed_resps}
@@ -73,4 +82,11 @@ defmodule MarketManager.Implementation do
 
   defp request_successful?({:ok, _data}), do: true
   defp request_successful?(_order), do: false
+
+  defp get_order_id({:ok, order_id}), do: order_id
+  defp get_order_id({:error, :order_non_existent, order_id}), do: order_id
+
+  defp order_non_existent?({:error, :order_non_existent, _order_id}), do: true
+  defp order_non_existent?(_), do: false
+
 end
