@@ -83,10 +83,11 @@ defmodule MarketManager.AuctionHouse.HTTPClient do
 
   defp map_error(%{"error" => %{"_form" => _error}}), do: {:error, :order_already_placed}
 
-  defp map_error(%{"error" => %{"_err" => _error}}), do: {:error, :order_non_existent}
+  defp map_error(%{"error" => %{"order_id" => _error}}), do: {:error, :order_non_existent}
 
   @spec get_id(map) :: String.t()
   defp get_id(%{"payload" => %{"order" => %{"id" => id}}}), do: id
+  defp get_id(%{"payload" => %{"order_id" => id}}), do: id
 
   # TODO: Add spec
   defp build_response(id), do: {:ok, id}

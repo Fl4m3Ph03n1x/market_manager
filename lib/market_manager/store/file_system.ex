@@ -46,7 +46,20 @@ defmodule MarketManager.Store.FileSystem do
   end
 
   @impl Store
-  def delete_order(order_id, _syndicate), do: {:ok, order_id}
+  def delete_order(order_id, syndicate) do
+    new_orders =
+      @orders_filename
+      |> File.read!()
+      |> Jason.decode()
+      |> get_orders()
+      |> delete_order(order_id, syndicate)
+      |> Jason.encode!()
+
+      case File.write(@orders_filename, new_orders) do
+        :ok -> {:ok, order_id}
+        err   -> err
+      end
+  end
 
   ###########
   # Private #
@@ -57,6 +70,15 @@ defmodule MarketManager.Store.FileSystem do
 
   defp add_order(all_orders, order_id, syndicate), do:
     Map.put(all_orders, syndicate, Map.get(all_orders, syndicate, []) ++ [order_id])
+
+  defp delete_order(all_orders, order_id, syndicate) do
+    updated_syndicate_orders =
+      all_orders
+      |> Map.get(syndicate)
+      |> List.delete(order_id)
+
+    Map.put(all_orders, syndicate, updated_syndicate_orders)
+  end
 
   defp find_syndicate(orders, syndicate) when is_map_key(orders, syndicate),
     do: {:ok, Map.get(orders, syndicate)}
