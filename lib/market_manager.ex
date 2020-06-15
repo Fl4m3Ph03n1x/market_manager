@@ -3,9 +3,9 @@ defmodule MarketManager do
   Documentation for MarketManager.
   """
 
-  alias MarketManager.Implementation
+  alias MarketManager.Interpreter
 
-  defdelegate activate(syndicate), to: Implementation
+  defdelegate activate(syndicate), to: Interpreter
 
-  defdelegate deactivate(syndicate), to: Implementation
+  defdelegate deactivate(syndicate), to: Interpreter
 end

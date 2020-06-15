@@ -7,7 +7,7 @@ defmodule MarketManager.AuctionHouse.HTTPClient do
 
   @behaviour AuctionHouse
 
-  @url "https://api.warframe.market/v1/profile/orders"
+  @url Application.compile_env!(:market_manager, :api_base_url)
   @headers [
     {"User-Agent",
      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:76.0) Gecko/20100101 Firefox/76.0"},

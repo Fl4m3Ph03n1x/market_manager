@@ -5,7 +5,7 @@ defmodule MarketManager.CLI do
   usage:
     $ ./market_manager {options}
   example:
-    ./market_manager --action=activate syndicates=new_loka,red_veil
+    ./market_manager --action=activate --syndicates=new_loka,red_veil
   options:
     --action=activate|deactivate        Can be either 'activate' or 'deactivate'.
                                         Activating a syndicate means placing a sell

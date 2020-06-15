@@ -1,4 +1,4 @@
-defmodule MarketManager.Implementation do
+defmodule MarketManager.Interpreter do
   @moduledoc """
   """
 

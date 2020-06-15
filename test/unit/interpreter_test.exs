@@ -1,10 +1,9 @@
-defmodule MarketManagerTest do
+defmodule InterpreterTest do
   use ExUnit.Case
-  doctest MarketManager
 
   import Hammox
 
-  alias MarketManager.{AuctionHouseMock, StoreMock}
+  alias MarketManager.{AuctionHouseMock, Interpreter, StoreMock}
 
   # Make sure mocks are verified when the test exits
   setup :verify_on_exit!
@@ -56,7 +55,7 @@ defmodule MarketManagerTest do
 
       # Execution
 
-      actual = MarketManager.activate(syndicate)
+      actual = Interpreter.activate(syndicate)
       expected = {:ok, :success}
 
       # Assertion
@@ -108,7 +107,7 @@ defmodule MarketManagerTest do
 
       # Execution
 
-      actual = MarketManager.activate(syndicate)
+      actual = Interpreter.activate(syndicate)
       expected = {:partial_success, failed_orders: [{:error, :invalid_item_id, order2}]}
 
       # Assertion
@@ -159,7 +158,7 @@ defmodule MarketManagerTest do
 
       # Execution
 
-      actual = MarketManager.activate(syndicate)
+      actual = Interpreter.activate(syndicate)
 
       expected =
         {:error, :unable_to_place_requests,
@@ -191,7 +190,7 @@ defmodule MarketManagerTest do
 
       # Execution
 
-      actual = MarketManager.deactivate(syndicate)
+      actual = Interpreter.deactivate(syndicate)
       expected = {:ok, :success}
 
       # Assertion
@@ -215,7 +214,7 @@ defmodule MarketManagerTest do
 
       # Execution
 
-      actual = MarketManager.deactivate(syndicate)
+      actual = Interpreter.deactivate(syndicate)
       expected = {:partial_success, failed_orders: [{:error, :order_non_existent, order_id2}]}
 
       # Assertion

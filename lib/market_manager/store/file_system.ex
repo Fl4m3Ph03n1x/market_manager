@@ -7,8 +7,8 @@ defmodule MarketManager.Store.FileSystem do
 
   @behaviour Store
 
-  @orders_filename "current_orders.json"
-  @products_filename "products.json"
+  @orders_filename Application.compile_env!(:market_manager, :current_orders)
+  @products_filename Application.compile_env!(:market_manager, :products)
 
   ##########
   # Public #
@@ -34,7 +34,8 @@ defmodule MarketManager.Store.FileSystem do
     new_orders =
       @orders_filename
       |> File.read!()
-      |> Jason.decode!()
+      |> Jason.decode()
+      |> get_orders()
       |> add_order(order_id, syndicate)
       |> Jason.encode!()
 
@@ -50,6 +51,9 @@ defmodule MarketManager.Store.FileSystem do
   ###########
   # Private #
   ###########
+
+  defp get_orders({:error, %Jason.DecodeError{data: ""}}), do: %{}
+  defp get_orders({:ok, orders}), do: orders
 
   defp add_order(all_orders, order_id, syndicate), do:
     Map.put(all_orders, syndicate, Map.get(all_orders, syndicate, []) ++ [order_id])

@@ -5,14 +5,15 @@ defmodule MarketManager.Application do
 
   use Application
 
-  def start(_type, _args) do
-    children = [
-      # Starts a worker by calling: MarketManager.Worker.start_link(arg)
-      # {MarketManager.Worker, arg}
-    ]
+  alias Plug.Cowboy
+  alias MarketManager.FakeMarketServer
 
-    # See https://hexdocs.pm/elixir/Supervisor.html
-    # for other strategies and supported options
+  def start(_type, args) do
+    children = case args do
+      [env: :integration] -> [{Cowboy, scheme: :http, plug: FakeMarketServer, options: [port: 8082]}]
+      _ -> []
+    end
+
     opts = [strategy: :one_for_one, name: MarketManager.Supervisor]
     Supervisor.start_link(children, opts)
   end
