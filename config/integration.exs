@@ -1,5 +1,5 @@
 import Config
-import_config "unit.exs"
+import_config "test.exs"
 
 # Here's where the two testing environments differ so that Mox is configured correctly:
 config :market_manager,
