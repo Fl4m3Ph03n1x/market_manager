@@ -3,12 +3,14 @@ defmodule MarketManager.FakeMarketServer do
 
   alias Plug.Conn
 
-  plug Plug.Parsers, parsers: [:json],
-                    pass:  ["text/*"],
-                    json_decoder: Jason
+  plug(Plug.Parsers,
+    parsers: [:json],
+    pass: ["text/*"],
+    json_decoder: Jason
+  )
 
-  plug :match
-  plug :dispatch
+  plug(:match)
+  plug(:dispatch)
 
   post "/v1/profile/orders" do
     success(conn, place_order_ok_response())
@@ -26,12 +28,9 @@ defmodule MarketManager.FakeMarketServer do
 
   # end
 
-  defp success(conn, body), do:
-    Conn.send_resp(conn, 200, Jason.encode!(body))
+  defp success(conn, body), do: Conn.send_resp(conn, 200, Jason.encode!(body))
 
-  defp failure(conn, body), do:
-    Conn.send_resp(conn, 400, Jason.encode!(body))
-
+  defp failure(conn, body), do: Conn.send_resp(conn, 400, Jason.encode!(body))
 
   defp place_order_ok_response() do
     %{
@@ -54,7 +53,8 @@ defmodule MarketManager.FakeMarketServer do
             "sub_icon" => nil,
             "sv" => %{"item_name" => "Toxic Sequence"},
             "tags" => ["mod", "weapons", "rare"],
-            "thumb" => "icons/en/thumbs/Toxic_Sequence.bab0370da343ca58b4b92fca65b1da6a.128x128.png",
+            "thumb" =>
+              "icons/en/thumbs/Toxic_Sequence.bab0370da343ca58b4b92fca65b1da6a.128x128.png",
             "url_name" => "toxic_sequence",
             "zh" => %{"item_name" => "Toxic Sequence"}
           },
@@ -79,4 +79,3 @@ defmodule MarketManager.FakeMarketServer do
     "{\"error\": {\"item_id\": [\"app.form.invalid\"]}}"
   end
 end
-
