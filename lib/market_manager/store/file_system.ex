@@ -15,11 +15,12 @@ defmodule MarketManager.Store.FileSystem do
   ##########
 
   @impl Store
-  def get_products_from_syndicate(syndicate), do:
-    @products_filename
-    |> File.read!()
-    |> Jason.decode!()
-    |> find_syndicate(syndicate)
+  def get_products_from_syndicate(syndicate),
+    do:
+      @products_filename
+      |> File.read!()
+      |> Jason.decode!()
+      |> find_syndicate(syndicate)
 
   @impl Store
   def list_orders(syndicate),
@@ -39,10 +40,10 @@ defmodule MarketManager.Store.FileSystem do
       |> add_order(order_id, syndicate)
       |> Jason.encode!()
 
-      case File.write(@orders_filename, new_orders) do
-        :ok -> {:ok, order_id}
-        err   -> err
-      end
+    case File.write(@orders_filename, new_orders) do
+      :ok -> {:ok, order_id}
+      err -> err
+    end
   end
 
   @impl Store
@@ -55,10 +56,10 @@ defmodule MarketManager.Store.FileSystem do
       |> delete_order(order_id, syndicate)
       |> Jason.encode!()
 
-      case File.write(@orders_filename, new_orders) do
-        :ok -> {:ok, order_id}
-        err   -> err
-      end
+    case File.write(@orders_filename, new_orders) do
+      :ok -> {:ok, order_id}
+      err -> err
+    end
   end
 
   ###########
@@ -68,8 +69,8 @@ defmodule MarketManager.Store.FileSystem do
   defp get_orders({:error, %Jason.DecodeError{data: ""}}), do: %{}
   defp get_orders({:ok, orders}), do: orders
 
-  defp add_order(all_orders, order_id, syndicate), do:
-    Map.put(all_orders, syndicate, Map.get(all_orders, syndicate, []) ++ [order_id])
+  defp add_order(all_orders, order_id, syndicate),
+    do: Map.put(all_orders, syndicate, Map.get(all_orders, syndicate, []) ++ [order_id])
 
   defp delete_order(all_orders, order_id, syndicate) do
     updated_syndicate_orders =

@@ -30,7 +30,6 @@ defmodule MarketManager.Interpreter do
   def deactivate(syndicate) do
     with {:ok, orders} <- @store_api.list_orders(syndicate),
          {success_resps, failed_resps} <- make_delete_requests(orders) do
-
       success_resps = Enum.map(success_resps, &get_order_id/1)
 
       non_existent_orders =
@@ -88,5 +87,4 @@ defmodule MarketManager.Interpreter do
 
   defp order_non_existent?({:error, :order_non_existent, _order_id}), do: true
   defp order_non_existent?(_), do: false
-
 end
