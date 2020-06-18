@@ -24,6 +24,7 @@ defmodule MarketManagerTest do
       @orders_filename
       |> File.read!()
       |> Jason.decode!()
+
     expected_orders = %{
       "red_veil" => ["5ee71a2604d55c0a5cbdc3c2", "5ee71a2604d55c0a5cbdc3c2"]
     }
@@ -45,6 +46,7 @@ defmodule MarketManagerTest do
       @orders_filename
       |> File.read!()
       |> Jason.decode!()
+
     expected_orders = %{
       "red_veil" => ["5ee71a2604d55c0a5cbdc3c2", "5ee71a2604d55c0a5cbdc3c2"],
       "new_loka" => ["5ee71a2604d55c0a5cbdc3c2", "5ee71a2604d55c0a5cbdc3c2"]
