@@ -32,7 +32,7 @@ defmodule MarketManager.FakeMarketServer do
 
   defp failure(conn, body), do: Conn.send_resp(conn, 400, Jason.encode!(body))
 
-  defp place_order_ok_response() do
+  defp place_order_ok_response do
     %{
       "payload" => %{
         "order" => %{
@@ -71,11 +71,11 @@ defmodule MarketManager.FakeMarketServer do
     }
   end
 
-  defp place_order_error_duplicated_response() do
+  defp place_order_error_duplicated_response do
     "{\"error\": {\"_form\": [\"app.post_order.already_created_no_duplicates\"]}}"
   end
 
-  defp place_order_erorr_non_existent_item_response() do
+  defp place_order_erorr_non_existent_item_response do
     "{\"error\": {\"item_id\": [\"app.form.invalid\"]}}"
   end
 end

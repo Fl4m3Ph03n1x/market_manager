@@ -19,14 +19,16 @@ defmodule MarketManager.CLI do
 
   alias MarketManager
 
+  require Logger
+
   ##########
   # Public #
   ##########
 
   @spec main([any]) :: :ok
-  def main([]), do: IO.puts(@moduledoc)
+  def main([]), do: Logger.info(@moduledoc)
 
-  def main([help_opt]) when help_opt == "-h", do: IO.puts(@moduledoc)
+  def main([help_opt]) when help_opt == "-h", do: Logger.info(@moduledoc)
 
   def main(args) do
     {opts, _positional_args, errors} = parse_args(args)
@@ -35,12 +37,11 @@ defmodule MarketManager.CLI do
       [] ->
         opts
         |> process_args()
-        |> IO.inspect()
+        |> log_inspect(:info)
 
       _ ->
-        IO.puts("Bad option:")
-        IO.inspect(errors)
-        IO.puts(@moduledoc)
+        log_inspect(errors, :error, "Bad option:\n")
+        Logger.info(@moduledoc)
     end
   end
 
@@ -72,4 +73,17 @@ defmodule MarketManager.CLI do
     do: Enum.map(syndicates, &MarketManager.deactivate/1)
 
   defp process_action(action, _syndicates), do: {:error, :unknown_action, action}
+
+  defp log_inspect(data, level, msg \\ "")
+
+  defp log_inspect(data, :info, msg) do
+    Logger.info("#{msg}#{inspect data}")
+    data
+  end
+
+  defp log_inspect(data, :error, msg) do
+    Logger.error("#{msg}#{inspect data}")
+    data
+  end
+
 end

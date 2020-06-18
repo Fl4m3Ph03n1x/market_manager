@@ -68,10 +68,10 @@ defmodule MarketManager.MixProject do
     ]
   end
 
-  def run_integration_tests(args), do: test_with_env("integration", args)
-  def run_unit_tests(args), do: test_with_env("test", args)
+  defp run_integration_tests(args), do: test_with_env("integration", args)
+  defp run_unit_tests(args), do: test_with_env("test", args)
 
-  def test_with_env(env, args) do
+  defp test_with_env(env, args) do
     args = if IO.ANSI.enabled?(), do: ["--color" | args], else: ["--no-color" | args]
     IO.puts("==> Running tests with `MIX_ENV=#{env}`")
 
