@@ -24,9 +24,9 @@ defmodule MarketManager.FakeMarketServer do
     # end
   end
 
-  # delete "/v1/profile/orders/:id" do
-
-  # end
+  delete "/v1/profile/orders/:id" do
+    success(conn, delete_order_ok_response())
+  end
 
   defp success(conn, body), do: Conn.send_resp(conn, 200, Jason.encode!(body))
 
@@ -69,6 +69,10 @@ defmodule MarketManager.FakeMarketServer do
         }
       }
     }
+  end
+
+  defp delete_order_ok_response do
+    %{"payload" => %{"order_id" => "5ee71a2604d55c0a5cbdc3c2"}}
   end
 
   defp place_order_error_duplicated_response do
