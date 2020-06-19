@@ -6,11 +6,11 @@ defmodule MarketManager.AuctionHouse do
   @type order_id :: String.t()
 
   @type order :: %{
-          String.t => String.t(),
-          String.t => String.t(),
-          String.t => non_neg_integer,
-          String.t => non_neg_integer,
-          String.t => non_neg_integer
+          String.t() => String.t(),
+          String.t() => String.t(),
+          String.t() => non_neg_integer,
+          String.t() => non_neg_integer,
+          String.t() => non_neg_integer
         }
 
   @callback place_order(order) ::

@@ -1,5 +1,8 @@
 defmodule MarketManager.Interpreter do
   @moduledoc """
+  Core of the market manager, where all the logic and communication with outer
+  layers is. Currently, it works more like a bridge between the different ports
+  of the application and manages data between them.
   """
 
   @auction_house_api Application.compile_env!(:market_manager, :auction_house_api)
@@ -30,7 +33,6 @@ defmodule MarketManager.Interpreter do
   def deactivate(syndicate) do
     with {:ok, orders} <- @store_api.list_orders(syndicate),
          {success_resps, failed_resps} <- make_delete_requests(orders) do
-
       success_resps = Enum.map(success_resps, &get_order_id/1)
 
       non_existent_orders =
@@ -88,5 +90,4 @@ defmodule MarketManager.Interpreter do
 
   defp order_non_existent?({:error, :order_non_existent, _order_id}), do: true
   defp order_non_existent?(_), do: false
-
 end

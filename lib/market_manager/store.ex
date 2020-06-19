@@ -3,8 +3,8 @@ defmodule MarketManager.Store do
   Port for the persistency layer.
   """
 
-  @type order_id :: String.t
-  @type syndicate :: String.t
+  @type order_id :: String.t()
+  @type syndicate :: String.t()
 
   @callback get_products_from_syndicate(syndicate) ::
               {:ok, [map]}

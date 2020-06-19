@@ -5,16 +5,18 @@ defmodule MarketManager.Application do
 
   use Application
 
+  alias MarketManager.MockMarketServer
   alias Plug.Cowboy
-  alias MarketManager.FakeMarketServer
 
   def start(_type, args) do
-    children = case args do
-      [env: :integration] -> [{Cowboy, scheme: :http, plug: FakeMarketServer, options: [port: 8082]}]
-      _ -> []
-    end
+    children = children(args[:env])
 
     opts = [strategy: :one_for_one, name: MarketManager.Supervisor]
     Supervisor.start_link(children, opts)
   end
+
+  defp children(:integration),
+    do: [{Cowboy, scheme: :http, plug: MockMarketServer, options: [port: 8082]}]
+
+  defp children(_), do: []
 end
