@@ -1,5 +1,8 @@
 defmodule MarketManager.Interpreter do
   @moduledoc """
+  Core of the market manager, where all the logic and communication with outer
+  layers is. Currently, it works more like a bridge between the different ports
+  of the application and manages data between them.
   """
 
   @auction_house_api Application.compile_env!(:market_manager, :auction_house_api)
