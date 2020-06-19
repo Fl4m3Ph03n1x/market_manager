@@ -17,7 +17,9 @@ defmodule MarketManager.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       escript: escript(),
       test_paths: test_paths(Mix.env()),
-      aliases: aliases()
+      aliases: aliases(),
+      test_coverage: [tool: ExCoveralls],
+      preferred_cli_env: preferred_cli_env()
     ]
   end
 
@@ -43,7 +45,8 @@ defmodule MarketManager.MixProject do
       {:hammox, "~> 0.2", only: @test_envs},
       {:plug_cowboy, "~> 2.0", only: @test_envs},
       {:mix_test_watch, "~> 1.0", only: @test_envs, runtime: false},
-      {:credo, "~> 1.4", only: [:dev] ++ @test_envs, runtime: false}
+      {:credo, "~> 1.4", only: [:dev] ++ @test_envs, runtime: false},
+      {:excoveralls, "~> 0.10", only: @test_envs}
     ]
   end
 
@@ -84,5 +87,14 @@ defmodule MarketManager.MixProject do
     if res > 0 do
       System.at_exit(fn _ -> exit({:shutdown, 1}) end)
     end
+  end
+
+  defp preferred_cli_env do
+    [
+      coveralls: :test,
+      "coveralls.detail": :test,
+      "coveralls.post": :test,
+      "coveralls.html": :test
+    ]
   end
 end
