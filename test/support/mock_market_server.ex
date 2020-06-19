@@ -1,4 +1,4 @@
-defmodule MarketManager.FakeMarketServer do
+defmodule MarketManager.MockMarketServer do
   use Plug.Router
 
   alias Plug.Conn
