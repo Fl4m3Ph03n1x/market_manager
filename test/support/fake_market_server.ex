@@ -13,15 +13,14 @@ defmodule MarketManager.FakeMarketServer do
   plug(:dispatch)
 
   post "/v1/profile/orders" do
-    success(conn, place_order_ok_response())
-    # case conn.params do
-    #   %{"name" =>"place_order_ok_response"} ->
-    #     success(conn, place_order_ok_response())
-    #   %{"name" =>"place_order_error_duplicated_response"} ->
-    #     failure(conn, place_order_error_duplicated_response())
-    #   %{"name" =>"place_order_erorr_non_existent_item_response"} ->
-    #     failure(conn, place_order_erorr_non_existent_item_response())
-    # end
+    case conn.params do
+      %{"item_id" => "duplicated_order"} ->
+        failure(conn, place_order_error_duplicated_response())
+      %{"item_id" => "non_existent_item"} ->
+        failure(conn, place_order_error_non_existent_item_response())
+      %{"item_id" => _id} ->
+          success(conn, place_order_ok_response())
+    end
   end
 
   delete "/v1/profile/orders/:id" do
@@ -79,7 +78,7 @@ defmodule MarketManager.FakeMarketServer do
     "{\"error\": {\"_form\": [\"app.post_order.already_created_no_duplicates\"]}}"
   end
 
-  defp place_order_erorr_non_existent_item_response do
+  defp place_order_error_non_existent_item_response do
     "{\"error\": {\"item_id\": [\"app.form.invalid\"]}}"
   end
 end
