@@ -7,10 +7,13 @@ defmodule MarketManagerTest do
 
   defp create_empty_orders_file, do: File.touch!(@orders_filename)
   defp delete_orders_file, do: File.rm!(@orders_filename)
+
   defp create_orders_file(syndicate, uuids) do
-    content = Jason.encode!(%{
-      syndicate => uuids
-    })
+    content =
+      Jason.encode!(%{
+        syndicate => uuids
+      })
+
     File.write!(@orders_filename, content)
   end
 
@@ -67,7 +70,6 @@ defmodule MarketManagerTest do
   end
 
   describe "deactivate syndicate" do
-
     setup do
       on_exit(&delete_orders_file/0)
     end

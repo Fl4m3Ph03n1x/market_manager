@@ -77,13 +77,12 @@ defmodule MarketManager.CLI do
   defp log_inspect(data, level, msg \\ "")
 
   defp log_inspect(data, :info, msg) do
-    Logger.info("#{msg}#{inspect data}")
+    Logger.info("#{msg}#{inspect(data)}")
     data
   end
 
   defp log_inspect(data, :error, msg) do
-    Logger.error("#{msg}#{inspect data}")
+    Logger.error("#{msg}#{inspect(data)}")
     data
   end
-
 end
