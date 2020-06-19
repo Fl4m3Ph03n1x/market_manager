@@ -21,6 +21,6 @@ jobs:
     - name: Install Dependencies
       run: mix deps.get
     - name: Run Tests
-      run: mix test
+      run: mix test.all
     - name: Build executable
       run: mix escript.build
