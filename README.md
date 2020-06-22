@@ -68,3 +68,20 @@ For more information on how to use type:
 ./market_manager -h
 ```
 
+## Development
+
+This project has a dependency erlang 22.1. While it doesn't require a lot of memory to run, it does require a lot of memory to compile, at least 4GB.
+
+Some of the dependencies also require rebar3 to work. Sometimes it is problematic to install rebar3 so, this script for Linux does the job:
+
+```
+curl -O https://rebar3.s3.amazonaws.com/rebar3 -k
+rm -rf /root/.mix/rebar3
+mv rebar3 /root/.mix/
+mix local.rebar rebar3 /root/.mix/rebar3 --force
+```
+
+After the initial setup, the following commands are used to run the tests:
+- mix test.all
+- mix test.unit
+- mix test.integration
