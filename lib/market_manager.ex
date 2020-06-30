@@ -5,7 +5,7 @@ defmodule MarketManager do
 
   alias MarketManager.Interpreter
 
-  defdelegate activate(syndicate), to: Interpreter
+  def activate(syndicate), do: Interpreter.activate(syndicate)
 
-  defdelegate deactivate(syndicate), to: Interpreter
+  def deactivate(syndicate), do: Interpreter.deactivate(syndicate)
 end

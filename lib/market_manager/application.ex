@@ -15,7 +15,7 @@ defmodule MarketManager.Application do
     Supervisor.start_link(children, opts)
   end
 
-  defp children(:integration),
+  defp children(:test),
     do: [{Cowboy, scheme: :http, plug: MockMarketServer, options: [port: 8082]}]
 
   defp children(_), do: []
