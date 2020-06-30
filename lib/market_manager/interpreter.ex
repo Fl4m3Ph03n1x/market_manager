@@ -5,19 +5,24 @@ defmodule MarketManager.Interpreter do
   of the application and manages data between them.
   """
 
-  @auction_house_api Application.compile_env!(:market_manager, :auction_house_api)
-  @store_api Application.compile_env!(:market_manager, :store_api)
+  @default_deps [
+    store: MarketManager.Store.FileSystem,
+    auction_house: MarketManager.AuctionHouse.HTTPClient
+  ]
 
   ##########
   # Public #
   ##########
 
-  def activate(syndicate) do
-    with {:ok, syndicate_products} <- @store_api.get_products_from_syndicate(syndicate),
-         {success_resps, failed_resps} <- make_requests(syndicate_products) do
+  def activate(syndicate, deps \\ @default_deps) do
+    store_api = deps[:store]
+    auction_house_api = deps[:auction_house]
+
+    with {:ok, syndicate_products} <- store_api.get_products_from_syndicate(syndicate),
+         {success_resps, failed_resps} <- make_requests(auction_house_api, syndicate_products) do
       success_resps
       |> Enum.map(fn {:ok, order_id} -> order_id end)
-      |> Enum.each(&@store_api.save_order(&1, syndicate))
+      |> Enum.each(&store_api.save_order(&1, syndicate))
 
       if Enum.empty?(success_resps) do
         {:error, :unable_to_place_requests, failed_resps}
@@ -30,9 +35,12 @@ defmodule MarketManager.Interpreter do
     end
   end
 
-  def deactivate(syndicate) do
-    with {:ok, orders} <- @store_api.list_orders(syndicate),
-         {success_resps, failed_resps} <- make_delete_requests(orders) do
+  def deactivate(syndicate, deps \\ @default_deps) do
+    store_api = deps[:store]
+    auction_house_api = deps[:auction_house]
+
+    with {:ok, orders} <- store_api.list_orders(syndicate),
+         {success_resps, failed_resps} <- make_delete_requests(auction_house_api, orders) do
       success_resps = Enum.map(success_resps, &get_order_id/1)
 
       non_existent_orders =
@@ -42,7 +50,7 @@ defmodule MarketManager.Interpreter do
 
       Enum.each(
         success_resps ++ non_existent_orders,
-        &@store_api.delete_order(&1, syndicate)
+        &store_api.delete_order(&1, syndicate)
       )
 
       if Enum.empty?(success_resps) do
@@ -60,11 +68,11 @@ defmodule MarketManager.Interpreter do
   # Private #
   ###########
 
-  defp make_requests(products),
+  defp make_requests(auction_house_api, products),
     do:
       products
       |> Enum.map(&build_order/1)
-      |> Enum.map(&@auction_house_api.place_order/1)
+      |> Enum.map(&auction_house_api.place_order/1)
       |> Enum.split_with(&request_successful?/1)
 
   defp build_order(product),
@@ -76,10 +84,10 @@ defmodule MarketManager.Interpreter do
       "mod_rank" => Map.get(product, "rank", 0)
     }
 
-  defp make_delete_requests(order_ids),
+  defp make_delete_requests(auction_house_api, order_ids),
     do:
       order_ids
-      |> Enum.map(&@auction_house_api.delete_order/1)
+      |> Enum.map(&auction_house_api.delete_order/1)
       |> Enum.split_with(&request_successful?/1)
 
   defp request_successful?({:ok, _data}), do: true

@@ -1,8 +1,6 @@
 defmodule MarketManager.MixProject do
   use Mix.Project
 
-  @test_envs [:test, :integration]
-
   ##########
   # Public #
   ##########
@@ -16,14 +14,13 @@ defmodule MarketManager.MixProject do
       deps: deps(),
       elixirc_paths: elixirc_paths(Mix.env()),
       escript: escript(),
-      test_paths: test_paths(Mix.env()),
+      test_paths: test_paths(),
       aliases: aliases(),
       test_coverage: [tool: ExCoveralls],
       preferred_cli_env: preferred_cli_env()
     ]
   end
 
-  # Run "mix help compile.app" to learn about applications.
   def application do
     [
       extra_applications: [:logger],
@@ -35,62 +32,43 @@ defmodule MarketManager.MixProject do
   # Private #
   ###########
 
-  # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
       {:httpoison, "~> 1.6"},
       {:jason, "~> 1.2"},
 
       # Testing and Dev
-      {:hammox, "~> 0.2", only: @test_envs},
-      {:plug_cowboy, "~> 2.0", only: @test_envs},
-      {:mix_test_watch, "~> 1.0", only: @test_envs, runtime: false},
-      {:credo, "~> 1.4", only: [:dev] ++ @test_envs, runtime: false},
-      {:excoveralls, "~> 0.10", only: @test_envs}
+      {:hammox, "~> 0.2", only: :test},
+      {:plug_cowboy, "~> 2.0", only: :test},
+      {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
+      {:credo, "~> 1.4", only: [:test, :dev], runtime: false},
+      {:excoveralls, "~> 0.10", only: :test}
     ]
   end
 
-  defp elixirc_paths(env) when env in @test_envs, do: ["test/support", "lib"]
+  defp elixirc_paths(:test), do: ["test/support", "lib"]
   defp elixirc_paths(_), do: ["lib"]
 
-  defp escript() do
+  defp escript do
     [
       main_module: MarketManager.CLI,
       comment: "Makes requests to warframe market."
     ]
   end
 
-  defp test_paths(:integration), do: ["test/integration"]
-  defp test_paths(_), do: ["test/unit"]
+  defp test_paths, do: ["test/unit", "test/integration"]
 
   defp aliases do
     [
-      "test.all": ["test.unit", "test.integration"],
-      "test.unit": &run_unit_tests/1,
-      "test.integration": &run_integration_tests/1
+      "test.unit": ["test --only unit"],
+      "test.integration": ["test --only integration"]
     ]
-  end
-
-  defp run_integration_tests(args), do: test_with_env("integration", args)
-  defp run_unit_tests(args), do: test_with_env("test", args)
-
-  defp test_with_env(env, args) do
-    args = if IO.ANSI.enabled?(), do: ["--color" | args], else: ["--no-color" | args]
-    IO.puts("==> Running tests with `MIX_ENV=#{env}`")
-
-    {_, res} =
-      System.cmd("mix", ["test" | args],
-        into: IO.binstream(:stdio, :line),
-        env: [{"MIX_ENV", to_string(env)}]
-      )
-
-    if res > 0 do
-      System.at_exit(fn _ -> exit({:shutdown, 1}) end)
-    end
   end
 
   defp preferred_cli_env do
     [
+      "test.integration": :test,
+      "test.unit": :test,
       coveralls: :test,
       "coveralls.detail": :test,
       "coveralls.post": :test,
