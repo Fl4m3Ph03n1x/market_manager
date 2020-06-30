@@ -40,7 +40,7 @@ defmodule MarketManager.MixProject do
       # Testing and Dev
       {:hammox, "~> 0.2", only: :test},
       {:plug_cowboy, "~> 2.0", only: :test},
-      {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
+      {:mix_test_watch, "~> 1.0", only: [:dev, :test], runtime: false},
       {:credo, "~> 1.4", only: [:test, :dev], runtime: false},
       {:excoveralls, "~> 0.10", only: :test}
     ]
@@ -60,6 +60,8 @@ defmodule MarketManager.MixProject do
 
   defp aliases do
     [
+      "test.watch.unit": ["test.watch --only unit"],
+      "test.watch.integration": ["test.watch --only integration"],
       "test.unit": ["test --only unit"],
       "test.integration": ["test --only integration"]
     ]
@@ -67,6 +69,8 @@ defmodule MarketManager.MixProject do
 
   defp preferred_cli_env do
     [
+      "test.watch.unit": :test,
+      "test.watch.integration": :test,
       "test.integration": :test,
       "test.unit": :test,
       coveralls: :test,
