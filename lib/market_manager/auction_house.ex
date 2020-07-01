@@ -19,5 +19,5 @@ defmodule MarketManager.AuctionHouse do
 
   @callback delete_order(order_id) ::
               {:ok, order_id}
-              | {:error, :order_non_existent, order_id}
+              | {:error, :order_non_existent| :timeout, order_id}
 end

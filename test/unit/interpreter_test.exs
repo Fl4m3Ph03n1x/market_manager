@@ -208,7 +208,7 @@ defmodule InterpreterTest do
       assert actual == expected
     end
 
-    test "Removes order from storage if it fails to delete it" do
+    test "Removes order from storage if it fails to delete it because it is :non_existent" do
       # Arrange
       syndicate = "red_veil"
       order_id1 = "54a74454e779892d5e5155d5"
@@ -233,5 +233,33 @@ defmodule InterpreterTest do
       # Assert
       assert actual == expected
     end
+
+    test "Returns error if it is unable to delete any orders and removes them from storage" do
+      # Arrange
+      syndicate = "red_veil"
+      order_id1 = "54a74454e779892d5e5155d5"
+      order_id2 = "54a74454e779892d5e5155d6"
+
+      deps = [store: StoreMock, auction_house: AuctionHouseMock]
+
+      StoreMock
+      |> expect(:list_orders, fn ^syndicate -> {:ok, [order_id1, order_id2]} end)
+
+      AuctionHouseMock
+      |> expect(:delete_order, fn ^order_id1 -> {:error, :timeout, order_id1} end)
+      |> expect(:delete_order, fn ^order_id2 -> {:error, :timeout, order_id2} end)
+
+      # Act
+
+      actual = Interpreter.deactivate(syndicate, deps)
+      expected = {:error, :unable_to_delete_orders, [
+        {:error, :timeout, order_id1},
+        {:error, :timeout, order_id2}
+      ]}
+
+      # Assert
+      assert actual == expected
+    end
+
   end
 end

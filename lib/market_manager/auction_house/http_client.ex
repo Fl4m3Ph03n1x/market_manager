@@ -33,44 +33,49 @@ defmodule MarketManager.AuctionHouse.HTTPClient do
   @impl AuctionHouse
   def place_order(order) do
     {:ok, encoded_order} = Jason.encode(order)
-    {:ok, response} = HTTPoison.post(@url, encoded_order, @headers)
+    response = HTTPoison.post(@url, encoded_order, @headers)
 
-    # TODO: Add scenario for general error other than 400
     case response do
-      %HTTPoison.Response{status_code: 400, body: error_body} ->
+      {:ok, %HTTPoison.Response{status_code: 400, body: error_body}} ->
         error_body
         |> Jason.decode!()
         |> map_error()
         |> build_response(order)
 
-      %HTTPoison.Response{status_code: 200, body: body} ->
+      {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         body
         |> Jason.decode!()
         |> get_id()
         |> build_response()
+
+      {:error, %HTTPoison.Error{id: _id, reason: reason}} ->
+        build_response({:error, reason}, order)
+
     end
   end
 
   @impl AuctionHouse
   def delete_order(order_id) do
-    {:ok, response} =
+    response =
       order_id
       |> build_delete_url()
       |> HTTPoison.delete(@headers)
 
-    # TODO: Add scenario for general error other than 400
     case response do
-      %HTTPoison.Response{status_code: 400, body: error_body} ->
+      {:ok, %HTTPoison.Response{status_code: 400, body: error_body}} ->
         error_body
         |> Jason.decode!()
         |> map_error()
         |> build_response(order_id)
 
-      %HTTPoison.Response{status_code: 200, body: body} ->
+      {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         body
         |> Jason.decode!()
         |> get_id()
         |> build_response()
+
+      {:error, %HTTPoison.Error{id: _id, reason: reason}} ->
+        build_response({:error, reason}, order_id)
     end
   end
 
@@ -91,6 +96,12 @@ defmodule MarketManager.AuctionHouse.HTTPClient do
 
   # TODO: Add spec
   defp build_response(id), do: {:ok, id}
+
+  defp build_response({:error, reason}, order) when is_map(order), do:
+    build_response({:error, reason, Map.get(order, "id")})
+
+  defp build_response({:error, reason}, order_id) when is_binary(order_id), do:
+    build_response({:error, reason, order_id})
 
   defp build_response(tuple, data), do: Tuple.append(tuple, data)
 
