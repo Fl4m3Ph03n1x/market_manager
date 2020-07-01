@@ -1,8 +1,6 @@
 defmodule InterpreterTest do
   use ExUnit.Case
 
-  @moduletag :unit
-
   import Hammox
 
   alias MarketManager.{AuctionHouse, AuctionHouseMock, Interpreter, Store, StoreMock}

@@ -1,8 +1,6 @@
 defmodule MarketManagerTest do
   use ExUnit.Case, async: false
 
-  @moduletag :integration
-
   alias MarketManager.CLI
 
   @orders_filename Application.compile_env!(:market_manager, :current_orders)
