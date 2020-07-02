@@ -26,14 +26,20 @@ defmodule MarketManager.AuctionHouse.HTTPClient do
     {"TE", "Trailers"}
   ]
 
+  @default_deps [
+    post_fn: &HTTPoison.post/3
+  ]
+
   ##########
   # Public #
   ##########
 
   @impl AuctionHouse
-  def place_order(order) do
+  def place_order(order, deps \\ @default_deps) do
+    http_post = deps[:post_fn]
+
     {:ok, encoded_order} = Jason.encode(order)
-    response = HTTPoison.post(@url, encoded_order, @headers)
+    response = http_post.(@url, encoded_order, @headers)
 
     case response do
       {:ok, %HTTPoison.Response{status_code: 400, body: error_body}} ->
@@ -50,7 +56,6 @@ defmodule MarketManager.AuctionHouse.HTTPClient do
 
       {:error, %HTTPoison.Error{id: _id, reason: reason}} ->
         build_response({:error, reason}, order)
-
     end
   end
 
@@ -97,11 +102,11 @@ defmodule MarketManager.AuctionHouse.HTTPClient do
   # TODO: Add spec
   defp build_response(id), do: {:ok, id}
 
-  defp build_response({:error, reason}, order) when is_map(order), do:
-    build_response({:error, reason, Map.get(order, "id")})
+  defp build_response({:error, reason}, order) when is_map(order),
+    do: build_response({:error, reason, Map.get(order, "id")})
 
-  defp build_response({:error, reason}, order_id) when is_binary(order_id), do:
-    build_response({:error, reason, order_id})
+  defp build_response({:error, reason}, order_id) when is_binary(order_id),
+    do: build_response({:error, reason, order_id})
 
   defp build_response(tuple, data), do: Tuple.append(tuple, data)
 

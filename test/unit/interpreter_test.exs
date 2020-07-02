@@ -252,14 +252,16 @@ defmodule InterpreterTest do
       # Act
 
       actual = Interpreter.deactivate(syndicate, deps)
-      expected = {:error, :unable_to_delete_orders, [
-        {:error, :timeout, order_id1},
-        {:error, :timeout, order_id2}
-      ]}
+
+      expected =
+        {:error, :unable_to_delete_orders,
+         [
+           {:error, :timeout, order_id1},
+           {:error, :timeout, order_id2}
+         ]}
 
       # Assert
       assert actual == expected
     end
-
   end
 end
