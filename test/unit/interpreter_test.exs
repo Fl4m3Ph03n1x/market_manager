@@ -67,7 +67,7 @@ defmodule InterpreterTest do
       assert actual == expected
     end
 
-    test "Returns partial success and if some orders failed to be placed" do
+    test "Returns partial success if some orders failed to be placed" do
       # Arrange
       syndicate = "red_veil"
       id1 = "54a74454e779892d5e5155d5"
@@ -121,7 +121,7 @@ defmodule InterpreterTest do
       assert actual == expected
     end
 
-    test "Returns error if it is unable to place any requests" do
+    test "Returns error if it is unable to place any orders" do
       # Arrange
       syndicate = "red_veil"
       id1 = "54a74454e779892d5e5155d5"
@@ -182,7 +182,7 @@ defmodule InterpreterTest do
   end
 
   describe "deactivate/1" do
-    test "Deletes items from auction house and removes them from storage" do
+    test "Deletes orders from auction house and removes them from storage" do
       # Arrange
       syndicate = "red_veil"
       order_id1 = "54a74454e779892d5e5155d5"
@@ -234,7 +234,7 @@ defmodule InterpreterTest do
       assert actual == expected
     end
 
-    test "Returns error if it is unable to delete any orders and removes them from storage" do
+    test "Returns error if it is unable to delete any orders" do
       # Arrange
       syndicate = "red_veil"
       order_id1 = "54a74454e779892d5e5155d5"
