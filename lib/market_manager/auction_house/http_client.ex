@@ -27,7 +27,8 @@ defmodule MarketManager.AuctionHouse.HTTPClient do
   ]
 
   @default_deps [
-    post_fn: &HTTPoison.post/3
+    post_fn: &HTTPoison.post/3,
+    delete_fn: &HTTPoison.delete/2
   ]
 
   ##########
@@ -46,41 +47,43 @@ defmodule MarketManager.AuctionHouse.HTTPClient do
         error_body
         |> Jason.decode!()
         |> map_error()
-        |> build_response(order)
+        |> build_error_response(order)
 
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         body
         |> Jason.decode!()
         |> get_id()
-        |> build_response()
+        |> build_success_response()
 
       {:error, %HTTPoison.Error{id: _id, reason: reason}} ->
-        build_response({:error, reason}, order)
+        build_error_response({:error, reason}, order)
     end
   end
 
   @impl AuctionHouse
-  def delete_order(order_id) do
+  def delete_order(order_id, deps \\ @default_deps) do
+    http_delete = deps[:delete_fn]
+
     response =
       order_id
       |> build_delete_url()
-      |> HTTPoison.delete(@headers)
+      |> http_delete.(@headers)
 
     case response do
       {:ok, %HTTPoison.Response{status_code: 400, body: error_body}} ->
         error_body
         |> Jason.decode!()
         |> map_error()
-        |> build_response(order_id)
+        |> build_error_response(order_id)
 
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         body
         |> Jason.decode!()
         |> get_id()
-        |> build_response()
+        |> build_success_response()
 
       {:error, %HTTPoison.Error{id: _id, reason: reason}} ->
-        build_response({:error, reason}, order_id)
+        build_error_response({:error, reason}, order_id)
     end
   end
 
@@ -100,15 +103,13 @@ defmodule MarketManager.AuctionHouse.HTTPClient do
   defp get_id(%{"payload" => %{"order_id" => id}}), do: id
 
   # TODO: Add spec
-  defp build_response(id), do: {:ok, id}
+  defp build_success_response(id), do: {:ok, id}
 
-  defp build_response({:error, reason}, order) when is_map(order),
-    do: build_response({:error, reason, Map.get(order, "id")})
+  defp build_error_response({:error, reason}, order) when is_map(order),
+    do: {:error, reason, Map.get(order, "item_id")}
 
-  defp build_response({:error, reason}, order_id) when is_binary(order_id),
-    do: build_response({:error, reason, order_id})
-
-  defp build_response(tuple, data), do: Tuple.append(tuple, data)
+  defp build_error_response({:error, reason}, order_id) when is_binary(order_id),
+    do: {:error, reason, order_id}
 
   @spec build_delete_url(String.t()) :: String.t()
   defp build_delete_url(id), do: @url <> "/" <> id
