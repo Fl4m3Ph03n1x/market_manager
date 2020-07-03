@@ -18,7 +18,7 @@ defmodule MarketManager.Interpreter do
     store_api = deps[:store]
     auction_house_api = deps[:auction_house]
 
-    with {:ok, syndicate_products} <- store_api.get_products_from_syndicate(syndicate),
+    with {:ok, syndicate_products} <- store_api.list_products(syndicate),
          {success_resps, failed_resps} <- make_requests(auction_house_api, syndicate_products) do
       success_resps
       |> Enum.map(fn {:ok, order_id} -> order_id end)

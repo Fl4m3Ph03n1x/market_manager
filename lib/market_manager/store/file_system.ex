@@ -10,28 +10,36 @@ defmodule MarketManager.Store.FileSystem do
   @orders_filename Application.compile_env!(:market_manager, :current_orders)
   @products_filename Application.compile_env!(:market_manager, :products)
 
+  @default_deps [
+    read_fn: &File.read/1
+  ]
+
   ##########
   # Public #
   ##########
 
   @impl Store
-  def get_products_from_syndicate(syndicate),
-    do:
-      @products_filename
-      |> File.read!()
-      |> Jason.decode!()
-      |> find_syndicate(syndicate)
+  def list_products(syndicate, deps \\ @default_deps) do
+    read = deps[:read_fn]
+
+    with {:ok, content} <- read.(@products_filename),
+         {:ok, products} <- Jason.decode(content) do
+      find_syndicate(products, syndicate)
+    end
+  end
 
   @impl Store
-  def list_orders(syndicate),
-    do:
-      @orders_filename
-      |> File.read!()
-      |> Jason.decode!()
-      |> find_syndicate(syndicate)
+  def list_orders(syndicate, deps \\ @default_deps) do
+    read = deps[:read_fn]
+
+    with {:ok, content} <- read.(@orders_filename),
+         {:ok, orders} <- Jason.decode(content) do
+      find_syndicate(orders, syndicate)
+    end
+  end
 
   @impl Store
-  def save_order(order_id, syndicate) do
+  def save_order(order_id, syndicate, deps \\ @default_deps) do
     new_orders =
       @orders_filename
       |> File.read!()
@@ -47,13 +55,13 @@ defmodule MarketManager.Store.FileSystem do
   end
 
   @impl Store
-  def delete_order(order_id, syndicate) do
+  def delete_order(order_id, syndicate, deps \\ @default_deps) do
     new_orders =
       @orders_filename
       |> File.read!()
       |> Jason.decode()
       |> get_orders()
-      |> delete_order(order_id, syndicate)
+      |> remove_order(order_id, syndicate)
       |> Jason.encode!()
 
     case File.write(@orders_filename, new_orders) do
@@ -72,7 +80,7 @@ defmodule MarketManager.Store.FileSystem do
   defp add_order(all_orders, order_id, syndicate),
     do: Map.put(all_orders, syndicate, Map.get(all_orders, syndicate, []) ++ [order_id])
 
-  defp delete_order(all_orders, order_id, syndicate) do
+  defp remove_order(all_orders, order_id, syndicate) do
     updated_syndicate_orders =
       all_orders
       |> Map.get(syndicate)

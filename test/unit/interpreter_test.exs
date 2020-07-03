@@ -50,7 +50,7 @@ defmodule InterpreterTest do
       deps = [store: StoreMock, auction_house: AuctionHouseMock]
 
       StoreMock
-      |> expect(:get_products_from_syndicate, fn ^syndicate -> {:ok, products} end)
+      |> expect(:list_products, fn ^syndicate -> {:ok, products} end)
       |> expect(:save_order, fn ^id1, ^syndicate -> {:ok, id1} end)
       |> expect(:save_order, fn ^id2, ^syndicate -> {:ok, id1} end)
 
@@ -105,7 +105,7 @@ defmodule InterpreterTest do
       deps = [store: StoreMock, auction_house: AuctionHouseMock]
 
       StoreMock
-      |> expect(:get_products_from_syndicate, fn ^syndicate -> {:ok, products} end)
+      |> expect(:list_products, fn ^syndicate -> {:ok, products} end)
       |> expect(:save_order, fn ^id1, ^syndicate -> {:ok, id1} end)
 
       AuctionHouseMock
@@ -159,7 +159,7 @@ defmodule InterpreterTest do
       deps = [store: StoreMock, auction_house: AuctionHouseMock]
 
       StoreMock
-      |> expect(:get_products_from_syndicate, fn ^syndicate -> {:ok, products} end)
+      |> expect(:list_products, fn ^syndicate -> {:ok, products} end)
 
       AuctionHouseMock
       |> expect(:place_order, fn ^order1 -> {:error, :order_already_placed, order1} end)
