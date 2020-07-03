@@ -11,7 +11,8 @@ defmodule MarketManager.Store.FileSystem do
   @products_filename Application.compile_env!(:market_manager, :products)
 
   @default_deps [
-    read_fn: &File.read/1
+    read_fn: &File.read/1,
+    write_fn: &File.write/2
   ]
 
   ##########
@@ -40,34 +41,45 @@ defmodule MarketManager.Store.FileSystem do
 
   @impl Store
   def save_order(order_id, syndicate, deps \\ @default_deps) do
-    new_orders =
-      @orders_filename
-      |> File.read!()
-      |> Jason.decode()
-      |> get_orders()
-      |> add_order(order_id, syndicate)
-      |> Jason.encode!()
+    read = deps[:read_fn]
+    write = deps[:write_fn]
 
-    case File.write(@orders_filename, new_orders) do
-      :ok -> {:ok, order_id}
-      err -> err
+    with {:ok, content} <- read.(@orders_filename),
+         maybe_decode <- Jason.decode(content),
+         orders <- get_orders(maybe_decode),
+         new_orders <- add_order(orders, order_id, syndicate),
+         {:ok, new_content} <- Jason.encode(new_orders),
+         :ok <- write.(@orders_filename, new_content) do
+      {:ok, order_id}
     end
   end
 
   @impl Store
   def delete_order(order_id, syndicate, deps \\ @default_deps) do
-    new_orders =
-      @orders_filename
-      |> File.read!()
-      |> Jason.decode()
-      |> get_orders()
-      |> remove_order(order_id, syndicate)
-      |> Jason.encode!()
+    read = deps[:read_fn]
+    write = deps[:write_fn]
 
-    case File.write(@orders_filename, new_orders) do
-      :ok -> {:ok, order_id}
-      err -> err
+    with {:ok, content} <- read.(@orders_filename),
+         maybe_decode <- Jason.decode(content),
+         orders <- get_orders(maybe_decode),
+         new_orders <- remove_order(orders, order_id, syndicate),
+         {:ok, new_content} <- Jason.encode(new_orders),
+         :ok <- write.(@orders_filename, new_content) do
+      {:ok, order_id}
     end
+
+    # new_orders =
+    #   @orders_filename
+    #   |> File.read!()
+    #   |> Jason.decode()
+    #   |> get_orders()
+    #   |> remove_order(order_id, syndicate)
+    #   |> Jason.encode!()
+
+    # case File.write(@orders_filename, new_orders) do
+    #   :ok -> {:ok, order_id}
+    #   err -> err
+    # end
   end
 
   ###########
