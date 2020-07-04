@@ -5,18 +5,25 @@ defmodule MarketManager.Store do
 
   @type order_id :: String.t()
   @type syndicate :: String.t()
+  @type deps :: keyword()
 
-  @callback get_products_from_syndicate(syndicate) ::
-              {:ok, [map]}
-              | {:error, any}
+  @callback list_products(syndicate) :: {:ok, [map]} | {:error, any}
+  @callback list_products(syndicate, deps) :: {:ok, [map]} | {:error, any}
 
   @callback list_orders(syndicate) :: {:ok, [order_id]}
+  @callback list_orders(syndicate, deps) :: {:ok, [order_id]}
 
   @callback save_order(order_id, syndicate) ::
               {:ok, order_id}
               | {:error, any}
+  @callback save_order(order_id, syndicate, deps) ::
+              {:ok, order_id}
+              | {:error, any}
 
   @callback delete_order(order_id, syndicate) ::
+              {:ok, order_id}
+              | {:error, any}
+  @callback delete_order(order_id, syndicate, deps) ::
               {:ok, order_id}
               | {:error, any}
 end

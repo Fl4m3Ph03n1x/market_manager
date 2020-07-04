@@ -86,3 +86,5 @@ After the initial setup, the following commands are used to run the tests:
 - `mix test.unit` runs only unit tests
 - `mix test.integration` runs only integration tests
 - `mix test.watch` runs all tests continuously and re-runs them every time a file changes
+- `mix test.watch.unit` runs unit tests continuously and re-runs them every time a file changes
+- `mix test.watch.integration` runs integration tests continuously and re-runs them every time a file changes

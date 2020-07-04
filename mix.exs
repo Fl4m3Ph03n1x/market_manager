@@ -60,10 +60,10 @@ defmodule MarketManager.MixProject do
 
   defp aliases do
     [
-      "test.watch.unit": ["test.watch --only unit"],
-      "test.watch.integration": ["test.watch --only integration"],
-      "test.unit": ["test --only unit"],
-      "test.integration": ["test --only integration"]
+      "test.watch.unit": ["test.watch test/unit/"],
+      "test.watch.integration": ["test.watch test/integration/"],
+      "test.unit": ["test test/unit/"],
+      "test.integration": ["test test/integration/"]
     ]
   end
 

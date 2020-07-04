@@ -19,13 +19,7 @@ defmodule MarketManager.MockMarketServer do
 
   post "/v1/profile/orders" do
     case conn.params do
-      %{"item_id" => "duplicated_order"} ->
-        failure(conn, place_order_error_duplicated_response())
-
-      %{"item_id" => "non_existent_item"} ->
-        failure(conn, place_order_error_non_existent_item_response())
-
-      %{"item_id" => _id} ->
+            %{"item_id" => _id} ->
         success(conn, place_order_ok_response())
     end
   end
@@ -33,8 +27,6 @@ defmodule MarketManager.MockMarketServer do
   delete("/v1/profile/orders/:id", do: success(conn, delete_order_ok_response()))
 
   defp success(conn, body), do: Conn.send_resp(conn, 200, Jason.encode!(body))
-
-  defp failure(conn, body), do: Conn.send_resp(conn, 400, Jason.encode!(body))
 
   defp place_order_ok_response,
     do: %{
@@ -76,9 +68,4 @@ defmodule MarketManager.MockMarketServer do
 
   defp delete_order_ok_response, do: %{"payload" => %{"order_id" => "5ee71a2604d55c0a5cbdc3c2"}}
 
-  defp place_order_error_duplicated_response,
-    do: %{"error" => %{"_form" => ["app.post_order.already_created_no_duplicates"]}}
-
-  defp place_order_error_non_existent_item_response,
-    do: %{"error" => %{"item_id" => ["app.form.invalid"]}}
 end
