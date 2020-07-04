@@ -1,4 +1,4 @@
-defmodule HTTPClientTest do
+defmodule MarketManager.AuctionHouse.HTTPClientTest do
   use ExUnit.Case
 
   alias MarketManager.AuctionHouse.HTTPClient
@@ -47,7 +47,7 @@ defmodule HTTPClientTest do
           {:ok,
            %HTTPoison.Response{
              status_code: 400,
-             body: "{\"error\":{\"_form\":\"duplicated_order\"}}"
+             body: "{\"error\":{\"_form\":[\"app.post_order.already_created_no_duplicates\"]}}"
            }}
         end
       ]
@@ -75,7 +75,7 @@ defmodule HTTPClientTest do
           {:ok,
            %HTTPoison.Response{
              status_code: 400,
-             body: "{\"error\":{\"item_id\":\"invalid_item_id\"}}"
+             body: "{\"error\":{\"item_id\":[\"app.form.invalid\"]}}"
            }}
         end
       ]
@@ -107,6 +107,70 @@ defmodule HTTPClientTest do
       # Act
       actual = HTTPClient.place_order(order, deps)
       expected = {:error, :timeout, "54a74454e779892d5e5155d5"}
+
+      # Assert
+      assert actual == expected
+    end
+  end
+
+  describe "delete_oder/1" do
+    test "returns {:ok, order_id} if order was deleted correctly" do
+      # Arrange
+      order_id = "5ee71a2604d55c0a5cbdc3c2"
+
+      deps = [
+        delete_fn: fn _url, _headers ->
+          {:ok,
+           %HTTPoison.Response{
+             status_code: 200,
+             body: "{\"payload\":{\"order_id\":\"5ee71a2604d55c0a5cbdc3c2\"}}"
+           }}
+        end
+      ]
+
+      # Act
+      actual = HTTPClient.delete_order(order_id, deps)
+      expected = {:ok, "5ee71a2604d55c0a5cbdc3c2"}
+
+      # Assert
+      assert actual == expected
+    end
+
+    test "returns error if order did not exist" do
+      # Arrange
+      order_id = "5ee71a2604d55c0a5cbdc3c2"
+
+      deps = [
+        delete_fn: fn _url, _headers ->
+          {:ok,
+           %HTTPoison.Response{
+             status_code: 400,
+             body: "{\"error\": {\"order_id\": [\"app.form.invalid\"]}}"
+           }}
+        end
+      ]
+
+      # Act
+      actual = HTTPClient.delete_order(order_id, deps)
+      expected = {:error, :order_non_existent, "5ee71a2604d55c0a5cbdc3c2"}
+
+      # Assert
+      assert actual == expected
+    end
+
+    test "returns error if a generic network error occurred while placing a request" do
+      # Arrange
+      order_id = "5ee71a2604d55c0a5cbdc3c2"
+
+      deps = [
+        delete_fn: fn _url, _headers ->
+          {:error, %HTTPoison.Error{id: nil, reason: :timeout}}
+        end
+      ]
+
+      # Act
+      actual = HTTPClient.delete_order(order_id, deps)
+      expected = {:error, :timeout, "5ee71a2604d55c0a5cbdc3c2"}
 
       # Assert
       assert actual == expected

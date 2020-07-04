@@ -1,6 +1,9 @@
 defmodule MarketManagerTest do
   use ExUnit.Case, async: false
 
+  import ExUnit.CaptureLog
+  require Logger
+
   alias MarketManager.CLI
 
   @orders_filename Application.compile_env!(:market_manager, :current_orders)
@@ -97,6 +100,56 @@ defmodule MarketManagerTest do
       # Assert
       assert actual_response == expected_response
       assert actual_orders == expected_orders
+    end
+  end
+
+  describe "help instructions" do
+    test "Prints instructions if invoked with no parameters" do
+      # Arrange
+      params = []
+
+      # Act & Assert
+      {_, _, _, _, %{"en" => docs}, _, _} = Code.fetch_docs(CLI)
+
+      assert capture_log(fn ->
+        assert CLI.main(params) == :ok
+      end) =~ docs
+    end
+
+    test "Prints instructions if invoked with -h" do
+      # Arrange
+      params = ["-h"]
+
+      # Act & Assert
+      {_, _, _, _, %{"en" => docs}, _, _} = Code.fetch_docs(CLI)
+
+      assert capture_log(fn ->
+        assert CLI.main(params) == :ok
+      end) =~ docs
+    end
+
+    test "Prints instructions if invoked with invalid parameters" do
+      # Arrange
+      params = ["--Bananas=yummi"]
+
+      # Act & Assert
+      {_, _, _, _, %{"en" => docs}, _, _} = Code.fetch_docs(CLI)
+
+      assert capture_log(fn ->
+        assert CLI.main(params) == :ok
+      end) =~ docs
+    end
+
+    test "Prints instructions if invoked with unknown action" do
+      # Arrange
+      params = ["--action==yummi", "--syndicates=new_loka"]
+
+      # Act & Assert
+      {_, _, _, _, %{"en" => docs}, _, _} = Code.fetch_docs(CLI)
+
+      assert capture_log(fn ->
+        assert CLI.main(params) == {:error, :unknown_action, "=yummi"}
+      end) =~ docs
     end
   end
 end

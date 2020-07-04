@@ -1,4 +1,4 @@
-defmodule InterpreterTest do
+defmodule MarketManager.InterpreterTest do
   use ExUnit.Case
 
   import Hammox

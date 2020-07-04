@@ -1,4 +1,4 @@
-defmodule FileSystemTest do
+defmodule MarketManager.Store.FileSystemTest do
   use ExUnit.Case
 
   alias MarketManager.Store.FileSystem
@@ -128,6 +128,42 @@ defmodule FileSystemTest do
     end
   end
 
-  # describe "delete_order/3" do
-  # end
+  describe "delete_order/3" do
+    test "returns order_id if order was deleted successfully" do
+      # Arrange
+      syndicate = "perrin_sequence"
+      order_id = "54a74454e779892d5e5155d5"
+
+      deps = [
+        read_fn: fn _file_name ->
+          {:ok, "{\"perrin_sequence\":[\"5ee71a2604d55c0a5cbdc3c2\"]}"}
+        end,
+        write_fn: fn _file_name, _content -> :ok end
+      ]
+
+      # Act
+      actual = FileSystem.delete_order(order_id, syndicate, deps)
+      expected = {:ok, order_id}
+
+      # Assert
+      assert actual == expected
+    end
+
+    test "returns error if it failed to save order" do
+      # Arrange
+      syndicate = "perrin_sequence"
+      order_id = "54a74454e779892d5e5155d5"
+
+      deps = [
+        read_fn: fn _file_name -> {:error, :enoent} end
+      ]
+
+      # Act
+      actual = FileSystem.delete_order(order_id, syndicate, deps)
+      expected = {:error, :enoent}
+
+      # Assert
+      assert actual == expected
+    end
+  end
 end

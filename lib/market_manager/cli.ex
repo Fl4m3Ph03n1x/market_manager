@@ -37,7 +37,7 @@ defmodule MarketManager.CLI do
       [] ->
         opts
         |> process_args()
-        |> log_inspect(:info)
+        |> log_result()
 
       _ ->
         log_inspect(errors, :error, "Bad option:\n")
@@ -74,10 +74,14 @@ defmodule MarketManager.CLI do
 
   defp process_action(action, _syndicates), do: {:error, :unknown_action, action}
 
-  defp log_inspect(data, level, msg \\ "")
+  defp log_result({:error, :unknown_action, action} = data) do
+    Logger.error("Unknown action: #{action}")
+    Logger.info(@moduledoc)
+    data
+  end
 
-  defp log_inspect(data, :info, msg) do
-    Logger.info("#{msg}#{inspect(data)}")
+  defp log_result(data) do
+    Logger.info("#{inspect(data)}")
     data
   end
 
