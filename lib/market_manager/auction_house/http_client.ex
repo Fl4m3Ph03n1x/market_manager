@@ -98,6 +98,8 @@ defmodule MarketManager.AuctionHouse.HTTPClient do
 
   defp map_error(%{"error" => %{"order_id" => _error}}), do: {:error, :order_non_existent}
 
+  defp map_error(%{"error" => %{"mod_rank" => _error}}), do: {:error, :rank_level_non_applicable}
+
   @spec get_id(map) :: String.t()
   defp get_id(%{"payload" => %{"order" => %{"id" => id}}}), do: id
   defp get_id(%{"payload" => %{"order_id" => id}}), do: id

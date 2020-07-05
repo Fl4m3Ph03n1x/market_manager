@@ -27,7 +27,8 @@ defmodule MarketManager.InterpreterTest do
         %{
           "name" => "Eroding Blight",
           "id" => id2,
-          "price" => 15
+          "price" => 15,
+          "rank" => "n/a"
         }
       ]
 
@@ -43,8 +44,7 @@ defmodule MarketManager.InterpreterTest do
         "order_type" => "sell",
         "item_id" => id2,
         "platinum" => 15,
-        "quantity" => 1,
-        "mod_rank" => 0
+        "quantity" => 1
       }
 
       deps = [store: StoreMock, auction_house: AuctionHouseMock]
