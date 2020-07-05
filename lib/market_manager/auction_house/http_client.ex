@@ -104,15 +104,17 @@ defmodule MarketManager.AuctionHouse.HTTPClient do
   defp get_id(%{"payload" => %{"order" => %{"id" => id}}}), do: id
   defp get_id(%{"payload" => %{"order_id" => id}}), do: id
 
-  # TODO: Add spec
+  @spec build_success_response(AuctionHouse.order_id()) :: {:ok, AuctionHouse.order_id()}
   defp build_success_response(id), do: {:ok, id}
 
+  @spec build_error_response({:error, atom}, AuctionHouse.order_id() | AuctionHouse.order()) ::
+          {:error, atom, AuctionHouse.order_id() | AuctionHouse.item_id()}
   defp build_error_response({:error, reason}, order) when is_map(order),
     do: {:error, reason, Map.get(order, "item_id")}
 
   defp build_error_response({:error, reason}, order_id) when is_binary(order_id),
     do: {:error, reason, order_id}
 
-  @spec build_delete_url(String.t()) :: String.t()
+  @spec build_delete_url(AuctionHouse.order_id()) :: String.t()
   defp build_delete_url(id), do: @url <> "/" <> id
 end
