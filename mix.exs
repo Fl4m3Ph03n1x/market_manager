@@ -36,6 +36,7 @@ defmodule MarketManager.MixProject do
     [
       {:httpoison, "~> 1.6"},
       {:jason, "~> 1.2"},
+      {:rop, "~> 0.5"},
 
       # Testing and Dev
       {:hammox, "~> 0.2", only: :test},
