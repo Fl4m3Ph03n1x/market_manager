@@ -67,19 +67,6 @@ defmodule MarketManager.Store.FileSystem do
          :ok <- write.(@orders_filename, new_content) do
       {:ok, order_id}
     end
-
-    # new_orders =
-    #   @orders_filename
-    #   |> File.read!()
-    #   |> Jason.decode()
-    #   |> get_orders()
-    #   |> remove_order(order_id, syndicate)
-    #   |> Jason.encode!()
-
-    # case File.write(@orders_filename, new_orders) do
-    #   :ok -> {:ok, order_id}
-    #   err -> err
-    # end
   end
 
   ###########
