@@ -3,6 +3,8 @@ defmodule MarketManager.AuctionHouse.HTTPClient do
   Adapter for the interface AuctionHouse
   """
 
+  use Rop
+
   alias MarketManager.AuctionHouse
 
   @behaviour AuctionHouse
@@ -58,6 +60,14 @@ defmodule MarketManager.AuctionHouse.HTTPClient do
       {:error, %HTTPoison.Error{id: _id, reason: reason}} ->
         build_error_response({:error, reason}, order)
     end
+
+    # post_order = fn order ->
+    #   deps[:post_fn].(@url, order, @headers)
+    # end
+
+    # Jason.encode(order)
+    # >>> post_order()
+    # >>> to_auction_house_response
   end
 
   @impl AuctionHouse
@@ -91,7 +101,7 @@ defmodule MarketManager.AuctionHouse.HTTPClient do
   # Private #
   ###########
 
-  @spec map_error(map) :: {:error, :invalid_item_id | :order_already_placed | :order_non_existent}
+  @spec map_error(error_response :: map) :: {:error, :invalid_item_id | :order_already_placed | :order_non_existent | :rank_level_non_applicable}
   defp map_error(%{"error" => %{"item_id" => _error}}), do: {:error, :invalid_item_id}
 
   defp map_error(%{"error" => %{"_form" => _error}}), do: {:error, :order_already_placed}
@@ -100,21 +110,21 @@ defmodule MarketManager.AuctionHouse.HTTPClient do
 
   defp map_error(%{"error" => %{"mod_rank" => _error}}), do: {:error, :rank_level_non_applicable}
 
-  @spec get_id(map) :: String.t()
+  @spec get_id(response :: map) :: AuctionHouse.order_id() | AuctionHouse.item_id()
   defp get_id(%{"payload" => %{"order" => %{"id" => id}}}), do: id
   defp get_id(%{"payload" => %{"order_id" => id}}), do: id
 
   @spec build_success_response(AuctionHouse.order_id()) :: {:ok, AuctionHouse.order_id()}
   defp build_success_response(id), do: {:ok, id}
 
-  @spec build_error_response({:error, atom}, AuctionHouse.order_id() | AuctionHouse.order()) ::
-          {:error, atom, AuctionHouse.order_id() | AuctionHouse.item_id()}
+  @spec build_error_response({:error, reason :: atom}, AuctionHouse.order_id() | AuctionHouse.order()) ::
+          {:error, reason :: atom, AuctionHouse.order_id() | AuctionHouse.item_id()}
   defp build_error_response({:error, reason}, order) when is_map(order),
     do: {:error, reason, Map.get(order, "item_id")}
 
   defp build_error_response({:error, reason}, order_id) when is_binary(order_id),
     do: {:error, reason, order_id}
 
-  @spec build_delete_url(AuctionHouse.order_id()) :: String.t()
+  @spec build_delete_url(AuctionHouse.order_id()) :: (url :: String.t())
   defp build_delete_url(id), do: @url <> "/" <> id
 end
