@@ -66,7 +66,7 @@ defmodule MarketManager.AuctionHouse.HTTPClient do
     # end
 
     # Jason.encode(order)
-    # >>> post_order()
+    # >>> post_order.()
     # >>> to_auction_house_response
   end
 
