@@ -38,70 +38,48 @@ defmodule MarketManager.AuctionHouse.HTTPClient do
   ##########
 
   @impl AuctionHouse
-  def place_order(order, deps \\ @default_deps) do
-    http_post = deps[:post_fn]
-
-    {:ok, encoded_order} = Jason.encode(order)
-    response = http_post.(@url, encoded_order, @headers)
-
-    case response do
-      {:ok, %HTTPoison.Response{status_code: 400, body: error_body}} ->
-        error_body
-        |> Jason.decode!()
-        |> map_error()
-        |> build_error_response(order)
-
-      {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
-        body
-        |> Jason.decode!()
-        |> get_id()
-        |> build_success_response()
-
-      {:error, %HTTPoison.Error{id: _id, reason: reason}} ->
-        build_error_response({:error, reason}, order)
-    end
-
-    # post_order = fn order ->
-    #   deps[:post_fn].(@url, order, @headers)
-    # end
-
-    # Jason.encode(order)
-    # >>> post_order.()
-    # >>> to_auction_house_response
-  end
+  def place_order(order, deps \\ @default_deps),
+    do:
+      Jason.encode(order)
+      >>> http_post(deps[:post_fn])
+      |> to_auction_house_response(order)
 
   @impl AuctionHouse
-  def delete_order(order_id, deps \\ @default_deps) do
-    http_delete = deps[:delete_fn]
-
-    response =
+  def delete_order(order_id, deps \\ @default_deps),
+    do:
       order_id
       |> build_delete_url()
-      |> http_delete.(@headers)
-
-    case response do
-      {:ok, %HTTPoison.Response{status_code: 400, body: error_body}} ->
-        error_body
-        |> Jason.decode!()
-        |> map_error()
-        |> build_error_response(order_id)
-
-      {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
-        body
-        |> Jason.decode!()
-        |> get_id()
-        |> build_success_response()
-
-      {:error, %HTTPoison.Error{id: _id, reason: reason}} ->
-        build_error_response({:error, reason}, order_id)
-    end
-  end
+      |> http_delete(deps[:delete_fn])
+      |> to_auction_house_response(order_id)
 
   ###########
   # Private #
   ###########
 
-  @spec map_error(error_response :: map) :: {:error, :invalid_item_id | :order_already_placed | :order_non_existent | :rank_level_non_applicable}
+  defp http_post(order, post_fn), do: post_fn.(@url, order, @headers)
+
+  defp http_delete(url, delete_fn), do: delete_fn.(url, @headers)
+
+  defp to_auction_house_response({:ok, %HTTPoison.Response{status_code: 400, body: error_body}}, order), do:
+    error_body
+    |> Jason.decode()
+    >>> map_error()
+    |> build_error_response(order)
+
+  defp to_auction_house_response({:ok, %HTTPoison.Response{status_code: 200, body: body}}, _order), do:
+    body
+    |> Jason.decode()
+    >>> get_id()
+    |> build_success_response()
+
+  defp to_auction_house_response({:error, %HTTPoison.Error{id: _id, reason: reason}}, order),
+    do: build_error_response({:error, reason}, order)
+
+  @spec map_error(error_response :: map) :: {:error,
+          :invalid_item_id
+          | :order_already_placed
+          | :order_non_existent
+          | :rank_level_non_applicable}
   defp map_error(%{"error" => %{"item_id" => _error}}), do: {:error, :invalid_item_id}
 
   defp map_error(%{"error" => %{"_form" => _error}}), do: {:error, :order_already_placed}
@@ -125,6 +103,6 @@ defmodule MarketManager.AuctionHouse.HTTPClient do
   defp build_error_response({:error, reason}, order_id) when is_binary(order_id),
     do: {:error, reason, order_id}
 
-  @spec build_delete_url(AuctionHouse.order_id()) :: (url :: String.t())
+  @spec build_delete_url(AuctionHouse.order_id()) :: url :: String.t()
   defp build_delete_url(id), do: @url <> "/" <> id
 end
