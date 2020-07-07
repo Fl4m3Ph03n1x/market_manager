@@ -3,6 +3,8 @@ defmodule MarketManager.Store.FileSystem do
   Adapter for the Store port, implements it using the file system.
   """
 
+  use Rop
+
   alias MarketManager.Store
 
   @behaviour Store
@@ -20,64 +22,57 @@ defmodule MarketManager.Store.FileSystem do
   ##########
 
   @impl Store
-  def list_products(syndicate, deps \\ @default_deps) do
-    read = deps[:read_fn]
-
-    with {:ok, content} <- read.(@products_filename),
-         {:ok, products} <- Jason.decode(content) do
-      find_syndicate(products, syndicate)
-    end
-  end
+  def list_products(syndicate, deps \\ @default_deps), do:
+    read_syndicate_data(@products_filename, syndicate, deps[:read_fn])
 
   @impl Store
-  def list_orders(syndicate, deps \\ @default_deps) do
-    read = deps[:read_fn]
-
-    with {:ok, content} <- read.(@orders_filename),
-         {:ok, orders} <- Jason.decode(content) do
-      find_syndicate(orders, syndicate)
-    end
-  end
+  def list_orders(syndicate, deps \\ @default_deps), do:
+    read_syndicate_data(@orders_filename, syndicate, deps[:read_fn])
 
   @impl Store
-  def save_order(order_id, syndicate, deps \\ @default_deps) do
-    read = deps[:read_fn]
-    write = deps[:write_fn]
-
-    with {:ok, content} <- read.(@orders_filename),
-         maybe_decode <- Jason.decode(content),
-         orders <- get_orders(maybe_decode),
-         new_orders <- add_order(orders, order_id, syndicate),
-         {:ok, new_content} <- Jason.encode(new_orders),
-         :ok <- write.(@orders_filename, new_content) do
-      {:ok, order_id}
-    end
-  end
+  def save_order(order_id, syndicate, deps \\ @default_deps), do:
+    deps[:read_fn].(@orders_filename)
+    >>> decode_orders_or_empty_orders()
+    >>> add_order(order_id, syndicate)
+    >>> Jason.encode()
+    >>> save_new_orders(deps[:write_fn])
+    >>> send_ok_response(order_id)
 
   @impl Store
-  def delete_order(order_id, syndicate, deps \\ @default_deps) do
-    read = deps[:read_fn]
-    write = deps[:write_fn]
-
-    with {:ok, content} <- read.(@orders_filename),
-         maybe_decode <- Jason.decode(content),
-         orders <- get_orders(maybe_decode),
-         new_orders <- remove_order(orders, order_id, syndicate),
-         {:ok, new_content} <- Jason.encode(new_orders),
-         :ok <- write.(@orders_filename, new_content) do
-      {:ok, order_id}
-    end
-  end
+  def delete_order(order_id, syndicate, deps \\ @default_deps), do:
+    deps[:read_fn].(@orders_filename)
+    >>> decode_orders_or_empty_orders()
+    >>> remove_order(order_id, syndicate)
+    >>> Jason.encode()
+    >>> save_new_orders(deps[:write_fn])
+    >>> send_ok_response(order_id)
 
   ###########
   # Private #
   ###########
 
-  defp get_orders({:error, %Jason.DecodeError{data: ""}}), do: %{}
-  defp get_orders({:ok, orders}), do: orders
+  @spec read_syndicate_data(
+      filename :: String.t, syndicate :: String.t, file_read_fn :: function
+    ) ::
+        {:ok, [Store.order_id | map]}
+        | {:error, :syndicate_not_found, syndicate_name :: String.t}
+        | {:error, any}
+  defp read_syndicate_data(filename, syndicate, read_fn), do:
+    read_fn.(filename)
+    >>> Jason.decode()
+    >>> find_syndicate(syndicate)
 
-  defp add_order(all_orders, order_id, syndicate),
-    do: Map.put(all_orders, syndicate, Map.get(all_orders, syndicate, []) ++ [order_id])
+  defp find_syndicate(orders, syndicate) when is_map_key(orders, syndicate), do:
+    {:ok, Map.get(orders, syndicate)}
+
+  defp find_syndicate(_orders, syndicate), do:
+    {:error, :syndicate_not_found, syndicate}
+
+  defp decode_orders_or_empty_orders(""), do: {:ok, %{}}
+  defp decode_orders_or_empty_orders(content), do: Jason.decode(content)
+
+  defp add_order(all_orders, order_id, syndicate), do:
+    {:ok, Map.put(all_orders, syndicate, Map.get(all_orders, syndicate, []) ++ [order_id])}
 
   defp remove_order(all_orders, order_id, syndicate) do
     updated_syndicate_orders =
@@ -85,11 +80,15 @@ defmodule MarketManager.Store.FileSystem do
       |> Map.get(syndicate)
       |> List.delete(order_id)
 
-    Map.put(all_orders, syndicate, updated_syndicate_orders)
+    {:ok, Map.put(all_orders, syndicate, updated_syndicate_orders)}
   end
 
-  defp find_syndicate(orders, syndicate) when is_map_key(orders, syndicate),
-    do: {:ok, Map.get(orders, syndicate)}
+  defp save_new_orders(orders, write_fn) do
+    case write_fn.(@orders_filename, orders) do
+      :ok -> {:ok, :new_orders_saved}
+      err -> err
+    end
+  end
 
-  defp find_syndicate(_orders, syndicate), do: {:error, :syndicate_not_found, syndicate}
+  defp send_ok_response(:new_orders_saved, order_id), do: {:ok, order_id}
 end
