@@ -10,22 +10,14 @@ defmodule MarketManager.AuctionHouse.HTTPClient do
   @behaviour AuctionHouse
 
   @url Application.compile_env!(:market_manager, :api_base_url)
+
   @headers [
-    {"User-Agent",
-     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:76.0) Gecko/20100101 Firefox/76.0"},
     {"Accept", "application/json"},
-    {"Accept-Language", "en-US,en;q=0.5"},
     {"Content-Type", "application/json"},
-    {"language", "en"},
-    {"platform", "pc"},
     {"x-csrftoken",
      "##12ecacf698f99616bd5ed5cc11a339aeda3af8d22d667583688d9d89be281bb1ad89a6dd5036a407259d12bc0311f6b4991b892eb178a8c8cf6cf9a50e009ff2"},
-    {"Origin", "https://warframe.market"},
-    {"DNT", "1"},
-    {"Connection", "keep-alive"},
     {"Cookie",
-     "__cfduid=dafc34ba816bcebf538279e5538d16f611586856929; JWT=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzaWQiOiJnTzFSWnpXS0pEM0dwTW56MzlzQTdjbXRmeVVrNjg4VCIsImNzcmZfdG9rZW4iOiIwNGVjNmU0MWIyYTg1N2NiNTYxNzJlOTViMjk1NjMxYzVhZTEyN2FlIiwiZXhwIjoxNTk0NDY0MTQ5LCJpYXQiOjE1ODkyODAxNDksImlzcyI6Imp3dCIsImF1ZCI6Imp3dCIsImF1dGhfdHlwZSI6ImNvb2tpZSIsInNlY3VyZSI6ZmFsc2UsImxvZ2luX3VhIjoiYidNb3ppbGxhLzUuMCAoTWFjaW50b3NoOyBJbnRlbCBNYWMgT1MgWCAxMC4xNDsgcnY6NzYuMCkgR2Vja28vMjAxMDAxMDEgRmlyZWZveC83Ni4wJyIsImxvZ2luX2lwIjoiYic4MC43MS4wLjIwOSciLCJqd3RfaWRlbnRpdHkiOiJCZFdQR3F4WlU1RW56SUJXUDhHU3VYNEhBNE84RVlDUSJ9.Ua8qXU-yY56KVBv_PsVhflmHQizM3DNI_gG5vwlOJj4"},
-    {"TE", "Trailers"}
+     "__cfduid=dafc34ba816bcebf538279e5538d16f611586856929; JWT=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzaWQiOiJnTzFSWnpXS0pEM0dwTW56MzlzQTdjbXRmeVVrNjg4VCIsImNzcmZfdG9rZW4iOiIwNGVjNmU0MWIyYTg1N2NiNTYxNzJlOTViMjk1NjMxYzVhZTEyN2FlIiwiZXhwIjoxNTk0NDY0MTQ5LCJpYXQiOjE1ODkyODAxNDksImlzcyI6Imp3dCIsImF1ZCI6Imp3dCIsImF1dGhfdHlwZSI6ImNvb2tpZSIsInNlY3VyZSI6ZmFsc2UsImxvZ2luX3VhIjoiYidNb3ppbGxhLzUuMCAoTWFjaW50b3NoOyBJbnRlbCBNYWMgT1MgWCAxMC4xNDsgcnY6NzYuMCkgR2Vja28vMjAxMDAxMDEgRmlyZWZveC83Ni4wJyIsImxvZ2luX2lwIjoiYic4MC43MS4wLjIwOSciLCJqd3RfaWRlbnRpdHkiOiJCZFdQR3F4WlU1RW56SUJXUDhHU3VYNEhBNE84RVlDUSJ9.Ua8qXU-yY56KVBv_PsVhflmHQizM3DNI_gG5vwlOJj4"}
   ]
 
   @default_deps [
@@ -38,28 +30,36 @@ defmodule MarketManager.AuctionHouse.HTTPClient do
   ##########
 
   @impl AuctionHouse
-  def place_order(order, deps \\ @default_deps),
-    do:
-      Jason.encode(order)
-      >>> http_post(deps[:post_fn])
-      |> to_auction_house_response(order)
+  def place_order(order, deps \\ @default_deps), do:
+    Jason.encode(order)
+    >>> http_post(deps[:post_fn])
+    |> to_auction_house_response(order)
 
   @impl AuctionHouse
-  def delete_order(order_id, deps \\ @default_deps),
-    do:
-      order_id
-      |> build_delete_url()
-      |> http_delete(deps[:delete_fn])
-      |> to_auction_house_response(order_id)
+  def delete_order(order_id, deps \\ @default_deps), do:
+    order_id
+    |> build_delete_url()
+    |> http_delete(deps[:delete_fn])
+    |> to_auction_house_response(order_id)
 
   ###########
   # Private #
   ###########
 
+  @spec http_post(order_json :: String.t, post_fn :: function) ::
+    {:ok, HTTPoison.Response.t()} | {:error, HTTPoison.Error.t()}
   defp http_post(order, post_fn), do: post_fn.(@url, order, @headers)
 
+  @spec http_delete(url :: String.t, delete_fun :: function) ::
+    {:ok, HTTPoison.Response.t} | {:error, HTTPoison.Error.t}
   defp http_delete(url, delete_fn), do: delete_fn.(url, @headers)
 
+  @spec to_auction_house_response(
+        {:ok, HTTPoison.Response.t} | {:error, HTTPoison.Error.t},
+        AuctionHouse.order | AuctionHouse.item_id
+        ) ::
+        {:ok, AuctionHouse.order_id}
+        | {:error, reason :: atom, AuctionHouse.order_id | AuctionHouse.item_id}
   defp to_auction_house_response({:ok, %HTTPoison.Response{status_code: 400, body: error_body}}, order), do:
     error_body
     |> Jason.decode()
@@ -88,21 +88,21 @@ defmodule MarketManager.AuctionHouse.HTTPClient do
 
   defp map_error(%{"error" => %{"mod_rank" => _error}}), do: {:error, :rank_level_non_applicable}
 
-  @spec get_id(response :: map) :: AuctionHouse.order_id() | AuctionHouse.item_id()
+  @spec get_id(response :: map) :: AuctionHouse.order_id | AuctionHouse.item_id
   defp get_id(%{"payload" => %{"order" => %{"id" => id}}}), do: id
   defp get_id(%{"payload" => %{"order_id" => id}}), do: id
 
-  @spec build_success_response(AuctionHouse.order_id()) :: {:ok, AuctionHouse.order_id()}
+  @spec build_success_response(AuctionHouse.order_id) :: {:ok, AuctionHouse.order_id}
   defp build_success_response(id), do: {:ok, id}
 
-  @spec build_error_response({:error, reason :: atom}, AuctionHouse.order_id() | AuctionHouse.order()) ::
-          {:error, reason :: atom, AuctionHouse.order_id() | AuctionHouse.item_id()}
+  @spec build_error_response({:error, reason :: atom}, AuctionHouse.order_id | AuctionHouse.order) ::
+          {:error, reason :: atom, AuctionHouse.order_id | AuctionHouse.item_id}
   defp build_error_response({:error, reason}, order) when is_map(order),
     do: {:error, reason, Map.get(order, "item_id")}
 
   defp build_error_response({:error, reason}, order_id) when is_binary(order_id),
     do: {:error, reason, order_id}
 
-  @spec build_delete_url(AuctionHouse.order_id()) :: url :: String.t()
+  @spec build_delete_url(AuctionHouse.order_id) :: (url :: String.t)
   defp build_delete_url(id), do: @url <> "/" <> id
 end
