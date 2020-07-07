@@ -10,11 +10,10 @@ defmodule MarketManager.Curry do
   end
 
   def create(fun, 0, arguments) do
-    apply(fun, Enum.reverse arguments)
+    apply(fun, Enum.reverse(arguments))
   end
 
   def create(fun, arity, arguments) do
     fn arg -> create(fun, arity - 1, [arg | arguments]) end
   end
-
 end
