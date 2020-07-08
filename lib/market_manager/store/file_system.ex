@@ -52,28 +52,34 @@ defmodule MarketManager.Store.FileSystem do
   ###########
 
   @spec read_syndicate_data(
-      filename :: String.t, syndicate :: String.t, file_read_fn :: function
+      filename :: String.t, Store.syndicate, file_read_fn :: function
     ) ::
-        {:ok, [Store.order_id | map]}
-        | {:error, :syndicate_not_found, syndicate_name :: String.t}
+        {:ok, [Store.order_id | [Store.product]]}
         | {:error, any}
   defp read_syndicate_data(filename, syndicate, read_fn), do:
     read_fn.(filename)
     >>> Jason.decode()
     >>> find_syndicate(syndicate)
 
+  @spec find_syndicate(Store.all_orders_store, Store.syndicate) ::
+    {:ok, [Store.order_id] | [Store.product]} | {:error, any}
   defp find_syndicate(orders, syndicate) when is_map_key(orders, syndicate), do:
     {:ok, Map.get(orders, syndicate)}
 
-  defp find_syndicate(_orders, syndicate), do:
-    {:error, :syndicate_not_found, syndicate}
+  defp find_syndicate(_orders, _syndicate), do: {:error, :syndicate_not_found}
 
+  @spec decode_orders_or_empty_orders(content :: String.t)
+    :: {:ok, map} | {:error, any}
   defp decode_orders_or_empty_orders(""), do: {:ok, %{}}
   defp decode_orders_or_empty_orders(content), do: Jason.decode(content)
 
+  @spec add_order(Store.all_orders_store, Store.order_id, Store.syndicate)
+    :: {:ok, Store.all_orders_store}
   defp add_order(all_orders, order_id, syndicate), do:
     {:ok, Map.put(all_orders, syndicate, Map.get(all_orders, syndicate, []) ++ [order_id])}
 
+  @spec remove_order(Store.all_orders_store, Store.order_id, Store.syndicate)
+    :: {:ok, Store.all_orders_store}
   defp remove_order(all_orders, order_id, syndicate) do
     updated_syndicate_orders =
       all_orders
@@ -83,6 +89,9 @@ defmodule MarketManager.Store.FileSystem do
     {:ok, Map.put(all_orders, syndicate, updated_syndicate_orders)}
   end
 
+  @spec save_new_orders(orders_json :: String.t, file_write_fn :: function) ::
+    {:ok, :new_orders_saved}
+    | {:error, any}
   defp save_new_orders(orders, write_fn) do
     case write_fn.(@orders_filename, orders) do
       :ok -> {:ok, :new_orders_saved}
@@ -90,5 +99,6 @@ defmodule MarketManager.Store.FileSystem do
     end
   end
 
+  @spec send_ok_response(:new_orders_saved, Store.order_id) :: {:ok, Store.order_id}
   defp send_ok_response(:new_orders_saved, order_id), do: {:ok, order_id}
 end

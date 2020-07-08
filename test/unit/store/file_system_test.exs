@@ -42,7 +42,7 @@ defmodule MarketManager.Store.FileSystemTest do
 
       # Act
       actual = FileSystem.list_products(syndicate, deps)
-      expected = {:error, :syndicate_not_found, syndicate}
+      expected = {:error, :syndicate_not_found}
 
       # Assert
       assert actual == expected
@@ -82,7 +82,7 @@ defmodule MarketManager.Store.FileSystemTest do
 
       # Act
       actual = FileSystem.list_orders(syndicate, deps)
-      expected = {:error, :syndicate_not_found, syndicate}
+      expected = {:error, :syndicate_not_found}
 
       # Assert
       assert actual == expected

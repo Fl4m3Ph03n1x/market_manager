@@ -108,6 +108,7 @@ defmodule MarketManager.Interpreter do
   defp get_order_id({:ok, order_id}), do: order_id
   defp get_order_id({:error, :order_non_existent, order_id}), do: order_id
 
+  @spec order_non_existent?(any) :: boolean
   defp order_non_existent?({:error, :order_non_existent, _order_id}), do: true
   defp order_non_existent?(_), do: false
 end

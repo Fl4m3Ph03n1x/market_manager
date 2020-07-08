@@ -3,10 +3,13 @@ defmodule MarketManager.AuctionHouse do
   Port for http client.
   """
 
+  ##########
+  # Types  #
+  ##########
+
   @type item_id :: String.t()
   @type order_id :: String.t()
   @type deps :: keyword
-
   @type order :: %{
           (item_id :: String.t()) => String.t(),
           (name :: String.t()) => String.t(),
@@ -15,17 +18,20 @@ defmodule MarketManager.AuctionHouse do
           (rank :: String.t()) => non_neg_integer | String.t()
         }
 
-  @callback place_order(order) ::
-              {:ok, order_id}
-              | {:error, :order_already_placed | :invalid_item_id, order}
-  @callback place_order(order, deps) ::
-              {:ok, order_id}
-              | {:error, :order_already_placed | :invalid_item_id, order}
+  #############
+  # Responses #
+  #############
 
-  @callback delete_order(order_id) ::
-              {:ok, order_id}
-              | {:error, :order_non_existent | :timeout, order_id}
-  @callback delete_order(order_id, deps) ::
-              {:ok, order_id}
-              | {:error, :order_non_existent | :timeout, order_id}
+  @type place_order_response :: {:ok, order_id} | {:error, any, order}
+  @type delete_order_response :: {:ok, order_id} | {:error, any, order_id}
+
+  #############
+  # Callbacks #
+  #############
+
+  @callback place_order(order) :: place_order_response
+  @callback place_order(order, deps) :: place_order_response
+
+  @callback delete_order(order_id) :: delete_order_response
+  @callback delete_order(order_id, deps) :: delete_order_response
 end
