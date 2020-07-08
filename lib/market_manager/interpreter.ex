@@ -4,6 +4,7 @@ defmodule MarketManager.Interpreter do
   layers is. Currently, it works more like a bridge between the different ports
   of the application and manages data between them.
   """
+  use Rop
 
   @default_deps [
     store: MarketManager.Store.FileSystem,
@@ -33,7 +34,34 @@ defmodule MarketManager.Interpreter do
         end
       end
     end
+
+    # syndicate
+    # |> list_products(store_api)
+    # >>> make_place_requests(auction_house_api)
+    # |> save_orders()
+    # |> to_human_response()
+
   end
+
+  # defp list_products(syndicate, store), do: store.list_products(syndicate)
+
+  # defp save_orders({success_resps, failed_resps}) do
+  #   # this can fail, so if it fails, we pass it to failed_resps
+  #   success_resps
+  #   |> Enum.map(fn {:ok, order_id} -> order_id end)
+  #   |> Enum.each(&store_api.save_order(&1, syndicate))
+
+  #   {success_resps, failed_resps}
+  # end
+
+  # defp to_human_response({successfull, failed}) when successfull == [], do:
+  #   {:error, :unable_to_place_requests, failed}
+
+  # defp to_human_response({_successfull, failed}) when failed == [], do:
+  #   {:ok, :success}
+
+  # defp to_human_response({_successfull, failed}), do:
+  #   {:partial_success, [failed_orders: failed]}
 
   def deactivate(syndicate, deps \\ @default_deps) do
     store_api = deps[:store]
