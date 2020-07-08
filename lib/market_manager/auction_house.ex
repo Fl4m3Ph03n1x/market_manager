@@ -7,23 +7,23 @@ defmodule MarketManager.AuctionHouse do
   # Types  #
   ##########
 
-  @type item_id :: String.t()
-  @type order_id :: String.t()
+  @type item_id :: String.t
+  @type order_id :: String.t
   @type deps :: keyword
   @type order :: %{
-          (item_id :: String.t()) => String.t(),
-          (name :: String.t()) => String.t(),
-          (price :: String.t()) => non_neg_integer,
-          (quantity :: String.t()) => non_neg_integer,
-          (rank :: String.t()) => non_neg_integer | String.t()
+          (item_id :: String.t) => String.t,
+          (name :: String.t) => String.t,
+          (price :: String.t) => non_neg_integer,
+          (quantity :: String.t) => non_neg_integer,
+          (rank :: String.t) => non_neg_integer | String.t
         }
 
   #############
   # Responses #
   #############
 
-  @type place_order_response :: {:ok, order_id} | {:error, any, order}
-  @type delete_order_response :: {:ok, order_id} | {:error, any, order_id}
+  @type place_order_response :: {:ok, order_id} | {:error, atom, order}
+  @type delete_order_response :: {:ok, order_id} | {:error, atom, order_id}
 
   #############
   # Callbacks #

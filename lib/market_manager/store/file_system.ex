@@ -53,16 +53,14 @@ defmodule MarketManager.Store.FileSystem do
 
   @spec read_syndicate_data(
       filename :: String.t, Store.syndicate, file_read_fn :: function
-    ) ::
-        {:ok, [Store.order_id | [Store.product]]}
-        | {:error, any}
+    ) :: {:ok, [Store.order_id | [Store.product]]} | {:error, any}
   defp read_syndicate_data(filename, syndicate, read_fn), do:
     read_fn.(filename)
     >>> Jason.decode()
     >>> find_syndicate(syndicate)
 
   @spec find_syndicate(Store.all_orders_store, Store.syndicate) ::
-    {:ok, [Store.order_id] | [Store.product]} | {:error, any}
+    {:ok, [Store.order_id] | [Store.product]} | {:error, :syndicate_not_found}
   defp find_syndicate(orders, syndicate) when is_map_key(orders, syndicate), do:
     {:ok, Map.get(orders, syndicate)}
 
