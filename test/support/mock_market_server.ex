@@ -19,7 +19,7 @@ defmodule MarketManager.MockMarketServer do
 
   post "/v1/profile/orders" do
     case conn.params do
-            %{"item_id" => _id} ->
+      %{"item_id" => _id} ->
         success(conn, place_order_ok_response())
     end
   end
@@ -67,5 +67,4 @@ defmodule MarketManager.MockMarketServer do
     }
 
   defp delete_order_ok_response, do: %{"payload" => %{"order_id" => "5ee71a2604d55c0a5cbdc3c2"}}
-
 end

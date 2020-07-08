@@ -60,7 +60,7 @@ defmodule MarketManager.AuctionHouse.HTTPClientTest do
       assert actual == expected
     end
 
-    test "returns error if order received was invalid" do
+    test "returns error if item_id of order was invalid" do
       # Arrange
       order = %{
         "order_type" => "sell",
@@ -83,6 +83,34 @@ defmodule MarketManager.AuctionHouse.HTTPClientTest do
       # Act
       actual = HTTPClient.place_order(order, deps)
       expected = {:error, :invalid_item_id, "54a74454e779892d5e5155d5"}
+
+      # Assert
+      assert actual == expected
+    end
+
+    test "returns error if mod has no level and yet a level was passed" do
+      # Arrange
+      order = %{
+        "order_type" => "sell",
+        "item_id" => "54a74454e779892d5e5155d5",
+        "platinum" => 15,
+        "quantity" => 1,
+        "mod_rank" => 0
+      }
+
+      deps = [
+        post_fn: fn _url, _body, _headers ->
+          {:ok,
+           %HTTPoison.Response{
+             status_code: 400,
+             body: "{\"error\":{\"mod_rank\":[\"app.form.invalid\"]}}"
+           }}
+        end
+      ]
+
+      # Act
+      actual = HTTPClient.place_order(order, deps)
+      expected = {:error, :rank_level_non_applicable, "54a74454e779892d5e5155d5"}
 
       # Assert
       assert actual == expected

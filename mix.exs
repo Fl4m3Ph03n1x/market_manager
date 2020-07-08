@@ -36,13 +36,15 @@ defmodule MarketManager.MixProject do
     [
       {:httpoison, "~> 1.6"},
       {:jason, "~> 1.2"},
+      {:rop, "~> 0.5"},
 
       # Testing and Dev
       {:hammox, "~> 0.2", only: :test},
       {:plug_cowboy, "~> 2.0", only: :test},
       {:mix_test_watch, "~> 1.0", only: [:dev, :test], runtime: false},
       {:credo, "~> 1.4", only: [:test, :dev], runtime: false},
-      {:excoveralls, "~> 0.10", only: :test}
+      {:excoveralls, "~> 0.10", only: :test},
+      {:dialyxir, "~> 1.0", only: [:dev], runtime: false}
     ]
   end
 

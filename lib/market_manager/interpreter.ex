@@ -75,14 +75,26 @@ defmodule MarketManager.Interpreter do
       |> Enum.map(&auction_house_api.place_order/1)
       |> Enum.split_with(&request_successful?/1)
 
-  defp build_order(product),
-    do: %{
-      "order_type" => "sell",
-      "item_id" => Map.get(product, "id"),
-      "platinum" => Map.get(product, "price"),
-      "quantity" => Map.get(product, "quantity", 1),
-      "mod_rank" => Map.get(product, "rank", 0)
-    }
+  defp build_order(product) do
+    case Map.get(product, "rank") do
+      "n/a" ->
+        %{
+          "order_type" => "sell",
+          "item_id" => Map.get(product, "id"),
+          "platinum" => Map.get(product, "price"),
+          "quantity" => Map.get(product, "quantity", 1)
+        }
+
+      _ ->
+        %{
+          "order_type" => "sell",
+          "item_id" => Map.get(product, "id"),
+          "platinum" => Map.get(product, "price"),
+          "quantity" => Map.get(product, "quantity", 1),
+          "mod_rank" => Map.get(product, "rank", 0)
+        }
+    end
+  end
 
   defp make_delete_requests(auction_house_api, order_ids),
     do:
@@ -96,6 +108,7 @@ defmodule MarketManager.Interpreter do
   defp get_order_id({:ok, order_id}), do: order_id
   defp get_order_id({:error, :order_non_existent, order_id}), do: order_id
 
+  @spec order_non_existent?(any) :: boolean
   defp order_non_existent?({:error, :order_non_existent, _order_id}), do: true
   defp order_non_existent?(_), do: false
 end

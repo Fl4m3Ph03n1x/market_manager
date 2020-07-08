@@ -112,8 +112,8 @@ defmodule MarketManagerTest do
       {_, _, _, _, %{"en" => docs}, _, _} = Code.fetch_docs(CLI)
 
       assert capture_log(fn ->
-        assert CLI.main(params) == :ok
-      end) =~ docs
+               assert CLI.main(params) == :ok
+             end) =~ docs
     end
 
     test "Prints instructions if invoked with -h" do
@@ -124,8 +124,8 @@ defmodule MarketManagerTest do
       {_, _, _, _, %{"en" => docs}, _, _} = Code.fetch_docs(CLI)
 
       assert capture_log(fn ->
-        assert CLI.main(params) == :ok
-      end) =~ docs
+               assert CLI.main(params) == :ok
+             end) =~ docs
     end
 
     test "Prints instructions if invoked with invalid parameters" do
@@ -136,8 +136,8 @@ defmodule MarketManagerTest do
       {_, _, _, _, %{"en" => docs}, _, _} = Code.fetch_docs(CLI)
 
       assert capture_log(fn ->
-        assert CLI.main(params) == :ok
-      end) =~ docs
+               assert CLI.main(params) == :ok
+             end) =~ docs
     end
 
     test "Prints instructions if invoked with unknown action" do
@@ -148,8 +148,8 @@ defmodule MarketManagerTest do
       {_, _, _, _, %{"en" => docs}, _, _} = Code.fetch_docs(CLI)
 
       assert capture_log(fn ->
-        assert CLI.main(params) == {:error, :unknown_action, "=yummi"}
-      end) =~ docs
+               assert CLI.main(params) == {:error, :unknown_action, "=yummi"}
+             end) =~ docs
     end
   end
 end

@@ -3,27 +3,49 @@ defmodule MarketManager.Store do
   Port for the persistency layer.
   """
 
-  @type order_id :: String.t()
-  @type syndicate :: String.t()
-  @type deps :: keyword()
+  ##########
+  # Types  #
+  ##########
 
-  @callback list_products(syndicate) :: {:ok, [map]} | {:error, any}
-  @callback list_products(syndicate, deps) :: {:ok, [map]} | {:error, any}
+  @type order_id :: String.t
+  @type syndicate :: String.t
+  @type deps :: keyword
+  @type product :: %{
+    (name :: String.t()) => String.t(),
+    (id :: String.t()) => String.t(),
+    (price :: String.t()) => non_neg_integer,
+    (quantity :: String.t()) => non_neg_integer,
+    (rank :: String.t()) => non_neg_integer | String.t()
+  }
+  @type all_orders_store :: %{
+    (new_loka :: String.t()) => [order_id],
+    (perrin_sequence :: String.t()) => [order_id],
+    (red_veil :: String.t()) => [order_id],
+    (simaris :: String.t()) => [order_id]
+  }
 
-  @callback list_orders(syndicate) :: {:ok, [order_id]}
-  @callback list_orders(syndicate, deps) :: {:ok, [order_id]}
+  #############
+  # Responses #
+  #############
 
-  @callback save_order(order_id, syndicate) ::
-              {:ok, order_id}
-              | {:error, any}
-  @callback save_order(order_id, syndicate, deps) ::
-              {:ok, order_id}
-              | {:error, any}
+  @type list_products_response :: {:ok, [product]} | {:error, any}
+  @type list_orders_response :: {:ok, [order_id]} | {:error, any}
+  @type save_order_response :: {:ok, order_id} | {:error, any}
+  @type delete_order_response :: {:ok, order_id} | {:error, any}
 
-  @callback delete_order(order_id, syndicate) ::
-              {:ok, order_id}
-              | {:error, any}
-  @callback delete_order(order_id, syndicate, deps) ::
-              {:ok, order_id}
-              | {:error, any}
+  #############
+  # Callbacks #
+  #############
+
+  @callback list_products(syndicate) :: list_products_response
+  @callback list_products(syndicate, deps) :: list_products_response
+
+  @callback list_orders(syndicate) :: list_orders_response
+  @callback list_orders(syndicate, deps) :: list_orders_response
+
+  @callback save_order(order_id, syndicate) :: save_order_response
+  @callback save_order(order_id, syndicate, deps) :: save_order_response
+
+  @callback delete_order(order_id, syndicate) :: delete_order_response
+  @callback delete_order(order_id, syndicate, deps) :: delete_order_response
 end
