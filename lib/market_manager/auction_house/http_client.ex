@@ -25,11 +25,6 @@ defmodule MarketManager.AuctionHouse.HTTPClient do
     delete_fn: &HTTPoison.delete/2
   ]
 
-  @default_deps [
-    post_fn: &HTTPoison.post/3,
-    delete_fn: &HTTPoison.delete/2
-  ]
-
   ##########
   # Public #
   ##########
@@ -52,7 +47,7 @@ defmodule MarketManager.AuctionHouse.HTTPClient do
   ###########
 
   @spec http_post(order_json :: String.t, post_fn :: function) ::
-    {:ok, HTTPoison.Response.t()} | {:error, HTTPoison.Error.t()}
+    {:ok, HTTPoison.Response.t} | {:error, HTTPoison.Error.t}
   defp http_post(order, post_fn), do: post_fn.(@url, order, @headers)
 
   @spec http_delete(url :: String.t, delete_fun :: function) ::
@@ -61,8 +56,7 @@ defmodule MarketManager.AuctionHouse.HTTPClient do
 
   @spec to_auction_house_response(
         {:ok, HTTPoison.Response.t} | {:error, HTTPoison.Error.t},
-        AuctionHouse.order | AuctionHouse.item_id
-        ) ::
+        AuctionHouse.order | AuctionHouse.item_id) ::
         {:ok, AuctionHouse.order_id}
         | {:error, reason :: atom, AuctionHouse.order_id | AuctionHouse.item_id}
   defp to_auction_house_response({:ok, %HTTPoison.Response{status_code: 400, body: error_body}}, order), do:
