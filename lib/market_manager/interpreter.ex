@@ -121,9 +121,6 @@ defmodule MarketManager.Interpreter do
   defp to_human_response({successfull, failed}, :delete) when successfull == [], do:
     {:error, :unable_to_delete_orders, failed}
 
-  defp to_human_response({successfull, failed}, _op) when successfull == [], do:
-    {:error, :unable_to_place_requests, failed}
-
   defp to_human_response({_successfull, failed}, _op) when failed == [], do:
     {:ok, :success}
 
