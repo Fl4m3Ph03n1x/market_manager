@@ -25,7 +25,7 @@ defmodule MarketManager.CLI do
   # Public #
   ##########
 
-  @spec main([any]) :: :ok
+  @spec main([String.t]) :: :ok
   def main([]), do: Logger.info(@moduledoc)
 
   def main([help_opt]) when help_opt == "-h", do: Logger.info(@moduledoc)
@@ -49,13 +49,13 @@ defmodule MarketManager.CLI do
   # Private #
   ###########
 
-  defp parse_args(args) do
-    {opts, cmd_and_args, errors} =
-      OptionParser.parse(args, strict: [syndicates: :string, action: :string])
+  @spec parse_args([String.t]) :: {OptionParser.parsed, OptionParser.argv, OptionParser.errors}
+  defp parse_args(args), do:
+    OptionParser.parse(args, strict: [syndicates: :string, action: :string])
 
-    {opts, cmd_and_args, errors}
-  end
-
+  @spec process_args(OptionParser.parsed) ::
+    [MarketManager.activate_response | MarketManager.deactivate_response]
+    | {:error, :unknown_action, bad_syndicate :: String.t}
   defp process_args(opts) do
     syndicates =
       opts
@@ -67,13 +67,18 @@ defmodule MarketManager.CLI do
     process_action(action, syndicates)
   end
 
-  defp process_action("activate", syndicates), do: Enum.map(syndicates, &MarketManager.activate/1)
+  @spec process_action(String.t, [String.t]) ::
+    [MarketManager.activate_response | MarketManager.deactivate_response]
+    | {:error, :unknown_action, bad_syndicate :: String.t}
+  defp process_action("activate", syndicates), do:
+    Enum.map(syndicates, &MarketManager.activate/1)
 
-  defp process_action("deactivate", syndicates),
-    do: Enum.map(syndicates, &MarketManager.deactivate/1)
+  defp process_action("deactivate", syndicates), do:
+    Enum.map(syndicates, &MarketManager.deactivate/1)
 
   defp process_action(action, _syndicates), do: {:error, :unknown_action, action}
 
+  @spec log_result(data_to_log :: any) :: (data_to_log :: any)
   defp log_result({:error, :unknown_action, action} = data) do
     Logger.error("Unknown action: #{action}")
     Logger.info(@moduledoc)
@@ -85,6 +90,8 @@ defmodule MarketManager.CLI do
     data
   end
 
+  @spec log_inspect(data_to_inspect :: any, :error, String.t) ::
+    (data_to_inspect :: any)
   defp log_inspect(data, :error, msg) do
     Logger.error("#{msg}#{inspect(data)}")
     data
