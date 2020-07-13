@@ -155,12 +155,15 @@ defmodule MarketManager.Store.FileSystemTest do
       order_id = "54a74454e779892d5e5155d5"
 
       deps = [
-        read_fn: fn _file_name -> {:error, :enoent} end
+        read_fn: fn _file_name ->
+          {:ok, "{\"perrin_sequence\":[\"5ee71a2604d55c0a5cbdc3c2\"]}"}
+        end,
+        write_fn: fn _file_name, _content -> {:error, :no_persmission} end
       ]
 
       # Act
       actual = FileSystem.delete_order(order_id, syndicate, deps)
-      expected = {:error, :enoent}
+      expected = {:error, :no_persmission}
 
       # Assert
       assert actual == expected
