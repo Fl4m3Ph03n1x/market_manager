@@ -6,6 +6,8 @@ defmodule MarketManager.Interpreter do
   """
   use Rop
 
+  alias MarketManager
+
   @default_deps [
     store: MarketManager.Store.FileSystem,
     auction_house: MarketManager.AuctionHouse.HTTPClient
@@ -15,10 +17,8 @@ defmodule MarketManager.Interpreter do
   # Public #
   ##########
 
-  @spec activate(String.t, keyword) ::
-          {:ok, :success}
-          | {:partial_success, [{any, any}, ...]}
-          | {:error, :unable_to_delete_orders | :unable_to_place_requests, [any]}
+  @spec activate(MarketManager.syndicate, keyword) ::
+    MarketManager.activate_response
   def activate(syndicate, deps \\ @default_deps), do:
     syndicate
     |> list_products(deps[:store])
@@ -26,10 +26,8 @@ defmodule MarketManager.Interpreter do
     |> save_orders(syndicate, deps[:store])
     |> to_human_response(:place)
 
-  @spec deactivate(String.t, keyword) ::
-          {:ok, :success}
-          | {:partial_success, [{any, any}, ...]}
-          | {:error, :unable_to_delete_orders | :unable_to_place_requests, [any]}
+  @spec deactivate(MarketManager.syndicate, keyword) ::
+    MarketManager.deactivate_response
   def deactivate(syndicate, deps \\ @default_deps), do:
     syndicate
     |> list_orders(deps[:store])
@@ -105,9 +103,14 @@ defmodule MarketManager.Interpreter do
     {successfull_deletions, failed_resps ++ failed_deletions}
   end
 
+  @spec status_ok?(any) :: boolean
   defp status_ok?({:ok, _data}), do: true
   defp status_ok?(_order), do: false
 
+  @spec get_order_id(
+    {:ok, MarketManager.order_id}
+    | {:error, :order_non_existent, MarketManager.order_id}
+  ) :: MarketManager.order_id
   defp get_order_id({:ok, order_id}), do: order_id
   defp get_order_id({:error, :order_non_existent, order_id}), do: order_id
 
@@ -115,6 +118,11 @@ defmodule MarketManager.Interpreter do
   defp order_non_existent?({:error, :order_non_existent, _order_id}), do: true
   defp order_non_existent?(_), do: false
 
+  @spec to_human_response({[any], [any]}, :delete | :place) ::
+    {:ok, :success}
+    | {:partial_success, [failed_orders: [{:error, MarketManager.error_reason, MarketManager.order_id | MarketManager.item_id}, ...]]}
+    | {:error, :unable_to_place_requests, [{:error, MarketManager.error_reason, MarketManager.order_id | MarketManager.item_id}]}
+    | {:error, :unable_to_delete_orders, [{:error, MarketManager.error_reason, MarketManager.order_id | MarketManager.item_id}]}
   defp to_human_response({successfull, failed}, :place) when successfull == [], do:
     {:error, :unable_to_place_requests, failed}
 
