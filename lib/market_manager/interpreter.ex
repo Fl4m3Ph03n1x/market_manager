@@ -54,7 +54,7 @@ defmodule MarketManager.Interpreter do
   ###########
   # Private #
   ###########
-  
+
   @spec list_products(MarketManager.syndicate, deps :: module)
     :: Store.list_products_response
   defp list_products(syndicate, store), do: store.list_products(syndicate)
@@ -159,9 +159,20 @@ defmodule MarketManager.Interpreter do
 
   @spec to_human_response({[any], [any]}, :delete | :place) ::
     {:ok, :success}
-    | {:partial_success, [failed_orders: [{:error, MarketManager.error_reason, MarketManager.order_id | MarketManager.item_id}, ...]]}
-    | {:error, :unable_to_place_requests, [{:error, MarketManager.error_reason, MarketManager.order_id | MarketManager.item_id}]}
-    | {:error, :unable_to_delete_orders, [{:error, MarketManager.error_reason, MarketManager.order_id | MarketManager.item_id}]}
+    | {
+        :partial_success,
+        [failed_orders: [{:error, MarketManager.error_reason, MarketManager.order_id | MarketManager.item_id}, ...]]
+      }
+    | {
+        :error,
+        :unable_to_place_requests,
+        [{:error, MarketManager.error_reason, MarketManager.order_id | MarketManager.item_id}]
+      }
+    | {
+        :error,
+        :unable_to_delete_orders,
+        [{:error, MarketManager.error_reason, MarketManager.order_id | MarketManager.item_id}]
+      }
   defp to_human_response({successfull, failed}, :place) when successfull == [], do:
     {:error, :unable_to_place_requests, failed}
 
