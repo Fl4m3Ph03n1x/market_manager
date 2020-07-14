@@ -54,6 +54,7 @@ defmodule MarketManager.Interpreter do
   ###########
   # Private #
   ###########
+  
   @spec list_products(MarketManager.syndicate, deps :: module)
     :: Store.list_products_response
   defp list_products(syndicate, store), do: store.list_products(syndicate)
