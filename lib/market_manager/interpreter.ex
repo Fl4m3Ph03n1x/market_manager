@@ -7,6 +7,21 @@ defmodule MarketManager.Interpreter do
   use Rop
 
   alias MarketManager
+  alias MarketManager.Store
+
+  @type order_request :: %{
+    (order_type :: String.t) => String.t,
+    (item_id :: String.t) => String.t,
+    (platinum :: String.t) => non_neg_integer,
+    (quantity :: String.t) => non_neg_integer,
+    (mod_rank :: String.t) => non_neg_integer
+  }
+  @type order_request_without_rank :: %{
+    (order_type :: String.t) => String.t,
+    (item_id :: String.t) => String.t,
+    (platinum :: String.t) => non_neg_integer,
+    (quantity :: String.t) => non_neg_integer
+  }
 
   @default_deps [
     store: MarketManager.Store.FileSystem,
@@ -39,15 +54,19 @@ defmodule MarketManager.Interpreter do
   ###########
   # Private #
   ###########
-
+  @spec list_products(MarketManager.syndicate, deps :: module)
+    :: Store.list_products_response
   defp list_products(syndicate, store), do: store.list_products(syndicate)
 
+  @spec make_place_requests([Store.product], deps :: module)
+    :: {[{:ok, MarketManager.order_id}], [{:error, atom, MarketManager.order_id}]}
   defp make_place_requests(products, auction_house_api), do:
     products
     |> Enum.map(&build_order/1)
     |> Enum.map(&auction_house_api.place_order/1)
     |> Enum.split_with(&status_ok?/1)
 
+  @spec build_order(Store.product) :: order_request | order_request_without_rank
   defp build_order(product) do
     case Map.get(product, "rank") do
       "n/a" ->
@@ -69,6 +88,11 @@ defmodule MarketManager.Interpreter do
     end
   end
 
+  @spec save_orders(
+    {[{:ok, MarketManager.order_id}], [{:error, atom, MarketManager.order_id}]},
+    MarketManager.syndicate,
+    deps :: module
+  ) :: {[{:ok, MarketManager.order_id}], [{:error, atom, MarketManager.order_id} | {:error, any}]}
   defp save_orders({success_resps, failed_resps}, syndicate, store_api) do
     {successfull_saves, failed_saves} =
       success_resps
@@ -79,13 +103,21 @@ defmodule MarketManager.Interpreter do
     {successfull_saves, failed_resps ++ failed_saves}
   end
 
+  @spec list_orders(MarketManager.syndicate, deps :: module)
+    :: Store.list_orders_response
   defp list_orders(syndicate, store), do: store.list_orders(syndicate)
 
+  @spec make_delete_requests([MarketManager.order_id], deps :: module) ::
+    {[{:ok, MarketManager.order_id}], [{:error, atom, MarketManager.order_id}]}
   defp make_delete_requests(order_ids, auction_house_api), do:
     order_ids
     |> Enum.map(&auction_house_api.delete_order/1)
     |> Enum.split_with(&status_ok?/1)
 
+  @spec check_non_existent_orders(
+    {[{:ok, MarketManager.order_id}], [{:error, atom, MarketManager.order_id}]}
+  ) :: {[{:ok, MarketManager.order_id} | {:error, :order_non_existent, MarketManager.order_id}],
+        [{:error, atom, MarketManager.order_id}]}
   defp check_non_existent_orders({success_resps, failed_resps}) do
     non_existent_orders =
       Enum.filter(failed_resps, &order_non_existent?/1)
@@ -93,6 +125,12 @@ defmodule MarketManager.Interpreter do
     {success_resps ++ non_existent_orders, failed_resps}
   end
 
+  @spec delete_orders(
+    {[{:ok, MarketManager.order_id} | {:error, :order_non_existent, MarketManager.order_id}],
+    [{:error, atom, MarketManager.order_id}]},
+    MarketManager.syndicate,
+    deps :: keyword
+  ) :: {[{:ok, MarketManager.order_id}], [{:error, atom, MarketManager.order_id} | {:error, any}]}
   defp delete_orders({success_resps, failed_resps}, syndicate, store_api) do
     {successfull_deletions, failed_deletions} =
       success_resps
