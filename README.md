@@ -51,7 +51,7 @@ The format of each item is the following:
   "name": "Disarming purity",       //name of the item
   "id": "5911f11d97a0add8e9d5da4c", //warframe.market item id
   "price": 15,                      //platinum price of the item
-  "rank": 1,                        //rank of the mod. Defaults to 0
+  "rank": 1,                        //rank of the mod. Defaults to 0. If the mods has no rank use "n/a" instead
   "quantity": 1                     //number of items to sell. Defaults to 1
 }
 ```
