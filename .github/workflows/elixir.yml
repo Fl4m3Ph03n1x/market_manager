@@ -22,5 +22,11 @@ jobs:
       run: mix deps.get
     - name: Run Tests
       run: mix test
+    - name: Run credo code analyser
+      run: mix credo --strict
+    - name: Run typechecks
+      run: mix dialyzer
     - name: Build executable
-      run: MIX_ENV=prod mix escript.build
+      run: mix escript.build
+      env: 
+        MIX_ENV: prod
