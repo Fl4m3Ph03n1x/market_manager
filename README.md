@@ -1,3 +1,5 @@
+![Elixir CI](https://github.com/Fl4m3Ph03n1x/market_manager/workflows/Elixir%20CI/badge.svg)
+
 # MarketManager
 
 Makes sell requests in batch to warframe market.
