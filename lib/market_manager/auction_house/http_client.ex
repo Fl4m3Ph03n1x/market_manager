@@ -10,14 +10,12 @@ defmodule MarketManager.AuctionHouse.HTTPClient do
   @behaviour AuctionHouse
 
   @url Application.compile_env!(:market_manager, :api_base_url)
+  @cookie Application.compile_env!(:market_manager, :auction_house_cookie)
+  @token Application.compile_env!(:market_manager, :auction_house_token)
 
-  @headers [
+  @static_headers [
     {"Accept", "application/json"},
-    {"Content-Type", "application/json"},
-    {"x-csrftoken",
-     "##12ecacf698f99616bd5ed5cc11a339aeda3af8d22d667583688d9d89be281bb1ad89a6dd5036a407259d12bc0311f6b4991b892eb178a8c8cf6cf9a50e009ff2"},
-    {"Cookie",
-     "JWT=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzaWQiOiJnTzFSWnpXS0pEM0dwTW56MzlzQTdjbXRmeVVrNjg4VCIsImNzcmZfdG9rZW4iOiIwNGVjNmU0MWIyYTg1N2NiNTYxNzJlOTViMjk1NjMxYzVhZTEyN2FlIiwiZXhwIjoxNjAwMDcxODgzLCJpYXQiOjE1OTQ4ODc4ODMsImlzcyI6Imp3dCIsImF1ZCI6Imp3dCIsImF1dGhfdHlwZSI6ImNvb2tpZSIsInNlY3VyZSI6ZmFsc2UsImxvZ2luX3VhIjoiYidNb3ppbGxhLzUuMCAoTWFjaW50b3NoOyBJbnRlbCBNYWMgT1MgWCAxMC4xNDsgcnY6NzYuMCkgR2Vja28vMjAxMDAxMDEgRmlyZWZveC83Ni4wJyIsImxvZ2luX2lwIjoiYic4MC43MS4wLjIwOSciLCJqd3RfaWRlbnRpdHkiOiJCZFdQR3F4WlU1RW56SUJXUDhHU3VYNEhBNE84RVlDUSJ9.oDEqN7zseggTKQWiSIHGlmyeyje5dosShQVGRswze0E; _ga=GA1.2.1094921180.1591686701; __cfduid=d1582beb0dccb9976006f828da535db251594807955"}
+    {"Content-Type", "application/json"}
   ]
 
   @default_deps [
@@ -48,11 +46,11 @@ defmodule MarketManager.AuctionHouse.HTTPClient do
 
   @spec http_post(order_json :: String.t, post_fn :: function) ::
     {:ok, HTTPoison.Response.t} | {:error, HTTPoison.Error.t}
-  defp http_post(order, post_fn), do: post_fn.(@url, order, @headers)
+  defp http_post(order, post_fn), do: post_fn.(@url, order, headers())
 
   @spec http_delete(url :: String.t, delete_fun :: function) ::
     {:ok, HTTPoison.Response.t} | {:error, HTTPoison.Error.t}
-  defp http_delete(url, delete_fn), do: delete_fn.(url, @headers)
+  defp http_delete(url, delete_fn), do: delete_fn.(url, headers())
 
   @spec to_auction_house_response(
         {:ok, HTTPoison.Response.t} | {:error, HTTPoison.Error.t},
@@ -104,4 +102,7 @@ defmodule MarketManager.AuctionHouse.HTTPClient do
 
   @spec build_delete_url(AuctionHouse.order_id) :: (url :: String.t)
   defp build_delete_url(id), do: @url <> "/" <> id
+
+  def headers, do: [{"x-csrftoken", @token}, {"Cookie", @cookie}] ++ @static_headers
+
 end
