@@ -6,11 +6,14 @@ on:
   pull_request:
     branches: [ master ]
 
+env: 
+  AUCTION_HOUSE_COOKIE: ${{ secrets.MARKET_MANAGER_WM_COOKIE }}
+  AUCTION_HOUSE_TOKEN: ${{ secrets.MARKET_MANAGER_WM_XCSRFTOKEN }}
+
 jobs:
+
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
     - name: Setup elixir
