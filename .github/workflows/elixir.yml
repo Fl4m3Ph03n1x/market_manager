@@ -6,9 +6,9 @@ on:
   pull_request:
     branches: [ master ]
 
-env: 
-  AUCTION_HOUSE_COOKIE: ${{ secrets.MARKET_MANAGER_WM_COOKIE }}
-  AUCTION_HOUSE_TOKEN: ${{ secrets.MARKET_MANAGER_WM_XCSRFTOKEN }}
+env:
+  MARKET_MANAGER_WM_COOKIE: ${{ secrets.MARKET_MANAGER_WM_COOKIE }}
+  MARKET_MANAGER_WM_XCSRFTOKEN: ${{ secrets.MARKET_MANAGER_WM_XCSRFTOKEN }}
 
 jobs:
 
@@ -31,5 +31,5 @@ jobs:
       run: mix dialyzer
     - name: Build executable
       run: mix escript.build
-      env: 
+      env:
         MIX_ENV: prod
