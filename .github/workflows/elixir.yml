@@ -5,6 +5,7 @@ env:
   MARKET_MANAGER_WM_COOKIE: ${{ secrets.MARKET_MANAGER_WM_COOKIE }}
   MARKET_MANAGER_WM_XCSRFTOKEN: ${{ secrets.MARKET_MANAGER_WM_XCSRFTOKEN }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 on:
   push:
     branches: [ master ]
@@ -32,6 +33,8 @@ jobs:
       run: mix credo --strict
     - name: Run typechecks
       run: mix dialyzer
+      env:
+        MIX_ENV: dev
     - name: Build executable
       run: mix escript.build
       env:
