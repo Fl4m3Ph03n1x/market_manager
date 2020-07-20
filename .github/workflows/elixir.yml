@@ -7,6 +7,7 @@ on:
     branches: [ master ]
 
 env:
+  MIX_ENV: test
   MARKET_MANAGER_WM_COOKIE: ${{ secrets.MARKET_MANAGER_WM_COOKIE }}
   MARKET_MANAGER_WM_XCSRFTOKEN: ${{ secrets.MARKET_MANAGER_WM_XCSRFTOKEN }}
 
