@@ -9,7 +9,7 @@ defmodule MarketManager.MixProject do
     [
       app: :market_manager,
       version: "0.1.0",
-      elixir: "~> 1.9",
+      elixir: "~> 1.10",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       elixirc_paths: elixirc_paths(Mix.env()),
@@ -43,7 +43,7 @@ defmodule MarketManager.MixProject do
       {:plug_cowboy, "~> 2.0", only: :test},
       {:mix_test_watch, "~> 1.0", only: [:dev, :test], runtime: false},
       {:credo, "~> 1.4", only: [:test, :dev], runtime: false},
-      {:excoveralls, "~> 0.10", only: :test},
+      {:excoveralls, "~> 0.12", only: :test},
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false}
     ]
   end
