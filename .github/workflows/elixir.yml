@@ -39,3 +39,4 @@ jobs:
       run: mix escript.build
       env:
         MIX_ENV: prod
+
