@@ -1,6 +1,4 @@
-![Build Status](https://github.com/Fl4m3Ph03n1x/market_manager/workflows/build/badge.svg?branch=master)
-
-[![Coverage Status](https://coveralls.io/repos/github/Fl4m3Ph03n1x/market_manager/badge.svg?branch=master)](https://coveralls.io/github/Fl4m3Ph03n1x/market_manager?branch=master)
+![Build Status](https://github.com/Fl4m3Ph03n1x/market_manager/workflows/build/badge.svg?branch=master)[![Coverage Status](https://coveralls.io/repos/github/Fl4m3Ph03n1x/market_manager/badge.svg?branch=master)](https://coveralls.io/github/Fl4m3Ph03n1x/market_manager?branch=master)
 
 # MarketManager
 
