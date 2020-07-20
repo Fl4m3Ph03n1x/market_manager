@@ -1,15 +1,15 @@
 name: build
 
+env:
+  MIX_ENV: test
+  MARKET_MANAGER_WM_COOKIE: ${{ secrets.MARKET_MANAGER_WM_COOKIE }}
+  MARKET_MANAGER_WM_XCSRFTOKEN: ${{ secrets.MARKET_MANAGER_WM_XCSRFTOKEN }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 on:
   push:
     branches: [ master ]
   pull_request:
     branches: [ master ]
-
-env:
-  MIX_ENV: test
-  MARKET_MANAGER_WM_COOKIE: ${{ secrets.MARKET_MANAGER_WM_COOKIE }}
-  MARKET_MANAGER_WM_XCSRFTOKEN: ${{ secrets.MARKET_MANAGER_WM_XCSRFTOKEN }}
 
 jobs:
 
@@ -20,12 +20,14 @@ jobs:
     - name: Setup elixir
       uses: actions/setup-elixir@v1
       with:
-        elixir-version: '1.10' # Define the elixir version [required]
-        otp-version: '22.1' # Define the OTP version [required]
+        elixir-version: '1.10.x' # Define the elixir version [required]
+        otp-version: '22.1.x' # Define the OTP version [required]
     - name: Install Dependencies
       run: mix deps.get
     - name: Run Tests
       run: mix test
+    - name: Run Coverage
+      run: mix coveralls.github
     - name: Run credo code analyser
       run: mix credo --strict
     - name: Run typechecks
