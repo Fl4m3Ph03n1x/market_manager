@@ -5,6 +5,7 @@ env:
   MARKET_MANAGER_WM_COOKIE: ${{ secrets.MARKET_MANAGER_WM_COOKIE }}
   MARKET_MANAGER_WM_XCSRFTOKEN: ${{ secrets.MARKET_MANAGER_WM_XCSRFTOKEN }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 on:
   push:
     branches: [ master ]
@@ -36,3 +37,6 @@ jobs:
       run: mix escript.build
       env:
         MIX_ENV: prod
+    - name: Coveralls GitHub Action
+      uses: coverallsapp/github-action@v1.1.1
+
