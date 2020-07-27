@@ -1,6 +1,8 @@
 defmodule MarketManager do
   @moduledoc """
-  Documentation for MarketManager.
+  MarketManager is an application that allows you to make batch requests to
+  warframe.market. This is the entrypoint of everything. If you have a module
+  and you need to talk to MarketManager, this is who you call, the public API.
   """
 
   alias MarketManager.Interpreter
@@ -32,9 +34,28 @@ defmodule MarketManager do
   # Callbacks #
   #############
 
+  @doc """
+  Activates a syndicate in warframe.market. Activating a syndicate means you
+  put on sell all the mods the syndicate has with the prices you specify on
+  "products.json".
+
+  Example:
+  ```
+  {:ok, :success} = MarketManager.activate("simaris")
+  ```
+  """
   @spec activate(syndicate) :: activate_response
   def activate(syndicate), do: Interpreter.activate(syndicate)
 
+  @doc """
+  Deactivates a syndicate in warframe.market. Deactivating a syndicate means you
+  delete all orders you have placed before that belong to the given syndicate.
+
+  Example:
+  ```
+  {:ok, :success} = MarketManager.deactivate("simaris")
+  ```
+  """
   @spec deactivate(syndicate) :: deactivate_response
   def deactivate(syndicate), do: Interpreter.deactivate(syndicate)
 end
