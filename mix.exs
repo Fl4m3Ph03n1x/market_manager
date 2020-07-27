@@ -17,8 +17,16 @@ defmodule MarketManager.MixProject do
       test_paths: test_paths(),
       aliases: aliases(),
       test_coverage: [tool: ExCoveralls],
-      preferred_cli_env: preferred_cli_env()
-    ]
+      preferred_cli_env: preferred_cli_env(),
+
+      # Docs
+      name: "Market Manager",
+      source_url: "https://github.com/Fl4m3Ph03n1x/market_manager",
+      homepage_url: "http://market_manager",
+      docs: [main: "MarketManager", # The main page in the docs
+            logo: "images/resized_logo.png",
+            extras: ["README.md"]]
+      ]
   end
 
   def application do
@@ -44,7 +52,8 @@ defmodule MarketManager.MixProject do
       {:mix_test_watch, "~> 1.0", only: [:dev, :test], runtime: false},
       {:credo, "~> 1.4", only: [:test, :dev], runtime: false},
       {:excoveralls, "~> 0.12", only: :test},
-      {:dialyxir, "~> 1.0", only: [:dev], runtime: false}
+      {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
+      {:ex_doc, "~> 0.22", only: :dev, runtime: false}
     ]
   end
 
