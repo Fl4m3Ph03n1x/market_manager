@@ -75,7 +75,9 @@ MarketManager          <a href="https://github.com/Fl4m3Ph03n1x/market_manager/b
 
 
         <section id="moduledoc">
-<p>Documentation for MarketManager.</p>        </section>
+<p>MarketManager is an application that allows you to make batch requests to
+warframe.market. This is the entrypoint of everything. If you have a module
+and you need to talk to MarketManager, this is who you call, the public API.</p>        </section>
 
         <section id="summary" class="details-list">
           <h1 class="section-heading">
@@ -128,11 +130,16 @@ MarketManager          <a href="https://github.com/Fl4m3Ph03n1x/market_manager/b
   <div class="summary-signature">
     <a href="#activate/1">activate(syndicate)</a>
   </div>
+    <div class="summary-synopsis"><p>Activates a syndicate in warframe.market. Activating a syndicate means you
+put on sell all the mods the syndicate has with the prices you specify on
+&quot;products.json&quot;.</p></div>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
     <a href="#deactivate/1">deactivate(syndicate)</a>
   </div>
+    <div class="summary-synopsis"><p>Deactivates a syndicate in warframe.market. Deactivating a syndicate means you
+delete all orders you have placed before that belong to the given syndicate.</p></div>
 </div>
   </div>
         </section>
@@ -152,7 +159,7 @@ Types          </h1>
       <span class="sr-only">Link to this type</span>
     </a>
     <h1 class="signature">activate_response()</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/lib/market_manager.ex#L21" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/lib/market_manager.ex#L23" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -176,7 +183,7 @@ Types          </h1>
       <span class="sr-only">Link to this type</span>
     </a>
     <h1 class="signature">deactivate_response()</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/lib/market_manager.ex#L26" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/lib/market_manager.ex#L28" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -200,7 +207,7 @@ Types          </h1>
       <span class="sr-only">Link to this type</span>
     </a>
     <h1 class="signature">error_reason()</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/lib/market_manager.ex#L13" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/lib/market_manager.ex#L15" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -221,7 +228,7 @@ Types          </h1>
       <span class="sr-only">Link to this type</span>
     </a>
     <h1 class="signature">item_id()</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/lib/market_manager.ex#L15" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/lib/market_manager.ex#L17" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -242,7 +249,7 @@ Types          </h1>
       <span class="sr-only">Link to this type</span>
     </a>
     <h1 class="signature">order_id()</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/lib/market_manager.ex#L14" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/lib/market_manager.ex#L16" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -263,7 +270,7 @@ Types          </h1>
       <span class="sr-only">Link to this type</span>
     </a>
     <h1 class="signature">syndicate()</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/lib/market_manager.ex#L12" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/lib/market_manager.ex#L14" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -294,7 +301,7 @@ Functions          </h1>
       <span class="sr-only">Link to this function</span>
     </a>
     <h1 class="signature">activate(syndicate)</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/lib/market_manager.ex#L36" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/lib/market_manager.ex#L48" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -306,7 +313,9 @@ Functions          </h1>
           <pre>activate(<a href="#t:syndicate/0">syndicate</a>()) :: <a href="#t:activate_response/0">activate_response</a>()</pre>
       </div>
 
-  </section>
+<p>Activates a syndicate in warframe.market. Activating a syndicate means you
+put on sell all the mods the syndicate has with the prices you specify on
+&quot;products.json&quot;.</p><p>Example:</p><pre><code class="nohighlight makeup elixir"><span class="p" data-group-id="1499855459-1">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="ss">:success</span><span class="p" data-group-id="1499855459-1">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">MarketManager</span><span class="o">.</span><span class="n">activate</span><span class="p" data-group-id="1499855459-2">(</span><span class="s">&quot;simaris&quot;</span><span class="p" data-group-id="1499855459-2">)</span></code></pre>  </section>
 </section>
 <section class="detail" id="deactivate/1">
   <div class="detail-header">
@@ -315,7 +324,7 @@ Functions          </h1>
       <span class="sr-only">Link to this function</span>
     </a>
     <h1 class="signature">deactivate(syndicate)</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/lib/market_manager.ex#L39" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/lib/market_manager.ex#L60" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -327,7 +336,8 @@ Functions          </h1>
           <pre>deactivate(<a href="#t:syndicate/0">syndicate</a>()) :: <a href="#t:deactivate_response/0">deactivate_response</a>()</pre>
       </div>
 
-  </section>
+<p>Deactivates a syndicate in warframe.market. Deactivating a syndicate means you
+delete all orders you have placed before that belong to the given syndicate.</p><p>Example:</p><pre><code class="nohighlight makeup elixir"><span class="p" data-group-id="0670729086-1">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="ss">:success</span><span class="p" data-group-id="0670729086-1">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">MarketManager</span><span class="o">.</span><span class="n">deactivate</span><span class="p" data-group-id="0670729086-2">(</span><span class="s">&quot;simaris&quot;</span><span class="p" data-group-id="0670729086-2">)</span></code></pre>  </section>
 </section>
           </div>
         </section>
