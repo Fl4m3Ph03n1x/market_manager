@@ -7,7 +7,7 @@ defmodule MarketManager.Interpreter do
   use Rop
 
   alias MarketManager
-  alias MarketManager.Store
+  alias MarketManager.{PriceAnalyst, Store}
 
   @type order_request :: %{
     (order_type :: String.t) => String.t,
@@ -32,14 +32,29 @@ defmodule MarketManager.Interpreter do
   # Public #
   ##########
 
-  @spec activate(MarketManager.syndicate, keyword) ::
+  # curl 'https://api.warframe.market/v1/items/kitgun_riven_mod_(veiled)/orders'
+  # -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:78.0) Gecko/20100101 Firefox/78.0'
+  # -H 'Accept: application/json'
+  # -H 'Accept-Language: en-US,en;q=0.5'
+  # --compressed
+  # -H 'Referer: https://warframe.market/items/kitgun_riven_mod_(veiled)'
+  # -H 'content-type: application/json'
+  # -H 'language: en'
+  # -H 'platform: pc'
+  # -H 'Origin: https://warframe.market'
+  # -H 'DNT: 1'
+  # -H 'Connection: keep-alive'
+  # -H 'Cookie: JWT=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzaWQiOiJnTzFSWnpXS0pEM0dwTW56MzlzQTdjbXRmeVVrNjg4VCIsImNzcmZfdG9rZW4iOiIwNGVjNmU0MWIyYTg1N2NiNTYxNzJlOTViMjk1NjMxYzVhZTEyN2FlIiwiZXhwIjoxNjAxMTA3ODg0LCJpYXQiOjE1OTU5MjM4ODQsImlzcyI6Imp3dCIsImF1ZCI6Imp3dCIsImF1dGhfdHlwZSI6ImNvb2tpZSIsInNlY3VyZSI6ZmFsc2UsImxvZ2luX3VhIjoiYidNb3ppbGxhLzUuMCAoTWFjaW50b3NoOyBJbnRlbCBNYWMgT1MgWCAxMC4xNDsgcnY6NzYuMCkgR2Vja28vMjAxMDAxMDEgRmlyZWZveC83Ni4wJyIsImxvZ2luX2lwIjoiYic4MC43MS4wLjIwOSciLCJqd3RfaWRlbnRpdHkiOiJCZFdQR3F4WlU1RW56SUJXUDhHU3VYNEhBNE84RVlDUSJ9.YDHDLPATCpO1LVHROVFvFQuJG41sr4PjrHef55NxyYk; _ga=GA1.2.1094921180.1591686701; __cfduid=d1582beb0dccb9976006f828da535db251594807955'
+
+  @spec activate(MarketManager.syndicate, MarketManager.strategy, keyword) ::
     MarketManager.activate_response
-  def activate(syndicate, deps \\ @default_deps), do:
+  def activate(syndicate, strategy, deps \\ @default_deps), do:
     syndicate
     |> list_products(deps[:store])
-    >>> make_place_requests(deps[:auction_house])
-    |> save_orders(syndicate, deps[:store])
-    |> to_human_response(:place)
+    >>> calculate_prices(strategy, deps[:auction_house])
+    # >>> make_place_requests(deps[:auction_house])
+    # |> save_orders(syndicate, deps[:store])
+    # |> to_human_response(:place)
 
   @spec deactivate(MarketManager.syndicate, keyword) ::
     MarketManager.deactivate_response
@@ -58,6 +73,20 @@ defmodule MarketManager.Interpreter do
   @spec list_products(MarketManager.syndicate, deps :: module)
     :: Store.list_products_response
   defp list_products(syndicate, store), do: store.list_products(syndicate)
+
+  @spec calculate_prices([Store.product], MarketManager.strategy, deps :: module)
+  :: {:ok, [Store.product]}
+  defp calculate_prices(products, strategy, auction_house_api) do
+    products
+    |> Enum.map(fn product -> Map.get(product, "name") end)
+    |> Enum.map(&auction_house_api.get_all_orders/1)
+    |> Enum.map(&calculate_price(&1, strategy))
+  end
+
+  defp calculate_price({:ok, all_orders}, strategy), do:
+    PriceAnalyst.calculate_price(all_orders, strategy)
+
+  defp calculate_price(_error, _strategy), do: 0
 
   @spec make_place_requests([Store.product], deps :: module)
     :: {[{:ok, MarketManager.order_id}], [{:error, atom, MarketManager.order_id}]}

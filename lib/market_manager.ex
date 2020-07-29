@@ -12,6 +12,7 @@ defmodule MarketManager do
   ##########
 
   @type syndicate :: String.t
+  @type strategy :: atom
   @type error_reason :: atom
   @type order_id :: String.t
   @type item_id :: String.t
@@ -44,8 +45,8 @@ defmodule MarketManager do
   {:ok, :success} = MarketManager.activate("simaris")
   ```
   """
-  @spec activate(syndicate) :: activate_response
-  def activate(syndicate), do: Interpreter.activate(syndicate)
+  @spec activate(syndicate, strategy) :: activate_response
+  def activate(syndicate, strategy), do: Interpreter.activate(syndicate, strategy)
 
   @doc """
   Deactivates a syndicate in warframe.market. Deactivating a syndicate means you

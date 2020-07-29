@@ -10,6 +10,7 @@ defmodule MarketManager.AuctionHouse.HTTPClient do
   @behaviour AuctionHouse
 
   @url Application.compile_env!(:market_manager, :api_base_url)
+  @search_url Application.compile_env!(:market_manager, :api_search_url)
   @cookie Application.compile_env!(:market_manager, :auction_house_cookie)
   @token Application.compile_env!(:market_manager, :auction_house_token)
 
@@ -19,6 +20,7 @@ defmodule MarketManager.AuctionHouse.HTTPClient do
   ]
 
   @default_deps [
+    get_fn: &HTTPoison.get/2,
     post_fn: &HTTPoison.post/3,
     delete_fn: &HTTPoison.delete/2
   ]
@@ -40,6 +42,14 @@ defmodule MarketManager.AuctionHouse.HTTPClient do
     |> http_delete(deps[:delete_fn])
     |> to_auction_house_response(order_id)
 
+  @impl AuctionHouse
+  defp get_all_orders(item_name, deps \\ @default_deps), do:
+    item_name
+    |> Recase.to_snake()
+    |> build_get_orders_url()
+    |> http_get(deps[:get_fn])
+    |> to_auction_house_response_orders(item_name)
+
   ###########
   # Private #
   ###########
@@ -51,6 +61,10 @@ defmodule MarketManager.AuctionHouse.HTTPClient do
   @spec http_delete(url :: String.t, delete_fun :: function) ::
     {:ok, HTTPoison.Response.t} | {:error, HTTPoison.Error.t}
   defp http_delete(url, delete_fn), do: delete_fn.(url, headers())
+
+  @spec http_get(url :: String.t, get_fun :: function) ::
+    {:ok, HTTPoison.Response.t} | {:error, HTTPoison.Error.t}
+  defp http_get(url, get_fn), do: get_fn.(url, headers())
 
   @spec to_auction_house_response(
         {:ok, HTTPoison.Response.t} | {:error, HTTPoison.Error.t},
@@ -89,8 +103,9 @@ defmodule MarketManager.AuctionHouse.HTTPClient do
   defp get_id(%{"payload" => %{"order" => %{"id" => id}}}), do: id
   defp get_id(%{"payload" => %{"order_id" => id}}), do: id
 
-  @spec build_success_response(AuctionHouse.order_id) :: {:ok, AuctionHouse.order_id}
-  defp build_success_response(id), do: {:ok, id}
+  @spec build_success_response(AuctionHouse.order_id | [AuctionHouse.order_info])
+    :: {:ok, AuctionHouse.order_id | [AuctionHouse.order_info]}
+  defp build_success_response(data), do: {:ok, data}
 
   @spec build_error_response({:error, reason :: atom}, AuctionHouse.order_id | AuctionHouse.order) ::
           {:error, reason :: atom, AuctionHouse.order_id | AuctionHouse.item_id}
@@ -103,6 +118,19 @@ defmodule MarketManager.AuctionHouse.HTTPClient do
   @spec build_delete_url(AuctionHouse.order_id) :: (url :: String.t)
   defp build_delete_url(id), do: @url <> "/" <> id
 
-  def headers, do: [{"x-csrftoken", @token}, {"Cookie", @cookie}] ++ @static_headers
+  @spec headers :: [{String.t, String.t}]
+  defp headers, do: [{"x-csrftoken", @token}, {"Cookie", @cookie}] ++ @static_headers
+
+  defp build_get_orders_url(item_search_name), do: @search_url <> "/" <> item_search_name
+
+  defp to_auction_house_response_orders({:ok, %HTTPoison.Response{status_code: 200, body: body}}, _item_name) do
+    body
+    |> Jason.decode()
+    >>> get_orders()
+    |> build_success_response()
+  end
+
+  @spec get_orders(map) :: [AuctionHou.order_info]
+  defp get_orders(body), do: get_in(body, ["payload", "orders"])
 
 end

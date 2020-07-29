@@ -703,46 +703,55 @@
     "simaris": [
         {
             "name": "Looter",
+            "search_name": "looter",
             "id": "5740c1879d238d4a03d28518",
             "price": 50
         },
         {
             "name": "Detect Vulnerability",
+            "search_name": "detect_vulnerability",
             "id": "554d3f0ce779894445a848f2",
             "price": 50
         },
         {
             "name": "Reawaken",
+            "search_name": "reawaken",
             "id": "5b00231bac0f7e006fd6f7b3",
             "price": 50
         },
         {
             "name": "Negate",
+            "search_name": "negate",
             "id": "5b00231bac0f7e006fd6f7b4",
             "price": 50
         },
         {
             "name": "Ambush",
+            "search_name": "ambush",
             "id": "5bc24accb919f2010f7d579a",
             "price": 50
         },
         {
             "name": "Energy Generator",
+            "search_name": "energy_generator",
             "id": "5bc24accb919f2010f7d579b",
             "price": 50
         },
         {
             "name": "Energy Conversion",
+            "search_name": "energy_conversion",
             "id": "56dac8cc5cc639de0a45c52c",
             "price": 50
         },
         {
             "name": "Health Conversion",
+            "search_name": "health_conversion",
             "id": "56dac8d25cc639de0a45c52d",
             "price": 50
         },
         {
             "name": "Astral Autopsy",
+            "search_name": "astral_autopsy",
             "id": "588a789c3cf52c408a2f88dc",
             "price": 50,
             "rank": "n/a"
