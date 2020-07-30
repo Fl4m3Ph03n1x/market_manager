@@ -14,6 +14,7 @@ defmodule MarketManager.PriceAnalyst do
     all_orders
     |> pre_process_orders()
     |> apply_strategy(strategy)
+    |> round()
 
   ###########
   # Private #
@@ -39,7 +40,7 @@ defmodule MarketManager.PriceAnalyst do
 
   defp apply_strategy([], _strategy), do: 0
 
-  defp apply_strategy([price], _strategy), do: price
+  defp apply_strategy([%{"platinum" => price}], _strategy), do: price
 
   defp apply_strategy(orders, :top_five_average), do:
     orders
