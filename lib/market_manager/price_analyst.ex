@@ -23,14 +23,14 @@ defmodule MarketManager.PriceAnalyst do
   defp pre_process_orders(all_orders), do:
     all_orders
     |> Enum.filter(&visible?/1)
-    |> Enum.filter(&user_online?/1)
+    |> Enum.filter(&user_ingame?/1)
     |> Enum.filter(&platform_pc?/1)
     |> Enum.filter(&sell_order?/1)
     |> Enum.sort(&price_ascending/2)
 
   defp visible?(order), do: Map.get(order, "visible") == true
 
-  defp user_online?(order), do: get_in(order, ["user", "status"]) == "online"
+  defp user_ingame?(order), do: get_in(order, ["user", "status"]) == "ingame"
 
   defp platform_pc?(order), do: Map.get(order, "platform") == "pc"
 
@@ -56,6 +56,7 @@ defmodule MarketManager.PriceAnalyst do
 
   defp apply_strategy(orders, :equal_to_lowest), do:
     orders
+    |> IO.inspect()
     |> Enum.take(1)
     |> Enum.map(&platinum/1)
     |> List.first()

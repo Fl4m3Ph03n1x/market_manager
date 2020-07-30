@@ -121,7 +121,8 @@ defmodule MarketManager.AuctionHouse.HTTPClient do
   @spec headers :: [{String.t, String.t}]
   defp headers, do: [{"x-csrftoken", @token}, {"Cookie", @cookie}] ++ @static_headers
 
-  defp build_get_orders_url(item_search_name), do: @search_url <> "/" <> item_search_name
+  defp build_get_orders_url(item_search_name), do:
+    @search_url <> "/" <> item_search_name <> "/orders"
 
   defp to_auction_house_response_orders({:ok, %HTTPoison.Response{status_code: 200, body: body}}, _item_name) do
     body
