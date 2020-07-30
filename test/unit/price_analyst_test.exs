@@ -3,8 +3,6 @@ defmodule MarketManager.PriceAnalystTest do
 
   alias MarketManager.PriceAnalyst
 
-  @moduletag :price_analyst
-
   #########
   # Tests #
   #########
