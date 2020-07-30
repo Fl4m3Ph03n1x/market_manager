@@ -43,7 +43,7 @@ defmodule MarketManager.AuctionHouse.HTTPClient do
     |> to_auction_house_response(order_id)
 
   @impl AuctionHouse
-  defp get_all_orders(item_name, deps \\ @default_deps), do:
+  def get_all_orders(item_name, deps \\ @default_deps), do:
     item_name
     |> Recase.to_snake()
     |> build_get_orders_url()

@@ -37,12 +37,13 @@ defmodule MarketManager do
 
   @doc """
   Activates a syndicate in warframe.market. Activating a syndicate means you
-  put on sell all the mods the syndicate has with the prices you specify on
-  "products.json".
+  put on sell all the mods the syndicate has with that are in the *products.json*
+  file. The price of each mod will be calculated via a PriceAnalyst depending on
+  which strategy you choose.
 
   Example:
   ```
-  {:ok, :success} = MarketManager.activate("simaris")
+  {:ok, :success} = MarketManager.activate("simaris", :lowest_minus_one)
   ```
   """
   @spec activate(syndicate, strategy) :: activate_response

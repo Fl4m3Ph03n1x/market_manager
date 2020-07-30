@@ -5,16 +5,20 @@ defmodule MarketManager.CLI do
   usage:
     $ ./market_manager {options}
   example:
-    ./market_manager --action=activate --syndicates=new_loka,red_veil
+    ./market_manager --action=activate --syndicates=new_loka,red_veil --strategy=equal_to_lowest
   options:
-    --action=activate|deactivate        Can be either 'activate' or 'deactivate'.
-                                        Activating a syndicate means placing a sell
-                                        order on warframe.market for each item the
-                                        syndicate has that is in the *products.json*
-                                        file.
-                                        Deactivating a syndicate deletes all orders
-                                        in warframe.market from the given syndicate.
-    --syndicates=syndicate1,syndicate2  Syndicates to be affected by the action.
+    --action=activate|deactivate
+      Can be either 'activate' or 'deactivate'. Activating a syndicate means
+      placing a sell order on warframe.market for each item the syndicate has
+      that is in the *products.json* file. Deactivating a syndicate deletes all
+      orders in warframe.market from the given syndicate.
+
+    --syndicates=syndicate1,syndicate2
+      Syndicates to be affected by the action.
+
+    --strategy=top_five_average|top_three_average|equal_to_lowest|lowest_minus_one
+      The strategy used by the price analysr to calculate the price at which
+      your items should be sold.
   """
 
   alias MarketManager
@@ -51,7 +55,7 @@ defmodule MarketManager.CLI do
 
   @spec parse_args([String.t]) :: {OptionParser.parsed, OptionParser.argv, OptionParser.errors}
   defp parse_args(args), do:
-    OptionParser.parse(args, strict: [syndicates: :string, action: :string])
+    OptionParser.parse(args, strict: [syndicates: :string, action: :string, strategy: :string])
 
   @spec process_args(OptionParser.parsed) ::
     [MarketManager.activate_response | MarketManager.deactivate_response]
@@ -64,19 +68,24 @@ defmodule MarketManager.CLI do
 
     action = Keyword.get(opts, :action)
 
-    process_action(action, syndicates)
+    strategy =
+      opts
+      |> Keyword.get(:strategy)
+      |> to_strategy()
+
+    process_action(action, syndicates, strategy)
   end
 
-  @spec process_action(String.t, [String.t]) ::
+  @spec process_action(String.t, [String.t], atom) ::
     [MarketManager.activate_response | MarketManager.deactivate_response]
     | {:error, :unknown_action, bad_syndicate :: String.t}
-  defp process_action("activate", syndicates), do:
-    Enum.map(syndicates, &MarketManager.activate/1)
+  defp process_action("activate", syndicates, strategy), do:
+    Enum.map(syndicates, &MarketManager.activate(&1, strategy))
 
-  defp process_action("deactivate", syndicates), do:
+  defp process_action("deactivate", syndicates, _strategy), do:
     Enum.map(syndicates, &MarketManager.deactivate/1)
 
-  defp process_action(action, _syndicates), do: {:error, :unknown_action, action}
+  defp process_action(action, _syndicates, _strategy), do: {:error, :unknown_action, action}
 
   @spec log_result(data_to_log :: any) :: (data_to_log :: any)
   defp log_result({:error, :unknown_action, action} = data) do
@@ -96,4 +105,10 @@ defmodule MarketManager.CLI do
     Logger.error("#{msg}#{inspect(data)}")
     data
   end
+
+  defp to_strategy("top_five_average"), do: :top_five_average
+  defp to_strategy("top_three_average"), do: :top_three_average
+  defp to_strategy("equal_to_lowest"), do: :equal_to_lowest
+  defp to_strategy("lowest_minus_one"), do: :lowest_minus_one
+  defp to_strategy(nil), do: nil
 end

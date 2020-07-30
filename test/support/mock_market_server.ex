@@ -26,6 +26,10 @@ defmodule MarketManager.MockMarketServer do
 
   delete("/v1/profile/orders/:id", do: success(conn, delete_order_ok_response()))
 
+  get "/items/:item_name" do
+    success(conn, get_orders_ok_response())
+  end
+
   defp success(conn, body), do: Conn.send_resp(conn, 200, Jason.encode!(body))
 
   defp place_order_ok_response,

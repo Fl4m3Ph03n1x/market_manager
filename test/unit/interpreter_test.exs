@@ -12,10 +12,10 @@ defmodule MarketManager.InterpreterTest do
   setup :verify_on_exit!
 
   describe "activate/1" do
-    @tag :wip
     test "Places orders in auction house and saves order ids" do
       # Arrange
       syndicate = "red_veil"
+      strategy = :top_five_average
       id1 = "54a74454e779892d5e5155d5"
       id2 = "54a74454e779892d5e5155a0"
       product1_name = "Gleaming Blight"
@@ -36,7 +36,7 @@ defmodule MarketManager.InterpreterTest do
       order1 = %{
         "order_type" => "sell",
         "item_id" => id1,
-        "platinum" => 15,
+        "platinum" => 52,
         "quantity" => 1,
         "mod_rank" => 0
       }
@@ -44,7 +44,7 @@ defmodule MarketManager.InterpreterTest do
       order2 = %{
         "order_type" => "sell",
         "item_id" => id2,
-        "platinum" => 15,
+        "platinum" => 50,
         "quantity" => 1
       }
 
@@ -144,8 +144,6 @@ defmodule MarketManager.InterpreterTest do
         }
       ]
 
-      strategy = :top_five_average
-
       deps = [store: StoreMock, auction_house: AuctionHouseMock]
 
       StoreMock
@@ -171,17 +169,20 @@ defmodule MarketManager.InterpreterTest do
     test "Returns partial success if some orders failed to be placed" do
       # Arrange
       syndicate = "red_veil"
+      strategy = :top_five_average
       id1 = "54a74454e779892d5e5155d5"
       id2 = "some_invalid_id"
+      product1_name = "Gleaming Blight"
+      product2_name = "Eroding Blight"
 
       products = [
         %{
-          "name" => "Gleaming Blight",
+          "name" => product1_name,
           "id" => id1,
           "price" => 15
         },
         %{
-          "name" => "Eroding Blight",
+          "name" => product2_name,
           "id" => id2,
           "price" => 15
         }
@@ -203,6 +204,30 @@ defmodule MarketManager.InterpreterTest do
         "mod_rank" => 0
       }
 
+      product1_market_orders = [
+        %{
+          "order_type" => "sell",
+          "platinum" => 15,
+          "platform" => "pc",
+          "user" => %{
+            "status" => "online"
+          },
+          "visible" => true
+        }
+      ]
+
+      product2_market_orders = [
+        %{
+          "order_type" => "sell",
+          "platinum" => 15,
+          "platform" => "pc",
+          "user" => %{
+            "status" => "online"
+          },
+          "visible" => true
+        }
+      ]
+
       deps = [store: StoreMock, auction_house: AuctionHouseMock]
 
       StoreMock
@@ -210,12 +235,14 @@ defmodule MarketManager.InterpreterTest do
       |> expect(:save_order, fn ^id1, ^syndicate -> {:ok, id1} end)
 
       AuctionHouseMock
+      |> expect(:get_all_orders, fn ^product1_name -> {:ok, product1_market_orders} end)
       |> expect(:place_order, fn ^order1 -> {:ok, id1} end)
+      |> expect(:get_all_orders, fn ^product2_name -> {:ok, product2_market_orders} end)
       |> expect(:place_order, fn ^order2 -> {:error, :invalid_item_id, order2} end)
 
       # Act
 
-      actual = Interpreter.activate(syndicate, deps)
+      actual = Interpreter.activate(syndicate, strategy, deps)
       expected = {:partial_success, failed_orders: [{:error, :invalid_item_id, order2}]}
 
       # Assert
@@ -225,8 +252,11 @@ defmodule MarketManager.InterpreterTest do
     test "Returns error if it is unable to place any orders" do
       # Arrange
       syndicate = "red_veil"
+      strategy = :top_five_average
       id1 = "54a74454e779892d5e5155d5"
       id2 = "some_invalid_id"
+      product1_name = "Gleaming Blight"
+      product2_name = "Eroding Blight"
 
       products = [
         %{
@@ -257,18 +287,44 @@ defmodule MarketManager.InterpreterTest do
         "mod_rank" => 0
       }
 
+      product1_market_orders = [
+        %{
+          "order_type" => "sell",
+          "platinum" => 15,
+          "platform" => "pc",
+          "user" => %{
+            "status" => "online"
+          },
+          "visible" => true
+        }
+      ]
+
+      product2_market_orders = [
+        %{
+          "order_type" => "sell",
+          "platinum" => 15,
+          "platform" => "pc",
+          "user" => %{
+            "status" => "online"
+          },
+          "visible" => true
+        }
+      ]
+
       deps = [store: StoreMock, auction_house: AuctionHouseMock]
 
       StoreMock
       |> expect(:list_products, fn ^syndicate -> {:ok, products} end)
 
       AuctionHouseMock
+      |> expect(:get_all_orders, fn ^product1_name -> {:ok, product1_market_orders} end)
       |> expect(:place_order, fn ^order1 -> {:error, :order_already_placed, order1} end)
+      |> expect(:get_all_orders, fn ^product2_name -> {:ok, product2_market_orders} end)
       |> expect(:place_order, fn ^order2 -> {:error, :invalid_item_id, order2} end)
 
       # Act
 
-      actual = Interpreter.activate(syndicate, deps)
+      actual = Interpreter.activate(syndicate, strategy, deps)
 
       expected =
         {:error, :unable_to_place_requests,

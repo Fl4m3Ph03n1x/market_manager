@@ -28,7 +28,11 @@ defmodule MarketManagerTest do
 
     test "Places orders from a syndicate in the market" do
       # Arrange
-      params = ["--action=activate", "--syndicates=red_veil"]
+      params = [
+        "--action=activate",
+        "--syndicates=red_veil",
+        "--strategy=equal_to_lowest"
+      ]
 
       # Act
       actual_response = CLI.main(params)
@@ -50,7 +54,11 @@ defmodule MarketManagerTest do
 
     test "Places orders from multiple syndicates in the market" do
       # Arrange
-      params = ["--action=activate", "--syndicates=red_veil,new_loka"]
+      params = [
+        "--action=activate",
+        "--syndicates=red_veil,new_loka",
+        "--strategy=equal_to_lowest"
+      ]
 
       # Act
       actual_response = CLI.main(params)
@@ -142,7 +150,11 @@ defmodule MarketManagerTest do
 
     test "Prints instructions if invoked with unknown action" do
       # Arrange
-      params = ["--action==yummi", "--syndicates=new_loka"]
+      params = [
+        "--action==yummi",
+        "--syndicates=new_loka",
+        "--strategy=equal_to_lowest"
+      ]
 
       # Act & Assert
       {_, _, _, _, %{"en" => docs}, _, _} = Code.fetch_docs(CLI)
