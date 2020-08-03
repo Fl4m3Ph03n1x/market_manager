@@ -45,7 +45,7 @@ defmodule MarketManager.PriceAnalystTest do
         new_order_info(65),
         new_order_info(55),
         new_order_info(45),
-        new_order_info(50000)
+        new_order_info(50_000)
       ]
 
       # Act
@@ -84,7 +84,7 @@ defmodule MarketManager.PriceAnalystTest do
         new_order_info(65),
         new_order_info(55),
         new_order_info(45),
-        new_order_info(50000)
+        new_order_info(50_000)
       ]
 
       # Act
@@ -121,7 +121,7 @@ defmodule MarketManager.PriceAnalystTest do
         new_order_info(65),
         new_order_info(55),
         new_order_info(45),
-        new_order_info(50000)
+        new_order_info(50_000)
       ]
 
       # Act
@@ -143,7 +143,7 @@ defmodule MarketManager.PriceAnalystTest do
         new_order_info(65),
         new_order_info(55),
         new_order_info(45),
-        new_order_info(50000)
+        new_order_info(50_000)
       ]
 
       # Act
