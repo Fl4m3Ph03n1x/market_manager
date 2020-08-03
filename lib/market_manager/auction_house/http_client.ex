@@ -33,14 +33,14 @@ defmodule MarketManager.AuctionHouse.HTTPClient do
   def place_order(order, deps \\ @default_deps), do:
     Jason.encode(order)
     >>> http_post(deps[:post_fn])
-    |> to_auction_house_response(order)
+    |> to_auction_house_response(order, &get_id/1)
 
   @impl AuctionHouse
   def delete_order(order_id, deps \\ @default_deps), do:
     order_id
     |> build_delete_url()
     |> http_delete(deps[:delete_fn])
-    |> to_auction_house_response(order_id)
+    |> to_auction_house_response(order_id, &get_id/1)
 
   @impl AuctionHouse
   def get_all_orders(item_name, deps \\ @default_deps), do:
@@ -48,7 +48,7 @@ defmodule MarketManager.AuctionHouse.HTTPClient do
     |> Recase.to_snake()
     |> build_get_orders_url()
     |> http_get(deps[:get_fn])
-    |> to_auction_house_response_orders(item_name)
+    |> to_auction_house_response(item_name, &get_orders/1)
 
   ###########
   # Private #
@@ -68,23 +68,33 @@ defmodule MarketManager.AuctionHouse.HTTPClient do
 
   @spec to_auction_house_response(
         {:ok, HTTPoison.Response.t} | {:error, HTTPoison.Error.t},
-        AuctionHouse.order | AuctionHouse.item_id) ::
+        AuctionHouse.order | AuctionHouse.item_id,
+        success_handler_fn :: function) ::
         {:ok, AuctionHouse.order_id}
         | {:error, reason :: atom, AuctionHouse.order_id | AuctionHouse.item_id}
-  defp to_auction_house_response({:ok, %HTTPoison.Response{status_code: 400, body: error_body}}, order), do:
+  defp to_auction_house_response({:ok, %HTTPoison.Response{status_code: 400, body: error_body}}, data, _handler), do:
     error_body
     |> Jason.decode()
     >>> map_error()
-    |> build_error_response(order)
+    |> build_error_response(data)
 
-  defp to_auction_house_response({:ok, %HTTPoison.Response{status_code: 200, body: body}}, _order), do:
+  defp to_auction_house_response({:ok, %HTTPoison.Response{status_code: 503, body: error_body}}, data, _handler), do:
+    error_body
+    |> Jason.decode()
+    >>> map_error()
+    |> build_error_response(data)
+
+  defp to_auction_house_response({:ok, %HTTPoison.Response{status_code: 200, body: body}}, _data, handler), do:
     body
     |> Jason.decode()
-    >>> get_id()
+    >>> handler.()
     |> build_success_response()
 
-  defp to_auction_house_response({:error, %HTTPoison.Error{id: _id, reason: reason}}, order),
-    do: build_error_response({:error, reason}, order)
+  defp to_auction_house_response({:error, %HTTPoison.Error{id: _id, reason: reason}}, data, _handler),
+    do: build_error_response({:error, reason}, data)
+
+  @spec get_orders(map) :: [AuctionHouse.order_info]
+  defp get_orders(body), do: get_in(body, ["payload", "orders"])
 
   @spec map_error(error_response :: map) :: {:error,
           :invalid_item_id
@@ -125,15 +135,5 @@ defmodule MarketManager.AuctionHouse.HTTPClient do
   @spec build_get_orders_url(item_name :: String.t) :: (uri :: String.t)
   defp build_get_orders_url(item_search_name), do:
     URI.encode(@search_url <> "/" <> item_search_name <> "/orders")
-
-  defp to_auction_house_response_orders({:ok, %HTTPoison.Response{status_code: 200, body: body}}, _item_name) do
-    body
-    |> Jason.decode()
-    >>> get_orders()
-    |> build_success_response()
-  end
-
-  @spec get_orders(map) :: [AuctionHouse.order_info]
-  defp get_orders(body), do: get_in(body, ["payload", "orders"])
 
 end

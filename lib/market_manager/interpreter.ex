@@ -60,19 +60,24 @@ defmodule MarketManager.Interpreter do
     :: Store.list_products_response
   defp list_products(syndicate, store), do: store.list_products(syndicate)
 
-  defp calculate_prices(products, strategy, auction_house_api) do
-    Enum.map(products, fn product ->
-      all_orders = auction_house_api.get_all_orders(Map.get(product, "name"))
-      new_product_price = calculate_price(all_orders, strategy)
-
-      Map.put(product, "price", new_product_price)
-    end)
-  end
+  @spec calculate_prices([Store.product], MarketManager.strategy, deps :: module) :: [Store.product]
+  defp calculate_prices(products, strategy, auction_house_api), do:
+    Enum.map(products, &update_product_price(&1, strategy, auction_house_api))
 
   defp calculate_price({:ok, all_orders}, strategy), do:
     PriceAnalyst.calculate_price(all_orders, strategy)
 
   defp calculate_price(_error, _strategy), do: 0
+
+  defp update_product_price(product, strategy, auction_house_api) do
+    new_product_price =
+      product
+      |> Map.get("name")
+      |> auction_house_api.get_all_orders()
+      |> calculate_price(strategy)
+
+    Map.put(product, "price", new_product_price)
+  end
 
   @spec make_place_requests([Store.product], deps :: module)
     :: {[{:ok, MarketManager.order_id}], [{:error, atom, MarketManager.order_id}]}
