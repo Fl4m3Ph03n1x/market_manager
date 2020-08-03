@@ -80,8 +80,7 @@ defmodule MarketManager.AuctionHouse.HTTPClient do
 
   defp to_auction_house_response({:ok, %HTTPoison.Response{status_code: 503, body: error_body}}, data, _handler), do:
     error_body
-    |> Jason.decode()
-    >>> map_error()
+    |> map_error()
     |> build_error_response(data)
 
   defp to_auction_house_response({:ok, %HTTPoison.Response{status_code: 200, body: body}}, _data, handler), do:
@@ -96,11 +95,12 @@ defmodule MarketManager.AuctionHouse.HTTPClient do
   @spec get_orders(map) :: [AuctionHouse.order_info]
   defp get_orders(body), do: get_in(body, ["payload", "orders"])
 
-  @spec map_error(error_response :: map) :: {:error,
+  @spec map_error(error_response :: map | String.t) :: {:error,
           :invalid_item_id
           | :order_already_placed
           | :order_non_existent
-          | :rank_level_non_applicable}
+          | :rank_level_non_applicable
+          | :server_unavailable}
   defp map_error(%{"error" => %{"item_id" => _error}}), do: {:error, :invalid_item_id}
 
   defp map_error(%{"error" => %{"_form" => _error}}), do: {:error, :order_already_placed}
@@ -108,6 +108,8 @@ defmodule MarketManager.AuctionHouse.HTTPClient do
   defp map_error(%{"error" => %{"order_id" => _error}}), do: {:error, :order_non_existent}
 
   defp map_error(%{"error" => %{"mod_rank" => _error}}), do: {:error, :rank_level_non_applicable}
+
+  defp map_error(html) when is_binary(html), do: {:error, :server_unavailable}
 
   @spec get_id(response :: map) :: AuctionHouse.order_id | AuctionHouse.item_id
   defp get_id(%{"payload" => %{"order" => %{"id" => id}}}), do: id

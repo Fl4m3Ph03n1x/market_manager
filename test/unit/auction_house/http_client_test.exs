@@ -116,6 +116,34 @@ defmodule MarketManager.AuctionHouse.HTTPClientTest do
       assert actual == expected
     end
 
+    test "returns error if server is unavailable" do
+      # Arrange
+      order = %{
+        "order_type" => "sell",
+        "item_id" => "54a74454e779892d5e5155d5",
+        "platinum" => 15,
+        "quantity" => 1,
+        "mod_rank" => 0
+      }
+
+      deps = [
+        post_fn: fn _url, _body, _headers ->
+          {:ok,
+           %HTTPoison.Response{
+             status_code: 503,
+             body: "<html><head><title>503 Service Temporarily Unavailable</title></head></html>"
+           }}
+        end
+      ]
+
+      # Act
+      actual = HTTPClient.place_order(order, deps)
+      expected = {:error, :server_unavailable, "54a74454e779892d5e5155d5"}
+
+      # Assert
+      assert actual == expected
+    end
+
     test "returns error if a generic network error occurred while placing a request" do
       # Arrange
       order = %{
