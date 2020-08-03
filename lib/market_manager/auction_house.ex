@@ -7,6 +7,7 @@ defmodule MarketManager.AuctionHouse do
   # Types  #
   ##########
 
+  @type item_id :: String.t
   @type item_name :: String.t
   @type order_id :: String.t
   @type deps :: keyword

@@ -92,8 +92,8 @@ defmodule MarketManager.AuctionHouse.HTTPClient do
   defp to_auction_house_response({:error, %HTTPoison.Error{id: _id, reason: reason}}, data, _handler),
     do: build_error_response({:error, reason}, data)
 
-  @spec get_orders(map) :: [AuctionHouse.order_info]
-  defp get_orders(body), do: get_in(body, ["payload", "orders"])
+  @spec get_orders(response :: map) :: [AuctionHouse.order_info]
+  defp get_orders(%{"payload" => %{"orders" => orders}}), do: orders
 
   @spec map_error(error_response :: map | String.t) :: {:error,
           :invalid_item_id
