@@ -56,7 +56,6 @@ defmodule MarketManager.PriceAnalyst do
 
   defp apply_strategy(orders, :equal_to_lowest), do:
     orders
-    |> IO.inspect()
     |> Enum.take(1)
     |> Enum.map(&platinum/1)
     |> List.first()

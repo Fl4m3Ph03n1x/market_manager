@@ -54,7 +54,7 @@ defmodule MarketManager.InterpreterTest do
           "platinum" => 45,
           "platform" => "pc",
           "user" => %{
-            "status" => "online"
+            "status" => "ingame"
           },
           "visible" => true
         },
@@ -63,7 +63,7 @@ defmodule MarketManager.InterpreterTest do
           "platinum" => 55,
           "platform" => "pc",
           "user" => %{
-            "status" => "online"
+            "status" => "ingame"
           },
           "visible" => true
         },
@@ -72,7 +72,7 @@ defmodule MarketManager.InterpreterTest do
           "platinum" => 50,
           "platform" => "pc",
           "user" => %{
-            "status" => "online"
+            "status" => "ingame"
           },
           "visible" => true
         },
@@ -81,7 +81,7 @@ defmodule MarketManager.InterpreterTest do
           "platinum" => 60,
           "platform" => "pc",
           "user" => %{
-            "status" => "online"
+            "status" => "ingame"
           },
           "visible" => true
         },
@@ -90,7 +90,7 @@ defmodule MarketManager.InterpreterTest do
           "platinum" => 50,
           "platform" => "pc",
           "user" => %{
-            "status" => "online"
+            "status" => "ingame"
           },
           "visible" => true
         }
@@ -102,7 +102,7 @@ defmodule MarketManager.InterpreterTest do
           "platinum" => 40,
           "platform" => "pc",
           "user" => %{
-            "status" => "online"
+            "status" => "ingame"
           },
           "visible" => true
         },
@@ -111,7 +111,7 @@ defmodule MarketManager.InterpreterTest do
           "platinum" => 50,
           "platform" => "pc",
           "user" => %{
-            "status" => "online"
+            "status" => "ingame"
           },
           "visible" => true
         },
@@ -120,7 +120,7 @@ defmodule MarketManager.InterpreterTest do
           "platinum" => 50,
           "platform" => "pc",
           "user" => %{
-            "status" => "online"
+            "status" => "ingame"
           },
           "visible" => true
         },
@@ -129,7 +129,7 @@ defmodule MarketManager.InterpreterTest do
           "platinum" => 60,
           "platform" => "pc",
           "user" => %{
-            "status" => "online"
+            "status" => "ingame"
           },
           "visible" => true
         },
@@ -138,7 +138,7 @@ defmodule MarketManager.InterpreterTest do
           "platinum" => 50,
           "platform" => "pc",
           "user" => %{
-            "status" => "online"
+            "status" => "ingame"
           },
           "visible" => true
         }
@@ -210,7 +210,7 @@ defmodule MarketManager.InterpreterTest do
           "platinum" => 15,
           "platform" => "pc",
           "user" => %{
-            "status" => "online"
+            "status" => "ingame"
           },
           "visible" => true
         }
@@ -222,7 +222,7 @@ defmodule MarketManager.InterpreterTest do
           "platinum" => 15,
           "platform" => "pc",
           "user" => %{
-            "status" => "online"
+            "status" => "ingame"
           },
           "visible" => true
         }
@@ -293,7 +293,7 @@ defmodule MarketManager.InterpreterTest do
           "platinum" => 15,
           "platform" => "pc",
           "user" => %{
-            "status" => "online"
+            "status" => "ingame"
           },
           "visible" => true
         }
@@ -305,7 +305,7 @@ defmodule MarketManager.InterpreterTest do
           "platinum" => 15,
           "platform" => "pc",
           "user" => %{
-            "status" => "online"
+            "status" => "ingame"
           },
           "visible" => true
         }

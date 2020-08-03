@@ -162,7 +162,7 @@ defmodule MarketManager.PriceAnalystTest do
   defp new_order_info(price), do:
     %{
       "visible" => true,
-      "user" => %{"status" => "online"},
+      "user" => %{"status" => "ingame"},
       "platform" => "pc",
       "order_type"=> "sell",
       "platinum" => price

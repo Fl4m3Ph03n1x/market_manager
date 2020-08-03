@@ -121,6 +121,7 @@ defmodule MarketManager.AuctionHouse.HTTPClient do
   @spec headers :: [{String.t, String.t}]
   defp headers, do: [{"x-csrftoken", @token}, {"Cookie", @cookie}] ++ @static_headers
 
+  @spec build_get_orders_url(item_name :: String.t) :: (uri :: String.t)
   defp build_get_orders_url(item_search_name), do:
     @search_url <> "/" <> item_search_name <> "/orders"
 
@@ -131,7 +132,7 @@ defmodule MarketManager.AuctionHouse.HTTPClient do
     |> build_success_response()
   end
 
-  @spec get_orders(map) :: [AuctionHou.order_info]
+  @spec get_orders(map) :: [AuctionHouse.order_info]
   defp get_orders(body), do: get_in(body, ["payload", "orders"])
 
 end

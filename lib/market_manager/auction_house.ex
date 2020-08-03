@@ -10,14 +10,15 @@ defmodule MarketManager.AuctionHouse do
   @type item_name :: String.t
   @type order_id :: String.t
   @type deps :: keyword
+
   @type order :: %{
-          (order_type :: String.t) => String.t,
-          (item_id :: String.t) => String.t,
-          (name :: String.t) => String.t,
-          (price :: String.t) => non_neg_integer,
-          (quantity :: String.t) => non_neg_integer,
-          (rank :: String.t) => non_neg_integer | String.t
-        }
+    (item_id :: String.t) => String.t,
+    (mod_rank :: String.t) => non_neg_integer | String.t,
+    (order_type :: String.t) => String.t,
+    (platinum :: String.t) => non_neg_integer,
+    (quantity :: String.t) => non_neg_integer
+  }
+
   @type order_info :: %{
     (visible :: String.t) => boolean,
     (order_type :: String.t) => String.t,
