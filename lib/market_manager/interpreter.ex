@@ -64,11 +64,6 @@ defmodule MarketManager.Interpreter do
   defp calculate_prices(products, strategy, auction_house_api), do:
     Enum.map(products, &update_product_price(&1, strategy, auction_house_api))
 
-  defp calculate_price({:ok, all_orders}, strategy), do:
-    PriceAnalyst.calculate_price(all_orders, strategy)
-
-  defp calculate_price(_error, _strategy), do: 0
-
   defp update_product_price(product, strategy, auction_house_api) do
     new_product_price =
       product
@@ -76,8 +71,18 @@ defmodule MarketManager.Interpreter do
       |> auction_house_api.get_all_orders()
       |> calculate_price(strategy)
 
-    Map.put(product, "price", new_product_price)
+    min_price = Map.get(product, "price")
+    if new_product_price > min_price do
+      Map.put(product, "price", new_product_price)
+    else
+      product
+    end
   end
+
+  defp calculate_price({:ok, all_orders}, strategy), do:
+    PriceAnalyst.calculate_price(all_orders, strategy)
+
+  defp calculate_price(_error, _strategy), do: 0
 
   @spec make_place_requests([Store.product], deps :: module)
     :: {[{:ok, MarketManager.order_id}], [{:error, atom, MarketManager.order_id}]}
