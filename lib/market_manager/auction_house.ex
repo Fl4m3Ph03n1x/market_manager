@@ -36,9 +36,7 @@ defmodule MarketManager.AuctionHouse do
 
   @type place_order_response :: {:ok, order_id} | {:error, atom, order}
   @type delete_order_response :: {:ok, order_id} | {:error, atom, order_id}
-
-  #TODO: put real results here
-  @type get_all_orders_response :: any
+  @type get_all_orders_response :: {:ok, [order_info]} | {:error, atom, item_name}
 
   #############
   # Callbacks #
