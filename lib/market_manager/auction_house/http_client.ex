@@ -116,14 +116,15 @@ defmodule MarketManager.AuctionHouse.HTTPClient do
     do: {:error, reason, order_id}
 
   @spec build_delete_url(AuctionHouse.order_id) :: (url :: String.t)
-  defp build_delete_url(id), do: @url <> "/" <> id
+  defp build_delete_url(id), do:
+    URI.encode(@url <> "/" <> id)
 
   @spec headers :: [{String.t, String.t}]
   defp headers, do: [{"x-csrftoken", @token}, {"Cookie", @cookie}] ++ @static_headers
 
   @spec build_get_orders_url(item_name :: String.t) :: (uri :: String.t)
   defp build_get_orders_url(item_search_name), do:
-    @search_url <> "/" <> item_search_name <> "/orders"
+    URI.encode(@search_url <> "/" <> item_search_name <> "/orders")
 
   defp to_auction_house_response_orders({:ok, %HTTPoison.Response{status_code: 200, body: body}}, _item_name) do
     body
