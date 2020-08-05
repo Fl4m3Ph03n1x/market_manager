@@ -222,7 +222,7 @@ defmodule AuctionHouse.HTTPClientTest do
       assert actual == expected
     end
 
-    test "returns error if a generic network error occurred while placing a request" do
+    test "returns error if a generic network error occurred while deleting a request" do
       # Arrange
       order_id = "5ee71a2604d55c0a5cbdc3c2"
 

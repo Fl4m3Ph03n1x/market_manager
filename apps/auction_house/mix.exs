@@ -10,6 +10,7 @@ defmodule AuctionHouse.MixProject do
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
       elixir: "~> 1.10",
+      elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       test_coverage: [tool: ExCoveralls],
@@ -19,7 +20,7 @@ defmodule AuctionHouse.MixProject do
   def application, do:
     [
       extra_applications: [:logger],
-      mod: {AuctionHouse.Application, []}
+      mod: {AuctionHouse.Application, [env: Mix.env()]}
     ]
 
   defp deps, do:
@@ -30,7 +31,11 @@ defmodule AuctionHouse.MixProject do
       {:recase, "~> 0.5"},
       {:jobs, git: "https://github.com/uwiger/jobs.git", tag: "0.9.0"},
 
-      {:excoveralls, "~> 0.10", only: :test}
+      {:excoveralls, "~> 0.10", only: :test},
+      {:plug_cowboy, "~> 2.0", only: :test}
     ]
+
+    defp elixirc_paths(:test), do: ["test/support", "lib"]
+    defp elixirc_paths(_), do: ["lib"]
 
 end
