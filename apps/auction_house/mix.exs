@@ -13,8 +13,7 @@ defmodule AuctionHouse.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      test_coverage: [tool: ExCoveralls],
-      preferred_cli_env: [coveralls: :test, "coveralls.detail": :test, "coveralls.post": :test, "coveralls.html": :test]
+      test_coverage: [tool: ExCoveralls]
     ]
 
   def application, do:
@@ -31,9 +30,7 @@ defmodule AuctionHouse.MixProject do
       {:recase, "~> 0.5"},
       {:jobs, git: "https://github.com/uwiger/jobs.git", tag: "0.9.0"},
 
-      {:excoveralls, "~> 0.10", only: :test},
-      {:plug_cowboy, "~> 2.0", only: :test},
-      {:mix_test_watch, "~> 1.0", only: :dev, runtime: false}
+      {:plug_cowboy, "~> 2.0", only: :test}
     ]
 
     defp elixirc_paths(:test), do: ["test/support", "lib"]

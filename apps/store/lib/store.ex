@@ -1,7 +1,9 @@
-defmodule MarketManager.Store do
+defmodule Store do
   @moduledoc """
   Port for the persistency layer.
   """
+
+  alias Store.FileSystem
 
   ##########
   # Types  #
@@ -39,13 +41,17 @@ defmodule MarketManager.Store do
 
   @callback list_products(syndicate) :: list_products_response
   @callback list_products(syndicate, deps) :: list_products_response
+  defdelegate list_products(syndicate), to: FileSystem
 
   @callback list_orders(syndicate) :: list_orders_response
   @callback list_orders(syndicate, deps) :: list_orders_response
+  defdelegate list_orders(syndicate), to: FileSystem
 
   @callback save_order(order_id, syndicate) :: save_order_response
   @callback save_order(order_id, syndicate, deps) :: save_order_response
+  defdelegate save_order(order_id, syndicate), to: FileSystem
 
   @callback delete_order(order_id, syndicate) :: delete_order_response
   @callback delete_order(order_id, syndicate, deps) :: delete_order_response
+  defdelegate delete_order(order_id, syndicate), to: FileSystem
 end

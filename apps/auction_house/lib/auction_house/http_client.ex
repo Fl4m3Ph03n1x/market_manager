@@ -9,10 +9,10 @@ defmodule AuctionHouse.HTTPClient do
 
   @behaviour AuctionHouse
 
-  @url Application.compile_env!(:market_manager, :api_base_url)
-  @search_url Application.compile_env!(:market_manager, :api_search_url)
-  @cookie Application.compile_env!(:market_manager, :auction_house_cookie)
-  @token Application.compile_env!(:market_manager, :auction_house_token)
+  @url Application.compile_env!(:auction_house, :api_base_url)
+  @search_url Application.compile_env!(:auction_house, :api_search_url)
+  @cookie Application.compile_env!(:auction_house, :auction_house_cookie)
+  @token Application.compile_env!(:auction_house, :auction_house_token)
 
   @static_headers [
     {"Accept", "application/json"},

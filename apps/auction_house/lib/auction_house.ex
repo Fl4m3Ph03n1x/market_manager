@@ -12,7 +12,7 @@ defmodule AuctionHouse do
   @type item_id :: String.t
   @type item_name :: String.t
   @type order_id :: String.t
-  @type deps :: keyword
+  @type deps :: map
 
   @type order :: %{
     (item_id :: String.t) => String.t,
@@ -47,8 +47,6 @@ defmodule AuctionHouse do
 
   @callback place_order(order) :: place_order_response
   @callback place_order(order, deps) :: place_order_response
-  @spec place_order(binary | %{optional(binary) => binary}) ::
-          {:ok, binary} | {:error, atom, binary}
   defdelegate place_order(order), to: HTTPClient
 
   @callback delete_order(order_id) :: delete_order_response

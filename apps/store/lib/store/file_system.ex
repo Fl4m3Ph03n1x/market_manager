@@ -1,16 +1,14 @@
-defmodule MarketManager.Store.FileSystem do
+defmodule Store.FileSystem do
   @moduledoc """
   Adapter for the Store port, implements it using the file system.
   """
 
   use Rop
 
-  alias MarketManager.Store
-
   @behaviour Store
 
-  @orders_filename Application.compile_env!(:market_manager, :current_orders)
-  @products_filename Application.compile_env!(:market_manager, :products)
+  @orders_filename Application.compile_env!(:store, :current_orders)
+  @products_filename Application.compile_env!(:store, :products)
 
   @default_deps [
     read_fn: &File.read/1,

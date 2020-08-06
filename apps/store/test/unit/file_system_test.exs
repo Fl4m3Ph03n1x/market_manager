@@ -1,7 +1,7 @@
 defmodule MarketManager.Store.FileSystemTest do
   use ExUnit.Case
 
-  alias MarketManager.Store.FileSystem
+  alias Store.FileSystem
 
   describe "list_products/2" do
     test "returns list of available products from given syndicate" do
