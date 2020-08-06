@@ -20,5 +20,7 @@ erl_crash.dump
 *.ez
 
 # Ignore package tarball (built via "mix hex.build").
-manager-*.tar
+auction_house-*.tar
 
+# Elixir_LS
+.elixir_ls/
