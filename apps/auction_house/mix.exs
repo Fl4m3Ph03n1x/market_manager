@@ -32,10 +32,10 @@ defmodule AuctionHouse.MixProject do
       {:jobs, git: "https://github.com/uwiger/jobs.git", tag: "0.9.0"},
 
       {:excoveralls, "~> 0.10", only: :test},
-      {:plug_cowboy, "~> 2.0", only: :test}
+      {:plug_cowboy, "~> 2.0", only: :test},
+      {:mix_test_watch, "~> 1.0", only: :dev, runtime: false}
     ]
 
     defp elixirc_paths(:test), do: ["test/support", "lib"]
     defp elixirc_paths(_), do: ["lib"]
-
 end
