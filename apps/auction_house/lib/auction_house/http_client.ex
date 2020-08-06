@@ -19,13 +19,14 @@ defmodule AuctionHouse.HTTPClient do
     {"Content-Type", "application/json"}
   ]
 
-  @default_deps [
+  @default_deps %{
     get_fn: &HTTPoison.get/2,
     post_fn: &HTTPoison.post/3,
     delete_fn: &HTTPoison.delete/2,
     run_fn: &:jobs.run/2
-  ]
+  }
 
+  #TODO: put this in config
   @outgoing_requests_queue :outgoing_requests_queue
 
   ##########
@@ -57,19 +58,19 @@ defmodule AuctionHouse.HTTPClient do
   # Private #
   ###########
 
-  @spec http_post(order_json :: String.t, deps :: keyword(function)) ::
+  @spec http_post(order_json :: String.t, deps :: map) ::
     {:ok, HTTPoison.Response.t} | {:error, HTTPoison.Error.t}
-  defp http_post(order, [post_fn: post, run_fn: run]), do:
+  defp http_post(order, %{post_fn: post, run_fn: run}), do:
     run.(@outgoing_requests_queue, fn -> post.(@url, order, headers()) end)
 
-  @spec http_delete(url :: String.t, deps :: keyword(function)) ::
+  @spec http_delete(url :: String.t, deps :: map) ::
     {:ok, HTTPoison.Response.t} | {:error, HTTPoison.Error.t}
-  defp http_delete(url, [delete_fn: delete, run_fn: run]), do:
+  defp http_delete(url, %{delete_fn: delete, run_fn: run}), do:
     run.(@outgoing_requests_queue, fn -> delete.(url, headers()) end)
 
-  @spec http_get(url :: String.t, deps :: keyword(function)) ::
+  @spec http_get(url :: String.t, deps :: map) ::
     {:ok, HTTPoison.Response.t} | {:error, HTTPoison.Error.t}
-  defp http_get(url, [get_fn: get, run_fn: run]), do:
+  defp http_get(url, %{get_fn: get, run_fn: run}), do:
     run.(@outgoing_requests_queue, fn -> get.(url, headers()) end)
 
   @spec to_auction_house_response(

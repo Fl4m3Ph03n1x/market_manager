@@ -14,7 +14,7 @@ defmodule AuctionHouse.HTTPClientTest do
         "mod_rank" => 0
       }
 
-      deps = [
+      deps = %{
         post_fn: fn _url, _body, _headers ->
           {:ok,
            %HTTPoison.Response{
@@ -23,7 +23,7 @@ defmodule AuctionHouse.HTTPClientTest do
            }}
         end,
         run_fn: fn _queue_name, func -> func.() end
-      ]
+      }
 
       # Act
       actual = HTTPClient.place_order(order, deps)
@@ -43,7 +43,7 @@ defmodule AuctionHouse.HTTPClientTest do
         "mod_rank" => 0
       }
 
-      deps = [
+      deps = %{
         post_fn: fn _url, _body, _headers ->
           {:ok,
            %HTTPoison.Response{
@@ -52,7 +52,7 @@ defmodule AuctionHouse.HTTPClientTest do
            }}
         end,
         run_fn: fn _queue_name, func -> func.() end
-      ]
+      }
 
       # Act
       actual = HTTPClient.place_order(order, deps)
@@ -72,7 +72,7 @@ defmodule AuctionHouse.HTTPClientTest do
         "mod_rank" => 0
       }
 
-      deps = [
+      deps = %{
         post_fn: fn _url, _body, _headers ->
           {:ok,
            %HTTPoison.Response{
@@ -81,7 +81,7 @@ defmodule AuctionHouse.HTTPClientTest do
            }}
         end,
         run_fn: fn _queue_name, func -> func.() end
-      ]
+      }
 
       # Act
       actual = HTTPClient.place_order(order, deps)
@@ -101,7 +101,7 @@ defmodule AuctionHouse.HTTPClientTest do
         "mod_rank" => 0
       }
 
-      deps = [
+      deps = %{
         post_fn: fn _url, _body, _headers ->
           {:ok,
            %HTTPoison.Response{
@@ -110,7 +110,7 @@ defmodule AuctionHouse.HTTPClientTest do
            }}
         end,
         run_fn: fn _queue_name, func -> func.() end
-      ]
+      }
 
       # Act
       actual = HTTPClient.place_order(order, deps)
@@ -130,7 +130,7 @@ defmodule AuctionHouse.HTTPClientTest do
         "mod_rank" => 0
       }
 
-      deps = [
+      deps = %{
         post_fn: fn _url, _body, _headers ->
           {:ok,
            %HTTPoison.Response{
@@ -139,7 +139,7 @@ defmodule AuctionHouse.HTTPClientTest do
            }}
         end,
         run_fn: fn _queue_name, func -> func.() end
-      ]
+      }
 
       # Act
       actual = HTTPClient.place_order(order, deps)
@@ -159,12 +159,12 @@ defmodule AuctionHouse.HTTPClientTest do
         "mod_rank" => 0
       }
 
-      deps = [
+      deps = %{
         post_fn: fn _url, _body, _headers ->
           {:error, %HTTPoison.Error{id: nil, reason: :timeout}}
         end,
         run_fn: fn _queue_name, func -> func.() end
-      ]
+      }
 
       # Act
       actual = HTTPClient.place_order(order, deps)
@@ -180,7 +180,7 @@ defmodule AuctionHouse.HTTPClientTest do
       # Arrange
       order_id = "5ee71a2604d55c0a5cbdc3c2"
 
-      deps = [
+      deps = %{
         delete_fn: fn _url, _headers ->
           {:ok,
            %HTTPoison.Response{
@@ -189,7 +189,7 @@ defmodule AuctionHouse.HTTPClientTest do
            }}
         end,
         run_fn: fn _queue_name, func -> func.() end
-      ]
+      }
 
       # Act
       actual = HTTPClient.delete_order(order_id, deps)
@@ -203,7 +203,7 @@ defmodule AuctionHouse.HTTPClientTest do
       # Arrange
       order_id = "5ee71a2604d55c0a5cbdc3c2"
 
-      deps = [
+      deps = %{
         delete_fn: fn _url, _headers ->
           {:ok,
            %HTTPoison.Response{
@@ -212,7 +212,7 @@ defmodule AuctionHouse.HTTPClientTest do
            }}
         end,
         run_fn: fn _queue_name, func -> func.() end
-      ]
+      }
 
       # Act
       actual = HTTPClient.delete_order(order_id, deps)
@@ -226,12 +226,12 @@ defmodule AuctionHouse.HTTPClientTest do
       # Arrange
       order_id = "5ee71a2604d55c0a5cbdc3c2"
 
-      deps = [
+      deps = %{
         delete_fn: fn _url, _headers ->
           {:error, %HTTPoison.Error{id: nil, reason: :timeout}}
         end,
         run_fn: fn _queue_name, func -> func.() end
-      ]
+      }
 
       # Act
       actual = HTTPClient.delete_order(order_id, deps)
@@ -247,7 +247,7 @@ defmodule AuctionHouse.HTTPClientTest do
       # Arrange
       item_name = "Gleaming Blight"
 
-      deps = [
+      deps = %{
         get_fn: fn _url, _headers ->
           {:ok,
            %HTTPoison.Response{
@@ -256,7 +256,7 @@ defmodule AuctionHouse.HTTPClientTest do
            }}
         end,
         run_fn: fn _queue_name, func -> func.() end
-      ]
+      }
 
       # Act
       actual = HTTPClient.get_all_orders(item_name, deps)

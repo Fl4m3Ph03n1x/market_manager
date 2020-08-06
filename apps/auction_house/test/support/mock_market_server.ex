@@ -92,7 +92,7 @@ defmodule AuctionHouse.MockMarketServer do
               "region" => "en",
               "reputation" => 2,
               "reputation_bonus" => 0,
-              "status" => "offline"
+              "status" => "ingame"
             },
             "visible" => true
           },
@@ -113,7 +113,7 @@ defmodule AuctionHouse.MockMarketServer do
               "region" => "en",
               "reputation" => 28,
               "reputation_bonus" => 0,
-              "status" => "offline"
+              "status" => "ingame"
             },
             "visible" => true
           }
