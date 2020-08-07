@@ -5,7 +5,7 @@ defmodule Manager do
   and you need to talk to MarketManager, this is who you call, the public API.
   """
 
-  alias MarketManager.Interpreter
+  alias Manager.Interpreter
 
   ##########
   # Types  #

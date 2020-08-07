@@ -10,6 +10,7 @@ defmodule Manager.MixProject do
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
       elixir: "~> 1.10",
+      elixirc_paths: elixirc_paths(Mix.env),
       start_permanent: Mix.env() == :prod,
       deps: deps()
     ]
@@ -26,7 +27,14 @@ defmodule Manager.MixProject do
     [
       {:rop, "~> 0.5"},
       {:store, in_umbrella: true},
-      {:auction_house, in_umbrella: true}
+      {:auction_house, in_umbrella: true},
+
+      {:hammox, "~> 0.2"}
     ]
   end
+
+  defp elixirc_paths(:test), do: ["test/support", "lib"]
+  defp elixirc_paths(_),     do: ["lib"]
+
+
 end

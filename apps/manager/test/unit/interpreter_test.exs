@@ -3,7 +3,7 @@ defmodule Manager.InterpreterTest do
 
   import Hammox
 
-  alias Manager.Interpreter
+  alias Manager.{Interpreter, StoreMock, AuctionHouseMock}
 
   # Make sure mocks are verified when the test exits
   setup :verify_on_exit!
