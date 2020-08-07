@@ -18,8 +18,7 @@ defmodule Store.MixProject do
 
   def application do
     [
-      extra_applications: [:logger],
-      mod: {Store.Application, []}
+      extra_applications: [:logger]
     ]
   end
 
