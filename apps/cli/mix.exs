@@ -20,7 +20,9 @@ defmodule Cli.MixProject do
       extra_applications: [:logger]
     ]
 
-  defp deps, do: []
+  defp deps, do: [
+    {:manager, in_umbrella: true}
+  ]
 
   defp escript, do:
     [

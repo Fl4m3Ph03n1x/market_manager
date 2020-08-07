@@ -1,4 +1,4 @@
-defmodule MarketManager.CLI do
+defmodule Cli do
   @moduledoc """
   synopsis:
     Manages sell orders in warframe.market.
@@ -20,8 +20,6 @@ defmodule MarketManager.CLI do
       The strategy used by the price analysr to calculate the price at which
       your items should be sold.
   """
-
-  alias MarketManager
 
   require Logger
 
@@ -58,7 +56,7 @@ defmodule MarketManager.CLI do
     OptionParser.parse(args, strict: [syndicates: :string, action: :string, strategy: :string])
 
   @spec process_args(OptionParser.parsed) ::
-    [MarketManager.activate_response | MarketManager.deactivate_response]
+    [Manager.activate_response | Manager.deactivate_response]
     | {:error, :unknown_action, bad_syndicate :: String.t}
   defp process_args(opts) do
     syndicates =
@@ -77,13 +75,13 @@ defmodule MarketManager.CLI do
   end
 
   @spec process_action(String.t, [String.t], atom) ::
-    [MarketManager.activate_response | MarketManager.deactivate_response]
+    [Manager.activate_response | Manager.deactivate_response]
     | {:error, :unknown_action, bad_syndicate :: String.t}
   defp process_action("activate", syndicates, strategy), do:
-    Enum.map(syndicates, &MarketManager.activate(&1, strategy))
+    Enum.map(syndicates, &Manager.activate(&1, strategy))
 
   defp process_action("deactivate", syndicates, _strategy), do:
-    Enum.map(syndicates, &MarketManager.deactivate/1)
+    Enum.map(syndicates, &Manager.deactivate/1)
 
   defp process_action(action, _syndicates, _strategy), do: {:error, :unknown_action, action}
 
