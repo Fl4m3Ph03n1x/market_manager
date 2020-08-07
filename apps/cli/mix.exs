@@ -12,7 +12,8 @@ defmodule Cli.MixProject do
       elixir: "~> 1.10",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      escript: escript()
+      escript: escript(),
+      elixirc_paths: elixirc_paths(Mix.env)
     ]
 
   def application, do:
@@ -21,7 +22,8 @@ defmodule Cli.MixProject do
     ]
 
   defp deps, do: [
-    {:manager, in_umbrella: true}
+    {:manager, in_umbrella: true},
+    {:hammox, "~> 0.2"}
   ]
 
   defp escript, do:
@@ -29,5 +31,8 @@ defmodule Cli.MixProject do
       main_module: MarketManager.CLI,
       comment: "Makes requests to warframe market."
     ]
+
+  defp elixirc_paths(:test), do: ["test/support", "lib"]
+  defp elixirc_paths(_),     do: ["lib"]
 
 end

@@ -23,22 +23,28 @@ defmodule Cli do
 
   require Logger
 
+  @default_deps [
+    manager: Manager
+  ]
+
   ##########
   # Public #
   ##########
 
-  @spec main([String.t]) :: :ok
-  def main([]), do: Logger.info(@moduledoc)
+  # @spec main([String.t]) :: :ok
+  def main(args, deps \\ @default_deps)
 
-  def main([help_opt]) when help_opt == "-h", do: Logger.info(@moduledoc)
+  def main([], _deps), do: Logger.info(@moduledoc)
 
-  def main(args) do
+  def main([help_opt], _deps) when help_opt == "-h", do: Logger.info(@moduledoc)
+
+  def main(args, deps) do
     {opts, _positional_args, errors} = parse_args(args)
 
     case errors do
       [] ->
         opts
-        |> process_args()
+        |> process_args(deps[:manager])
         |> log_result()
 
       _ ->
@@ -55,10 +61,10 @@ defmodule Cli do
   defp parse_args(args), do:
     OptionParser.parse(args, strict: [syndicates: :string, action: :string, strategy: :string])
 
-  @spec process_args(OptionParser.parsed) ::
-    [Manager.activate_response | Manager.deactivate_response]
-    | {:error, :unknown_action, bad_syndicate :: String.t}
-  defp process_args(opts) do
+  # @spec process_args(OptionParser.parsed) ::
+  #   [Manager.activate_response | Manager.deactivate_response]
+  #   | {:error, :unknown_action, bad_syndicate :: String.t}
+  defp process_args(opts, manager) do
     syndicates =
       opts
       |> Keyword.get(:syndicates)
@@ -71,19 +77,19 @@ defmodule Cli do
       |> Keyword.get(:strategy)
       |> to_strategy()
 
-    process_action(action, syndicates, strategy)
+    process_action(action, syndicates, strategy, manager)
   end
 
-  @spec process_action(String.t, [String.t], atom) ::
-    [Manager.activate_response | Manager.deactivate_response]
-    | {:error, :unknown_action, bad_syndicate :: String.t}
-  defp process_action("activate", syndicates, strategy), do:
-    Enum.map(syndicates, &Manager.activate(&1, strategy))
+  # @spec process_action(String.t, [String.t], atom) ::
+  #   [Manager.activate_response | Manager.deactivate_response]
+  #   | {:error, :unknown_action, bad_syndicate :: String.t}
+  defp process_action("activate", syndicates, strategy, manager), do:
+    Enum.map(syndicates, &manager.activate(&1, strategy))
 
-  defp process_action("deactivate", syndicates, _strategy), do:
-    Enum.map(syndicates, &Manager.deactivate/1)
+  defp process_action("deactivate", syndicates, _strategy, manager), do:
+    Enum.map(syndicates, &manager.deactivate/1)
 
-  defp process_action(action, _syndicates, _strategy), do: {:error, :unknown_action, action}
+  defp process_action(action, _syndicates, _strategy, _manager), do: {:error, :unknown_action, action}
 
   @spec log_result(data_to_log :: any) :: (data_to_log :: any)
   defp log_result({:error, :unknown_action, action} = data) do
