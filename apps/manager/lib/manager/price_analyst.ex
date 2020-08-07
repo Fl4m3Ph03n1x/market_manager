@@ -1,4 +1,4 @@
-defmodule MarketManager.PriceAnalyst do
+defmodule Manager.PriceAnalyst do
   @moduledoc """
   Contains the formulas and calculations for all the strategies.
   Strategies calculate the optimum price for you to sell an item.

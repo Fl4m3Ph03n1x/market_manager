@@ -1,12 +1,9 @@
-defmodule MarketManager.InterpreterTest do
+defmodule Manager.InterpreterTest do
   use ExUnit.Case
 
   import Hammox
 
-  alias MarketManager.{AuctionHouse, AuctionHouseMock, Interpreter, Store, StoreMock}
-
-  Hammox.defmock(AuctionHouseMock, for: AuctionHouse)
-  Hammox.defmock(StoreMock, for: Store)
+  alias Manager.Interpreter
 
   # Make sure mocks are verified when the test exits
   setup :verify_on_exit!

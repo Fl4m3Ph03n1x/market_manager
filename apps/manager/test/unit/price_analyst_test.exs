@@ -1,7 +1,7 @@
-defmodule MarketManager.PriceAnalystTest do
+defmodule Manager.PriceAnalystTest do
   use ExUnit.Case
 
-  alias MarketManager.PriceAnalyst
+  alias Manager.PriceAnalyst
 
   #########
   # Tests #

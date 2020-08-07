@@ -1,13 +1,13 @@
-defmodule MarketManager.Interpreter do
+defmodule Manager.Interpreter do
   @moduledoc """
-  Core of the market manager, where all the logic and communication with outer
+  Core of the manager, where all the logic and communication with outer
   layers is. Currently, it works more like a bridge between the different ports
   of the application and manages data between them.
   """
   use Rop
 
-  alias MarketManager
-  alias MarketManager.{PriceAnalyst, Store}
+  alias Manager
+  alias Manager.PriceAnalyst
 
   @type order_request :: %{
     (order_type :: String.t) => String.t,
@@ -24,16 +24,16 @@ defmodule MarketManager.Interpreter do
   }
 
   @default_deps [
-    store: MarketManager.Store.FileSystem,
-    auction_house: MarketManager.AuctionHouse.HTTPClient
+    store: Store,
+    auction_house: AuctionHouse
   ]
 
   ##########
   # Public #
   ##########
 
-  @spec activate(MarketManager.syndicate, MarketManager.strategy, keyword) ::
-    MarketManager.activate_response
+  @spec activate(Manager.syndicate, Manager.strategy, keyword) ::
+    Manager.activate_response
   def activate(syndicate, strategy, deps \\ @default_deps), do:
     syndicate
     |> list_products(deps[:store])
@@ -42,8 +42,8 @@ defmodule MarketManager.Interpreter do
     |> save_orders(syndicate, deps[:store])
     |> to_human_response(:place)
 
-  @spec deactivate(MarketManager.syndicate, keyword) ::
-    MarketManager.deactivate_response
+  @spec deactivate(Manager.syndicate, keyword) ::
+    Manager.deactivate_response
   def deactivate(syndicate, deps \\ @default_deps), do:
     syndicate
     |> list_orders(deps[:store])
@@ -56,11 +56,11 @@ defmodule MarketManager.Interpreter do
   # Private #
   ###########
 
-  @spec list_products(MarketManager.syndicate, deps :: module)
+  @spec list_products(Manager.syndicate, deps :: module)
     :: Store.list_products_response
   defp list_products(syndicate, store), do: store.list_products(syndicate)
 
-  @spec calculate_prices([Store.product], MarketManager.strategy, deps :: module) :: [Store.product]
+  @spec calculate_prices([Store.product], Manager.strategy, deps :: module) :: [Store.product]
   defp calculate_prices(products, strategy, auction_house_api), do:
     Enum.map(products, &update_product_price(&1, strategy, auction_house_api))
 
@@ -85,7 +85,7 @@ defmodule MarketManager.Interpreter do
   defp calculate_price(_error, _strategy), do: 0
 
   @spec make_place_requests([Store.product], deps :: module)
-    :: {[{:ok, MarketManager.order_id}], [{:error, atom, MarketManager.order_id}]}
+    :: {[{:ok, Manager.order_id}], [{:error, atom, Manager.order_id}]}
   defp make_place_requests(products, auction_house_api), do:
     products
     |> Enum.map(&build_order/1)
@@ -115,10 +115,10 @@ defmodule MarketManager.Interpreter do
   end
 
   @spec save_orders(
-    {[{:ok, MarketManager.order_id}], [{:error, atom, MarketManager.order_id}]},
-    MarketManager.syndicate,
+    {[{:ok, Manager.order_id}], [{:error, atom, Manager.order_id}]},
+    Manager.syndicate,
     deps :: module
-  ) :: {[{:ok, MarketManager.order_id}], [{:error, atom, MarketManager.order_id} | {:error, any}]}
+  ) :: {[{:ok, Manager.order_id}], [{:error, atom, Manager.order_id} | {:error, any}]}
   defp save_orders({success_resps, failed_resps}, syndicate, store_api) do
     {successfull_saves, failed_saves} =
       success_resps
@@ -129,21 +129,21 @@ defmodule MarketManager.Interpreter do
     {successfull_saves, failed_resps ++ failed_saves}
   end
 
-  @spec list_orders(MarketManager.syndicate, deps :: module)
+  @spec list_orders(Manager.syndicate, deps :: module)
     :: Store.list_orders_response
   defp list_orders(syndicate, store), do: store.list_orders(syndicate)
 
-  @spec make_delete_requests([MarketManager.order_id], deps :: module) ::
-    {[{:ok, MarketManager.order_id}], [{:error, atom, MarketManager.order_id}]}
+  @spec make_delete_requests([Manager.order_id], deps :: module) ::
+    {[{:ok, Manager.order_id}], [{:error, atom, Manager.order_id}]}
   defp make_delete_requests(order_ids, auction_house_api), do:
     order_ids
     |> Enum.map(&auction_house_api.delete_order/1)
     |> Enum.split_with(&status_ok?/1)
 
   @spec check_non_existent_orders(
-    {[{:ok, MarketManager.order_id}], [{:error, atom, MarketManager.order_id}]}
-  ) :: {[{:ok, MarketManager.order_id} | {:error, :order_non_existent, MarketManager.order_id}],
-        [{:error, atom, MarketManager.order_id}]}
+    {[{:ok, Manager.order_id}], [{:error, atom, Manager.order_id}]}
+  ) :: {[{:ok, Manager.order_id} | {:error, :order_non_existent, Manager.order_id}],
+        [{:error, atom, Manager.order_id}]}
   defp check_non_existent_orders({success_resps, failed_resps}) do
     non_existent_orders =
       Enum.filter(failed_resps, &order_non_existent?/1)
@@ -152,11 +152,11 @@ defmodule MarketManager.Interpreter do
   end
 
   @spec delete_orders(
-    {[{:ok, MarketManager.order_id} | {:error, :order_non_existent, MarketManager.order_id}],
-    [{:error, atom, MarketManager.order_id}]},
-    MarketManager.syndicate,
+    {[{:ok, Manager.order_id} | {:error, :order_non_existent, Manager.order_id}],
+    [{:error, atom, Manager.order_id}]},
+    Manager.syndicate,
     deps :: keyword
-  ) :: {[{:ok, MarketManager.order_id}], [{:error, atom, MarketManager.order_id} | {:error, any}]}
+  ) :: {[{:ok, Manager.order_id}], [{:error, atom, Manager.order_id} | {:error, any}]}
   defp delete_orders({success_resps, failed_resps}, syndicate, store_api) do
     {successfull_deletions, failed_deletions} =
       success_resps
@@ -172,9 +172,9 @@ defmodule MarketManager.Interpreter do
   defp status_ok?(_order), do: false
 
   @spec get_order_id(
-    {:ok, MarketManager.order_id}
-    | {:error, :order_non_existent, MarketManager.order_id}
-  ) :: MarketManager.order_id
+    {:ok, Manager.order_id}
+    | {:error, :order_non_existent, Manager.order_id}
+  ) :: Manager.order_id
   defp get_order_id({:ok, order_id}), do: order_id
   defp get_order_id({:error, :order_non_existent, order_id}), do: order_id
 
@@ -186,17 +186,17 @@ defmodule MarketManager.Interpreter do
     {:ok, :success}
     | {
         :partial_success,
-        [failed_orders: [{:error, MarketManager.error_reason, MarketManager.order_id | MarketManager.item_id}, ...]]
+        [failed_orders: [{:error, Manager.error_reason, Manager.order_id | Manager.item_id}, ...]]
       }
     | {
         :error,
         :unable_to_place_requests,
-        [{:error, MarketManager.error_reason, MarketManager.order_id | MarketManager.item_id}]
+        [{:error, Manager.error_reason, Manager.order_id | Manager.item_id}]
       }
     | {
         :error,
         :unable_to_delete_orders,
-        [{:error, MarketManager.error_reason, MarketManager.order_id | MarketManager.item_id}]
+        [{:error, Manager.error_reason, Manager.order_id | Manager.item_id}]
       }
   defp to_human_response({successfull, failed}, :place) when successfull == [], do:
     {:error, :unable_to_place_requests, failed}
