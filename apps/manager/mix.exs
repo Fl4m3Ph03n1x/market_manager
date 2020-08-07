@@ -18,8 +18,7 @@ defmodule Manager.MixProject do
 
   def application do
     [
-      extra_applications: [:logger],
-      mod: {Manager.Application, []}
+      extra_applications: [:logger]
     ]
   end
 
