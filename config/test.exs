@@ -7,5 +7,5 @@ config :auction_house,
   auction_house_token: "token"
 
 config :store,
-  products: "test/support/products.json",
-  current_orders: "test/support/current_orders.json"
+  products: "test/products.json",
+  current_orders: "test/current_orders.json"
