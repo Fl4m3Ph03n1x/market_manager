@@ -28,7 +28,7 @@ defmodule Cli.MixProject do
 
   defp escript, do:
     [
-      main_module: MarketManager.CLI,
+      main_module: Cli,
       comment: "Makes requests to warframe market."
     ]
 
