@@ -35,7 +35,8 @@ defmodule AuctionHouse.HTTPClient do
 
   @impl AuctionHouse
   def place_order(order, deps \\ @default_deps), do:
-    Jason.encode(order)
+    order
+    |> Jason.encode()
     >>> http_post(deps)
     |> to_auction_house_response(order, &get_id/1)
 
