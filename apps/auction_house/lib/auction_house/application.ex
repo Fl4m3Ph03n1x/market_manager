@@ -12,7 +12,7 @@ defmodule AuctionHouse.Application do
   def start(_type, args) do
     children = children(args[:env])
 
-    :jobs.add_queue(@outgoing_requests_queue, [{:standard_rate, 5}])
+    :jobs.add_queue(@outgoing_requests_queue, [{:standard_rate, 2}])
 
     opts = [strategy: :one_for_one, name: AuctionHouse.Supervisor]
     Supervisor.start_link(children, opts)
