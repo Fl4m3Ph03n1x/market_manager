@@ -29,7 +29,8 @@ defmodule Cli.MixProject do
   defp escript, do:
     [
       main_module: Cli,
-      comment: "Makes requests to warframe market."
+      comment: "Command Line Interface for the MarketManager app.",
+      path: "../../market_manager"
     ]
 
   defp elixirc_paths(:test), do: ["test/support", "lib"]
