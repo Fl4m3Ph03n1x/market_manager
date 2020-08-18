@@ -17,7 +17,7 @@ defmodule CliTest do
         "--strategy=equal_to_lowest"
       ]
 
-      deps = [manager: ManagerMock]
+      deps = %{manager: ManagerMock}
 
       ManagerMock
       |> expect(:activate, fn ("red_veil", :equal_to_lowest) -> {:ok, :success} end)
@@ -38,7 +38,7 @@ defmodule CliTest do
         "--strategy=equal_to_lowest"
       ]
 
-      deps = [manager: ManagerMock]
+      deps = %{manager: ManagerMock}
 
       ManagerMock
       |> expect(:activate, fn ("red_veil", :equal_to_lowest) -> {:ok, :success} end)
@@ -59,7 +59,7 @@ defmodule CliTest do
       params = ["--action=deactivate", "--syndicates=red_veil"]
       syndicate = "red_veil"
 
-      deps = [manager: ManagerMock]
+      deps = %{manager: ManagerMock}
 
       ManagerMock
       |> expect(:deactivate, fn ^syndicate -> {:ok, :success} end)
@@ -123,6 +123,22 @@ defmodule CliTest do
 
       assert capture_log(fn ->
                assert Cli.main(params) == {:error, :unknown_action, "=yummi"}
+             end) =~ docs
+    end
+
+    test "Prints instructions if invoked with unknown strategy" do
+      # Arrange
+      params = [
+        "--action=activate",
+        "--syndicates=new_loka",
+        "--strategy=banana"
+      ]
+
+      # Act & Assert
+      {_, _, _, _, %{"en" => docs}, _, _} = Code.fetch_docs(Cli)
+
+      assert capture_log(fn ->
+               assert Cli.main(params) == {:error, :unknown_strategy, "banana"}
              end) =~ docs
     end
   end

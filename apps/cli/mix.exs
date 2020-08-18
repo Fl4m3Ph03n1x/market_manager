@@ -22,8 +22,11 @@ defmodule Cli.MixProject do
     ]
 
   defp deps, do: [
+    {:recase, "~> 0.5"},
     {:manager, in_umbrella: true},
-    {:hammox, "~> 0.2"}
+    {:hammox, "~> 0.2"},
+
+    {:dialyxir, "~> 1.0", only: [:dev], runtime: false}
   ]
 
   defp escript, do:

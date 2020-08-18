@@ -21,30 +21,44 @@ defmodule Cli do
       your items should be sold.
   """
 
+  @type dependecies :: %{manager: module}
+  @type args :: [String.t]
+  @type syndicate :: String.t
+  @type action :: String.t
+  @type strategy ::
+    :top_five_average
+    | :top_three_average
+    | :equal_to_lowest
+    | :lowest_minus_one
+    | nil
+    | {:error, :unknown_strategy, strategy}
+
+  alias Recase
+
   require Logger
 
-  @default_deps [
+  @default_deps %{
     manager: Manager
-  ]
+  }
 
   ##########
   # Public #
   ##########
 
-  # @spec main([String.t]) :: :ok
+  @spec main(args, dependecies) :: :ok
   def main(args, deps \\ @default_deps)
 
   def main([], _deps), do: Logger.info(@moduledoc)
 
   def main([help_opt], _deps) when help_opt == "-h", do: Logger.info(@moduledoc)
 
-  def main(args, deps) do
+  def main(args, %{manager: manager}) do
     {opts, _positional_args, errors} = parse_args(args)
 
     case errors do
       [] ->
         opts
-        |> process_args(deps[:manager])
+        |> process_args(manager)
         |> log_result()
 
       _ ->
@@ -57,13 +71,14 @@ defmodule Cli do
   # Private #
   ###########
 
-  @spec parse_args([String.t]) :: {OptionParser.parsed, OptionParser.argv, OptionParser.errors}
+  @spec parse_args(args) :: {OptionParser.parsed, OptionParser.argv, OptionParser.errors}
   defp parse_args(args), do:
     OptionParser.parse(args, strict: [syndicates: :string, action: :string, strategy: :string])
 
-  # @spec process_args(OptionParser.parsed) ::
-  #   [Manager.activate_response | Manager.deactivate_response]
-  #   | {:error, :unknown_action, bad_syndicate :: String.t}
+  @spec process_args(OptionParser.parsed, module) ::
+    [Manager.activate_response | Manager.deactivate_response]
+    | {:error, :unknown_action, action}
+    | {:error, :unknown_strategy, strategy}
   defp process_args(opts, manager) do
     syndicates =
       opts
@@ -80,20 +95,29 @@ defmodule Cli do
     process_action(action, syndicates, strategy, manager)
   end
 
-  # @spec process_action(String.t, [String.t], atom) ::
-  #   [Manager.activate_response | Manager.deactivate_response]
-  #   | {:error, :unknown_action, bad_syndicate :: String.t}
+  @spec process_action(action, [syndicate], strategy, module) ::
+    [Manager.activate_response | Manager.deactivate_response]
+    | {:error, :unknown_action, action}
+    | {:error, :unknown_strategy, strategy}
+  defp process_action("activate", _syndicates, {:error, :unknown_strategy, strategy}, _manager), do:
+    {:error, :unknown_strategy, strategy}
+
   defp process_action("activate", syndicates, strategy, manager), do:
     Enum.map(syndicates, &manager.activate(&1, strategy))
 
-  defp process_action("deactivate", syndicates, _strategy, manager), do:
+  defp process_action("deactivate", syndicates, nil, manager), do:
     Enum.map(syndicates, &manager.deactivate/1)
 
   defp process_action(action, _syndicates, _strategy, _manager), do: {:error, :unknown_action, action}
 
   @spec log_result(data_to_log :: any) :: (data_to_log :: any)
-  defp log_result({:error, :unknown_action, action} = data) do
-    Logger.error("Unknown action: #{action}")
+  defp log_result({:error, reason, input} = data) do
+    reason
+    |> Atom.to_string()
+    |> Recase.to_sentence()
+    |> append_data(input)
+    |> Logger.error()
+
     Logger.info(@moduledoc)
     data
   end
@@ -103,6 +127,9 @@ defmodule Cli do
     data
   end
 
+  @spec append_data(String.t, String.t) :: String.t
+  defp append_data(sentence, user_input), do: sentence <> ": " <> user_input
+
   @spec log_inspect(data_to_inspect :: any, :error, String.t) ::
     (data_to_inspect :: any)
   defp log_inspect(data, :error, msg) do
@@ -110,9 +137,17 @@ defmodule Cli do
     data
   end
 
+  @spec to_strategy(strategy) ::
+    :top_five_average
+    | :top_three_average
+    | :equal_to_lowest
+    | :lowest_minus_one
+    | nil
+    | {:error, :unknown_strategy, strategy}
   defp to_strategy("top_five_average"), do: :top_five_average
   defp to_strategy("top_three_average"), do: :top_three_average
   defp to_strategy("equal_to_lowest"), do: :equal_to_lowest
   defp to_strategy("lowest_minus_one"), do: :lowest_minus_one
   defp to_strategy(nil), do: nil
+  defp to_strategy(unknown_strategy), do: {:error, :unknown_strategy, unknown_strategy}
 end
