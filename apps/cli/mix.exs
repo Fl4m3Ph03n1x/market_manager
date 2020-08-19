@@ -26,7 +26,8 @@ defmodule Cli.MixProject do
     {:manager, in_umbrella: true},
     {:hammox, "~> 0.2"},
 
-    {:dialyxir, "~> 1.0", only: [:dev], runtime: false}
+    {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
+    {:mix_test_watch, "~> 1.0", only: :dev, runtime: false}
   ]
 
   defp escript, do:

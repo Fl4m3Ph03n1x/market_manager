@@ -21,6 +21,14 @@ defmodule Cli do
       your items should be sold.
   """
 
+  alias Recase
+
+  require Logger
+
+  @default_deps %{
+    manager: Manager
+  }
+
   @type dependecies :: %{manager: module}
   @type args :: [String.t]
   @type syndicate :: String.t
@@ -33,18 +41,17 @@ defmodule Cli do
     | nil
     | {:error, :unknown_strategy, strategy}
 
-  alias Recase
-
-  require Logger
-
-  @default_deps %{
-    manager: Manager
-  }
-
   ##########
   # Public #
   ##########
 
+  @doc """
+  Receives the input from the user, parses it and send it to the Manager.
+  Returns whatever response the Manager gave or an error message if the input
+  was malformed.
+
+  Can be invoked  with ["-h"] to see the help logs.
+  """
   @spec main(args, dependecies) :: :ok
   def main(args, deps \\ @default_deps)
 
@@ -127,10 +134,10 @@ defmodule Cli do
     data
   end
 
-  @spec append_data(String.t, String.t) :: String.t
+  @spec append_data(sentence :: String.t, input:: String.t) :: (result :: String.t)
   defp append_data(sentence, user_input), do: sentence <> ": " <> user_input
 
-  @spec log_inspect(data_to_inspect :: any, :error, String.t) ::
+  @spec log_inspect(data_to_inspect :: any, :error, msg :: String.t) ::
     (data_to_inspect :: any)
   defp log_inspect(data, :error, msg) do
     Logger.error("#{msg}#{inspect(data)}")
