@@ -46,7 +46,7 @@ defmodule Cli do
   ##########
 
   @doc """
-  Receives the input from the user, parses it and send it to the Manager.
+  Receives the input from the user, parses it and sends it to the Manager.
   Returns whatever response the Manager gave or an error message if the input
   was malformed.
 
