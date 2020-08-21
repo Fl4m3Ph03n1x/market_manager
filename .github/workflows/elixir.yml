@@ -36,6 +36,7 @@ jobs:
       env:
         MIX_ENV: dev
     - name: Build executable
+      working-directory: ./apps/cli
       run: mix escript.build
       env:
         MIX_ENV: prod
