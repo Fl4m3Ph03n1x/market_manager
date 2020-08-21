@@ -6,6 +6,7 @@ defmodule AuctionHouse.HTTPClient do
   use Rop
 
   alias AuctionHouse
+  alias AuctionHouse.Settings
 
   @behaviour AuctionHouse
 
@@ -25,9 +26,6 @@ defmodule AuctionHouse.HTTPClient do
     delete_fn: &HTTPoison.delete/2,
     run_fn: &:jobs.run/2
   }
-
-  #TODO: put this in config
-  @outgoing_requests_queue :outgoing_requests_queue
 
   ##########
   # Public #
@@ -62,17 +60,17 @@ defmodule AuctionHouse.HTTPClient do
   @spec http_post(order_json :: String.t, deps :: map) ::
     {:ok, HTTPoison.Response.t} | {:error, HTTPoison.Error.t}
   defp http_post(order, %{post_fn: post, run_fn: run}), do:
-    run.(@outgoing_requests_queue, fn -> post.(@url, order, headers()) end)
+    run.(Settings.requests_queue(), fn -> post.(@url, order, headers()) end)
 
   @spec http_delete(url :: String.t, deps :: map) ::
     {:ok, HTTPoison.Response.t} | {:error, HTTPoison.Error.t}
   defp http_delete(url, %{delete_fn: delete, run_fn: run}), do:
-    run.(@outgoing_requests_queue, fn -> delete.(url, headers()) end)
+    run.(Settings.requests_queue(), fn -> delete.(url, headers()) end)
 
   @spec http_get(url :: String.t, deps :: map) ::
     {:ok, HTTPoison.Response.t} | {:error, HTTPoison.Error.t}
   defp http_get(url, %{get_fn: get, run_fn: run}), do:
-    run.(@outgoing_requests_queue, fn -> get.(url, headers()) end)
+    run.(Settings.requests_queue(), fn -> get.(url, headers()) end)
 
   @spec to_auction_house_response(
         {:ok, HTTPoison.Response.t} | {:error, HTTPoison.Error.t},
