@@ -6,10 +6,24 @@ defmodule Manager.PriceAnalyst do
   on getting more profit.
   """
 
+  alias Manager
+  alias Manager.AuctionHouse
+
+  @strategies [
+    "top_five_average",
+    "top_three_average",
+    "equal_to_lowest",
+    "lowest_minus_one"
+  ]
+
   ##########
   # Public #
   ##########
 
+  @spec valid_strategy?(String.t) :: boolean
+  def valid_strategy?(strategy), do: strategy in @strategies
+
+  @spec calculate_price([AuctionHouse.order_info], Manager.strategy) :: non_neg_integer
   def calculate_price(all_orders, strategy), do:
     all_orders
     |> pre_process_orders()
@@ -28,16 +42,22 @@ defmodule Manager.PriceAnalyst do
     |> Enum.filter(&sell_order?/1)
     |> Enum.sort(&price_ascending/2)
 
+  @spec visible?(AuctionHouse.order_info) :: boolean
   defp visible?(order), do: Map.get(order, "visible") == true
 
+  @spec user_ingame?(AuctionHouse.order_info) :: boolean
   defp user_ingame?(order), do: get_in(order, ["user", "status"]) == "ingame"
 
+  @spec platform_pc?(AuctionHouse.order_info) :: boolean
   defp platform_pc?(order), do: Map.get(order, "platform") == "pc"
 
+  @spec sell_order?(AuctionHouse.order_info) :: boolean
   defp sell_order?(order), do: Map.get(order, "order_type") == "sell"
 
+  @spec price_ascending(AuctionHouse.order_info, AuctionHouse.order_info) :: boolean
   defp price_ascending(order1, order2), do: Map.get(order1, "platinum") < Map.get(order2, "platinum")
 
+  @spec apply_strategy([AuctionHouse.order_info], Manager.strategy) :: number
   defp apply_strategy([], _strategy), do: 0
 
   defp apply_strategy([%{"platinum" => price}], _strategy), do: price
@@ -66,9 +86,12 @@ defmodule Manager.PriceAnalyst do
     |> Enum.map(&platinum_minus_one/1)
     |> List.first()
 
+  @spec platinum(AuctionHouse.order_info) :: non_neg_integer
   defp platinum(order), do: Map.get(order, "platinum")
 
+  @spec platinum_minus_one(AuctionHouse.order_info) :: integer
   defp platinum_minus_one(order), do: Map.get(order, "platinum") - 1
 
+  @spec average([number]) :: number
   defp average(prices), do: Enum.sum(prices) / length(prices)
 end

@@ -5,7 +5,7 @@ defmodule Manager do
   and you need to talk to MarketManager, this is who you call, the public API.
   """
 
-  alias Manager.Interpreter
+  alias Manager.{Interpreter, PriceAnalyst}
 
   ##########
   # Types  #
@@ -60,4 +60,16 @@ defmodule Manager do
   """
   @spec deactivate(syndicate) :: deactivate_response
   def deactivate(syndicate), do: Interpreter.deactivate(syndicate)
+
+  @doc """
+  Returns true if the given strategy is valid, false otherwise.
+
+  Example:
+  ```
+  MarketManager.valid_strategy?("bananas")          # false
+  MarketManager.valid_strategy?("equal_to_lowest")  # true
+  ```
+  """
+  @spec valid_strategy?(String.t) :: boolean
+  defdelegate valid_strategy?(strategy), to: PriceAnalyst
 end
