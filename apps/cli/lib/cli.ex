@@ -33,13 +33,7 @@ defmodule Cli do
   @type args :: [String.t]
   @type syndicate :: String.t
   @type action :: String.t
-  @type strategy ::
-    :top_five_average
-    | :top_three_average
-    | :equal_to_lowest
-    | :lowest_minus_one
-    | nil
-    | {:error, :unknown_strategy, strategy}
+  @type strategy :: atom | nil | {:error, :unknown_strategy, String.t}
 
   ##########
   # Public #
@@ -85,7 +79,7 @@ defmodule Cli do
   @spec process_args(OptionParser.parsed, module) ::
     [Manager.activate_response | Manager.deactivate_response]
     | {:error, :unknown_action, action}
-    | {:error, :unknown_strategy, strategy}
+    | {:error, :unknown_strategy, String.t}
   defp process_args(opts, manager) do
     syndicates =
       opts
@@ -105,7 +99,7 @@ defmodule Cli do
   @spec process_action(action, [syndicate], strategy, module) ::
     [Manager.activate_response | Manager.deactivate_response]
     | {:error, :unknown_action, action}
-    | {:error, :unknown_strategy, strategy}
+    | {:error, :unknown_strategy, String.t}
   defp process_action("activate", _syndicates, {:error, :unknown_strategy, strategy}, _manager), do:
     {:error, :unknown_strategy, strategy}
 
@@ -144,17 +138,15 @@ defmodule Cli do
     data
   end
 
-  @spec to_strategy(strategy) ::
-    :top_five_average
-    | :top_three_average
-    | :equal_to_lowest
-    | :lowest_minus_one
-    | nil
-    | {:error, :unknown_strategy, strategy}
-  defp to_strategy("top_five_average"), do: :top_five_average
-  defp to_strategy("top_three_average"), do: :top_three_average
-  defp to_strategy("equal_to_lowest"), do: :equal_to_lowest
-  defp to_strategy("lowest_minus_one"), do: :lowest_minus_one
+  @spec to_strategy(String.t | nil) :: strategy
   defp to_strategy(nil), do: nil
-  defp to_strategy(unknown_strategy), do: {:error, :unknown_strategy, unknown_strategy}
+
+  defp to_strategy(user_input) do
+    if Manager.valid_strategy?(user_input) do
+      String.to_atom(user_input)
+    else
+      {:error, :unknown_strategy, user_input}
+    end
+  end
+
 end

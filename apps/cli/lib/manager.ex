@@ -35,5 +35,6 @@ defmodule Cli.Manager do
 
   @callback activate(syndicate, strategy) :: activate_response
   @callback deactivate(syndicate) :: deactivate_response
+  @callback valid_strategy?(String.t) :: boolean
 
 end
