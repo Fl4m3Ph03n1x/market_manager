@@ -349,7 +349,7 @@ Functions          </h1>
 <p>Activates a syndicate in warframe.market. Activating a syndicate means you
 put on sell all the mods the syndicate has with that are in the <em>products.json</em>
 file. The price of each mod will be calculated via a PriceAnalyst depending on
-which strategy you choose.</p><p>Example:</p><pre><code class="nohighlight makeup elixir"><span class="p" data-group-id="9176197838-1">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="ss">:success</span><span class="p" data-group-id="9176197838-1">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">MarketManager</span><span class="o">.</span><span class="n">activate</span><span class="p" data-group-id="9176197838-2">(</span><span class="s">&quot;simaris&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">:lowest_minus_one</span><span class="p" data-group-id="9176197838-2">)</span></code></pre>  </section>
+which strategy you choose.</p><p>Example:</p><pre><code class="nohighlight makeup elixir"><span class="p" data-group-id="6258583688-1">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="ss">:success</span><span class="p" data-group-id="6258583688-1">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">MarketManager</span><span class="o">.</span><span class="n">activate</span><span class="p" data-group-id="6258583688-2">(</span><span class="s">&quot;simaris&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">:lowest_minus_one</span><span class="p" data-group-id="6258583688-2">)</span></code></pre>  </section>
 </section>
 <section class="detail" id="deactivate/1">
   <div class="detail-header">
@@ -371,7 +371,7 @@ which strategy you choose.</p><p>Example:</p><pre><code class="nohighlight makeu
       </div>
 
 <p>Deactivates a syndicate in warframe.market. Deactivating a syndicate means you
-delete all orders you have placed before that belong to the given syndicate.</p><p>Example:</p><pre><code class="nohighlight makeup elixir"><span class="p" data-group-id="4568370342-1">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="ss">:success</span><span class="p" data-group-id="4568370342-1">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">MarketManager</span><span class="o">.</span><span class="n">deactivate</span><span class="p" data-group-id="4568370342-2">(</span><span class="s">&quot;simaris&quot;</span><span class="p" data-group-id="4568370342-2">)</span></code></pre>  </section>
+delete all orders you have placed before that belong to the given syndicate.</p><p>Example:</p><pre><code class="nohighlight makeup elixir"><span class="p" data-group-id="6886529565-1">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="ss">:success</span><span class="p" data-group-id="6886529565-1">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">MarketManager</span><span class="o">.</span><span class="n">deactivate</span><span class="p" data-group-id="6886529565-2">(</span><span class="s">&quot;simaris&quot;</span><span class="p" data-group-id="6886529565-2">)</span></code></pre>  </section>
 </section>
 <section class="detail" id="valid_strategy?/1">
   <div class="detail-header">
@@ -392,8 +392,8 @@ delete all orders you have placed before that belong to the given syndicate.</p>
           <pre>valid_strategy?(<a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()</pre>
       </div>
 
-<p>Returns true if the given strategy is valid, false otherwise.</p><p>Example:</p><pre><code class="nohighlight makeup elixir"><span class="nc">MarketManager</span><span class="o">.</span><span class="n">valid_strategy?</span><span class="p" data-group-id="3059042349-1">(</span><span class="s">&quot;bananas&quot;</span><span class="p" data-group-id="3059042349-1">)</span><span class="w">          </span><span class="c1"># false</span><span class="w">
-</span><span class="nc">MarketManager</span><span class="o">.</span><span class="n">valid_strategy?</span><span class="p" data-group-id="3059042349-2">(</span><span class="s">&quot;equal_to_lowest&quot;</span><span class="p" data-group-id="3059042349-2">)</span><span class="w">  </span><span class="c1"># true</span></code></pre>  </section>
+<p>Returns true if the given strategy is valid, false otherwise.</p><p>Example:</p><pre><code class="nohighlight makeup elixir"><span class="nc">MarketManager</span><span class="o">.</span><span class="n">valid_strategy?</span><span class="p" data-group-id="6330365793-1">(</span><span class="s">&quot;bananas&quot;</span><span class="p" data-group-id="6330365793-1">)</span><span class="w">          </span><span class="c1"># false</span><span class="w">
+</span><span class="nc">MarketManager</span><span class="o">.</span><span class="n">valid_strategy?</span><span class="p" data-group-id="6330365793-2">(</span><span class="s">&quot;equal_to_lowest&quot;</span><span class="p" data-group-id="6330365793-2">)</span><span class="w">  </span><span class="c1"># true</span></code></pre>  </section>
 </section>
           </div>
         </section>
