@@ -13,7 +13,8 @@ defmodule Manager.Store do
   @type product :: %{
     (name :: String.t()) => String.t(),
     (id :: String.t()) => String.t(),
-    (price :: String.t()) => non_neg_integer,
+    (min_price :: String.t()) => non_neg_integer,
+    (default_price :: String.t()) => non_neg_integer,
     (quantity :: String.t()) => non_neg_integer,
     (rank :: String.t()) => non_neg_integer | String.t()
   }

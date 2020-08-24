@@ -21,12 +21,14 @@ defmodule Manager.InterpreterTest do
       product1 = %{
         "name" => product1_name,
         "id" => id1,
-        "price" => 15
+        "min_price" => 15,
+        "default_price" => 16
       }
       product2 = %{
         "name" => product2_name,
         "id" => id2,
-        "price" => 15,
+        "min_price" => 15,
+        "default_price" => 16,
         "rank" => "n/a"
       }
 
@@ -163,6 +165,66 @@ defmodule Manager.InterpreterTest do
       assert actual == expected
     end
 
+    test "Succeeds even if it cannot get order_info from product" do
+      # Arrange
+      syndicate = "red_veil"
+      strategy = :top_five_average
+      id1 = "54a74454e779892d5e5155d5"
+      id2 = "54a74454e779892d5e5155a0"
+      product1_name = "Gleaming Blight"
+      product2_name = "Eroding Blight"
+
+      product1 = %{
+        "name" => product1_name,
+        "id" => id1,
+        "min_price" => 15,
+        "default_price" => 16
+      }
+      product2 = %{
+        "name" => product2_name,
+        "id" => id2,
+        "min_price" => 15,
+        "default_price" => 18,
+        "rank" => "n/a"
+      }
+
+      order1 = %{
+        "order_type" => "sell",
+        "item_id" => id1,
+        "platinum" => 16,
+        "quantity" => 1,
+        "mod_rank" => 0
+      }
+
+      order2 = %{
+        "order_type" => "sell",
+        "item_id" => id2,
+        "platinum" => 18,
+        "quantity" => 1
+      }
+
+      deps = [store: StoreMock, auction_house: AuctionHouseMock]
+
+      StoreMock
+      |> expect(:list_products, fn ^syndicate -> {:ok, [product1, product2]} end)
+      |> expect(:save_order, fn ^id1, ^syndicate -> {:ok, id1} end)
+      |> expect(:save_order, fn ^id2, ^syndicate -> {:ok, id1} end)
+
+      AuctionHouseMock
+      |> expect(:get_all_orders, fn ^product1_name -> {:error, :timeout, product1_name} end)
+      |> expect(:place_order, fn ^order1 -> {:ok, id1} end)
+      |> expect(:get_all_orders, fn ^product2_name -> {:error, :timeout, product2_name} end)
+      |> expect(:place_order, fn ^order2 -> {:ok, id2} end)
+
+      # Act
+
+      actual = Interpreter.activate(syndicate, strategy, deps)
+      expected = {:ok, :success}
+
+      # Assert
+      assert actual == expected
+    end
+
     test "Returns partial success if some orders failed to be placed" do
       # Arrange
       syndicate = "red_veil"
@@ -176,12 +238,14 @@ defmodule Manager.InterpreterTest do
         %{
           "name" => product1_name,
           "id" => id1,
-          "price" => 15
+          "min_price" => 15,
+          "default_price" => 16
         },
         %{
           "name" => product2_name,
           "id" => id2,
-          "price" => 15
+          "min_price" => 15,
+          "default_price" => 16
         }
       ]
 
@@ -259,12 +323,14 @@ defmodule Manager.InterpreterTest do
         %{
           "name" => "Gleaming Blight",
           "id" => id1,
-          "price" => 15
+          "min_price" => 15,
+          "default_price" => 16
         },
         %{
           "name" => "Eroding Blight",
           "id" => id2,
-          "price" => 15
+          "min_price" => 15,
+          "default_price" => 16
         }
       ]
 
