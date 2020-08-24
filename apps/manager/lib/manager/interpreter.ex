@@ -64,25 +64,22 @@ defmodule Manager.Interpreter do
   defp calculate_prices(products, strategy, auction_house_api), do:
     Enum.map(products, &update_product_price(&1, strategy, auction_house_api))
 
-  defp update_product_price(product, strategy, auction_house_api) do
-    new_product_price =
-      product
-      |> Map.get("name")
-      |> auction_house_api.get_all_orders()
-      |> calculate_price(strategy)
+  defp update_product_price(product, strategy, auction_house_api), do:
+    product
+    |> Map.get("name")
+    |> auction_house_api.get_all_orders()
+    |> calculate_price(strategy, product)
+    |> update_price(product)
 
-    min_price = Map.get(product, "price")
-    if new_product_price > min_price do
-      Map.put(product, "price", new_product_price)
-    else
-      product
-    end
-  end
+  @spec calculate_price(any, Manager.strategy, Store.product) :: non_neg_integer
+  defp calculate_price({:ok, all_orders}, strategy, product), do:
+    PriceAnalyst.calculate_price(product, all_orders, strategy)
 
-  defp calculate_price({:ok, all_orders}, strategy), do:
-    PriceAnalyst.calculate_price(all_orders, strategy)
+  defp calculate_price(_error, _strategy, product), do:
+    Map.get(product, "default_price")
 
-  defp calculate_price(_error, _strategy), do: 0
+  @spec update_price(non_neg_integer, Store.product) :: map
+  defp update_price(price, product), do: Map.put(product, "price", price)
 
   @spec make_place_requests([Store.product], deps :: module)
     :: {[{:ok, Manager.order_id}], [{:error, atom, Manager.order_id}]}

@@ -13,22 +13,40 @@ defmodule Manager.PriceAnalystTest do
       order_info = [
         new_order_info(50)
       ]
+      product = new_product(0, 0)
 
       # Act
-      actual = PriceAnalyst.calculate_price(order_info, :top_three_average)
+      actual = PriceAnalyst.calculate_price(product, order_info, :top_three_average)
       expected = 50
 
       # Assert
       assert actual == expected
     end
 
-    test "returns 0 with an empty list" do
+    test "returns default_price with an empty list" do
       # Arrange
       order_info = []
+      product = new_product(14, 20)
 
       # Act
-      actual = PriceAnalyst.calculate_price(order_info, :top_three_average)
-      expected = 0
+      actual = PriceAnalyst.calculate_price(product, order_info, :top_three_average)
+      expected = 20
+
+      # Assert
+      assert actual == expected
+    end
+
+    test "returns min_price if the calculated price is lower than min_price" do
+      # Arrange
+      order_info = [
+        new_order_info(10),
+        new_order_info(11)
+      ]
+      product = new_product(14, 16)
+
+      # Act
+      actual = PriceAnalyst.calculate_price(product, order_info, :top_three_average)
+      expected = 14
 
       # Assert
       assert actual == expected
@@ -47,9 +65,10 @@ defmodule Manager.PriceAnalystTest do
         new_order_info(45),
         new_order_info(50_000)
       ]
+      product = new_product(0, 0)
 
       # Act
-      actual = PriceAnalyst.calculate_price(order_info, :top_five_average)
+      actual = PriceAnalyst.calculate_price(product, order_info, :top_five_average)
       expected = 53
 
       # Assert
@@ -64,9 +83,10 @@ defmodule Manager.PriceAnalystTest do
         new_order_info(50),
         new_order_info(60)
       ]
+      product = new_product(0, 0)
 
       # Act
-      actual = PriceAnalyst.calculate_price(order_info, :top_five_average)
+      actual = PriceAnalyst.calculate_price(product, order_info, :top_five_average)
       expected = 54
 
       # Assert
@@ -86,9 +106,10 @@ defmodule Manager.PriceAnalystTest do
         new_order_info(45),
         new_order_info(50_000)
       ]
+      product = new_product(0, 0)
 
       # Act
-      actual = PriceAnalyst.calculate_price(order_info, :top_three_average)
+      actual = PriceAnalyst.calculate_price(product, order_info, :top_three_average)
       expected = 50
 
       # Assert
@@ -101,9 +122,10 @@ defmodule Manager.PriceAnalystTest do
         new_order_info(50),
         new_order_info(55)
       ]
+      product = new_product(0, 0)
 
       # Act
-      actual = PriceAnalyst.calculate_price(order_info, :top_three_average)
+      actual = PriceAnalyst.calculate_price(product, order_info, :top_three_average)
       expected = 53
 
       # Assert
@@ -123,9 +145,10 @@ defmodule Manager.PriceAnalystTest do
         new_order_info(45),
         new_order_info(50_000)
       ]
+      product = new_product(0, 0)
 
       # Act
-      actual = PriceAnalyst.calculate_price(order_info, :equal_to_lowest)
+      actual = PriceAnalyst.calculate_price(product, order_info, :equal_to_lowest)
       expected = 45
 
       # Assert
@@ -145,9 +168,10 @@ defmodule Manager.PriceAnalystTest do
         new_order_info(45),
         new_order_info(50_000)
       ]
+      product = new_product(0, 0)
 
       # Act
-      actual = PriceAnalyst.calculate_price(order_info, :lowest_minus_one)
+      actual = PriceAnalyst.calculate_price(product, order_info, :lowest_minus_one)
       expected = 44
 
       # Assert
@@ -173,6 +197,12 @@ defmodule Manager.PriceAnalystTest do
       "platform" => "pc",
       "order_type"=> "sell",
       "platinum" => price
+    }
+
+  defp new_product(min_price, default_price), do:
+    %{
+      "min_price" => min_price,
+      "default_price" => default_price
     }
 
 end

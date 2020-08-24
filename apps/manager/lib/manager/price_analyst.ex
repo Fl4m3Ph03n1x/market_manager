@@ -7,7 +7,7 @@ defmodule Manager.PriceAnalyst do
   """
 
   alias Manager
-  alias Manager.AuctionHouse
+  alias Manager.{AuctionHouse, Store}
 
   @strategies [
     "top_five_average",
@@ -23,11 +23,12 @@ defmodule Manager.PriceAnalyst do
   @spec valid_strategy?(String.t) :: boolean
   def valid_strategy?(strategy), do: strategy in @strategies
 
-  @spec calculate_price([AuctionHouse.order_info], Manager.strategy) :: non_neg_integer
-  def calculate_price(all_orders, strategy), do:
+  @spec calculate_price(Store.product, [AuctionHouse.order_info], Manager.strategy) :: non_neg_integer
+  def calculate_price(product, all_orders, strategy), do:
     all_orders
     |> pre_process_orders()
     |> apply_strategy(strategy)
+    |> apply_boundaries(product)
     |> round()
 
   ###########
@@ -94,4 +95,9 @@ defmodule Manager.PriceAnalyst do
 
   @spec average([number]) :: number
   defp average(prices), do: Enum.sum(prices) / length(prices)
+
+  @spec apply_boundaries(non_neg_integer, Store.product) :: non_neg_integer
+  defp apply_boundaries(price, %{"default_price" => default}) when price == 0, do: default
+  defp apply_boundaries(price, %{"min_price" => min}) when price < min, do: min
+  defp apply_boundaries(price, _product), do: price
 end
