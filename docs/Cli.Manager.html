@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.22.2">
     <meta name="project" content="Market Manager v1.0.0">
-    <title>Manager — Market Manager v1.0.0</title>
+    <title>Cli.Manager — Market Manager v1.0.0</title>
     <link rel="stylesheet" href="dist/elixir-d678dad126d82ddc061f.css" />
     <script src="dist/sidebar_items-24006aada5.js"></script>
       <script src="docs_config.js"></script>
@@ -67,7 +67,7 @@ Market Manager      </a>
 
       <h1>
         <small class="app-vsn">Market Manager v1.0.0</small>
-Manager          <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/manager/lib/manager.ex#L1" title="View Source" class="view-source" rel="help">
+Cli.Manager <small>behaviour</small>          <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/cli/lib/manager.ex#L1" title="View Source" class="view-source" rel="help">
             <span class="icon-code" aria-hidden="true"></span>
             <span class="sr-only">View Source</span>
           </a>
@@ -127,31 +127,24 @@ and you need to talk to MarketManager, this is who you call, the public API.</p>
   </div>
 </div>
   </div>
-  <div class="summary-functions summary">
+  <div class="summary-callbacks summary">
     <h2>
-      <a href="#functions">Functions</a>
+      <a href="#callbacks">Callbacks</a>
     </h2>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#activate/2">activate(syndicate, strategy)</a>
+    <a href="#c:activate/2">activate(syndicate, strategy)</a>
   </div>
-    <div class="summary-synopsis"><p>Activates a syndicate in warframe.market. Activating a syndicate means you
-put on sell all the mods the syndicate has with that are in the <em>products.json</em>
-file. The price of each mod will be calculated via a PriceAnalyst depending on
-which strategy you choose.</p></div>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#deactivate/1">deactivate(syndicate)</a>
+    <a href="#c:deactivate/1">deactivate(syndicate)</a>
   </div>
-    <div class="summary-synopsis"><p>Deactivates a syndicate in warframe.market. Deactivating a syndicate means you
-delete all orders you have placed before that belong to the given syndicate.</p></div>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#valid_strategy?/1">valid_strategy?(strategy)</a>
+    <a href="#c:valid_strategy?/1">valid_strategy?(arg1)</a>
   </div>
-    <div class="summary-synopsis"><p>Returns true if the given strategy is valid, false otherwise.</p></div>
 </div>
   </div>
         </section>
@@ -171,7 +164,7 @@ Types          </h1>
       <span class="sr-only">Link to this type</span>
     </a>
     <h1 class="signature">activate_response()</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/manager/lib/manager.ex#L24" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/cli/lib/manager.ex#L22" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -195,7 +188,7 @@ Types          </h1>
       <span class="sr-only">Link to this type</span>
     </a>
     <h1 class="signature">deactivate_response()</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/manager/lib/manager.ex#L29" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/cli/lib/manager.ex#L27" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -219,7 +212,7 @@ Types          </h1>
       <span class="sr-only">Link to this type</span>
     </a>
     <h1 class="signature">error_reason()</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/manager/lib/manager.ex#L16" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/cli/lib/manager.ex#L14" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -240,7 +233,7 @@ Types          </h1>
       <span class="sr-only">Link to this type</span>
     </a>
     <h1 class="signature">item_id()</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/manager/lib/manager.ex#L18" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/cli/lib/manager.ex#L16" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -261,7 +254,7 @@ Types          </h1>
       <span class="sr-only">Link to this type</span>
     </a>
     <h1 class="signature">order_id()</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/manager/lib/manager.ex#L17" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/cli/lib/manager.ex#L15" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -282,7 +275,7 @@ Types          </h1>
       <span class="sr-only">Link to this type</span>
     </a>
     <h1 class="signature">strategy()</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/manager/lib/manager.ex#L15" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/cli/lib/manager.ex#L13" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -303,7 +296,7 @@ Types          </h1>
       <span class="sr-only">Link to this type</span>
     </a>
     <h1 class="signature">syndicate()</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/manager/lib/manager.ex#L14" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/cli/lib/manager.ex#L12" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -319,22 +312,22 @@ Types          </h1>
 </section>
           </div>
         </section>
-        <section id="functions" class="details-list">
+        <section id="callbacks" class="details-list">
           <h1 class="section-heading">
-            <a class="hover-link" href="#functions">
+            <a class="hover-link" href="#callbacks">
               <span class="icon-link" aria-hidden="true"></span>
               <span class="sr-only">Link to this section</span>
             </a>
-Functions          </h1>
-          <div class="functions-list">
-<section class="detail" id="activate/2">
+Callbacks          </h1>
+          <div class="callbacks-list">
+<section class="detail" id="c:activate/2">
   <div class="detail-header">
-    <a href="#activate/2" class="detail-link" title="Link to this function">
+    <a href="#c:activate/2" class="detail-link" title="Link to this callback">
       <span class="icon-link" aria-hidden="true"></span>
-      <span class="sr-only">Link to this function</span>
+      <span class="sr-only">Link to this callback</span>
     </a>
     <h1 class="signature">activate(syndicate, strategy)</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/manager/lib/manager.ex#L50" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/cli/lib/manager.ex#L36" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -346,19 +339,16 @@ Functions          </h1>
           <pre>activate(<a href="#t:syndicate/0">syndicate</a>(), <a href="#t:strategy/0">strategy</a>()) :: <a href="#t:activate_response/0">activate_response</a>()</pre>
       </div>
 
-<p>Activates a syndicate in warframe.market. Activating a syndicate means you
-put on sell all the mods the syndicate has with that are in the <em>products.json</em>
-file. The price of each mod will be calculated via a PriceAnalyst depending on
-which strategy you choose.</p><p>Example:</p><pre><code class="nohighlight makeup elixir"><span class="p" data-group-id="6068908010-1">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="ss">:success</span><span class="p" data-group-id="6068908010-1">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">MarketManager</span><span class="o">.</span><span class="n">activate</span><span class="p" data-group-id="6068908010-2">(</span><span class="s">&quot;simaris&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">:lowest_minus_one</span><span class="p" data-group-id="6068908010-2">)</span></code></pre>  </section>
+  </section>
 </section>
-<section class="detail" id="deactivate/1">
+<section class="detail" id="c:deactivate/1">
   <div class="detail-header">
-    <a href="#deactivate/1" class="detail-link" title="Link to this function">
+    <a href="#c:deactivate/1" class="detail-link" title="Link to this callback">
       <span class="icon-link" aria-hidden="true"></span>
-      <span class="sr-only">Link to this function</span>
+      <span class="sr-only">Link to this callback</span>
     </a>
     <h1 class="signature">deactivate(syndicate)</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/manager/lib/manager.ex#L62" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/cli/lib/manager.ex#L37" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -370,17 +360,16 @@ which strategy you choose.</p><p>Example:</p><pre><code class="nohighlight makeu
           <pre>deactivate(<a href="#t:syndicate/0">syndicate</a>()) :: <a href="#t:deactivate_response/0">deactivate_response</a>()</pre>
       </div>
 
-<p>Deactivates a syndicate in warframe.market. Deactivating a syndicate means you
-delete all orders you have placed before that belong to the given syndicate.</p><p>Example:</p><pre><code class="nohighlight makeup elixir"><span class="p" data-group-id="2987971428-1">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="ss">:success</span><span class="p" data-group-id="2987971428-1">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">MarketManager</span><span class="o">.</span><span class="n">deactivate</span><span class="p" data-group-id="2987971428-2">(</span><span class="s">&quot;simaris&quot;</span><span class="p" data-group-id="2987971428-2">)</span></code></pre>  </section>
+  </section>
 </section>
-<section class="detail" id="valid_strategy?/1">
+<section class="detail" id="c:valid_strategy?/1">
   <div class="detail-header">
-    <a href="#valid_strategy?/1" class="detail-link" title="Link to this function">
+    <a href="#c:valid_strategy?/1" class="detail-link" title="Link to this callback">
       <span class="icon-link" aria-hidden="true"></span>
-      <span class="sr-only">Link to this function</span>
+      <span class="sr-only">Link to this callback</span>
     </a>
-    <h1 class="signature">valid_strategy?(strategy)</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/manager/lib/manager.ex#L74" class="view-source" rel="help" title="View Source">
+    <h1 class="signature">valid_strategy?(arg1)</h1>
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/cli/lib/manager.ex#L38" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -392,8 +381,7 @@ delete all orders you have placed before that belong to the given syndicate.</p>
           <pre>valid_strategy?(<a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()</pre>
       </div>
 
-<p>Returns true if the given strategy is valid, false otherwise.</p><p>Example:</p><pre><code class="nohighlight makeup elixir"><span class="nc">MarketManager</span><span class="o">.</span><span class="n">valid_strategy?</span><span class="p" data-group-id="3974379350-1">(</span><span class="s">&quot;bananas&quot;</span><span class="p" data-group-id="3974379350-1">)</span><span class="w">          </span><span class="c1"># false</span><span class="w">
-</span><span class="nc">MarketManager</span><span class="o">.</span><span class="n">valid_strategy?</span><span class="p" data-group-id="3974379350-2">(</span><span class="s">&quot;equal_to_lowest&quot;</span><span class="p" data-group-id="3974379350-2">)</span><span class="w">  </span><span class="c1"># true</span></code></pre>  </section>
+  </section>
 </section>
           </div>
         </section>
