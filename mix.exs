@@ -15,7 +15,7 @@ defmodule MarketManager.MixProject do
       source_url: "https://github.com/Fl4m3Ph03n1x/market_manager",
       homepage_url: "https://fl4m3ph03n1x.github.io/market_manager/",
       docs: [
-        main: "MarketManager", # The main page in the docs
+        main: "Manager", # The main page in the docs
         logo: "images/resized_logo.png",
         extras: ["README.md"],
         output: "docs"
