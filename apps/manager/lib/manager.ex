@@ -46,6 +46,8 @@ defmodule Manager do
   {:ok, :success} = MarketManager.activate("simaris", :lowest_minus_one)
   ```
   """
+  @callback activate(syndicate, strategy) :: activate_response
+
   @spec activate(syndicate, strategy) :: activate_response
   def activate(syndicate, strategy), do: Interpreter.activate(syndicate, strategy)
 
@@ -58,6 +60,8 @@ defmodule Manager do
   {:ok, :success} = MarketManager.deactivate("simaris")
   ```
   """
+  @callback deactivate(syndicate) :: deactivate_response
+
   @spec deactivate(syndicate) :: deactivate_response
   def deactivate(syndicate), do: Interpreter.deactivate(syndicate)
 
@@ -70,6 +74,8 @@ defmodule Manager do
   MarketManager.valid_strategy?("equal_to_lowest")  # true
   ```
   """
+  @callback valid_strategy?(String.t) :: boolean
+
   @spec valid_strategy?(String.t) :: boolean
   defdelegate valid_strategy?(strategy), to: PriceAnalyst
 end
