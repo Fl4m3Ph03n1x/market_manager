@@ -1,1 +1,1 @@
-Hammox.defmock(Cli.ManagerMock, for: Cli.Manager)
+Hammox.defmock(ManagerMock, for: Manager)

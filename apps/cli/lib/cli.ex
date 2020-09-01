@@ -78,7 +78,7 @@ defmodule Cli do
 
   @spec process_args(OptionParser.parsed, module) ::
     [Manager.activate_response | Manager.deactivate_response]
-    | {:error, :unknown_action, action}
+    | {:error, :unknown_action, String.t}
     | {:error, :unknown_strategy, String.t}
   defp process_args(opts, manager) do
     syndicates =
@@ -98,7 +98,7 @@ defmodule Cli do
 
   @spec process_action(action, [syndicate], strategy, module) ::
     [Manager.activate_response | Manager.deactivate_response]
-    | {:error, :unknown_action, action}
+    | {:error, :unknown_action, String.t}
     | {:error, :unknown_strategy, String.t}
   defp process_action("activate", _syndicates, {:error, :unknown_strategy, strategy}, _manager), do:
     {:error, :unknown_strategy, strategy}
