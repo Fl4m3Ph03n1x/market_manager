@@ -6,8 +6,9 @@ defmodule Manager.PriceAnalyst do
   on getting more profit.
   """
 
+  alias AuctionHouse
   alias Manager
-  alias Manager.{AuctionHouse, Store}
+  alias Store
 
   @strategies [
     "top_five_average",

@@ -1,2 +1,2 @@
-Hammox.defmock(Manager.StoreMock, for: Manager.Store)
-Hammox.defmock(Manager.AuctionHouseMock, for: Manager.AuctionHouse)
+Hammox.defmock(StoreMock, for: Store)
+Hammox.defmock(AuctionHouseMock, for: AuctionHouse)
