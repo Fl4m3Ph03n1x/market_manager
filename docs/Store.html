@@ -8,7 +8,7 @@
     <meta name="project" content="Market Manager v1.0.0">
     <title>Store — Market Manager v1.0.0</title>
     <link rel="stylesheet" href="dist/elixir-d678dad126d82ddc061f.css" />
-    <script src="dist/sidebar_items-24006aada5.js"></script>
+    <script src="dist/sidebar_items-da613d9c9d.js"></script>
       <script src="docs_config.js"></script>
     <script async src="dist/app-0103364119015b97e56c.js"></script>
   </head>
@@ -226,7 +226,7 @@ Types          </h1>
       <span class="sr-only">Link to this type</span>
     </a>
     <h1 class="signature">all_orders_store()</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store.ex#L22" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store.ex#L23" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -252,7 +252,7 @@ Types          </h1>
       <span class="sr-only">Link to this type</span>
     </a>
     <h1 class="signature">delete_order_response()</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store.ex#L36" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store.ex#L37" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -294,7 +294,7 @@ Types          </h1>
       <span class="sr-only">Link to this type</span>
     </a>
     <h1 class="signature">list_orders_response()</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store.ex#L34" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store.ex#L35" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -315,7 +315,7 @@ Types          </h1>
       <span class="sr-only">Link to this type</span>
     </a>
     <h1 class="signature">list_products_response()</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store.ex#L33" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store.ex#L34" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -369,7 +369,8 @@ Types          </h1>
           <pre>product() :: %{
   required(name :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
   required(id :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
-  required(price :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>(),
+  required(min_price :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>(),
+  required(default_price :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>(),
   required(quantity :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>(),
   required(rank :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>() | <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()
 }</pre>
@@ -384,7 +385,7 @@ Types          </h1>
       <span class="sr-only">Link to this type</span>
     </a>
     <h1 class="signature">save_order_response()</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store.ex#L35" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store.ex#L36" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -436,7 +437,7 @@ Functions          </h1>
       <span class="sr-only">Link to this function</span>
     </a>
     <h1 class="signature">delete_order(order_id, syndicate)</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store.ex#L56" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store.ex#L57" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -453,7 +454,7 @@ Functions          </h1>
       <span class="sr-only">Link to this function</span>
     </a>
     <h1 class="signature">list_orders(syndicate)</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store.ex#L48" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store.ex#L49" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -470,7 +471,7 @@ Functions          </h1>
       <span class="sr-only">Link to this function</span>
     </a>
     <h1 class="signature">list_products(syndicate)</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store.ex#L44" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store.ex#L45" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -487,7 +488,7 @@ Functions          </h1>
       <span class="sr-only">Link to this function</span>
     </a>
     <h1 class="signature">save_order(order_id, syndicate)</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store.ex#L52" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store.ex#L53" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -514,7 +515,7 @@ Callbacks          </h1>
       <span class="sr-only">Link to this callback</span>
     </a>
     <h1 class="signature">delete_order(order_id, syndicate)</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store.ex#L54" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store.ex#L55" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -535,7 +536,7 @@ Callbacks          </h1>
       <span class="sr-only">Link to this callback</span>
     </a>
     <h1 class="signature">delete_order(order_id, syndicate, deps)</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store.ex#L55" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store.ex#L56" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -556,7 +557,7 @@ Callbacks          </h1>
       <span class="sr-only">Link to this callback</span>
     </a>
     <h1 class="signature">list_orders(syndicate)</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store.ex#L46" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store.ex#L47" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -577,7 +578,7 @@ Callbacks          </h1>
       <span class="sr-only">Link to this callback</span>
     </a>
     <h1 class="signature">list_orders(syndicate, deps)</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store.ex#L47" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store.ex#L48" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -598,7 +599,7 @@ Callbacks          </h1>
       <span class="sr-only">Link to this callback</span>
     </a>
     <h1 class="signature">list_products(syndicate)</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store.ex#L42" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store.ex#L43" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -619,7 +620,7 @@ Callbacks          </h1>
       <span class="sr-only">Link to this callback</span>
     </a>
     <h1 class="signature">list_products(syndicate, deps)</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store.ex#L43" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store.ex#L44" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -640,7 +641,7 @@ Callbacks          </h1>
       <span class="sr-only">Link to this callback</span>
     </a>
     <h1 class="signature">save_order(order_id, syndicate)</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store.ex#L50" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store.ex#L51" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -661,7 +662,7 @@ Callbacks          </h1>
       <span class="sr-only">Link to this callback</span>
     </a>
     <h1 class="signature">save_order(order_id, syndicate, deps)</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store.ex#L51" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store.ex#L52" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
