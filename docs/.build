@@ -1,11 +1,11 @@
-dist/search_items-d283c2989a.js
+dist/search_items-cd4ba7eeb8.js
 dist/app-0103364119015b97e56c.js
 dist/elixir-d678dad126d82ddc061f.css
 dist/html/fonts/icomoon.eot
 dist/html/fonts/icomoon.svg
 dist/html/fonts/icomoon.ttf
 dist/html/fonts/icomoon.woff
-dist/sidebar_items-24006aada5.js
+dist/sidebar_items-da613d9c9d.js
 api-reference.html
 readme.html
 assets/logo.png
@@ -15,12 +15,9 @@ AuctionHouse.html
 AuctionHouse.HTTPClient.html
 AuctionHouse.Settings.html
 Cli.html
-Cli.Manager.html
 Manager.html
-Manager.AuctionHouse.html
 Manager.Interpreter.html
 Manager.PriceAnalyst.html
-Manager.Store.html
 Store.html
 Store.FileSystem.html
 index.html

@@ -6,7 +6,7 @@ defmodule CliTest do
   require Logger
 
   alias Cli
-  alias Cli.ManagerMock
+  alias ManagerMock
 
   describe "activate syndicate" do
     test "Places orders from a syndicate in the market" do

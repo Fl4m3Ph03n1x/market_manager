@@ -8,7 +8,7 @@
     <meta name="project" content="Market Manager v1.0.0">
     <title>Manager.PriceAnalyst — Market Manager v1.0.0</title>
     <link rel="stylesheet" href="dist/elixir-d678dad126d82ddc061f.css" />
-    <script src="dist/sidebar_items-24006aada5.js"></script>
+    <script src="dist/sidebar_items-da613d9c9d.js"></script>
       <script src="docs_config.js"></script>
     <script async src="dist/app-0103364119015b97e56c.js"></script>
   </head>
@@ -94,7 +94,7 @@ on getting more profit.</p>        </section>
     </h2>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#calculate_price/2">calculate_price(all_orders, strategy)</a>
+    <a href="#calculate_price/3">calculate_price(product, all_orders, strategy)</a>
   </div>
 </div>
 <div class="summary-row">
@@ -113,14 +113,14 @@ on getting more profit.</p>        </section>
             </a>
 Functions          </h1>
           <div class="functions-list">
-<section class="detail" id="calculate_price/2">
+<section class="detail" id="calculate_price/3">
   <div class="detail-header">
-    <a href="#calculate_price/2" class="detail-link" title="Link to this function">
+    <a href="#calculate_price/3" class="detail-link" title="Link to this function">
       <span class="icon-link" aria-hidden="true"></span>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature">calculate_price(all_orders, strategy)</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/manager/lib/manager/price_analyst.ex#L27" class="view-source" rel="help" title="View Source">
+    <h1 class="signature">calculate_price(product, all_orders, strategy)</h1>
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/manager/lib/manager/price_analyst.ex#L28" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -129,8 +129,11 @@ Functions          </h1>
   <section class="docstring">
       <h2>Specs</h2>
       <div class="specs">
-          <pre>calculate_price([<a href="Manager.AuctionHouse.html#t:order_info/0">Manager.AuctionHouse.order_info</a>()], <a href="Manager.html#t:strategy/0">Manager.strategy</a>()) ::
-  <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>()</pre>
+          <pre>calculate_price(
+  <a href="Store.html#t:product/0">Store.product</a>(),
+  [<a href="AuctionHouse.html#t:order_info/0">AuctionHouse.order_info</a>()],
+  <a href="Manager.html#t:strategy/0">Manager.strategy</a>()
+) :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>()</pre>
       </div>
 
   </section>
@@ -142,7 +145,7 @@ Functions          </h1>
       <span class="sr-only">Link to this function</span>
     </a>
     <h1 class="signature">valid_strategy?(strategy)</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/manager/lib/manager/price_analyst.ex#L24" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/manager/lib/manager/price_analyst.ex#L25" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
