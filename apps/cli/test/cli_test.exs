@@ -2,74 +2,89 @@ defmodule CliTest do
   use ExUnit.Case, async: false
 
   import ExUnit.CaptureLog
-  import Hammox
+  import Mock
+
   require Logger
 
   alias Cli
-  alias ManagerMock
 
   describe "activate syndicate" do
     test "Places orders from a syndicate in the market" do
-      # Arrange
-      params = [
-        "--action=activate",
-        "--syndicates=red_veil",
-        "--strategy=equal_to_lowest"
-      ]
+      with_mock Manager, [
+        activate: fn("red_veil", :equal_to_lowest) -> {:ok, :success} end,
+        valid_strategy?: fn("equal_to_lowest") -> true end,
+        valid_action?: fn("activate") -> true end,
+        valid_syndicate?: fn("red_veil") -> true end
+      ] do
+        # Arrange
+        params = [
+          "--action=activate",
+          "--syndicates=red_veil",
+          "--strategy=equal_to_lowest"
+        ]
 
-      deps = %{manager: ManagerMock}
+        deps = %{manager: Manager}
 
-      ManagerMock
-      |> expect(:activate, fn ("red_veil", :equal_to_lowest) -> {:ok, :success} end)
+        # Act
+        actual_response = Cli.main(params, deps)
+        expected_response = [{:ok, :success}]
 
-      # Act
-      actual_response = Cli.main(params, deps)
-      expected_response = [{:ok, :success}]
-
-      # Assert
-      assert actual_response == expected_response
+        # Assert
+        assert actual_response == expected_response
+      end
     end
 
     test "Places orders from multiple syndicates in the market" do
-      # Arrange
-      params = [
-        "--action=activate",
-        "--syndicates=red_veil,new_loka",
-        "--strategy=equal_to_lowest"
-      ]
+      with_mock(Manager, [
+        activate: fn
+          ("red_veil", :equal_to_lowest) -> {:ok, :success}
+          ("new_loka", :equal_to_lowest) -> {:ok, :success}
+        end,
+        valid_strategy?: fn("equal_to_lowest") -> true end,
+        valid_action?: fn("activate") -> true end,
+        valid_syndicate?: fn
+          "red_veil" -> true
+          "new_loka" -> true
+        end,
+      ]) do
+        # Arrange
+        params = [
+          "--action=activate",
+          "--syndicates=red_veil,new_loka",
+          "--strategy=equal_to_lowest"
+        ]
 
-      deps = %{manager: ManagerMock}
+        deps = %{manager: Manager}
 
-      ManagerMock
-      |> expect(:activate, fn ("red_veil", :equal_to_lowest) -> {:ok, :success} end)
-      |> expect(:activate, fn ("new_loka", :equal_to_lowest) -> {:ok, :success} end)
+        # Act
+        actual_response = Cli.main(params, deps)
+        expected_response = [{:ok, :success}, {:ok, :success}]
 
-      # Act
-      actual_response = Cli.main(params, deps)
-      expected_response = [{:ok, :success}, {:ok, :success}]
-
-      # Assert
-      assert actual_response == expected_response
+        # Assert
+        assert actual_response == expected_response
+      end
     end
   end
 
   describe "deactivate syndicate" do
     test "Deletes order from market " do
-      # Arrange
-      params = ["--action=deactivate", "--syndicates=red_veil"]
-      syndicate = "red_veil"
+      with_mock Manager, [
+        deactivate: fn("red_veil") -> {:ok, :success} end,
+        valid_action?: fn("deactivate") -> true end,
+        valid_syndicate?: fn("red_veil") -> true end
+      ] do
+        # Arrange
+        params = ["--action=deactivate", "--syndicates=red_veil"]
 
-      deps = %{manager: ManagerMock}
+        deps = %{manager: Manager}
 
-      ManagerMock
-      |> expect(:deactivate, fn ^syndicate -> {:ok, :success} end)
+        # Act
+        actual_response = Cli.main(params, deps)
+        expected_response = [{:ok, :success}]
 
-      # Act
-      actual_response = Cli.main(params, deps)
-      expected_response = [{:ok, :success}]
-
-      # Assert
-      assert actual_response == expected_response
+        # Assert
+        assert actual_response == expected_response
+      end
     end
   end
 
@@ -106,40 +121,53 @@ defmodule CliTest do
       {_, _, _, _, %{"en" => docs}, _, _} = Code.fetch_docs(Cli)
 
       assert capture_log(fn ->
-               assert Cli.main(params) == :ok
+               assert Cli.main(params) == {:error, [%{input: "--Bananas", type: :bad_option}]}
              end) =~ docs
     end
 
     test "Prints instructions if invoked with unknown action" do
-      # Arrange
-      params = [
-        "--action==yummi",
-        "--syndicates=new_loka",
-        "--strategy=equal_to_lowest"
-      ]
+      with_mock Manager, [
+        valid_strategy?: fn("equal_to_lowest") -> true end,
+        valid_action?: fn("yummi") -> false end,
+        valid_syndicate?: fn("new_loka") -> true end
+      ] do
+        # Arrange
+        params = [
+          "--action=yummi",
+          "--syndicates=new_loka",
+          "--strategy=equal_to_lowest"
+        ]
 
-      # Act & Assert
-      {_, _, _, _, %{"en" => docs}, _, _} = Code.fetch_docs(Cli)
+        # Act & Assert
+        {_, _, _, _, %{"en" => docs}, _, _} = Code.fetch_docs(Cli)
 
-      assert capture_log(fn ->
-               assert Cli.main(params) == {:error, :unknown_action, "=yummi"}
-             end) =~ docs
+        assert capture_log(fn ->
+                assert Cli.main(params) == {:error, [%{input: "yummi", type: :unknown_action}]}
+              end) =~ docs
+      end
     end
 
     test "Prints instructions if invoked with unknown strategy" do
-      # Arrange
-      params = [
-        "--action=activate",
-        "--syndicates=new_loka",
-        "--strategy=banana"
-      ]
+      with_mock Manager, [
+        valid_strategy?: fn("banana") -> false end,
+        valid_action?: fn("activate") -> true end,
+        valid_syndicate?: fn("new_loka") -> true end
+      ] do
+        # Arrange
+        params = [
+          "--action=activate",
+          "--syndicates=new_loka",
+          "--strategy=banana"
+        ]
 
-      # Act & Assert
-      {_, _, _, _, %{"en" => docs}, _, _} = Code.fetch_docs(Cli)
+        # Act & Assert
+        {_, _, _, _, %{"en" => docs}, _, _} = Code.fetch_docs(Cli)
 
-      assert capture_log(fn ->
-               assert Cli.main(params) == {:error, :unknown_strategy, "banana"}
-             end) =~ docs
+        assert capture_log(fn ->
+                assert Cli.main(params) == {:error, [%{input: "banana", type: :unknown_strategy}]}
+              end) =~ docs
+      end
+
     end
   end
 end

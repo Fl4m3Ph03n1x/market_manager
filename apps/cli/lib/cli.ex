@@ -21,7 +21,10 @@ defmodule Cli do
       your items should be sold.
   """
 
+  alias Cli.{Parser, Validator}
   alias Recase
+
+  use Rop
 
   require Logger
 
@@ -46,107 +49,51 @@ defmodule Cli do
 
   Can be invoked  with ["-h"] to see the help logs.
   """
-  @spec main(args, dependecies) :: :ok
+  # @spec main(args, dependecies) :: :ok
   def main(args, deps \\ @default_deps)
 
   def main([], _deps), do: Logger.info(@moduledoc)
 
   def main([help_opt], _deps) when help_opt == "-h", do: Logger.info(@moduledoc)
 
-  def main(args, %{manager: manager}) do
-    {opts, _positional_args, errors} = parse_args(args)
-
-    case errors do
-      [] ->
-        opts
-        |> process_args(manager)
-        |> log_result()
-
-      _ ->
-        log_inspect(errors, :error, "Bad option:\n")
-        Logger.info(@moduledoc)
-    end
-  end
+  def main(args, %{manager: manager}), do:
+    args
+    |> Parser.parse()
+    >>> Validator.validate(manager)
+    >>> process(manager)
+    |> handle_result
 
   ###########
   # Private #
   ###########
 
-  @spec parse_args(args) :: {OptionParser.parsed, OptionParser.argv, OptionParser.errors}
-  defp parse_args(args), do:
-    OptionParser.parse(args, strict: [syndicates: :string, action: :string, strategy: :string])
-
-  @spec process_args(OptionParser.parsed, module) ::
-    [Manager.activate_response | Manager.deactivate_response]
-    | {:error, :unknown_action, String.t}
-    | {:error, :unknown_strategy, String.t}
-  defp process_args(opts, manager) do
-    syndicates =
-      opts
-      |> Keyword.get(:syndicates)
-      |> String.split(",")
-
-    action = Keyword.get(opts, :action)
-
-    strategy =
-      opts
-      |> Keyword.get(:strategy)
-      |> to_strategy()
-
-    process_action(action, syndicates, strategy, manager)
-  end
-
-  @spec process_action(action, [syndicate], strategy, module) ::
-    [Manager.activate_response | Manager.deactivate_response]
-    | {:error, :unknown_action, String.t}
-    | {:error, :unknown_strategy, String.t}
-  defp process_action("activate", _syndicates, {:error, :unknown_strategy, strategy}, _manager), do:
-    {:error, :unknown_strategy, strategy}
-
-  defp process_action("activate", syndicates, strategy, manager), do:
+  defp process(%{action: "activate", strategy: strategy, syndicates: syndicates}, manager), do:
     Enum.map(syndicates, &manager.activate(&1, strategy))
 
-  defp process_action("deactivate", syndicates, nil, manager), do:
+  defp process(%{action: "deactivate", syndicates: syndicates}, manager), do:
     Enum.map(syndicates, &manager.deactivate/1)
 
-  defp process_action(action, _syndicates, _strategy, _manager), do: {:error, :unknown_action, action}
-
-  @spec log_result(data_to_log :: any) :: (data_to_log :: any)
-  defp log_result({:error, reason, input} = data) do
-    reason
-    |> Atom.to_string()
-    |> Recase.to_sentence()
-    |> append_data(input)
-    |> Logger.error()
-
+  @spec handle_result(data_to_log :: any) :: (data_to_log :: any)
+  defp handle_result({:error, errors} = data) do
+    Enum.each(errors, &log_error/1)
     Logger.info(@moduledoc)
     data
   end
 
-  defp log_result(data) do
+  defp handle_result(data) do
     Logger.info("#{inspect(data)}")
     data
   end
 
+  @spec log_error(%{type: atom, input: String.t}) :: :ok
+  defp log_error(%{type: err_type, input: usr_input}), do:
+    err_type
+    |> Atom.to_string()
+    |> Recase.to_sentence()
+    |> append_data(usr_input)
+    |> Logger.error()
+
   @spec append_data(sentence :: String.t, input:: String.t) :: (result :: String.t)
   defp append_data(sentence, user_input), do: sentence <> ": " <> user_input
-
-  @spec log_inspect(data_to_inspect :: any, :error, msg :: String.t) ::
-    (data_to_inspect :: any)
-  defp log_inspect(data, :error, msg) do
-    Logger.error("#{msg}#{inspect(data)}")
-    data
-  end
-
-  @spec to_strategy(String.t | nil) :: strategy
-  defp to_strategy(nil), do: nil
-
-  defp to_strategy(user_input) do
-    if Manager.valid_strategy?(user_input) do
-      String.to_atom(user_input)
-    else
-      {:error, :unknown_strategy, user_input}
-    end
-  end
 
 end
