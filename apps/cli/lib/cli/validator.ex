@@ -4,7 +4,7 @@ defmodule Cli.Validator do
   user to make sure the next stage only has to work with valid input.
   """
 
-  def validate(%{syndicates: syndicates, action: action, strategy: strategy}, manager) do
+  def validate(%{syndicates: syndicates, action: action, strategy: strategy}, %{manager: manager}) do
     errors =
       []
       |> validate_strategy(strategy, manager)

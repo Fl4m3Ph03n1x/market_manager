@@ -17,7 +17,7 @@ defmodule Cli do
       Syndicates to be affected by the action.
 
     --strategy=top_five_average|top_three_average|equal_to_lowest|lowest_minus_one
-      The strategy used by the price analysr to calculate the price at which
+      The strategy used by the price analyser to calculate the price at which
       your items should be sold.
   """
 
@@ -59,7 +59,7 @@ defmodule Cli do
   def main(args, %{manager: manager}), do:
     args
     |> Parser.parse()
-    >>> Validator.validate(manager)
+    >>> Validator.validate(%{manager: manager})
     >>> process(manager)
     |> handle_result
 

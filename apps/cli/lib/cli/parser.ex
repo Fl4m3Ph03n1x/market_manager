@@ -1,4 +1,7 @@
 defmodule Cli.Parser do
+  @moduledoc """
+  Parses user input and transforms it into a format that CLI app can understand.
+  """
 
   def parse(args) do
     {opts, _positional_args, errors} = OptionParser.parse(args, strict: [

@@ -113,7 +113,7 @@ defmodule CliTest do
              end) =~ docs
     end
 
-    test "Prints instructions if invoked with invalid parameters" do
+    test "Prints instructions if an error occurs" do
       # Arrange
       params = ["--Bananas=yummi"]
 
@@ -123,51 +123,6 @@ defmodule CliTest do
       assert capture_log(fn ->
                assert Cli.main(params) == {:error, [%{input: "--Bananas", type: :bad_option}]}
              end) =~ docs
-    end
-
-    test "Prints instructions if invoked with unknown action" do
-      with_mock Manager, [
-        valid_strategy?: fn("equal_to_lowest") -> true end,
-        valid_action?: fn("yummi") -> false end,
-        valid_syndicate?: fn("new_loka") -> true end
-      ] do
-        # Arrange
-        params = [
-          "--action=yummi",
-          "--syndicates=new_loka",
-          "--strategy=equal_to_lowest"
-        ]
-
-        # Act & Assert
-        {_, _, _, _, %{"en" => docs}, _, _} = Code.fetch_docs(Cli)
-
-        assert capture_log(fn ->
-                assert Cli.main(params) == {:error, [%{input: "yummi", type: :unknown_action}]}
-              end) =~ docs
-      end
-    end
-
-    test "Prints instructions if invoked with unknown strategy" do
-      with_mock Manager, [
-        valid_strategy?: fn("banana") -> false end,
-        valid_action?: fn("activate") -> true end,
-        valid_syndicate?: fn("new_loka") -> true end
-      ] do
-        # Arrange
-        params = [
-          "--action=activate",
-          "--syndicates=new_loka",
-          "--strategy=banana"
-        ]
-
-        # Act & Assert
-        {_, _, _, _, %{"en" => docs}, _, _} = Code.fetch_docs(Cli)
-
-        assert capture_log(fn ->
-                assert Cli.main(params) == {:error, [%{input: "banana", type: :unknown_strategy}]}
-              end) =~ docs
-      end
-
     end
   end
 end
