@@ -3,7 +3,7 @@ defmodule Cli.ValidatorTest do
 
   import Mock
 
-  alias Cli.Validator
+  alias Cli.{Error, Request, Validator}
 
   describe "validate" do
     test "returns error if strategy is invalid" do
@@ -13,7 +13,7 @@ defmodule Cli.ValidatorTest do
         valid_syndicate?: fn nil -> true end
       ] do
         # Arrange
-        params = %{
+        params = %Request{
           syndicates: [nil],
           action: nil,
           strategy: "invalid_strategy"
@@ -22,7 +22,7 @@ defmodule Cli.ValidatorTest do
 
         # Act
         actual_response = Validator.validate(params, deps)
-        expected_response = {:error, [%{input: "invalid_strategy", type: :unknown_strategy}]}
+        expected_response = {:error, [%Error{input: "invalid_strategy", type: :unknown_strategy}]}
 
         # Assert
         assert actual_response == expected_response
@@ -39,7 +39,7 @@ defmodule Cli.ValidatorTest do
         end
       ] do
         # Arrange
-        params = %{
+        params = %Request{
           syndicates: ["new_loka", "invalid_syndicate"],
           action: nil,
           strategy: nil
@@ -48,7 +48,7 @@ defmodule Cli.ValidatorTest do
 
         # Act
         actual_response = Validator.validate(params, deps)
-        expected_response = {:error, [%{input: "invalid_syndicate", type: :unknown_syndicate}]}
+        expected_response = {:error, [%Error{input: "invalid_syndicate", type: :unknown_syndicate}]}
 
         # Assert
         assert actual_response == expected_response
@@ -65,7 +65,7 @@ defmodule Cli.ValidatorTest do
         end
       ] do
         # Arrange
-        params = %{
+        params = %Request{
           syndicates: ["invalid_syndicate1", "invalid_syndicate2"],
           action: nil,
           strategy: nil
@@ -75,15 +75,14 @@ defmodule Cli.ValidatorTest do
         # Act
         actual_response = Validator.validate(params, deps)
         expected_response = {:error, [
-          %{input: "invalid_syndicate1", type: :unknown_syndicate},
-          %{input: "invalid_syndicate2", type: :unknown_syndicate},
+          %Error{input: "invalid_syndicate1", type: :unknown_syndicate},
+          %Error{input: "invalid_syndicate2", type: :unknown_syndicate},
         ]}
 
         # Assert
         assert actual_response == expected_response
       end
     end
-
 
     test "returns error if an action is invalid" do
       with_mock Manager, [
@@ -92,7 +91,7 @@ defmodule Cli.ValidatorTest do
         valid_syndicate?: fn nil -> true end
       ] do
         # Arrange
-        params = %{
+        params = %Request{
           syndicates: [nil],
           action: "invalid_action",
           strategy: nil
@@ -101,7 +100,7 @@ defmodule Cli.ValidatorTest do
 
         # Act
         actual_response = Validator.validate(params, deps)
-        expected_response = {:error, [%{input: "invalid_action", type: :unknown_action}]}
+        expected_response = {:error, [%Error{input: "invalid_action", type: :unknown_action}]}
 
         # Assert
         assert actual_response == expected_response
@@ -115,7 +114,7 @@ defmodule Cli.ValidatorTest do
         valid_syndicate?: fn nil -> true end
       ] do
         # Arrange
-        params = %{
+        params = %Request{
           syndicates: [nil],
           action: "invalid_action",
           strategy: "invalid_strategy"
@@ -125,8 +124,8 @@ defmodule Cli.ValidatorTest do
         # Act
         actual_response = Validator.validate(params, deps)
         expected_response = {:error, [
-          %{input: "invalid_action", type: :unknown_action},
-          %{input: "invalid_strategy", type: :unknown_strategy}
+          %Error{input: "invalid_action", type: :unknown_action},
+          %Error{input: "invalid_strategy", type: :unknown_strategy}
         ]}
 
         # Assert
@@ -141,7 +140,7 @@ defmodule Cli.ValidatorTest do
         valid_syndicate?: fn "red_veil" -> true end
       ] do
         # Arrange
-        params = %{
+        params = %Request{
           syndicates: ["red_veil"],
           action: "activate",
           strategy: "equal_to_lowest"
@@ -150,7 +149,7 @@ defmodule Cli.ValidatorTest do
 
         # Act
         actual_response = Validator.validate(params, deps)
-        expected_response = {:ok, %{
+        expected_response = {:ok, %Request{
           action: "activate",
           strategy: :equal_to_lowest,
           syndicates: ["red_veil"]

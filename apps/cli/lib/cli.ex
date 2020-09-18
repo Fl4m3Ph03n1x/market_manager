@@ -21,22 +21,16 @@ defmodule Cli do
       your items should be sold.
   """
 
-  alias Cli.{Parser, Validator}
-  alias Recase
+  alias Cli.{Error, Parser, Request, Validator}
 
   use Rop
 
   require Logger
 
-  @default_deps %{
-    manager: Manager
-  }
+  @default_deps %{manager: Manager}
 
-  @type dependecies :: %{manager: module}
+  @type dependencies :: %{manager: module}
   @type args :: [String.t]
-  @type syndicate :: String.t
-  @type action :: String.t
-  @type strategy :: atom | nil | {:error, :unknown_strategy, String.t}
 
   ##########
   # Public #
@@ -49,7 +43,7 @@ defmodule Cli do
 
   Can be invoked  with ["-h"] to see the help logs.
   """
-  # @spec main(args, dependecies) :: :ok
+  @spec main(args, dependencies) :: any
   def main(args, deps \\ @default_deps)
 
   def main([], _deps), do: Logger.info(@moduledoc)
@@ -67,10 +61,11 @@ defmodule Cli do
   # Private #
   ###########
 
-  defp process(%{action: "activate", strategy: strategy, syndicates: syndicates}, manager), do:
+  @spec process(Request.t, dependencies) :: any
+  defp process(%Request{action: "activate", strategy: strategy, syndicates: syndicates}, manager), do:
     Enum.map(syndicates, &manager.activate(&1, strategy))
 
-  defp process(%{action: "deactivate", syndicates: syndicates}, manager), do:
+  defp process(%Request{action: "deactivate", syndicates: syndicates}, manager), do:
     Enum.map(syndicates, &manager.deactivate/1)
 
   @spec handle_result(data_to_log :: any) :: (data_to_log :: any)
@@ -85,15 +80,10 @@ defmodule Cli do
     data
   end
 
-  @spec log_error(%{type: atom, input: String.t}) :: :ok
-  defp log_error(%{type: err_type, input: usr_input}), do:
-    err_type
-    |> Atom.to_string()
-    |> Recase.to_sentence()
-    |> append_data(usr_input)
+  @spec log_error(Error.t) :: :ok
+  defp log_error(error), do:
+    error
+    |> Error.to_string()
     |> Logger.error()
-
-  @spec append_data(sentence :: String.t, input:: String.t) :: (result :: String.t)
-  defp append_data(sentence, user_input), do: sentence <> ": " <> user_input
 
 end

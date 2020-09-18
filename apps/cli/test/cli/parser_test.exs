@@ -1,7 +1,7 @@
 defmodule Cli.ParserTest do
   use ExUnit.Case
 
-  alias Cli.Parser
+  alias Cli.{Error, Parser, Request}
 
   describe "parse" do
     test "returns parsed map of user input" do
@@ -12,7 +12,7 @@ defmodule Cli.ParserTest do
       ]
 
       actual = Parser.parse(params)
-      expected = {:ok, %{
+      expected = {:ok, %Request{
         action: "activate",
         strategy: "equal_to_lowest",
         syndicates: ["red_veil"]}
@@ -28,7 +28,7 @@ defmodule Cli.ParserTest do
       ]
 
       actual = Parser.parse(params)
-      expected = {:error, [%{input: "--bad_option", type: :bad_option}]}
+      expected = {:error, [%Error{input: "--bad_option", type: :bad_option}]}
 
       assert actual == expected
     end

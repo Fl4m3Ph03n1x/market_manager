@@ -7,6 +7,7 @@ defmodule CliTest do
   require Logger
 
   alias Cli
+  alias Cli.Error
 
   describe "activate syndicate" do
     test "Places orders from a syndicate in the market" do
@@ -121,7 +122,7 @@ defmodule CliTest do
       {_, _, _, _, %{"en" => docs}, _, _} = Code.fetch_docs(Cli)
 
       assert capture_log(fn ->
-               assert Cli.main(params) == {:error, [%{input: "--Bananas", type: :bad_option}]}
+               assert Cli.main(params) == {:error, [%Error{input: "--Bananas", type: :bad_option}]}
              end) =~ docs
     end
   end

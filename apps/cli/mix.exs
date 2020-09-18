@@ -26,8 +26,9 @@ defmodule Cli.MixProject do
     {:recase, "~> 0.5"},
     {:manager, in_umbrella: true},
     {:rop, "~> 0.5"},
-    {:mock, "~> 0.3.0", only: :test},
+    {:typed_struct, "~> 0.2.1"},
 
+    {:mock, "~> 0.3.0", only: :test},
     {:mix_test_watch, "~> 1.0", only: :dev, runtime: false}
   ]
 
