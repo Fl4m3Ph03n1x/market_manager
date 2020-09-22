@@ -45,6 +45,13 @@ defmodule Store.FileSystem do
     >>> save_new_orders(deps[:write_fn])
     >>> send_ok_response(order_id)
 
+  def syndicate_exists?(syndicate, deps \\ @default_deps) do
+    case read_syndicate_data(@products_filename, syndicate, deps[:read_fn]) do
+      {:ok, _data} -> true
+      _ -> false
+    end
+  end
+
   ###########
   # Private #
   ###########

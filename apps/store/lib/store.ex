@@ -55,4 +55,8 @@ defmodule Store do
   @callback delete_order(order_id, syndicate) :: delete_order_response
   @callback delete_order(order_id, syndicate, deps) :: delete_order_response
   defdelegate delete_order(order_id, syndicate), to: FileSystem
+
+  @callback syndicate_exists?(syndicate) :: boolean
+  @callback syndicate_exists?(syndicate, deps) :: boolean
+  defdelegate syndicate_exists?(syndicate), to: FileSystem
 end
