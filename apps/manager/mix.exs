@@ -29,7 +29,9 @@ defmodule Manager.MixProject do
       {:store, in_umbrella: true},
       {:auction_house, in_umbrella: true},
 
-      {:hammox, "~> 0.2"}
+      # Testing and Dev
+      {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
+      {:mock, "~> 0.3.0", only: :test}
     ]
   end
 

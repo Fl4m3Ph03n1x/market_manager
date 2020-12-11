@@ -5,7 +5,7 @@ defmodule Store.FileSystem do
 
   use Rop
 
-  @behaviour Store
+  alias Store
 
   @orders_filename Application.compile_env!(:store, :current_orders)
   @products_filename Application.compile_env!(:store, :products)
@@ -19,15 +19,15 @@ defmodule Store.FileSystem do
   # Public #
   ##########
 
-  @impl Store
+  @spec list_products(Store.syndicate) :: Store.list_products_response
   def list_products(syndicate, deps \\ @default_deps), do:
     read_syndicate_data(@products_filename, syndicate, deps[:read_fn])
 
-  @impl Store
+  @spec list_orders(Store.syndicate) :: Store.list_orders_response
   def list_orders(syndicate, deps \\ @default_deps), do:
     read_syndicate_data(@orders_filename, syndicate, deps[:read_fn])
 
-  @impl Store
+  @spec save_order(Store.order_id, Store.syndicate) :: Store.save_order_response
   def save_order(order_id, syndicate, deps \\ @default_deps), do:
     deps[:read_fn].(@orders_filename)
     >>> decode_orders_or_empty_orders()
@@ -36,7 +36,7 @@ defmodule Store.FileSystem do
     >>> save_new_orders(deps[:write_fn])
     >>> send_ok_response(order_id)
 
-  @impl Store
+  @spec delete_order(Store.order_id, Store.syndicate) :: Store.delete_order_response
   def delete_order(order_id, syndicate, deps \\ @default_deps), do:
     deps[:read_fn].(@orders_filename)
     >>> decode_orders_or_empty_orders()
@@ -45,12 +45,11 @@ defmodule Store.FileSystem do
     >>> save_new_orders(deps[:write_fn])
     >>> send_ok_response(order_id)
 
-  def syndicate_exists?(syndicate, deps \\ @default_deps) do
-    case read_syndicate_data(@products_filename, syndicate, deps[:read_fn]) do
-      {:ok, _data} -> true
-      _ -> false
-    end
-  end
+  @spec syndicate_exists?(Store.syndicate) :: boolean
+  def syndicate_exists?(syndicate, deps \\ @default_deps), do:
+    @products_filename
+    |> read_syndicate_data(syndicate, deps[:read_fn])
+    |> syndicate_found?()
 
   ###########
   # Private #
@@ -101,6 +100,10 @@ defmodule Store.FileSystem do
       err -> err
     end
   end
+
+  @spec syndicate_found?({:ok | :error, any}) :: boolean
+  defp syndicate_found?({:ok, _data}), do: true
+  defp syndicate_found?(_error), do: false
 
   @spec send_ok_response(:new_orders_saved, Store.order_id) :: {:ok, Store.order_id}
   defp send_ok_response(:new_orders_saved, order_id), do: {:ok, order_id}

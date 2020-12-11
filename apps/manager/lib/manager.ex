@@ -32,9 +32,9 @@ defmodule Manager do
     | {:partial_success, [{:error, error_reason, order_id}, ...]}
     | {:error, :unable_to_delete_orders, [{:error, error_reason, order_id}]}
 
-  #############
-  # Callbacks #
-  #############
+  ##########
+  # Public #
+  ##########
 
   @doc """
   Activates a syndicate in warframe.market. Activating a syndicate means you
@@ -44,7 +44,8 @@ defmodule Manager do
 
   Example:
   ```
-  {:ok, :success} = MarketManager.activate("simaris", :lowest_minus_one)
+  > MarketManager.activate("simaris", :lowest_minus_one)
+  {:ok, :success}
   ```
   """
   @spec activate(syndicate, strategy) :: activate_response
@@ -56,7 +57,8 @@ defmodule Manager do
 
   Example:
   ```
-  {:ok, :success} = MarketManager.deactivate("simaris")
+  > MarketManager.deactivate("simaris")
+  {:ok, :success}
   ```
   """
   @spec deactivate(syndicate) :: deactivate_response
@@ -67,8 +69,10 @@ defmodule Manager do
 
   Example:
   ```
-  MarketManager.valid_strategy?("bananas")          # false
-  MarketManager.valid_strategy?("equal_to_lowest")  # true
+  > MarketManager.valid_strategy?("bananas")
+  false
+  > MarketManager.valid_strategy?("equal_to_lowest")
+  true
   ```
   """
   @spec valid_strategy?(String.t) :: boolean
@@ -79,8 +83,10 @@ defmodule Manager do
 
   Example:
   ```
-  MarketManager.valid_action?("bananas")  # false
-  MarketManager.valid_action?("activate") # true
+  > MarketManager.valid_action?("bananas")
+  false
+  > MarketManager.valid_action?("activate")
+  true
   ```
   """
   @spec valid_action?(String.t) :: boolean
@@ -93,8 +99,10 @@ defmodule Manager do
 
   Example:
   ```
-  MarketManager.valid_syndicate?("bananas")       # false
-  MarketManager.valid_syndicate?("red_veil")      # true
+  > MarketManager.valid_syndicate?("bananas")
+  false
+  > MarketManager.valid_syndicate?("red_veil")
+  true
   ```
   """
   @spec valid_syndicate?(syndicate) :: boolean

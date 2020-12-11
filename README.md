@@ -17,7 +17,7 @@
 
 Makes sell requests in batch to warframe market.
 Used when you want to sell a lot of things or remove them from your list all at
-once. Specially usefull for syndicates because you dont have to buy everything
+once. Specially useful for syndicates because you don't have to buy everything
 in advance and if you want to avoid the 100 items limit without being a Patreon,
 which if you want to support the site, you should totally become.
 
@@ -109,7 +109,7 @@ For more information on how to use type:
 
 ## Development
 
-This project has a dependency erlang 22.1. While it doesn't require a lot of memory to run, it does require a lot of memory to compile, at least 4GB.
+This project has a dependency Erlang 22.1. While it doesn't require a lot of memory to run, it does require a lot of memory to compile, at least 4GB.
 
 Some of the dependencies also require rebar3 to work. Sometimes it is problematic to install rebar3 so, this script for Linux does the job:
 
