@@ -8,7 +8,7 @@
     <meta name="project" content="Market Manager v1.0.0">
     <title>Manager.Interpreter — Market Manager v1.0.0</title>
     <link rel="stylesheet" href="dist/elixir-d678dad126d82ddc061f.css" />
-    <script src="dist/sidebar_items-da613d9c9d.js"></script>
+    <script src="dist/sidebar_items-af679b8738.js"></script>
       <script src="docs_config.js"></script>
     <script async src="dist/app-0103364119015b97e56c.js"></script>
   </head>
@@ -116,6 +116,11 @@ of the application and manages data between them.</p>        </section>
     <a href="#deactivate/2">deactivate(syndicate, deps \\ [store: Store, auction_house: AuctionHouse])</a>
   </div>
 </div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#valid_action?/1">valid_action?(action)</a>
+  </div>
+</div>
   </div>
         </section>
 
@@ -198,7 +203,7 @@ Functions          </h1>
       <span class="sr-only">Link to this function</span>
     </a>
     <h1 class="signature">activate(syndicate, strategy, deps \\ [store: Store, auction_house: AuctionHouse])</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/manager/lib/manager/interpreter.ex#L37" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/manager/lib/manager/interpreter.ex#L41" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -221,7 +226,7 @@ Functions          </h1>
       <span class="sr-only">Link to this function</span>
     </a>
     <h1 class="signature">deactivate(syndicate, deps \\ [store: Store, auction_house: AuctionHouse])</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/manager/lib/manager/interpreter.ex#L47" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/manager/lib/manager/interpreter.ex#L51" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -231,6 +236,27 @@ Functions          </h1>
       <h2>Specs</h2>
       <div class="specs">
           <pre>deactivate(<a href="Manager.html#t:syndicate/0">Manager.syndicate</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">keyword</a>()) :: <a href="Manager.html#t:deactivate_response/0">Manager.deactivate_response</a>()</pre>
+      </div>
+
+  </section>
+</section>
+<section class="detail" id="valid_action?/1">
+  <div class="detail-header">
+    <a href="#valid_action?/1" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">valid_action?(action)</h1>
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/manager/lib/manager/interpreter.ex#L37" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+  </div>
+
+  <section class="docstring">
+      <h2>Specs</h2>
+      <div class="specs">
+          <pre>valid_action?(<a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()</pre>
       </div>
 
   </section>

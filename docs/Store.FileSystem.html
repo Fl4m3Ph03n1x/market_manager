@@ -8,7 +8,7 @@
     <meta name="project" content="Market Manager v1.0.0">
     <title>Store.FileSystem — Market Manager v1.0.0</title>
     <link rel="stylesheet" href="dist/elixir-d678dad126d82ddc061f.css" />
-    <script src="dist/sidebar_items-da613d9c9d.js"></script>
+    <script src="dist/sidebar_items-af679b8738.js"></script>
       <script src="docs_config.js"></script>
     <script async src="dist/app-0103364119015b97e56c.js"></script>
   </head>
@@ -77,7 +77,146 @@ Store.FileSystem          <a href="https://github.com/Fl4m3Ph03n1x/market_manage
         <section id="moduledoc">
 <p>Adapter for the Store port, implements it using the file system.</p>        </section>
 
+        <section id="summary" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#summary">
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
+            </a>
+            Summary
+          </h1>
+  <div class="summary-functions summary">
+    <h2>
+      <a href="#functions">Functions</a>
+    </h2>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#delete_order/3">delete_order(order_id, syndicate, deps \\ [read_fn: &amp;File.read/1, write_fn: &amp;File.write/2])</a>
+  </div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#list_orders/2">list_orders(syndicate, deps \\ [read_fn: &amp;File.read/1, write_fn: &amp;File.write/2])</a>
+  </div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#list_products/2">list_products(syndicate, deps \\ [read_fn: &amp;File.read/1, write_fn: &amp;File.write/2])</a>
+  </div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#save_order/3">save_order(order_id, syndicate, deps \\ [read_fn: &amp;File.read/1, write_fn: &amp;File.write/2])</a>
+  </div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#syndicate_exists?/2">syndicate_exists?(syndicate, deps \\ [read_fn: &amp;File.read/1, write_fn: &amp;File.write/2])</a>
+  </div>
+</div>
+  </div>
+        </section>
 
+        <section id="functions" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#functions">
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
+            </a>
+Functions          </h1>
+          <div class="functions-list">
+<section class="detail" id="delete_order/3">
+    <span id="delete_order/2"></span>
+  <div class="detail-header">
+    <a href="#delete_order/3" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">delete_order(order_id, syndicate, deps \\ [read_fn: &amp;File.read/1, write_fn: &amp;File.write/2])</h1>
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store/file_system.ex#L40" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+  </div>
+
+  <section class="docstring">
+
+  </section>
+</section>
+<section class="detail" id="list_orders/2">
+    <span id="list_orders/1"></span>
+  <div class="detail-header">
+    <a href="#list_orders/2" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">list_orders(syndicate, deps \\ [read_fn: &amp;File.read/1, write_fn: &amp;File.write/2])</h1>
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store/file_system.ex#L27" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+  </div>
+
+  <section class="docstring">
+
+  </section>
+</section>
+<section class="detail" id="list_products/2">
+    <span id="list_products/1"></span>
+  <div class="detail-header">
+    <a href="#list_products/2" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">list_products(syndicate, deps \\ [read_fn: &amp;File.read/1, write_fn: &amp;File.write/2])</h1>
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store/file_system.ex#L23" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+  </div>
+
+  <section class="docstring">
+
+  </section>
+</section>
+<section class="detail" id="save_order/3">
+    <span id="save_order/2"></span>
+  <div class="detail-header">
+    <a href="#save_order/3" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">save_order(order_id, syndicate, deps \\ [read_fn: &amp;File.read/1, write_fn: &amp;File.write/2])</h1>
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store/file_system.ex#L31" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+  </div>
+
+  <section class="docstring">
+
+  </section>
+</section>
+<section class="detail" id="syndicate_exists?/2">
+    <span id="syndicate_exists?/1"></span>
+  <div class="detail-header">
+    <a href="#syndicate_exists?/2" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">syndicate_exists?(syndicate, deps \\ [read_fn: &amp;File.read/1, write_fn: &amp;File.write/2])</h1>
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store/file_system.ex#L49" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+  </div>
+
+  <section class="docstring">
+
+  </section>
+</section>
+          </div>
+        </section>
       <footer class="footer">
         <p>
           <span class="line">
