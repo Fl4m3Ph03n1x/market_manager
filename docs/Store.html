@@ -8,7 +8,7 @@
     <meta name="project" content="Market Manager v1.0.0">
     <title>Store — Market Manager v1.0.0</title>
     <link rel="stylesheet" href="dist/elixir-d678dad126d82ddc061f.css" />
-    <script src="dist/sidebar_items-da613d9c9d.js"></script>
+    <script src="dist/sidebar_items-af679b8738.js"></script>
       <script src="docs_config.js"></script>
     <script async src="dist/app-0103364119015b97e56c.js"></script>
   </head>
@@ -67,7 +67,7 @@ Market Manager      </a>
 
       <h1>
         <small class="app-vsn">Market Manager v1.0.0</small>
-Store <small>behaviour</small>          <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store.ex#L1" title="View Source" class="view-source" rel="help">
+Store          <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store.ex#L1" title="View Source" class="view-source" rel="help">
             <span class="icon-code" aria-hidden="true"></span>
             <span class="sr-only">View Source</span>
           </a>
@@ -143,70 +143,31 @@ Store <small>behaviour</small>          <a href="https://github.com/Fl4m3Ph03n1x
   <div class="summary-signature">
     <a href="#delete_order/2">delete_order(order_id, syndicate)</a>
   </div>
-    <div class="summary-synopsis"><p>See <code>Store.FileSystem.delete_order/2</code>.</p></div>
+    <div class="summary-synopsis"><p>Deletes the given orderId from the given syndicate from the storage system.</p></div>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
     <a href="#list_orders/1">list_orders(syndicate)</a>
   </div>
-    <div class="summary-synopsis"><p>See <code>Store.FileSystem.list_orders/1</code>.</p></div>
+    <div class="summary-synopsis"><p>Lists the ids of currently active orders from the given syndicate.</p></div>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
     <a href="#list_products/1">list_products(syndicate)</a>
   </div>
-    <div class="summary-synopsis"><p>See <code>Store.FileSystem.list_products/1</code>.</p></div>
+    <div class="summary-synopsis"><p>Lists the products from the given syndicate.</p></div>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
     <a href="#save_order/2">save_order(order_id, syndicate)</a>
   </div>
-    <div class="summary-synopsis"><p>See <code>Store.FileSystem.save_order/2</code>.</p></div>
-</div>
-  </div>
-  <div class="summary-callbacks summary">
-    <h2>
-      <a href="#callbacks">Callbacks</a>
-    </h2>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#c:delete_order/2">delete_order(order_id, syndicate)</a>
-  </div>
+    <div class="summary-synopsis"><p>Saves the given orderId for the given syndicate in the storage system.</p></div>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#c:delete_order/3">delete_order(order_id, syndicate, deps)</a>
+    <a href="#syndicate_exists?/1">syndicate_exists?(syndicate)</a>
   </div>
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#c:list_orders/1">list_orders(syndicate)</a>
-  </div>
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#c:list_orders/2">list_orders(syndicate, deps)</a>
-  </div>
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#c:list_products/1">list_products(syndicate)</a>
-  </div>
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#c:list_products/2">list_products(syndicate, deps)</a>
-  </div>
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#c:save_order/2">save_order(order_id, syndicate)</a>
-  </div>
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#c:save_order/3">save_order(order_id, syndicate, deps)</a>
-  </div>
+    <div class="summary-synopsis"><p>Returns true if the given syndicate exists, false otherwise.</p></div>
 </div>
   </div>
         </section>
@@ -437,85 +398,7 @@ Functions          </h1>
       <span class="sr-only">Link to this function</span>
     </a>
     <h1 class="signature">delete_order(order_id, syndicate)</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store.ex#L57" class="view-source" rel="help" title="View Source">
-       <span class="icon-code" aria-hidden="true"></span>
-       <span class="sr-only">View Source</span>
-     </a>
-  </div>
-
-  <section class="docstring">
-
-<p>See <code>Store.FileSystem.delete_order/2</code>.</p>  </section>
-</section>
-<section class="detail" id="list_orders/1">
-  <div class="detail-header">
-    <a href="#list_orders/1" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature">list_orders(syndicate)</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store.ex#L49" class="view-source" rel="help" title="View Source">
-       <span class="icon-code" aria-hidden="true"></span>
-       <span class="sr-only">View Source</span>
-     </a>
-  </div>
-
-  <section class="docstring">
-
-<p>See <code>Store.FileSystem.list_orders/1</code>.</p>  </section>
-</section>
-<section class="detail" id="list_products/1">
-  <div class="detail-header">
-    <a href="#list_products/1" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature">list_products(syndicate)</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store.ex#L45" class="view-source" rel="help" title="View Source">
-       <span class="icon-code" aria-hidden="true"></span>
-       <span class="sr-only">View Source</span>
-     </a>
-  </div>
-
-  <section class="docstring">
-
-<p>See <code>Store.FileSystem.list_products/1</code>.</p>  </section>
-</section>
-<section class="detail" id="save_order/2">
-  <div class="detail-header">
-    <a href="#save_order/2" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature">save_order(order_id, syndicate)</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store.ex#L53" class="view-source" rel="help" title="View Source">
-       <span class="icon-code" aria-hidden="true"></span>
-       <span class="sr-only">View Source</span>
-     </a>
-  </div>
-
-  <section class="docstring">
-
-<p>See <code>Store.FileSystem.save_order/2</code>.</p>  </section>
-</section>
-          </div>
-        </section>
-        <section id="callbacks" class="details-list">
-          <h1 class="section-heading">
-            <a class="hover-link" href="#callbacks">
-              <span class="icon-link" aria-hidden="true"></span>
-              <span class="sr-only">Link to this section</span>
-            </a>
-Callbacks          </h1>
-          <div class="callbacks-list">
-<section class="detail" id="c:delete_order/2">
-  <div class="detail-header">
-    <a href="#c:delete_order/2" class="detail-link" title="Link to this callback">
-      <span class="icon-link" aria-hidden="true"></span>
-      <span class="sr-only">Link to this callback</span>
-    </a>
-    <h1 class="signature">delete_order(order_id, syndicate)</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store.ex#L55" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store.ex#L111" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -527,37 +410,20 @@ Callbacks          </h1>
           <pre>delete_order(<a href="#t:order_id/0">order_id</a>(), <a href="#t:syndicate/0">syndicate</a>()) :: <a href="#t:delete_order_response/0">delete_order_response</a>()</pre>
       </div>
 
-  </section>
-</section>
-<section class="detail" id="c:delete_order/3">
-  <div class="detail-header">
-    <a href="#c:delete_order/3" class="detail-link" title="Link to this callback">
-      <span class="icon-link" aria-hidden="true"></span>
-      <span class="sr-only">Link to this callback</span>
-    </a>
-    <h1 class="signature">delete_order(order_id, syndicate, deps)</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store.ex#L56" class="view-source" rel="help" title="View Source">
-       <span class="icon-code" aria-hidden="true"></span>
-       <span class="sr-only">View Source</span>
-     </a>
-  </div>
+<p>Deletes the given orderId from the given syndicate from the storage system.</p><p>Example:</p><pre><code class="nohighlight makeup elixir"><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">delete_order</span><span class="p" data-group-id="1099161211-1">(</span><span class="s">&quot;00f83ca2-67d9-4019-9fea-587b9fc4037c&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;red_veil&quot;</span><span class="p" data-group-id="1099161211-1">)</span><span class="w">
+</span><span class="p" data-group-id="1099161211-2">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;00f83ca2-67d9-4019-9fea-587b9fc4037c&quot;</span><span class="p" data-group-id="1099161211-2">}</span><span class="w">
 
-  <section class="docstring">
-      <h2>Specs</h2>
-      <div class="specs">
-          <pre>delete_order(<a href="#t:order_id/0">order_id</a>(), <a href="#t:syndicate/0">syndicate</a>(), <a href="#t:deps/0">deps</a>()) :: <a href="#t:delete_order_response/0">delete_order_response</a>()</pre>
-      </div>
-
-  </section>
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">delete_order</span><span class="p" data-group-id="1099161211-3">(</span><span class="s">&quot;invalid_syndicate&quot;</span><span class="p" data-group-id="1099161211-3">)</span><span class="w">
+</span><span class="p" data-group-id="1099161211-4">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:enoent</span><span class="p" data-group-id="1099161211-4">}</span></code></pre>  </section>
 </section>
-<section class="detail" id="c:list_orders/1">
+<section class="detail" id="list_orders/1">
   <div class="detail-header">
-    <a href="#c:list_orders/1" class="detail-link" title="Link to this callback">
+    <a href="#list_orders/1" class="detail-link" title="Link to this function">
       <span class="icon-link" aria-hidden="true"></span>
-      <span class="sr-only">Link to this callback</span>
+      <span class="sr-only">Link to this function</span>
     </a>
     <h1 class="signature">list_orders(syndicate)</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store.ex#L47" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store.ex#L81" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -569,37 +435,20 @@ Callbacks          </h1>
           <pre>list_orders(<a href="#t:syndicate/0">syndicate</a>()) :: <a href="#t:list_orders_response/0">list_orders_response</a>()</pre>
       </div>
 
-  </section>
-</section>
-<section class="detail" id="c:list_orders/2">
-  <div class="detail-header">
-    <a href="#c:list_orders/2" class="detail-link" title="Link to this callback">
-      <span class="icon-link" aria-hidden="true"></span>
-      <span class="sr-only">Link to this callback</span>
-    </a>
-    <h1 class="signature">list_orders(syndicate, deps)</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store.ex#L48" class="view-source" rel="help" title="View Source">
-       <span class="icon-code" aria-hidden="true"></span>
-       <span class="sr-only">View Source</span>
-     </a>
-  </div>
+<p>Lists the ids of currently active orders from the given syndicate.</p><p>Example:</p><pre><code class="nohighlight makeup elixir"><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">list_orders</span><span class="p" data-group-id="2630690889-1">(</span><span class="s">&quot;red_veil&quot;</span><span class="p" data-group-id="2630690889-1">)</span><span class="w">
+</span><span class="p" data-group-id="2630690889-2">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="2630690889-3">[</span><span class="s">&quot;5a750686-956f-42a6-8194-11925ec9281e&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;58f0b7e7-0ded-4932-8ccd-380cc5634c82&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">...</span><span class="p" data-group-id="2630690889-3">]</span><span class="p" data-group-id="2630690889-2">}</span><span class="w">
 
-  <section class="docstring">
-      <h2>Specs</h2>
-      <div class="specs">
-          <pre>list_orders(<a href="#t:syndicate/0">syndicate</a>(), <a href="#t:deps/0">deps</a>()) :: <a href="#t:list_orders_response/0">list_orders_response</a>()</pre>
-      </div>
-
-  </section>
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">list_orders</span><span class="p" data-group-id="2630690889-4">(</span><span class="s">&quot;invalid_syndicate&quot;</span><span class="p" data-group-id="2630690889-4">)</span><span class="w">
+</span><span class="p" data-group-id="2630690889-5">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:syndicate_not_found</span><span class="p" data-group-id="2630690889-5">}</span></code></pre>  </section>
 </section>
-<section class="detail" id="c:list_products/1">
+<section class="detail" id="list_products/1">
   <div class="detail-header">
-    <a href="#c:list_products/1" class="detail-link" title="Link to this callback">
+    <a href="#list_products/1" class="detail-link" title="Link to this function">
       <span class="icon-link" aria-hidden="true"></span>
-      <span class="sr-only">Link to this callback</span>
+      <span class="sr-only">Link to this function</span>
     </a>
     <h1 class="signature">list_products(syndicate)</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store.ex#L43" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store.ex#L66" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -611,37 +460,30 @@ Callbacks          </h1>
           <pre>list_products(<a href="#t:syndicate/0">syndicate</a>()) :: <a href="#t:list_products_response/0">list_products_response</a>()</pre>
       </div>
 
-  </section>
-</section>
-<section class="detail" id="c:list_products/2">
-  <div class="detail-header">
-    <a href="#c:list_products/2" class="detail-link" title="Link to this callback">
-      <span class="icon-link" aria-hidden="true"></span>
-      <span class="sr-only">Link to this callback</span>
-    </a>
-    <h1 class="signature">list_products(syndicate, deps)</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store.ex#L44" class="view-source" rel="help" title="View Source">
-       <span class="icon-code" aria-hidden="true"></span>
-       <span class="sr-only">View Source</span>
-     </a>
-  </div>
+<p>Lists the products from the given syndicate.</p><p>Example:</p><pre><code class="nohighlight makeup elixir"><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">list_products</span><span class="p" data-group-id="5064430066-1">(</span><span class="s">&quot;red_veil&quot;</span><span class="p" data-group-id="5064430066-1">)</span><span class="w">
+</span><span class="p" data-group-id="5064430066-2">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="5064430066-3">[</span><span class="w">
+  </span><span class="p" data-group-id="5064430066-4">%{</span><span class="w">
+    </span><span class="s">&quot;name&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;Eternal War&quot;</span><span class="p">,</span><span class="w">
+    </span><span class="s">&quot;id&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;8ee5b3b0-fa43-4dbc-9363-a52930dc742e&quot;</span><span class="p">,</span><span class="w">
+    </span><span class="s">&quot;min_price&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">14</span><span class="p">,</span><span class="w">
+    </span><span class="s">&quot;default_price&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">15</span><span class="p">,</span><span class="w">
+    </span><span class="s">&quot;quantity&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+    </span><span class="s">&quot;rank&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="w">
+  </span><span class="p" data-group-id="5064430066-4">}</span><span class="p">,</span><span class="w">
+  </span><span class="n">...</span><span class="w">
+</span><span class="p" data-group-id="5064430066-3">]</span><span class="p" data-group-id="5064430066-2">}</span><span class="w">
 
-  <section class="docstring">
-      <h2>Specs</h2>
-      <div class="specs">
-          <pre>list_products(<a href="#t:syndicate/0">syndicate</a>(), <a href="#t:deps/0">deps</a>()) :: <a href="#t:list_products_response/0">list_products_response</a>()</pre>
-      </div>
-
-  </section>
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">list_products</span><span class="p" data-group-id="5064430066-5">(</span><span class="s">&quot;invalid_syndicate&quot;</span><span class="p" data-group-id="5064430066-5">)</span><span class="w">
+</span><span class="p" data-group-id="5064430066-6">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:syndicate_not_found</span><span class="p" data-group-id="5064430066-6">}</span></code></pre>  </section>
 </section>
-<section class="detail" id="c:save_order/2">
+<section class="detail" id="save_order/2">
   <div class="detail-header">
-    <a href="#c:save_order/2" class="detail-link" title="Link to this callback">
+    <a href="#save_order/2" class="detail-link" title="Link to this function">
       <span class="icon-link" aria-hidden="true"></span>
-      <span class="sr-only">Link to this callback</span>
+      <span class="sr-only">Link to this function</span>
     </a>
     <h1 class="signature">save_order(order_id, syndicate)</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store.ex#L51" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store.ex#L96" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -653,16 +495,20 @@ Callbacks          </h1>
           <pre>save_order(<a href="#t:order_id/0">order_id</a>(), <a href="#t:syndicate/0">syndicate</a>()) :: <a href="#t:save_order_response/0">save_order_response</a>()</pre>
       </div>
 
-  </section>
+<p>Saves the given orderId for the given syndicate in the storage system.</p><p>Example:</p><pre><code class="nohighlight makeup elixir"><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">save_order</span><span class="p" data-group-id="9708977466-1">(</span><span class="s">&quot;00f83ca2-67d9-4019-9fea-587b9fc4037c&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;red_veil&quot;</span><span class="p" data-group-id="9708977466-1">)</span><span class="w">
+</span><span class="p" data-group-id="9708977466-2">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;00f83ca2-67d9-4019-9fea-587b9fc4037c&quot;</span><span class="p" data-group-id="9708977466-2">}</span><span class="w">
+
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">save_order</span><span class="p" data-group-id="9708977466-3">(</span><span class="s">&quot;invalid_syndicate&quot;</span><span class="p" data-group-id="9708977466-3">)</span><span class="w">
+</span><span class="p" data-group-id="9708977466-4">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:enoent</span><span class="p" data-group-id="9708977466-4">}</span></code></pre>  </section>
 </section>
-<section class="detail" id="c:save_order/3">
+<section class="detail" id="syndicate_exists?/1">
   <div class="detail-header">
-    <a href="#c:save_order/3" class="detail-link" title="Link to this callback">
+    <a href="#syndicate_exists?/1" class="detail-link" title="Link to this function">
       <span class="icon-link" aria-hidden="true"></span>
-      <span class="sr-only">Link to this callback</span>
+      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature">save_order(order_id, syndicate, deps)</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store.ex#L52" class="view-source" rel="help" title="View Source">
+    <h1 class="signature">syndicate_exists?(syndicate)</h1>
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store.ex#L126" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -671,10 +517,14 @@ Callbacks          </h1>
   <section class="docstring">
       <h2>Specs</h2>
       <div class="specs">
-          <pre>save_order(<a href="#t:order_id/0">order_id</a>(), <a href="#t:syndicate/0">syndicate</a>(), <a href="#t:deps/0">deps</a>()) :: <a href="#t:save_order_response/0">save_order_response</a>()</pre>
+          <pre>syndicate_exists?(<a href="#t:syndicate/0">syndicate</a>()) :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()</pre>
       </div>
 
-  </section>
+<p>Returns true if the given syndicate exists, false otherwise.</p><p>Example:</p><pre><code class="nohighlight makeup elixir"><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">syndicate_exists?</span><span class="p" data-group-id="7367317974-1">(</span><span class="n">red_veil</span><span class="s">&quot;)
+true
+
+&gt; Store.syndicate_exists?(&quot;</span><span class="n">invalid_syndicate</span><span class="err">&quot;</span><span class="p" data-group-id="7367317974-1">)</span><span class="w">
+</span><span class="no">false</span></code></pre>  </section>
 </section>
           </div>
         </section>

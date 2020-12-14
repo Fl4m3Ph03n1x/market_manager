@@ -36,23 +36,92 @@ defmodule Store do
   @type save_order_response :: {:ok, order_id} | {:error, any}
   @type delete_order_response :: {:ok, order_id} | {:error, any}
 
-  #############
-  # Callbacks #
-  #############
+  ##########
+  # Public #
+  ##########
 
-  @callback list_products(syndicate) :: list_products_response
-  @callback list_products(syndicate, deps) :: list_products_response
+  @doc """
+  Lists the products from the given syndicate.
+
+  Example:
+  ```
+  > Store.list_products("red_veil")
+  {:ok, [
+    %{
+      "name" => "Eternal War",
+      "id" => "8ee5b3b0-fa43-4dbc-9363-a52930dc742e",
+      "min_price" => 14,
+      "default_price" => 15,
+      "quantity" => 1,
+      "rank" => 0
+    },
+    ...
+  ]}
+
+  > Store.list_products("invalid_syndicate")
+  {:error, :syndicate_not_found}
+  ```
+  """
+  @spec list_products(syndicate) :: list_products_response
   defdelegate list_products(syndicate), to: FileSystem
 
-  @callback list_orders(syndicate) :: list_orders_response
-  @callback list_orders(syndicate, deps) :: list_orders_response
+  @doc """
+  Lists the ids of currently active orders from the given syndicate.
+
+  Example:
+  ```
+  > Store.list_orders("red_veil")
+  {:ok, ["5a750686-956f-42a6-8194-11925ec9281e", "58f0b7e7-0ded-4932-8ccd-380cc5634c82", ...]}
+
+  > Store.list_orders("invalid_syndicate")
+  {:error, :syndicate_not_found}
+  ```
+  """
+  @spec list_orders(syndicate) :: list_orders_response
   defdelegate list_orders(syndicate), to: FileSystem
 
-  @callback save_order(order_id, syndicate) :: save_order_response
-  @callback save_order(order_id, syndicate, deps) :: save_order_response
+  @doc """
+  Saves the given orderId for the given syndicate in the storage system.
+
+  Example:
+  ```
+  > Store.save_order("00f83ca2-67d9-4019-9fea-587b9fc4037c", "red_veil")
+  {:ok, "00f83ca2-67d9-4019-9fea-587b9fc4037c"}
+
+  > Store.save_order("invalid_syndicate")
+  {:error, :enoent}
+  ```
+  """
+  @spec save_order(order_id, syndicate) :: save_order_response
   defdelegate save_order(order_id, syndicate), to: FileSystem
 
-  @callback delete_order(order_id, syndicate) :: delete_order_response
-  @callback delete_order(order_id, syndicate, deps) :: delete_order_response
+  @doc """
+  Deletes the given orderId from the given syndicate from the storage system.
+
+  Example:
+  ```
+  > Store.delete_order("00f83ca2-67d9-4019-9fea-587b9fc4037c", "red_veil")
+  {:ok, "00f83ca2-67d9-4019-9fea-587b9fc4037c"}
+
+  > Store.delete_order("invalid_syndicate")
+  {:error, :enoent}
+  ```
+  """
+  @spec delete_order(order_id, syndicate) :: delete_order_response
   defdelegate delete_order(order_id, syndicate), to: FileSystem
+
+  @doc """
+  Returns true if the given syndicate exists, false otherwise.
+
+  Example:
+  ```
+  > Store.syndicate_exists?(red_veil")
+  true
+
+  > Store.syndicate_exists?("invalid_syndicate")
+  false
+  ```
+  """
+  @spec syndicate_exists?(syndicate) :: boolean
+  defdelegate syndicate_exists?(syndicate), to: FileSystem
 end

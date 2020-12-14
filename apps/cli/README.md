@@ -1,21 +1,7 @@
 # Cli
 
-**TODO: Add description**
+A command line interface for the market manager app. 
+This app converts user input, makes requests to the manager app and returns the 
+results to the user in a way the user can understand them.
 
-## Installation
-
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `cli` to your list of dependencies in `mix.exs`:
-
-```elixir
-def deps do
-  [
-    {:cli, "~> 0.1.0"}
-  ]
-end
-```
-
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/cli](https://hexdocs.pm/cli).
-
+This is one of many interfaces the market manager can have.

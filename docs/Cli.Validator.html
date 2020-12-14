@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.22.2">
     <meta name="project" content="Market Manager v1.0.0">
-    <title>Store.FileSystem — Market Manager v1.0.0</title>
+    <title>Cli.Validator — Market Manager v1.0.0</title>
     <link rel="stylesheet" href="dist/elixir-d678dad126d82ddc061f.css" />
     <script src="dist/sidebar_items-af679b8738.js"></script>
       <script src="docs_config.js"></script>
@@ -67,7 +67,7 @@ Market Manager      </a>
 
       <h1>
         <small class="app-vsn">Market Manager v1.0.0</small>
-Store.FileSystem          <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store/file_system.ex#L1" title="View Source" class="view-source" rel="help">
+Cli.Validator          <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/cli/lib/cli/validator.ex#L1" title="View Source" class="view-source" rel="help">
             <span class="icon-code" aria-hidden="true"></span>
             <span class="sr-only">View Source</span>
           </a>
@@ -75,7 +75,8 @@ Store.FileSystem          <a href="https://github.com/Fl4m3Ph03n1x/market_manage
 
 
         <section id="moduledoc">
-<p>Adapter for the Store port, implements it using the file system.</p>        </section>
+<p>Contains all the validation logic for CLI. Validates every input from the
+user to make sure the next stage only has to work with valid input.</p>        </section>
 
         <section id="summary" class="details-list">
           <h1 class="section-heading">
@@ -91,27 +92,7 @@ Store.FileSystem          <a href="https://github.com/Fl4m3Ph03n1x/market_manage
     </h2>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#delete_order/3">delete_order(order_id, syndicate, deps \\ [read_fn: &amp;File.read/1, write_fn: &amp;File.write/2])</a>
-  </div>
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#list_orders/2">list_orders(syndicate, deps \\ [read_fn: &amp;File.read/1, write_fn: &amp;File.write/2])</a>
-  </div>
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#list_products/2">list_products(syndicate, deps \\ [read_fn: &amp;File.read/1, write_fn: &amp;File.write/2])</a>
-  </div>
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#save_order/3">save_order(order_id, syndicate, deps \\ [read_fn: &amp;File.read/1, write_fn: &amp;File.write/2])</a>
-  </div>
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#syndicate_exists?/2">syndicate_exists?(syndicate, deps \\ [read_fn: &amp;File.read/1, write_fn: &amp;File.write/2])</a>
+    <a href="#validate/2">validate(request, map)</a>
   </div>
 </div>
   </div>
@@ -125,93 +106,25 @@ Store.FileSystem          <a href="https://github.com/Fl4m3Ph03n1x/market_manage
             </a>
 Functions          </h1>
           <div class="functions-list">
-<section class="detail" id="delete_order/3">
-    <span id="delete_order/2"></span>
+<section class="detail" id="validate/2">
   <div class="detail-header">
-    <a href="#delete_order/3" class="detail-link" title="Link to this function">
+    <a href="#validate/2" class="detail-link" title="Link to this function">
       <span class="icon-link" aria-hidden="true"></span>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature">delete_order(order_id, syndicate, deps \\ [read_fn: &amp;File.read/1, write_fn: &amp;File.write/2])</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store/file_system.ex#L40" class="view-source" rel="help" title="View Source">
+    <h1 class="signature">validate(request, map)</h1>
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/cli/lib/cli/validator.ex#L14" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
   </div>
 
   <section class="docstring">
-
-  </section>
-</section>
-<section class="detail" id="list_orders/2">
-    <span id="list_orders/1"></span>
-  <div class="detail-header">
-    <a href="#list_orders/2" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature">list_orders(syndicate, deps \\ [read_fn: &amp;File.read/1, write_fn: &amp;File.write/2])</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store/file_system.ex#L27" class="view-source" rel="help" title="View Source">
-       <span class="icon-code" aria-hidden="true"></span>
-       <span class="sr-only">View Source</span>
-     </a>
-  </div>
-
-  <section class="docstring">
-
-  </section>
-</section>
-<section class="detail" id="list_products/2">
-    <span id="list_products/1"></span>
-  <div class="detail-header">
-    <a href="#list_products/2" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature">list_products(syndicate, deps \\ [read_fn: &amp;File.read/1, write_fn: &amp;File.write/2])</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store/file_system.ex#L23" class="view-source" rel="help" title="View Source">
-       <span class="icon-code" aria-hidden="true"></span>
-       <span class="sr-only">View Source</span>
-     </a>
-  </div>
-
-  <section class="docstring">
-
-  </section>
-</section>
-<section class="detail" id="save_order/3">
-    <span id="save_order/2"></span>
-  <div class="detail-header">
-    <a href="#save_order/3" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature">save_order(order_id, syndicate, deps \\ [read_fn: &amp;File.read/1, write_fn: &amp;File.write/2])</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store/file_system.ex#L31" class="view-source" rel="help" title="View Source">
-       <span class="icon-code" aria-hidden="true"></span>
-       <span class="sr-only">View Source</span>
-     </a>
-  </div>
-
-  <section class="docstring">
-
-  </section>
-</section>
-<section class="detail" id="syndicate_exists?/2">
-    <span id="syndicate_exists?/1"></span>
-  <div class="detail-header">
-    <a href="#syndicate_exists?/2" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature">syndicate_exists?(syndicate, deps \\ [read_fn: &amp;File.read/1, write_fn: &amp;File.write/2])</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/store/lib/store/file_system.ex#L49" class="view-source" rel="help" title="View Source">
-       <span class="icon-code" aria-hidden="true"></span>
-       <span class="sr-only">View Source</span>
-     </a>
-  </div>
-
-  <section class="docstring">
+      <h2>Specs</h2>
+      <div class="specs">
+          <pre>validate(<a href="Cli.Request.html#t:t/0">Cli.Request.t</a>(), %{manager: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">atom</a>()}) ::
+  {:error, [<a href="Cli.Error.html#t:t/0">Cli.Error.t</a>()]} | {:ok, <a href="Cli.Request.html#t:t/0">Cli.Request.t</a>()}</pre>
+      </div>
 
   </section>
 </section>

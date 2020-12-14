@@ -23,6 +23,7 @@ defmodule Manager.Interpreter do
     (quantity :: String.t) => non_neg_integer
   }
 
+  @actions ["activate", "deactivate"]
   @default_deps [
     store: Store,
     auction_house: AuctionHouse
@@ -31,6 +32,9 @@ defmodule Manager.Interpreter do
   ##########
   # Public #
   ##########
+
+  @spec valid_action?(String.t) :: boolean
+  def valid_action?(action), do: action in @actions
 
   @spec activate(Manager.syndicate, Manager.strategy, keyword) ::
     Manager.activate_response

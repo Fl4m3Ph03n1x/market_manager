@@ -6,6 +6,7 @@ defmodule Manager do
   """
 
   alias Manager.{Interpreter, PriceAnalyst}
+  alias Store
 
   ##########
   # Types  #
@@ -31,9 +32,9 @@ defmodule Manager do
     | {:partial_success, [{:error, error_reason, order_id}, ...]}
     | {:error, :unable_to_delete_orders, [{:error, error_reason, order_id}]}
 
-  #############
-  # Callbacks #
-  #############
+  ##########
+  # Public #
+  ##########
 
   @doc """
   Activates a syndicate in warframe.market. Activating a syndicate means you
@@ -43,13 +44,12 @@ defmodule Manager do
 
   Example:
   ```
-  {:ok, :success} = MarketManager.activate("simaris", :lowest_minus_one)
+  > MarketManager.activate("simaris", :lowest_minus_one)
+  {:ok, :success}
   ```
   """
-  @callback activate(syndicate, strategy) :: activate_response
-
   @spec activate(syndicate, strategy) :: activate_response
-  def activate(syndicate, strategy), do: Interpreter.activate(syndicate, strategy)
+  defdelegate activate(syndicate, strategy), to: Interpreter
 
   @doc """
   Deactivates a syndicate in warframe.market. Deactivating a syndicate means you
@@ -57,25 +57,54 @@ defmodule Manager do
 
   Example:
   ```
-  {:ok, :success} = MarketManager.deactivate("simaris")
+  > MarketManager.deactivate("simaris")
+  {:ok, :success}
   ```
   """
-  @callback deactivate(syndicate) :: deactivate_response
-
   @spec deactivate(syndicate) :: deactivate_response
-  def deactivate(syndicate), do: Interpreter.deactivate(syndicate)
+  defdelegate deactivate(syndicate), to: Interpreter
 
   @doc """
   Returns true if the given strategy is valid, false otherwise.
 
   Example:
   ```
-  MarketManager.valid_strategy?("bananas")          # false
-  MarketManager.valid_strategy?("equal_to_lowest")  # true
+  > MarketManager.valid_strategy?("bananas")
+  false
+  > MarketManager.valid_strategy?("equal_to_lowest")
+  true
   ```
   """
-  @callback valid_strategy?(String.t) :: boolean
-
   @spec valid_strategy?(String.t) :: boolean
   defdelegate valid_strategy?(strategy), to: PriceAnalyst
+
+  @doc """
+  Returns true if the given action is valid, false otherwise.
+
+  Example:
+  ```
+  > MarketManager.valid_action?("bananas")
+  false
+  > MarketManager.valid_action?("activate")
+  true
+  ```
+  """
+  @spec valid_action?(String.t) :: boolean
+  defdelegate valid_action?(action), to: Interpreter
+
+  @doc """
+  Returns true if the given syndicate is valid, false otherwise.
+  A syndicate is considered to be valid if it has an entry in the products.json
+  file, even if that entry is empty.
+
+  Example:
+  ```
+  > MarketManager.valid_syndicate?("bananas")
+  false
+  > MarketManager.valid_syndicate?("red_veil")
+  true
+  ```
+  """
+  @spec valid_syndicate?(syndicate) :: boolean
+  defdelegate valid_syndicate?(syndicate), to: Store, as: :syndicate_exists?
 end

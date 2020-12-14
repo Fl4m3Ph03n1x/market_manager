@@ -1,21 +1,5 @@
 # Manager
 
-**TODO: Add description**
-
-## Installation
-
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `manager` to your list of dependencies in `mix.exs`:
-
-```elixir
-def deps do
-  [
-    {:manager, "~> 0.1.0"}
-  ]
-end
-```
-
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/manager](https://hexdocs.pm/manager).
-
+MarketManager is an application that allows you to make batch requests to
+warframe.market. This is the entrypoint of everything. If you have a module
+and you need to talk to MarketManager, this is who you call, the public API.

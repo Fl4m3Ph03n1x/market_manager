@@ -8,7 +8,7 @@
     <meta name="project" content="Market Manager v1.0.0">
     <title>API Reference — Market Manager v1.0.0</title>
     <link rel="stylesheet" href="dist/elixir-d678dad126d82ddc061f.css" />
-    <script src="dist/sidebar_items-da613d9c9d.js"></script>
+    <script src="dist/sidebar_items-af679b8738.js"></script>
       <script src="docs_config.js"></script>
     <script async src="dist/app-0103364119015b97e56c.js"></script>
   </head>
@@ -109,6 +109,34 @@ example:
   ./market_manager --action=activate --syndicates=new_loka,red_veil --strategy=equal_to_lowest
 options:
   --action=activate|deactivate</p></div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Cli.Error.html">Cli.Error</a>
+  </div>
+    <div class="summary-synopsis"><p>A struct representing an error. The error here can be of any type and from any
+level of the application. This struct is merely how the Cli app views and
+understands errors. All errors must conform to this struct.</p></div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Cli.Parser.html">Cli.Parser</a>
+  </div>
+    <div class="summary-synopsis"><p>Parses user input and transforms it into a format that CLI app can understand.</p></div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Cli.Request.html">Cli.Request</a>
+  </div>
+    <div class="summary-synopsis"><p>A struct representing a parsed user request. Parsed requests have not yet
+been validated and may therefore contain invalid information.</p></div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Cli.Validator.html">Cli.Validator</a>
+  </div>
+    <div class="summary-synopsis"><p>Contains all the validation logic for CLI. Validates every input from the
+user to make sure the next stage only has to work with valid input.</p></div>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
