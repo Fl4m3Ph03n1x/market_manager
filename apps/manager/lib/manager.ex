@@ -95,16 +95,21 @@ defmodule Manager do
   @doc """
   Returns true if the given syndicate is valid, false otherwise.
   A syndicate is considered to be valid if it has an entry in the products.json
-  file, even if that entry is empty.
+  file, even if that entry is empty. Returns error if an error occurs, like for
+  example the products.json file not existing.
 
   Example:
   ```
   > MarketManager.valid_syndicate?("bananas")
-  false
+  {:ok, false}
+
   > MarketManager.valid_syndicate?("red_veil")
-  true
+  {:ok, true}
+
+  > MarketManager.valid_syndicate?("red_veil") # products.json not found
+  {:error, :enoent}
   ```
   """
-  @spec valid_syndicate?(syndicate) :: boolean
+  @spec valid_syndicate?(syndicate) :: Store.syndicate_exists_response
   defdelegate valid_syndicate?(syndicate), to: Store, as: :syndicate_exists?
 end

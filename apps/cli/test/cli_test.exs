@@ -15,7 +15,7 @@ defmodule CliTest do
         activate: fn("red_veil", :equal_to_lowest) -> {:ok, :success} end,
         valid_strategy?: fn("equal_to_lowest") -> true end,
         valid_action?: fn("activate") -> true end,
-        valid_syndicate?: fn("red_veil") -> true end
+        valid_syndicate?: fn("red_veil") -> {:ok, true} end
       ] do
         # Arrange
         params = [
@@ -44,8 +44,8 @@ defmodule CliTest do
         valid_strategy?: fn("equal_to_lowest") -> true end,
         valid_action?: fn("activate") -> true end,
         valid_syndicate?: fn
-          "red_veil" -> true
-          "new_loka" -> true
+          "red_veil" -> {:ok, true}
+          "new_loka" -> {:ok, true}
         end,
       ]) do
         # Arrange
@@ -72,7 +72,7 @@ defmodule CliTest do
       with_mock Manager, [
         deactivate: fn("red_veil") -> {:ok, :success} end,
         valid_action?: fn("deactivate") -> true end,
-        valid_syndicate?: fn("red_veil") -> true end
+        valid_syndicate?: fn("red_veil") -> {:ok, true} end
       ] do
         # Arrange
         params = ["--action=deactivate", "--syndicates=red_veil"]

@@ -55,19 +55,27 @@ defmodule Cli.Validator do
   defp validate_syndicates(errors, syndicates, manager) do
     syndicate_errors =
       syndicates
-      |> Enum.filter(&invalid_syndicate?(&1, manager))
+      |> Enum.map(&validate_syndicate(&1, manager))
+      |> Enum.filter(&invalid_syndicate?/1)
       |> Enum.map(&to_syndicate_error/1)
 
     syndicate_errors ++ errors
   end
 
-  @spec invalid_syndicate?(String.t, module) :: boolean
-  defp invalid_syndicate?(syndicate, manager), do:
-    not manager.valid_syndicate?(syndicate)
+  @spec validate_syndicate(String.t, module) :: {String.t, {:ok, boolean} | {:error, any}}
+  defp validate_syndicate(syndicate, manager), do:
+    {syndicate, manager.valid_syndicate?(syndicate)}
 
-  @spec to_syndicate_error(String.t) :: Error.t
-  defp to_syndicate_error(bad_syndicate), do:
+  @spec invalid_syndicate?({String.t, {:ok, boolean} | {:error, any}}) :: boolean
+  defp invalid_syndicate?({_syndicate, {:ok, true}}), do: false
+  defp invalid_syndicate?(_error), do: true
+
+  @spec to_syndicate_error({String.t, {:ok, false} | {:error, any}}) :: Error.t
+  defp to_syndicate_error({bad_syndicate, {:ok, false}}), do:
     Error.new(%{type: :unknown_syndicate, input: bad_syndicate})
+
+  defp to_syndicate_error({bad_syndicate, {:error, reason}}), do:
+    Error.new(%{type: reason, input: bad_syndicate})
 
   @spec to_strategy(nil | String.t) :: nil | atom
   defp to_strategy(nil), do: nil

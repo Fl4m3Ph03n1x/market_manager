@@ -25,7 +25,9 @@ defmodule Store.MixProject do
   defp deps do
     [
       {:rop, "~> 0.5"},
-      {:jason, "~> 1.2"}
+      {:jason, "~> 1.2"},
+
+      {:mix_test_watch, "~> 1.0", only: :dev, runtime: false}
     ]
   end
 end
