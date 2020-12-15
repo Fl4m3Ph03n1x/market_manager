@@ -26,15 +26,17 @@ defmodule Store do
     (red_veil :: String.t()) => [order_id],
     (simaris :: String.t()) => [order_id]
   }
+  @type error :: {:error, any}
 
   #############
   # Responses #
   #############
 
-  @type list_products_response :: {:ok, [product]} | {:error, any}
-  @type list_orders_response :: {:ok, [order_id]} | {:error, any}
-  @type save_order_response :: {:ok, order_id} | {:error, any}
-  @type delete_order_response :: {:ok, order_id} | {:error, any}
+  @type list_products_response :: {:ok, [product]} | error
+  @type list_orders_response :: {:ok, [order_id]} | error
+  @type save_order_response :: {:ok, order_id} | error
+  @type delete_order_response :: {:ok, order_id} | error
+  @type syndicate_exists_response :: {:ok, boolean} | error
 
   ##########
   # Public #
@@ -111,17 +113,21 @@ defmodule Store do
   defdelegate delete_order(order_id, syndicate), to: FileSystem
 
   @doc """
-  Returns true if the given syndicate exists, false otherwise.
+  Returns true if the given syndicate exists, false otherwise. Returns an
+  error if an error occurs.
 
   Example:
   ```
   > Store.syndicate_exists?(red_veil")
-  true
+  {:ok, true}
 
-  > Store.syndicate_exists?("invalid_syndicate")
-  false
+  > Store.syndicate_exists?("nonexistent_syndicate")
+  {:ok, false}
+
+  > Store.syndicate_exists?("syndicate") # world explodes meanwhile
+  {:error, :enoent}
   ```
   """
-  @spec syndicate_exists?(syndicate) :: boolean
+  @spec syndicate_exists?(syndicate) :: {:ok, boolean} | error
   defdelegate syndicate_exists?(syndicate), to: FileSystem
 end

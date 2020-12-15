@@ -169,4 +169,60 @@ defmodule MarketManager.Store.FileSystemTest do
       assert actual == expected
     end
   end
+
+  describe "syndicate_exists?/1" do
+    test "returns true if syndicate exists" do
+      # Arrange
+      syndicate = "red_veil"
+
+      deps = [
+        read_fn: fn _file_name ->
+          {:ok,
+           "{\"red_veil\": [{\"name\": \"Gleaming Blight\",\"id\": \"54a74454e779892d5e5155d5\",\"price\": 14}]}"}
+        end
+      ]
+
+      # Act
+      actual = FileSystem.syndicate_exists?(syndicate, deps)
+      expected = {:ok, true}
+
+      # Assert
+      assert actual == expected
+    end
+
+    test "returns false if syndicate does NOT exist" do
+     # Arrange
+     syndicate = "bad_syndicate"
+
+     deps = [
+       read_fn: fn _file_name ->
+         {:ok,
+          "{\"red_veil\": [{\"name\": \"Gleaming Blight\",\"id\": \"54a74454e779892d5e5155d5\",\"price\": 14}]}"}
+       end
+     ]
+
+     # Act
+     actual = FileSystem.syndicate_exists?(syndicate, deps)
+     expected = {:ok, false}
+
+     # Assert
+     assert actual == expected
+    end
+
+    test "returns error if operation fails" do
+      # Arrange
+      syndicate = "red_veil"
+
+      deps = [
+        read_fn: fn _file_name -> {:error, :enoent} end
+      ]
+
+      # Act
+      actual = FileSystem.syndicate_exists?(syndicate, deps)
+      expected = {:error, :enoent}
+
+      # Assert
+      assert actual == expected
+    end
+  end
 end

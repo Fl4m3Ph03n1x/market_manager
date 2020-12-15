@@ -10,7 +10,7 @@ defmodule Cli.ValidatorTest do
       with_mock Manager, [
         valid_strategy?: fn("invalid_strategy") -> false end,
         valid_action?: fn nil -> true end,
-        valid_syndicate?: fn nil -> true end
+        valid_syndicate?: fn nil -> {:ok, true} end
       ] do
         # Arrange
         params = %Request{
@@ -34,8 +34,8 @@ defmodule Cli.ValidatorTest do
         valid_strategy?: fn nil -> true end,
         valid_action?: fn nil -> true end,
         valid_syndicate?: fn
-          ("invalid_syndicate") -> false
-          ("new_loka") -> true
+          ("invalid_syndicate") -> {:ok, false}
+          ("new_loka") -> {:ok, true}
         end
       ] do
         # Arrange
@@ -60,8 +60,8 @@ defmodule Cli.ValidatorTest do
         valid_strategy?: fn nil -> true end,
         valid_action?: fn nil -> true end,
         valid_syndicate?: fn
-          ("invalid_syndicate1") -> false
-          ("invalid_syndicate2") -> false
+          ("invalid_syndicate1") -> {:ok, false}
+          ("invalid_syndicate2") -> {:ok, false}
         end
       ] do
         # Arrange
@@ -84,11 +84,36 @@ defmodule Cli.ValidatorTest do
       end
     end
 
+    test "returns error if there is an error validating a syndicate" do
+      with_mock Manager, [
+        valid_strategy?: fn nil -> true end,
+        valid_action?: fn nil -> true end,
+        valid_syndicate?: fn ("invalid_syndicate1") -> {:error, :enoent} end
+      ] do
+        # Arrange
+        params = %Request{
+          syndicates: ["invalid_syndicate1"],
+          action: nil,
+          strategy: nil
+        }
+        deps = %{manager: Manager}
+
+        # Act
+        actual_response = Validator.validate(params, deps)
+        expected_response = {:error, [
+          %Error{input: "invalid_syndicate1", type: :enoent}
+        ]}
+
+        # Assert
+        assert actual_response == expected_response
+      end
+    end
+
     test "returns error if an action is invalid" do
       with_mock Manager, [
         valid_strategy?: fn nil -> true end,
         valid_action?: fn "invalid_action" -> false end,
-        valid_syndicate?: fn nil -> true end
+        valid_syndicate?: fn nil -> {:ok, true} end
       ] do
         # Arrange
         params = %Request{
@@ -111,7 +136,7 @@ defmodule Cli.ValidatorTest do
       with_mock Manager, [
         valid_strategy?: fn("invalid_strategy") -> false end,
         valid_action?: fn ("invalid_action") -> false end,
-        valid_syndicate?: fn nil -> true end
+        valid_syndicate?: fn nil -> {:ok, true} end
       ] do
         # Arrange
         params = %Request{
@@ -137,7 +162,7 @@ defmodule Cli.ValidatorTest do
       with_mock Manager, [
         valid_strategy?: fn("equal_to_lowest") -> true end,
         valid_action?: fn ("activate") -> true end,
-        valid_syndicate?: fn "red_veil" -> true end
+        valid_syndicate?: fn "red_veil" -> {:ok, true} end
       ] do
         # Arrange
         params = %Request{

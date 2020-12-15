@@ -45,7 +45,7 @@ defmodule Store.FileSystem do
     >>> save_new_orders(deps[:write_fn])
     >>> send_ok_response(order_id)
 
-  @spec syndicate_exists?(Store.syndicate) :: boolean
+  @spec syndicate_exists?(Store.syndicate) :: Store.syndicate_exists_response
   def syndicate_exists?(syndicate, deps \\ @default_deps), do:
     @products_filename
     |> read_syndicate_data(syndicate, deps[:read_fn])
@@ -101,9 +101,10 @@ defmodule Store.FileSystem do
     end
   end
 
-  @spec syndicate_found?({:ok | :error, any}) :: boolean
-  defp syndicate_found?({:ok, _data}), do: true
-  defp syndicate_found?(_error), do: false
+  @spec syndicate_found?({:error, any} | {:ok, map}) :: {:ok, boolean} | {:error, any}
+  defp syndicate_found?({:error, :syndicate_not_found}), do: {:ok, false}
+  defp syndicate_found?({:ok, _data}), do: {:ok, true}
+  defp syndicate_found?({:error, _reason} = error), do: error
 
   @spec send_ok_response(:new_orders_saved, Store.order_id) :: {:ok, Store.order_id}
   defp send_ok_response(:new_orders_saved, order_id), do: {:ok, order_id}

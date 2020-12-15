@@ -8,7 +8,7 @@
     <meta name="project" content="Market Manager v1.0.0">
     <title>Manager — Market Manager v1.0.0</title>
     <link rel="stylesheet" href="dist/elixir-d678dad126d82ddc061f.css" />
-    <script src="dist/sidebar_items-af679b8738.js"></script>
+    <script src="dist/sidebar_items-22319cf825.js"></script>
       <script src="docs_config.js"></script>
     <script async src="dist/app-0103364119015b97e56c.js"></script>
   </head>
@@ -165,7 +165,8 @@ delete all orders you have placed before that belong to the given syndicate.</p>
   </div>
     <div class="summary-synopsis"><p>Returns true if the given syndicate is valid, false otherwise.
 A syndicate is considered to be valid if it has an entry in the products.json
-file, even if that entry is empty.</p></div>
+file, even if that entry is empty. Returns error if an error occurs, like for
+example the products.json file not existing.</p></div>
 </div>
   </div>
         </section>
@@ -363,8 +364,8 @@ Functions          </h1>
 <p>Activates a syndicate in warframe.market. Activating a syndicate means you
 put on sell all the mods the syndicate has with that are in the <em>products.json</em>
 file. The price of each mod will be calculated via a PriceAnalyst depending on
-which strategy you choose.</p><p>Example:</p><pre><code class="nohighlight makeup elixir"><span class="o">&gt;</span><span class="w"> </span><span class="nc">MarketManager</span><span class="o">.</span><span class="n">activate</span><span class="p" data-group-id="0041257836-1">(</span><span class="s">&quot;simaris&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">:lowest_minus_one</span><span class="p" data-group-id="0041257836-1">)</span><span class="w">
-</span><span class="p" data-group-id="0041257836-2">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="ss">:success</span><span class="p" data-group-id="0041257836-2">}</span></code></pre>  </section>
+which strategy you choose.</p><p>Example:</p><pre><code class="nohighlight makeup elixir"><span class="o">&gt;</span><span class="w"> </span><span class="nc">MarketManager</span><span class="o">.</span><span class="n">activate</span><span class="p" data-group-id="1750311638-1">(</span><span class="s">&quot;simaris&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">:lowest_minus_one</span><span class="p" data-group-id="1750311638-1">)</span><span class="w">
+</span><span class="p" data-group-id="1750311638-2">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="ss">:success</span><span class="p" data-group-id="1750311638-2">}</span></code></pre>  </section>
 </section>
 <section class="detail" id="deactivate/1">
   <div class="detail-header">
@@ -386,8 +387,8 @@ which strategy you choose.</p><p>Example:</p><pre><code class="nohighlight makeu
       </div>
 
 <p>Deactivates a syndicate in warframe.market. Deactivating a syndicate means you
-delete all orders you have placed before that belong to the given syndicate.</p><p>Example:</p><pre><code class="nohighlight makeup elixir"><span class="o">&gt;</span><span class="w"> </span><span class="nc">MarketManager</span><span class="o">.</span><span class="n">deactivate</span><span class="p" data-group-id="0138361220-1">(</span><span class="s">&quot;simaris&quot;</span><span class="p" data-group-id="0138361220-1">)</span><span class="w">
-</span><span class="p" data-group-id="0138361220-2">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="ss">:success</span><span class="p" data-group-id="0138361220-2">}</span></code></pre>  </section>
+delete all orders you have placed before that belong to the given syndicate.</p><p>Example:</p><pre><code class="nohighlight makeup elixir"><span class="o">&gt;</span><span class="w"> </span><span class="nc">MarketManager</span><span class="o">.</span><span class="n">deactivate</span><span class="p" data-group-id="4000947754-1">(</span><span class="s">&quot;simaris&quot;</span><span class="p" data-group-id="4000947754-1">)</span><span class="w">
+</span><span class="p" data-group-id="4000947754-2">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="ss">:success</span><span class="p" data-group-id="4000947754-2">}</span></code></pre>  </section>
 </section>
 <section class="detail" id="valid_action?/1">
   <div class="detail-header">
@@ -408,9 +409,9 @@ delete all orders you have placed before that belong to the given syndicate.</p>
           <pre>valid_action?(<a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()</pre>
       </div>
 
-<p>Returns true if the given action is valid, false otherwise.</p><p>Example:</p><pre><code class="nohighlight makeup elixir"><span class="o">&gt;</span><span class="w"> </span><span class="nc">MarketManager</span><span class="o">.</span><span class="n">valid_action?</span><span class="p" data-group-id="2892513247-1">(</span><span class="s">&quot;bananas&quot;</span><span class="p" data-group-id="2892513247-1">)</span><span class="w">
+<p>Returns true if the given action is valid, false otherwise.</p><p>Example:</p><pre><code class="nohighlight makeup elixir"><span class="o">&gt;</span><span class="w"> </span><span class="nc">MarketManager</span><span class="o">.</span><span class="n">valid_action?</span><span class="p" data-group-id="5271902207-1">(</span><span class="s">&quot;bananas&quot;</span><span class="p" data-group-id="5271902207-1">)</span><span class="w">
 </span><span class="no">false</span><span class="w">
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">MarketManager</span><span class="o">.</span><span class="n">valid_action?</span><span class="p" data-group-id="2892513247-2">(</span><span class="s">&quot;activate&quot;</span><span class="p" data-group-id="2892513247-2">)</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">MarketManager</span><span class="o">.</span><span class="n">valid_action?</span><span class="p" data-group-id="5271902207-2">(</span><span class="s">&quot;activate&quot;</span><span class="p" data-group-id="5271902207-2">)</span><span class="w">
 </span><span class="no">true</span></code></pre>  </section>
 </section>
 <section class="detail" id="valid_strategy?/1">
@@ -432,9 +433,9 @@ delete all orders you have placed before that belong to the given syndicate.</p>
           <pre>valid_strategy?(<a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()</pre>
       </div>
 
-<p>Returns true if the given strategy is valid, false otherwise.</p><p>Example:</p><pre><code class="nohighlight makeup elixir"><span class="o">&gt;</span><span class="w"> </span><span class="nc">MarketManager</span><span class="o">.</span><span class="n">valid_strategy?</span><span class="p" data-group-id="6863303967-1">(</span><span class="s">&quot;bananas&quot;</span><span class="p" data-group-id="6863303967-1">)</span><span class="w">
+<p>Returns true if the given strategy is valid, false otherwise.</p><p>Example:</p><pre><code class="nohighlight makeup elixir"><span class="o">&gt;</span><span class="w"> </span><span class="nc">MarketManager</span><span class="o">.</span><span class="n">valid_strategy?</span><span class="p" data-group-id="0310410306-1">(</span><span class="s">&quot;bananas&quot;</span><span class="p" data-group-id="0310410306-1">)</span><span class="w">
 </span><span class="no">false</span><span class="w">
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">MarketManager</span><span class="o">.</span><span class="n">valid_strategy?</span><span class="p" data-group-id="6863303967-2">(</span><span class="s">&quot;equal_to_lowest&quot;</span><span class="p" data-group-id="6863303967-2">)</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">MarketManager</span><span class="o">.</span><span class="n">valid_strategy?</span><span class="p" data-group-id="0310410306-2">(</span><span class="s">&quot;equal_to_lowest&quot;</span><span class="p" data-group-id="0310410306-2">)</span><span class="w">
 </span><span class="no">true</span></code></pre>  </section>
 </section>
 <section class="detail" id="valid_syndicate?/1">
@@ -444,7 +445,7 @@ delete all orders you have placed before that belong to the given syndicate.</p>
       <span class="sr-only">Link to this function</span>
     </a>
     <h1 class="signature">valid_syndicate?(syndicate)</h1>
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/manager/lib/manager.ex#L109" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/master/apps/manager/lib/manager.ex#L114" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -453,15 +454,20 @@ delete all orders you have placed before that belong to the given syndicate.</p>
   <section class="docstring">
       <h2>Specs</h2>
       <div class="specs">
-          <pre>valid_syndicate?(<a href="#t:syndicate/0">syndicate</a>()) :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()</pre>
+          <pre>valid_syndicate?(<a href="#t:syndicate/0">syndicate</a>()) :: <a href="Store.html#t:syndicate_exists_response/0">Store.syndicate_exists_response</a>()</pre>
       </div>
 
 <p>Returns true if the given syndicate is valid, false otherwise.
 A syndicate is considered to be valid if it has an entry in the products.json
-file, even if that entry is empty.</p><p>Example:</p><pre><code class="nohighlight makeup elixir"><span class="o">&gt;</span><span class="w"> </span><span class="nc">MarketManager</span><span class="o">.</span><span class="n">valid_syndicate?</span><span class="p" data-group-id="0918236070-1">(</span><span class="s">&quot;bananas&quot;</span><span class="p" data-group-id="0918236070-1">)</span><span class="w">
-</span><span class="no">false</span><span class="w">
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">MarketManager</span><span class="o">.</span><span class="n">valid_syndicate?</span><span class="p" data-group-id="0918236070-2">(</span><span class="s">&quot;red_veil&quot;</span><span class="p" data-group-id="0918236070-2">)</span><span class="w">
-</span><span class="no">true</span></code></pre>  </section>
+file, even if that entry is empty. Returns error if an error occurs, like for
+example the products.json file not existing.</p><p>Example:</p><pre><code class="nohighlight makeup elixir"><span class="o">&gt;</span><span class="w"> </span><span class="nc">MarketManager</span><span class="o">.</span><span class="n">valid_syndicate?</span><span class="p" data-group-id="9309944316-1">(</span><span class="s">&quot;bananas&quot;</span><span class="p" data-group-id="9309944316-1">)</span><span class="w">
+</span><span class="p" data-group-id="9309944316-2">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="no">false</span><span class="p" data-group-id="9309944316-2">}</span><span class="w">
+
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">MarketManager</span><span class="o">.</span><span class="n">valid_syndicate?</span><span class="p" data-group-id="9309944316-3">(</span><span class="s">&quot;red_veil&quot;</span><span class="p" data-group-id="9309944316-3">)</span><span class="w">
+</span><span class="p" data-group-id="9309944316-4">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="no">true</span><span class="p" data-group-id="9309944316-4">}</span><span class="w">
+
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">MarketManager</span><span class="o">.</span><span class="n">valid_syndicate?</span><span class="p" data-group-id="9309944316-5">(</span><span class="s">&quot;red_veil&quot;</span><span class="p" data-group-id="9309944316-5">)</span><span class="w"> </span><span class="c1"># products.json not found</span><span class="w">
+</span><span class="p" data-group-id="9309944316-6">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:enoent</span><span class="p" data-group-id="9309944316-6">}</span></code></pre>  </section>
 </section>
           </div>
         </section>
