@@ -299,6 +299,18 @@
 			"id":"554d3f0ce779894445a848fb",
 			"min_price":14,
 			"default_price":16
+		},
+		{
+			"name":"Blending talons",
+			"id":"5fb84767c34da3004797d543",
+			"min_price":14,
+			"default_price":16
+		},
+		{
+			"name":"Revealing spores",
+			"id":"5ecd08d804d55c0806f8534c",
+			"min_price":14,
+			"default_price":16
 		}
 	],
 	"new_loka":[
@@ -557,6 +569,12 @@
 		{
 			"name":"Primal rage",
 			"id":"576459af3ae92d545fd1e7b7",
+			"min_price":14,
+			"default_price":16
+		},
+		{
+			"name":"Critical surge",
+			"id":"5fb84767c34da3004797d53a",
 			"min_price":14,
 			"default_price":16
 		}
@@ -835,6 +853,18 @@
 		{
 			"name":"Photon repeater",
 			"id":"55397302e77989047f88411c",
+			"min_price":14,
+			"default_price":16
+		},
+		{
+			"name":"Mach crash",
+			"id":"5fb84768c34da3004797d550",
+			"min_price":14,
+			"default_price":16
+		},
+		{
+			"name":"Thrall pact",
+			"id":"5fb84767c34da3004797d539",
 			"min_price":14,
 			"default_price":16
 		}
