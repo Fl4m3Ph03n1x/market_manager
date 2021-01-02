@@ -58,24 +58,28 @@ It only supports mods currently.
         {
             "name": "Gleaming Blight",
             "id": "54a74454e779892d5e5155d5",
-            "price": 15
+            "min_price":14,
+			"default_price":16
         },
         {
             "name": "Eroding Blight",
             "id": "54a74454e779892d5e5155a0",
-            "price": 15
+            "min_price":14,
+			"default_price":16
         }
     ],
     "new_loka": [
         {
             "name": "Winds of purity",
             "id": "54a74455e779892d5e51569a",
-            "price": 15
+            "min_price":14,
+			"default_price":16
         },
         {
             "name": "Disarming purity",
             "id": "5911f11d97a0add8e9d5da4c",
-            "price": 15
+            "min_price":14,
+			"default_price":16
         }
     ]
 }
@@ -87,7 +91,8 @@ The format of each item is the following:
 {
   "name": "Disarming purity",       //name of the item
   "id": "5911f11d97a0add8e9d5da4c", //warframe.market item id
-  "price": 15,                      //platinum price of the item
+  "min_price": 14,                  //prices are calculated by the chosen strategy. This makes will overried the startegie's price if the calculated price is inferior. A safety net, this is the minimum price you will sell this item for. 
+  "default_price":16,               //if no one is selling this item or if the strategy was unable to calculte a price for the item, this is the value you will sell it for.
   "rank": 1,                        //rank of the mod, defaults to 0. If the mod has no rank use "n/a" instead
   "quantity": 1                     //number of items to sell, defaults to 1
 }
@@ -96,7 +101,7 @@ The format of each item is the following:
 Once you have the `products.json` file set up, you can use the shell application:
 
 ```
-./market_manager --action=activate --syndicates=red_veil,new_loka
+./market_manager --action=activate --syndicates=red_veil,new_loka --strategy=top_three_average
 ```
 
 The name of the syndicates must be the same name on the `products.json` file.
@@ -127,3 +132,21 @@ After the initial setup, the following commands are used to run the tests:
 - `mix test.watch` runs all tests continuously and re-runs them every time a file changes
 - `mix test.watch.unit` runs unit tests continuously and re-runs them every time a file changes
 - `mix test.watch.integration` runs integration tests continuously and re-runs them every time a file changes
+
+## Architecture
+
+MarketManager is divided into multiple small applications, ech one with one purpose in mind:
+
+```mermaid
+graph TD;
+    cli-->manager;
+    manager-->auction_house;
+    manager-->store;
+```
+
+`cli` is a command line interface and currently it is the only interface with the manager.
+`manager` is the core of the application, the entry point for all user requests. It talks to the rest of the layers.
+`auction_house` is the app responsible for understanding and making requests to the given auction house. In this case, warframe market.
+`store` is the persistency layer. It saves your data and remembers what is being selled or not.
+
+For more information, feel free to read the README file of each application. 
