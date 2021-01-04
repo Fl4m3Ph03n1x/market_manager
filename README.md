@@ -58,28 +58,28 @@ It only supports mods currently.
         {
             "name": "Gleaming Blight",
             "id": "54a74454e779892d5e5155d5",
-            "min_price":14,
-			"default_price":16
+            "min_price": 14,
+            "default_price": 16
         },
         {
             "name": "Eroding Blight",
             "id": "54a74454e779892d5e5155a0",
-            "min_price":14,
-			"default_price":16
+            "min_price": 14,
+	    "default_price": 16
         }
     ],
     "new_loka": [
         {
             "name": "Winds of purity",
             "id": "54a74455e779892d5e51569a",
-            "min_price":14,
-			"default_price":16
+            "min_price": 14,
+	    "default_price": 16
         },
         {
             "name": "Disarming purity",
             "id": "5911f11d97a0add8e9d5da4c",
-            "min_price":14,
-			"default_price":16
+            "min_price": 14,
+	    "default_price": 16
         }
     ]
 }
