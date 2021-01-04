@@ -9,6 +9,7 @@ defmodule MarketManager.MixProject do
       deps: deps(),
       test_coverage: [tool: ExCoveralls],
       preferred_cli_env: preferred_cli_env(),
+      releases: releases(),
 
       # Docs
       name: "Market Manager",
@@ -23,7 +24,7 @@ defmodule MarketManager.MixProject do
     ]
   end
 
-  defp deps do
+  defp deps, do:
     [
       {:credo, "~> 1.4", only: [:test, :dev], runtime: false},
       {:excoveralls, "~> 0.10", only: :test},
@@ -31,15 +32,23 @@ defmodule MarketManager.MixProject do
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
       {:ex_doc, "~> 0.22", only: :dev, runtime: false}
     ]
-  end
 
-  defp preferred_cli_env do
+  defp preferred_cli_env, do:
     [
       coveralls: :test,
       "coveralls.detail": :test,
       "coveralls.post": :test,
       "coveralls.html": :test
     ]
-  end
+
+  defp releases, do:
+    [
+      unix_mm: [
+        include_executables_for: [:unix],
+        applications: [
+          cli: :permanent
+        ]
+      ]
+    ]
 
 end
