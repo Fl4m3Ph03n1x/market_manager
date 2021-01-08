@@ -14,4 +14,10 @@ defmodule AuctionHouse.Settings do
   """
   @spec requests_queue :: atom
   def requests_queue, do: :warframe_market_outgoing_requests_queue
+
+  @doc """
+  Returns how many requests per second the throttling queue will make.
+  """
+  @spec requests_per_second :: non_neg_integer
+  def requests_per_second, do: 2
 end

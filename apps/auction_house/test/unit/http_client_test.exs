@@ -3,7 +3,7 @@ defmodule AuctionHouse.HTTPClientTest do
 
   alias AuctionHouse.HTTPClient
 
-  describe "place_oder/1" do
+  describe "place_oder/2" do
     test "returns {:ok, order_id} if order was placed correctly" do
       # Arrange
       order = %{
@@ -22,7 +22,8 @@ defmodule AuctionHouse.HTTPClientTest do
              body: "{\"payload\":{\"order\":{\"id\":\"5ee71a2604d55c0a5cbdc3c2\"}}}"
            }}
         end,
-        run_fn: fn _queue_name, func -> func.() end
+        run_fn: fn _queue_name, func -> func.() end,
+        requests_queue: nil
       }
 
       # Act
@@ -51,7 +52,8 @@ defmodule AuctionHouse.HTTPClientTest do
              body: "{\"error\":{\"_form\":[\"app.post_order.already_created_no_duplicates\"]}}"
            }}
         end,
-        run_fn: fn _queue_name, func -> func.() end
+        run_fn: fn _queue_name, func -> func.() end,
+        requests_queue: nil
       }
 
       # Act
@@ -80,7 +82,8 @@ defmodule AuctionHouse.HTTPClientTest do
              body: "{\"error\":{\"item_id\":[\"app.form.invalid\"]}}"
            }}
         end,
-        run_fn: fn _queue_name, func -> func.() end
+        run_fn: fn _queue_name, func -> func.() end,
+        requests_queue: nil
       }
 
       # Act
@@ -109,7 +112,8 @@ defmodule AuctionHouse.HTTPClientTest do
              body: "{\"error\":{\"mod_rank\":[\"app.form.invalid\"]}}"
            }}
         end,
-        run_fn: fn _queue_name, func -> func.() end
+        run_fn: fn _queue_name, func -> func.() end,
+        requests_queue: nil
       }
 
       # Act
@@ -138,7 +142,8 @@ defmodule AuctionHouse.HTTPClientTest do
              body: "<html><head><title>503 Service Temporarily Unavailable</title></head></html>"
            }}
         end,
-        run_fn: fn _queue_name, func -> func.() end
+        run_fn: fn _queue_name, func -> func.() end,
+        requests_queue: nil
       }
 
       # Act
@@ -163,7 +168,8 @@ defmodule AuctionHouse.HTTPClientTest do
         post_fn: fn _url, _body, _headers ->
           {:error, %HTTPoison.Error{id: nil, reason: :timeout}}
         end,
-        run_fn: fn _queue_name, func -> func.() end
+        run_fn: fn _queue_name, func -> func.() end,
+        requests_queue: nil
       }
 
       # Act
@@ -175,7 +181,7 @@ defmodule AuctionHouse.HTTPClientTest do
     end
   end
 
-  describe "delete_oder/1" do
+  describe "delete_oder/2" do
     test "returns {:ok, order_id} if order was deleted correctly" do
       # Arrange
       order_id = "5ee71a2604d55c0a5cbdc3c2"
@@ -188,7 +194,8 @@ defmodule AuctionHouse.HTTPClientTest do
              body: "{\"payload\":{\"order_id\":\"5ee71a2604d55c0a5cbdc3c2\"}}"
            }}
         end,
-        run_fn: fn _queue_name, func -> func.() end
+        run_fn: fn _queue_name, func -> func.() end,
+        requests_queue: nil
       }
 
       # Act
@@ -211,7 +218,8 @@ defmodule AuctionHouse.HTTPClientTest do
              body: "{\"error\": {\"order_id\": [\"app.form.invalid\"]}}"
            }}
         end,
-        run_fn: fn _queue_name, func -> func.() end
+        run_fn: fn _queue_name, func -> func.() end,
+        requests_queue: nil
       }
 
       # Act
@@ -230,7 +238,8 @@ defmodule AuctionHouse.HTTPClientTest do
         delete_fn: fn _url, _headers ->
           {:error, %HTTPoison.Error{id: nil, reason: :timeout}}
         end,
-        run_fn: fn _queue_name, func -> func.() end
+        run_fn: fn _queue_name, func -> func.() end,
+        requests_queue: nil
       }
 
       # Act
@@ -242,7 +251,7 @@ defmodule AuctionHouse.HTTPClientTest do
     end
   end
 
-  describe "get_all_orders/1" do
+  describe "get_all_orders/2" do
     test "returns {:ok, [order_info]} if request for orders about item succeeded" do
       # Arrange
       item_name = "Gleaming Blight"
@@ -255,7 +264,8 @@ defmodule AuctionHouse.HTTPClientTest do
              body: "{\"payload\":{\"orders\":[{\"order_type\":\"sell\",\"platform\":\"pc\",\"platinum\":45,\"region\":\"en\",\"user\":{\"status\":\"ingame\"},\"visible\":true},{\"order_type\":\"sell\",\"platform\":\"pc\",\"platinum\":30.0,\"region\":\"en\",\"user\":{\"status\":\"ingame\"},\"visible\":true}]}}"
            }}
         end,
-        run_fn: fn _queue_name, func -> func.() end
+        run_fn: fn _queue_name, func -> func.() end,
+        requests_queue: nil
       }
 
       # Act

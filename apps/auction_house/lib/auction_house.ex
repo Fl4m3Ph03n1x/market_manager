@@ -1,9 +1,11 @@
 defmodule AuctionHouse do
   @moduledoc """
-  Port for http client.
+  Librabry representing the interface for the auction house.
+  Responsible for making calls and decoding the answers from the auction house
+  into a format the manager understands.
   """
 
-  alias AuctionHouse.HTTPClient
+  alias AuctionHouse.Server
 
   ##########
   # Types  #
@@ -12,7 +14,6 @@ defmodule AuctionHouse do
   @type item_id :: String.t
   @type item_name :: String.t
   @type order_id :: String.t
-  @type deps :: map
 
   @type order :: %{
     (item_id :: String.t) => String.t,
@@ -41,19 +42,27 @@ defmodule AuctionHouse do
   @type delete_order_response :: {:ok, order_id} | {:error, atom, order_id}
   @type get_all_orders_response :: {:ok, [order_info]} | {:error, atom, item_name}
 
-  #############
-  # Callbacks #
-  #############
+  #######
+  # API #
+  #######
 
-  @callback place_order(order) :: place_order_response
-  @callback place_order(order, deps) :: place_order_response
-  defdelegate place_order(order), to: HTTPClient
+  @spec place_order(order) :: place_order_response
+  defdelegate place_order(order), to: Server
 
-  @callback delete_order(order_id) :: delete_order_response
-  @callback delete_order(order_id, deps) :: delete_order_response
-  defdelegate delete_order(order_id), to: HTTPClient
+  @spec delete_order(order_id) :: delete_order_response
+  defdelegate delete_order(order_id), to: Server
 
-  @callback get_all_orders(item_name) :: get_all_orders_response
-  @callback get_all_orders(item_name, deps) :: get_all_orders_response
-  defdelegate get_all_orders(item_name), to: HTTPClient
+  @spec get_all_orders(item_name) :: get_all_orders_response
+  defdelegate get_all_orders(item_name), to: Server
+
+  @spec child_spec(any) :: %{
+          :id => any,
+          :start => {atom, atom, [any]},
+          optional(:modules) => :dynamic | [atom],
+          optional(:restart) => :permanent | :temporary | :transient,
+          optional(:shutdown) => :brutal_kill | :infinity | non_neg_integer,
+          optional(:type) => :supervisor | :worker
+        }
+  @doc false
+  defdelegate child_spec(args), to: Server
 end

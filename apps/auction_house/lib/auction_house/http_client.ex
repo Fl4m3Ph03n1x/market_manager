@@ -6,9 +6,6 @@ defmodule AuctionHouse.HTTPClient do
   use Rop
 
   alias AuctionHouse
-  alias AuctionHouse.Settings
-
-  @behaviour AuctionHouse
 
   @url Application.compile_env!(:auction_house, :api_base_url)
   @search_url Application.compile_env!(:auction_house, :api_search_url)
@@ -20,33 +17,23 @@ defmodule AuctionHouse.HTTPClient do
     {"Content-Type", "application/json"}
   ]
 
-  @default_deps %{
-    get_fn: &HTTPoison.get/2,
-    post_fn: &HTTPoison.post/3,
-    delete_fn: &HTTPoison.delete/2,
-    run_fn: &:jobs.run/2
-  }
-
   ##########
   # Public #
   ##########
 
-  @impl AuctionHouse
-  def place_order(order, deps \\ @default_deps), do:
+  def place_order(order, deps), do:
     order
     |> Jason.encode()
     >>> http_post(deps)
     |> to_auction_house_response(order, &get_id/1)
 
-  @impl AuctionHouse
-  def delete_order(order_id, deps \\ @default_deps), do:
+  def delete_order(order_id, deps), do:
     order_id
     |> build_delete_url()
     |> http_delete(deps)
     |> to_auction_house_response(order_id, &get_id/1)
 
-  @impl AuctionHouse
-  def get_all_orders(item_name, deps \\ @default_deps), do:
+  def get_all_orders(item_name, deps), do:
     item_name
     |> Recase.to_snake()
     |> build_get_orders_url()
@@ -59,18 +46,18 @@ defmodule AuctionHouse.HTTPClient do
 
   @spec http_post(order_json :: String.t, deps :: map) ::
     {:ok, HTTPoison.Response.t} | {:error, HTTPoison.Error.t}
-  defp http_post(order, %{post_fn: post, run_fn: run}), do:
-    run.(Settings.requests_queue(), fn -> post.(@url, order, headers()) end)
+  defp http_post(order, %{post_fn: post, run_fn: run, requests_queue: queue}), do:
+    run.(queue, fn -> post.(@url, order, headers()) end)
 
   @spec http_delete(url :: String.t, deps :: map) ::
     {:ok, HTTPoison.Response.t} | {:error, HTTPoison.Error.t}
-  defp http_delete(url, %{delete_fn: delete, run_fn: run}), do:
-    run.(Settings.requests_queue(), fn -> delete.(url, headers()) end)
+  defp http_delete(url, %{delete_fn: delete, run_fn: run, requests_queue: queue}), do:
+    run.(queue, fn -> delete.(url, headers()) end)
 
   @spec http_get(url :: String.t, deps :: map) ::
     {:ok, HTTPoison.Response.t} | {:error, HTTPoison.Error.t}
-  defp http_get(url, %{get_fn: get, run_fn: run}), do:
-    run.(Settings.requests_queue(), fn -> get.(url, headers()) end)
+  defp http_get(url, %{get_fn: get, run_fn: run, requests_queue: queue}), do:
+    run.(queue, fn -> get.(url, headers()) end)
 
   @spec to_auction_house_response(
         {:ok, HTTPoison.Response.t} | {:error, HTTPoison.Error.t},
