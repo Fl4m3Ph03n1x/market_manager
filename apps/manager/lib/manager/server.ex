@@ -21,7 +21,7 @@ defmodule Manager.Server do
   # Callbacks  #
   ##############
 
-  @impl true
+  @impl Supervisor
   @spec init(nil) :: {:ok, {:supervisor.sup_flags, [:supervisor.child_spec]}} | :ignore
   def init(nil) do
     children = [
