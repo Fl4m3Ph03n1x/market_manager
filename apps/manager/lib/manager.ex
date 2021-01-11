@@ -5,7 +5,7 @@ defmodule Manager do
   and you need to talk to MarketManager, this is who you call, the public API.
   """
 
-  alias Manager.{Interpreter, PriceAnalyst}
+  alias Manager.{Interpreter, PriceAnalyst, Server}
   alias Store
 
   ##########
@@ -112,4 +112,15 @@ defmodule Manager do
   """
   @spec valid_syndicate?(syndicate) :: Store.syndicate_exists_response
   defdelegate valid_syndicate?(syndicate), to: Store, as: :syndicate_exists?
+
+  @doc false
+  @spec child_spec(any) :: %{
+    :id => any,
+    :start => {atom, atom, [any]},
+    optional(:modules) => :dynamic | [atom],
+    optional(:restart) => :permanent | :temporary | :transient,
+    optional(:shutdown) => :brutal_kill | :infinity | non_neg_integer,
+    optional(:type) => :supervisor | :worker
+  }
+  defdelegate child_spec(args), to: Server
 end
