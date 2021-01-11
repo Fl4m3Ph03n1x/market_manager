@@ -43,8 +43,7 @@ defmodule MarketManager.MixProject do
 
   defp releases, do:
     [
-      unix_mm: [
-        include_executables_for: [:unix],
+      market_manager: [
         applications: [
           cli: :permanent
         ]
