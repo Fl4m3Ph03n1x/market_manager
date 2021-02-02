@@ -1,5 +1,5 @@
-defmodule DemoWeb.LightLive do
-  use DemoWeb, :live_view
+defmodule WebInterfaceWeb.LightLive do
+  use WebInterfaceWeb, :live_view
 
   @impl true
   def mount(_params, _session, socket) do

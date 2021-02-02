@@ -1,16 +1,16 @@
-defmodule DemoWeb.Endpoint do
-  use Phoenix.Endpoint, otp_app: :demo
+defmodule WebInterfaceWeb.Endpoint do
+  use Phoenix.Endpoint, otp_app: :web_interface
 
   # The session will be stored in the cookie and signed,
   # this means its contents can be read but not tampered with.
   # Set :encryption_salt if you would also like to encrypt it.
   @session_options [
     store: :cookie,
-    key: "_demo_key",
+    key: "_web_interface_key",
     signing_salt: "LzIBWb0K"
   ]
 
-  socket "/socket", DemoWeb.UserSocket,
+  socket "/socket", WebInterfaceWeb.UserSocket,
     websocket: true,
     longpoll: false
 
@@ -22,7 +22,7 @@ defmodule DemoWeb.Endpoint do
   # when deploying your static files in production.
   plug Plug.Static,
     at: "/",
-    from: :demo,
+    from: :web_interface,
     gzip: false,
     only: ~w(css fonts images js favicon.ico robots.txt)
 
@@ -49,5 +49,5 @@ defmodule DemoWeb.Endpoint do
   plug Plug.MethodOverride
   plug Plug.Head
   plug Plug.Session, @session_options
-  plug DemoWeb.Router
+  plug WebInterfaceWeb.Router
 end

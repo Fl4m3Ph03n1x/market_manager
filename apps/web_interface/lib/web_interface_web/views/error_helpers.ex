@@ -1,4 +1,4 @@
-defmodule DemoWeb.ErrorHelpers do
+defmodule WebInterfaceWeb.ErrorHelpers do
   @moduledoc """
   Conveniences for translating and building error messages.
   """
@@ -39,9 +39,9 @@ defmodule DemoWeb.ErrorHelpers do
     # should be written to the errors.po file. The :count option is
     # set by Ecto and indicates we should also apply plural rules.
     if count = opts[:count] do
-      Gettext.dngettext(DemoWeb.Gettext, "errors", msg, msg, count, opts)
+      Gettext.dngettext(WebInterfaceWeb.Gettext, "errors", msg, msg, count, opts)
     else
-      Gettext.dgettext(DemoWeb.Gettext, "errors", msg, opts)
+      Gettext.dgettext(WebInterfaceWeb.Gettext, "errors", msg, opts)
     end
   end
 end

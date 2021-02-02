@@ -43,10 +43,11 @@ defmodule MarketManager.MixProject do
 
   defp releases, do:
     [
-      market_manager: [
-        applications: [
-          cli: :permanent
-        ]
+      market_manager_cli: [
+        applications: [cli: :permanent]
+      ],
+      market_manager_web: [
+        applications: [web_interface: :permanent]
       ]
     ]
 

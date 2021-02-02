@@ -1,3 +1,3 @@
-defmodule DemoWeb.LayoutView do
-  use DemoWeb, :view
+defmodule WebInterfaceWeb.LayoutView do
+  use WebInterfaceWeb, :view
 end
