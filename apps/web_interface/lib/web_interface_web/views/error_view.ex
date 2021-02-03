@@ -1,5 +1,5 @@
-defmodule DemoWeb.ErrorView do
-  use DemoWeb, :view
+defmodule WebInterfaceWeb.ErrorView do
+  use WebInterfaceWeb, :view
 
   # If you want to customize a particular status code
   # for a certain format, you may uncomment below.

@@ -10,7 +10,7 @@ defmodule WebInterfaceWeb.LightLive do
   @impl true
   def render(assigns) do
     ~L"""
-    <h1>Front Porch Light</h1>
+    <h1>Market Manager</h1>
     <div id="light">
       <div class="meter">
         <span style="width: <%= @brightness %>% ">
