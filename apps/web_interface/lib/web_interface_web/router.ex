@@ -17,7 +17,7 @@ defmodule WebInterfaceWeb.Router do
   scope "/", WebInterfaceWeb do
     pipe_through :browser
 
-    live "/", LightLive
+    live "/", CommandsLive
   end
 
   # Other scopes may use custom stacks.
