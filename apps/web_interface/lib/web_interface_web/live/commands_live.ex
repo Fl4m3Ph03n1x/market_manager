@@ -3,14 +3,19 @@ defmodule WebInterfaceWeb.CommandsLive do
 
 
   require Logger
-  alias WebInterface.Commands
+  alias WebInterface.{Commands, Strategies}
+
 
   @impl true
   def mount(_params, _session, socket) do
-    commands  = Commands.list_commands()
+    commands = Commands.list_commands()
+    strategies = Strategies.list_strategies()
+
     socket = assign(socket,
       commands: commands,
-      selected_command: hd(commands)
+      selected_command: hd(commands),
+      strategies: strategies,
+      selected_strategy: hd(strategies)
     )
 
     {:ok, socket}
@@ -26,7 +31,7 @@ defmodule WebInterfaceWeb.CommandsLive do
           <%= for command <- @commands do %>
             <a href="#"
               phx-click="show"
-              phx-value-name="<%= command.name %>"
+              phx-value-id="<%= command.id %>"
               class="<%= if command == @selected_command, do: 'active' %>">
               <%= command.name %>
             </a>
@@ -41,7 +46,13 @@ defmodule WebInterfaceWeb.CommandsLive do
               <span><%= @selected_command.description %></span>
             </div>
             <div class="body">
+              <div>
 
+                <%= for strat <- @strategies  do %>
+                  <%= strategy_radio_button(strat: strat, checked: strat == @selected_strategy) %>
+                <% end %>
+
+              </div>
             </div>
           </div>
         </div>
@@ -51,11 +62,26 @@ defmodule WebInterfaceWeb.CommandsLive do
   end
 
   @impl true
-  def handle_event("show", %{"name" => cname}, socket) do
-    command = Commands.get_command(cname)
+  def handle_event("show", %{"id" => id}, socket) do
+    command =
+      id
+      |> String.to_existing_atom()
+      |> Commands.get_command()
 
     socket = assign(socket, selected_command: command)
     {:noreply, socket}
+  end
+
+  defp strategy_radio_button(assigns) do
+    assigns = Enum.into(assigns, %{})
+
+    ~L"""
+    <input type="radio" id="<%= @strat.id %>"
+            name="strategy" value="<%= @strat.id %>"
+            <%= if @checked, do: "checked" %> />
+    <label for="<%= @strat.id %>"><%= @strat.name %></label>
+    </br>
+    """
   end
 
 end
