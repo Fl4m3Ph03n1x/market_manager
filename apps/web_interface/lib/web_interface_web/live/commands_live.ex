@@ -97,6 +97,7 @@ defmodule WebInterfaceWeb.CommandsLive do
       ) do
     command_id = String.to_existing_atom(command)
     strategy_id = String.to_existing_atom(strategy)
+
     syndicate_ids =
       syndicates
       |> String.split(";")
@@ -124,7 +125,7 @@ defmodule WebInterfaceWeb.CommandsLive do
       |> Enum.map(&String.to_existing_atom/1)
       |> Enum.map(&Syndicates.get_syndicate/1)
 
-    socket = assign(socket, [selected_strategy: new_strategy, selected_syndicates: new_syndicates])
+    socket = assign(socket, selected_strategy: new_strategy, selected_syndicates: new_syndicates)
     {:noreply, socket}
   end
 
@@ -154,11 +155,12 @@ defmodule WebInterfaceWeb.CommandsLive do
     """
   end
 
-  defp selected_syndicates_to_string(syndicates), do:
-    syndicates
-    |> Enum.map(&Syndicates.get_id/1)
-    |> Enum.map(&Atom.to_string/1)
-    |> Enum.join(";")
+  defp selected_syndicates_to_string(syndicates),
+    do:
+      syndicates
+      |> Enum.map(&Syndicates.get_id/1)
+      |> Enum.map(&Atom.to_string/1)
+      |> Enum.join(";")
 
   defp by_not_empty_string(string), do: string !== ""
 end
