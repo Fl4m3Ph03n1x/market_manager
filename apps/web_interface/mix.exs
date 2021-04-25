@@ -14,8 +14,8 @@ defmodule WebInterface.MixProject do
     ]
   end
 
-  def application,  do:
-    [
+  def application,
+    do: [
       mod: {WebInterface.Application, []},
       extra_applications: [:logger, :runtime_tools]
     ]
@@ -23,8 +23,8 @@ defmodule WebInterface.MixProject do
   defp elixirc_paths(:test), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
 
-  defp deps, do:
-    [
+  defp deps,
+    do: [
       {:phoenix, "~> 1.5.7"},
       {:phoenix_live_view, "~> 0.15.0"},
       {:floki, ">= 0.27.0", only: :test},
@@ -44,9 +44,8 @@ defmodule WebInterface.MixProject do
   #     $ mix setup
   #
   # See the documentation for `Mix` for more info on aliases.
-  defp aliases, do:
-    [
+  defp aliases,
+    do: [
       setup: ["deps.get", "cmd npm install --prefix assets"]
     ]
-
 end

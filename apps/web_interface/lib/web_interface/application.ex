@@ -15,14 +15,17 @@ defmodule WebInterface.Application do
     opts = [strategy: :one_for_one, name: WebInterface.Supervisor]
     result = Supervisor.start_link(children, opts)
 
-    operative_system = :os.type
+    operative_system = :os.type()
     start_browser_command = browser_start_cmd(operative_system)
-
 
     if System.find_executable(start_browser_command) do
       System.cmd(start_browser_command, browser_start_args(operative_system))
     else
-      Logger.warn("Unable to open browser window, user needs to open it manually by going to #{WebInterfaceWeb.Endpoint.url()}")
+      Logger.warn(
+        "Unable to open browser window, user needs to open it manually by going to #{
+          WebInterfaceWeb.Endpoint.url()
+        }"
+      )
     end
 
     result
@@ -39,5 +42,4 @@ defmodule WebInterface.Application do
 
   defp browser_start_args({:win32, _}), do: ["/C", "start", WebInterfaceWeb.Endpoint.url()]
   defp browser_start_args({:unix, _}), do: [WebInterfaceWeb.Endpoint.url()]
-
 end

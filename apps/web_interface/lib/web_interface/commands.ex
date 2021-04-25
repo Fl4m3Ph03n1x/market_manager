@@ -1,7 +1,6 @@
 defmodule WebInterface.Commands do
-
-  def list_commands, do:
-    [
+  def list_commands,
+    do: [
       %{
         name: "Activate",
         description: "
@@ -19,12 +18,17 @@ defmodule WebInterface.Commands do
       }
     ]
 
+  def execute(%{command: :activate, strategy: _strat, syndicates: _synds} = input),
+    do: IO.inspect(input, label: "Hello world ACTIVATE !!!!")
 
-  def get_command(id), do:
-    list_commands()
-    |> Enum.filter(&by_command_id(&1, id))
-    |> hd()
+  def execute(%{command: :deactivate, syndicates: _synds} = input),
+    do: IO.inspect(input, label: "Hello world DEEEEEEACTIVATE !!!!")
+
+  def get_command(id),
+    do:
+      list_commands()
+      |> Enum.filter(&by_command_id(&1, id))
+      |> hd()
 
   defp by_command_id(%{id: command_id}, id), do: command_id == id
-
 end

@@ -1,27 +1,29 @@
 defmodule WebInterfaceWeb.CommandsLive do
   use WebInterfaceWeb, :live_view
 
-
-  require Logger
-  alias WebInterface.{Commands, Strategies}
-
+  alias Phoenix.LiveView
+  alias WebInterface.{Commands, Strategies, Syndicates}
 
   @impl true
   def mount(_params, _session, socket) do
     commands = Commands.list_commands()
     strategies = Strategies.list_strategies()
+    syndicates = Syndicates.list_syndicates()
 
-    socket = assign(socket,
-      commands: commands,
-      selected_command: hd(commands),
-      strategies: strategies,
-      selected_strategy: hd(strategies)
-    )
+    socket =
+      assign(socket,
+        commands: commands,
+        selected_command: hd(commands),
+        strategies: strategies,
+        selected_strategy: hd(strategies),
+        syndicates: syndicates,
+        selected_syndicates: []
+      )
 
     {:ok, socket}
   end
 
-  @impl true
+  @impl LiveView
   def render(assigns) do
     ~L"""
     <h1>Actions</h1>
@@ -46,12 +48,28 @@ defmodule WebInterfaceWeb.CommandsLive do
               <span><%= @selected_command.description %></span>
             </div>
             <div class="body">
-              <div>
-
-                <%= for strat <- @strategies  do %>
-                  <%= strategy_radio_button(strat: strat, checked: strat == @selected_strategy) %>
-                <% end %>
-
+              <form phx-change=filters>
+                <div class="<%= if @selected_command.id == :deactivate, do: 'hide_strategies' %>">
+                  <%= for strat <- @strategies  do %>
+                    <%= strategy_radio_button(strat: strat, checked: strat == @selected_strategy) %>
+                  <% end %>
+                </div>
+                <div class="syndicates">
+                  <input type="hidden" name="syndicates[]" value="">
+                  <%= for synd <- @syndicates  do %>
+                    <%= syndicate_checkbox(synd: synd, checked: synd in @selected_syndicates) %>
+                  <% end %>
+                </div>
+              </form>
+              <div class="button">
+                <button
+                    phx-click="execute_command"
+                    phx-value-command="<%= @selected_command.id %>"
+                    phx-value-strategy="<%= @selected_strategy.id %>"
+                    phx-value-syndicates="<%= selected_syndicates_to_string(@selected_syndicates) %>"
+                    type="button">
+                  Execute Command
+                </button>
               </div>
             </div>
           </div>
@@ -61,7 +79,7 @@ defmodule WebInterfaceWeb.CommandsLive do
     """
   end
 
-  @impl true
+  @impl LiveView
   def handle_event("show", %{"id" => id}, socket) do
     command =
       id
@@ -69,6 +87,44 @@ defmodule WebInterfaceWeb.CommandsLive do
       |> Commands.get_command()
 
     socket = assign(socket, selected_command: command)
+    {:noreply, socket}
+  end
+
+  def handle_event(
+        "execute_command",
+        %{"command" => command, "strategy" => strategy, "syndicates" => syndicates},
+        socket
+      ) do
+    command_id = String.to_existing_atom(command)
+    strategy_id = String.to_existing_atom(strategy)
+    syndicate_ids =
+      syndicates
+      |> String.split(";")
+      |> Enum.filter(&by_not_empty_string/1)
+      |> Enum.map(&String.to_existing_atom/1)
+
+    Commands.execute(%{
+      command: command_id,
+      strategy: strategy_id,
+      syndicates: syndicate_ids
+    })
+
+    {:noreply, socket}
+  end
+
+  def handle_event("filters", %{"strategy" => strat, "syndicates" => synds}, socket) do
+    new_strategy =
+      strat
+      |> String.to_existing_atom()
+      |> Strategies.get_strategy()
+
+    new_syndicates =
+      synds
+      |> Enum.filter(&by_not_empty_string/1)
+      |> Enum.map(&String.to_existing_atom/1)
+      |> Enum.map(&Syndicates.get_syndicate/1)
+
+    socket = assign(socket, [selected_strategy: new_strategy, selected_syndicates: new_syndicates])
     {:noreply, socket}
   end
 
@@ -80,8 +136,29 @@ defmodule WebInterfaceWeb.CommandsLive do
             name="strategy" value="<%= @strat.id %>"
             <%= if @checked, do: "checked" %> />
     <label for="<%= @strat.id %>"><%= @strat.name %></label>
+    <span><%= @strat.description %></span>
     </br>
     """
   end
 
+  defp syndicate_checkbox(assigns) do
+    assigns = Enum.into(assigns, %{})
+
+    ~L"""
+    <input type="checkbox" id="<%= @synd.id %>"
+            name="syndicates[]" value="<%= @synd.id %>"
+            <%= if @checked, do: "checked" %>>
+
+    <label for="<%= @synd.id %>"><%= @synd.name %></label>
+    </br>
+    """
+  end
+
+  defp selected_syndicates_to_string(syndicates), do:
+    syndicates
+    |> Enum.map(&Syndicates.get_id/1)
+    |> Enum.map(&Atom.to_string/1)
+    |> Enum.join(";")
+
+  defp by_not_empty_string(string), do: string !== ""
 end

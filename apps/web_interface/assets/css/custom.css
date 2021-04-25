@@ -30,6 +30,12 @@ ul.examples {
   fill: currentColor;
 }
 
+/* Command */
+
+.hide_strategies {
+  display: none;
+}
+
 /* Light */
 
 #light {
