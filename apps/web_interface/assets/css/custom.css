@@ -15,10 +15,10 @@ header {
 }
 
 #commands {
-  @apply flex-none pb-5;
+  @apply pb-5;
 
   .sidebar {
-    @apply bg-indigo-800 text-indigo-300 pt-4 pb-4 rounded-md;
+    @apply bg-indigo-800 text-indigo-300 py-4 rounded-md col-span-2;
 
     nav {
       @apply px-2 bg-indigo-800;
@@ -42,7 +42,14 @@ header {
   }
 
   .main {
-    @apply flex-none bg-white shadow overflow-hidden rounded-lg;
+    @apply 
+      flex-none 
+      bg-white 
+      shadow 
+      overflow-hidden 
+      rounded-lg 
+      font-sans  
+      col-span-10;
 
     .header {
       @apply px-6 py-5 border-b border-gray-200 flex items-center flex-wrap justify-between;
@@ -53,81 +60,43 @@ header {
     }
 
     .body {
-      @apply px-8 py-4;
+      @apply 
+        px-8 py-4 
+        grid grid-rows-4 grid-flow-col gap-4;
 
       h3 {
         @apply mt-8 text-base leading-5 font-medium text-gray-500 mb-2;
       }
 
-      .strategies {
-        @apply font-semibold font-sans mb-4;
-      }
-
       .description {
-        @apply text-sm leading-5 font-normal text-gray-900;
+        @apply text-xs text-gray-900;
       }
 
-      .syndicates {
-        @apply font-semibold mb-5;
-      }
-    }
+      form {
+        @apply row-span-3;
 
-    .button {
-      @apply relative font-sans antialiased bg-indigo-800 pt-4 pb-4 text-white text-center rounded-md rounded-full font-medium items-center;
-    }
-
-    .hide_strategies {
-      display: none;
-    }
-  }
-
-  /* .main {
-    @apply flex-grow-0;
-
-    .wrapper {
-      @apply flex-none max-w-6xl mx-auto;
-    }
-
-    .button {
-      @apply relative font-sans antialiased bg-indigo-800 pt-4 pb-4 text-white text-center rounded-md rounded-full font-medium items-center;
-    }
-
-    .card {
-      @apply bg-white shadow overflow-hidden rounded-lg;
-
-      .header {
-        @apply px-6 py-5 border-b border-gray-200 flex items-center flex-wrap justify-between;
-
-        h2 {
-          @apply text-xl leading-6 font-semibold text-indigo-800;
-        }
-      }
-
-      .body {
-        @apply px-8 py-4;
-
-        h3 {
-          @apply mt-8 text-base leading-5 font-medium text-gray-500 mb-2;
+        .syndicates {
+          @apply mb-5;
         }
 
         .strategies {
-          @apply font-semibold font-sans mb-4;
-        }
-
-        .description {
-          @apply text-sm leading-5 font-normal text-gray-900;
-        }
-
-        .syndicates {
-          @apply font-semibold mb-5;
+          @apply mb-4;
         }
       }
+
+      button {
+        @apply 
+          px-2 py-4 
+          rounded-md rounded-full 
+          text-white text-center 
+          items-center 
+          bg-indigo-800 hover:bg-indigo-900 
+          row-span-1;
+      }
+
     }
 
-    .hide_strategies {
-      display: none;
-    }
-  } */
+  }
 }
 
 /*

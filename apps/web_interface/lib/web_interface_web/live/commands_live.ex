@@ -27,7 +27,7 @@ defmodule WebInterfaceWeb.CommandsLive do
   def render(assigns) do
     ~L"""
     <div id="commands" class="grid grid-cols-12 gap-2 justify-evenly">
-      <div class="sidebar col-span-2">
+      <div class="sidebar">
         <nav>
           <%= for command <- @commands do %>
             <a href="#"
@@ -39,7 +39,7 @@ defmodule WebInterfaceWeb.CommandsLive do
           <% end %>
         </nav>
       </div>
-      <div class="main col-span-10">
+      <div class="main">
 
         <div class="header">
           <h2>Description</h2>
@@ -47,9 +47,10 @@ defmodule WebInterfaceWeb.CommandsLive do
         </div>
 
         <div class="body">
+
           <form phx-change=filters>
 
-            <div class="<%= if @selected_command.id == :deactivate, do: 'hide_strategies' %> strategies">
+            <div class="<%= if @selected_command.id == :deactivate, do: 'hidden' %> strategies">
               <%= for strat <- @strategies  do %>
                 <%= strategy_radio_button(strat: strat, checked: strat == @selected_strategy) %>
               <% end %>
@@ -63,16 +64,14 @@ defmodule WebInterfaceWeb.CommandsLive do
             </div>
           </form>
 
-          <div class="button">
-            <button
-              phx-click="execute_command"
-              phx-value-command="<%= @selected_command.id %>"
-              phx-value-strategy="<%= @selected_strategy.id %>"
-              phx-value-syndicates="<%= selected_syndicates_to_string(@selected_syndicates) %>"
-              type="button">
-                Execute Command
-            </button>
-          </div>
+          <button
+            phx-click="execute_command"
+            phx-value-command="<%= @selected_command.id %>"
+            phx-value-strategy="<%= @selected_strategy.id %>"
+            phx-value-syndicates="<%= selected_syndicates_to_string(@selected_syndicates) %>">
+              Execute Command
+          </button>
+
         </div>
 
       </div>
