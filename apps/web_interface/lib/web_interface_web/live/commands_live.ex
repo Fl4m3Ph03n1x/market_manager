@@ -27,7 +27,7 @@ defmodule WebInterfaceWeb.CommandsLive do
   def render(assigns) do
     ~L"""
     <h1>Actions</h1>
-    <div id="servers">
+    <div id="commands">
       <div class="sidebar">
         <nav>
           <%= for command <- @commands do %>
@@ -61,15 +61,16 @@ defmodule WebInterfaceWeb.CommandsLive do
                   <% end %>
                 </div>
               </form>
+
               <div class="button">
                 <button
-                    phx-click="execute_command"
-                    phx-value-command="<%= @selected_command.id %>"
-                    phx-value-strategy="<%= @selected_strategy.id %>"
-                    phx-value-syndicates="<%= selected_syndicates_to_string(@selected_syndicates) %>"
-                    type="button">
-                  Execute Command
-                </button>
+                      phx-click="execute_command"
+                      phx-value-command="<%= @selected_command.id %>"
+                      phx-value-strategy="<%= @selected_strategy.id %>"
+                      phx-value-syndicates="<%= selected_syndicates_to_string(@selected_syndicates) %>"
+                      type="button">
+                    Execute Command
+                  </button>
               </div>
             </div>
           </div>
