@@ -1,5 +1,5 @@
 body {
-  @apply antialiased relative bg-cool-gray-200 font-sans;
+  @apply antialiased bg-cool-gray-200 font-sans;
 }
 
 header {
@@ -7,26 +7,21 @@ header {
 }
 
 .container {
-  @apply max-w-6xl mx-auto px-6;
+  @apply max-w-6xl mx-auto flex-none m-1;
 }
 
-h1 {
-  @apply text-center text-cool-gray-900 font-extrabold text-4xl mb-8;
-}
-
-
-.icon {
-  fill: currentColor;
+.logo-background {
+  @apply bg-gradient-to-r from-black via-gray-500 to-white antialiased rounded-md;
 }
 
 #commands {
-  @apply flex;
+  @apply flex-none pb-5;
 
   .sidebar {
-    @apply w-48 bg-indigo-800 pt-4 pb-4 text-indigo-300;
+    @apply bg-indigo-800 text-indigo-300 pt-4 pb-4 rounded-md;
 
     nav {
-      @apply flex-1 px-2 bg-indigo-800;
+      @apply px-2 bg-indigo-800;
 
       .active {
         @apply text-white bg-indigo-900;
@@ -47,10 +42,50 @@ h1 {
   }
 
   .main {
-    @apply flex flex-1;
+    @apply flex-none bg-white shadow overflow-hidden rounded-lg;
+
+    .header {
+      @apply px-6 py-5 border-b border-gray-200 flex items-center flex-wrap justify-between;
+
+      h2 {
+        @apply text-xl leading-6 font-semibold text-indigo-800;
+      }
+    }
+
+    .body {
+      @apply px-8 py-4;
+
+      h3 {
+        @apply mt-8 text-base leading-5 font-medium text-gray-500 mb-2;
+      }
+
+      .strategies {
+        @apply font-semibold font-sans mb-4;
+      }
+
+      .description {
+        @apply text-sm leading-5 font-normal text-gray-900;
+      }
+
+      .syndicates {
+        @apply font-semibold mb-5;
+      }
+    }
+
+    .button {
+      @apply relative font-sans antialiased bg-indigo-800 pt-4 pb-4 text-white text-center rounded-md rounded-full font-medium items-center;
+    }
+
+    .hide_strategies {
+      display: none;
+    }
+  }
+
+  /* .main {
+    @apply flex-grow-0;
 
     .wrapper {
-      @apply flex-1 max-w-2xl mx-auto px-6;
+      @apply flex-none max-w-6xl mx-auto;
     }
 
     .button {
@@ -75,24 +110,16 @@ h1 {
           @apply mt-8 text-base leading-5 font-medium text-gray-500 mb-2;
         }
 
-        .row {
-          @apply flex flex-wrap items-center justify-between text-base leading-5 font-medium text-gray-500;
+        .strategies {
+          @apply font-semibold font-sans mb-4;
         }
 
-        .deploys {
-          @apply flex items-baseline justify-between;
-
-          img {
-            @apply mr-3 h-6 w-6 text-indigo-400;
-          }
+        .description {
+          @apply text-sm leading-5 font-normal text-gray-900;
         }
 
-        .repo, .commit {
-          @apply text-sm leading-5 text-gray-900;
-        }
-
-        blockquote {
-          @apply mt-2 p-2 text-base leading-5 border-gray-300 text-gray-700 border-l-4;
+        .syndicates {
+          @apply font-semibold mb-5;
         }
       }
     }
@@ -100,7 +127,7 @@ h1 {
     .hide_strategies {
       display: none;
     }
-  }
+  } */
 }
 
 /*
