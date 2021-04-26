@@ -18,11 +18,15 @@ defmodule WebInterface.Commands do
       }
     ]
 
-  def execute(%{command: :activate, strategy: _strat, syndicates: _synds} = input),
-    do: IO.inspect(input, label: "Hello world ACTIVATE !!!!")
+  def execute(%{command: :activate, strategy: _strat, syndicates: _synds} = input) do
+    IO.inspect(input, label: "Hello world ACTIVATE !!!!")
+    {:ok, "it worked, promise!"}
+  end
 
-  def execute(%{command: :deactivate, syndicates: _synds} = input),
-    do: IO.inspect(input, label: "Hello world DEEEEEEACTIVATE !!!!")
+  def execute(%{command: :deactivate, syndicates: _synds} = input) do
+    IO.inspect(input, label: "Hello world DEEEEEEACTIVATE !!!!")
+    {:error, "OHHH NOOOESSSS!"}
+  end
 
   def get_command(id),
     do:

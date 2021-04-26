@@ -94,24 +94,15 @@ defmodule WebInterfaceWeb.CommandsLive do
         "execute_command",
         %{"command" => command, "strategy" => strategy, "syndicates" => syndicates},
         socket
-      ) do
-    command_id = String.to_existing_atom(command)
-    strategy_id = String.to_existing_atom(strategy)
-
-    syndicate_ids =
-      syndicates
-      |> String.split(";")
-      |> Enum.filter(&by_not_empty_string/1)
-      |> Enum.map(&String.to_existing_atom/1)
-
-    Commands.execute(%{
-      command: command_id,
-      strategy: strategy_id,
-      syndicates: syndicate_ids
-    })
-
-    {:noreply, socket}
-  end
+      ),
+      do:
+        %{
+          command: String.to_existing_atom(command),
+          strategy: String.to_existing_atom(strategy),
+          syndicates: string_to_selected_syndicates(syndicates)
+        }
+        |> Commands.execute()
+        |> handle_commands_response(socket)
 
   def handle_event("filters", %{"strategy" => strat, "syndicates" => synds}, socket) do
     new_strategy =
@@ -162,5 +153,18 @@ defmodule WebInterfaceWeb.CommandsLive do
       |> Enum.map(&Atom.to_string/1)
       |> Enum.join(";")
 
+  defp string_to_selected_syndicates(syndicates_string),
+    do:
+      syndicates_string
+      |> String.split(";")
+      |> Enum.filter(&by_not_empty_string/1)
+      |> Enum.map(&String.to_existing_atom/1)
+      |> Enum.map(&Syndicates.get_syndicate/1)
+
   defp by_not_empty_string(string), do: string !== ""
+
+  defp handle_commands_response({:ok, _result}, socket), do: {:noreply, socket}
+
+  defp handle_commands_response({:error, reason}, socket),
+    do: {:noreply, put_flash(socket, :error, "Request failed: #{inspect(reason)}")}
 end
