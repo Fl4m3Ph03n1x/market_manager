@@ -14,6 +14,20 @@ defmodule WebInterface.Strategies do
           Gets the 5 lowest prices for the given item and calculates the average.
         ",
         id: :top_five_average
+      },
+      %{
+        name: "Equal to lowest",
+        description: "
+          Gets the lowest price for the given item and uses it.
+        ",
+        id: :equal_to_lowest
+      },
+      %{
+        name: "Lowest minus one",
+        description: "
+          Gets the lowest price for the given item and beats it by 1.
+        ",
+        id: :lowest_minus_one
       }
     ]
 
