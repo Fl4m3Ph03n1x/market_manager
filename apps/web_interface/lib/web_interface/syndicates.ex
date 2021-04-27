@@ -8,6 +8,26 @@ defmodule WebInterface.Syndicates do
       %{
         name: "Perrin Sequence",
         id: :perrin_sequence
+      },
+      %{
+        name: "New Loka",
+        id: :new_loka
+      },
+      %{
+        name: "Arbiters of Hexis",
+        id: :arbiters_of_hexis
+      },
+      %{
+        name: "Steel Meridian",
+        id: :steel_meridian
+      },
+      %{
+        name: "Cephalon Suda",
+        id: :cephalon_suda
+      },
+      %{
+        name: "Cephalon Simaris",
+        id: :simaris
       }
     ]
 
