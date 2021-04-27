@@ -49,21 +49,32 @@ defmodule WebInterfaceWeb.CommandsLive do
         <div class="body">
 
           <form phx-change=filters>
-            <div class="<%= if @selected_command.id == :deactivate, do: 'hidden' %> strategies">
-              <h3>Strategies</h3>
-              <p>Strategies will automatically calculate the prices for your items. If a price's item cannot be calculated, a default one will be used instead.</p>
-              <%= for strat <- @strategies  do %>
-                <%= strategy_radio_button(strat: strat, checked: strat == @selected_strategy) %>
-              <% end %>
+            <div class="<%= if @selected_command.id == :deactivate, do: 'hidden' %>">
+              <div class="strategies">
+              <div>
+                <h3>Strategies</h3>
+                <p>Strategies will automatically calculate the prices for your items. If a price's item cannot be calculated, a default one will be used instead.</p>
+              </div>
+              <div>
+                <%= for strat <- @strategies  do %>
+                  <%= strategy_radio_button(strat: strat, checked: strat == @selected_strategy) %>
+                <% end %>
+              </div>
+              </div>
             </div>
 
+
             <div class="syndicates">
-              <h3>Syndicates</h3>
-              <p>The syndicates from the game. Only the ones that have items capable of being traded between players are shown.</p>
-              <input type="hidden" name="syndicates[]" value="">
-              <%= for synd <- @syndicates  do %>
-                <%= syndicate_checkbox(synd: synd, checked: synd in @selected_syndicates) %>
-              <% end %>
+              <div class="intro">
+                <h3>Syndicates</h3>
+                <p>The syndicates from the game. Only the ones that have items capable of being traded between players are shown.</p>
+              </div>
+              <div class="checkboxes">
+                <input type="hidden" name="syndicates[]" value="">
+                <%= for synd <- @syndicates  do %>
+                  <%= syndicate_checkbox(synd: synd, checked: synd in @selected_syndicates) %>
+                <% end %>
+              </div>
             </div>
           </form>
 
@@ -127,12 +138,17 @@ defmodule WebInterfaceWeb.CommandsLive do
     assigns = Enum.into(assigns, %{})
 
     ~L"""
-    <input type="radio" id="<%= @strat.id %>"
-            name="strategy" value="<%= @strat.id %>"
-            <%= if @checked, do: "checked" %> />
-    <label for="<%= @strat.id %>"><%= @strat.name %></label>
-    <span class="description"><%= @strat.description %></span>
-    </br>
+    <div class="radio-button">
+      <div class="choice">
+        <input type="radio" id="<%= @strat.id %>"
+                name="strategy" value="<%= @strat.id %>"
+                <%= if @checked, do: "checked" %> />
+        <label for="<%= @strat.id %>"><%= @strat.name %></label>
+      </div>
+      <div class="description">
+        <p><%= @strat.description %></p>
+      </div>
+    </div>
     """
   end
 

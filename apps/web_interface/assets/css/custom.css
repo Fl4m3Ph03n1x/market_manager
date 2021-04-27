@@ -39,7 +39,6 @@ body {
 
   .main {
     @apply 
-      flex-none 
       bg-white 
       shadow 
       overflow-hidden 
@@ -58,24 +57,36 @@ body {
     .body {
       @apply 
         px-8 py-4 
-        grid grid-rows-5 grid-flow-col gap-4;
+        grid grid-rows-5 grid-flow-row gap-4;
 
       form {
         @apply row-span-4;
 
-        p {
-          @apply pb-3;
+        .strategies {
+          @apply flex-none grid grid-rows-2 grid-flow-row gap-4;
+
+          .radio-button{
+            @apply grid grid-cols-5 grid-flow-col;
+
+            .choice{
+              @apply col-span-1;
+            }
+
+            .description {
+              @apply col-span-4 text-sm text-gray-400;
+            }
+          }
         }
 
         .syndicates {
-          @apply mb-5;
-        }
+          @apply grid grid-rows-3 grid-flow-row gap-4;
 
-        .strategies {
-          @apply mb-4;
+          .intro{
+            @apply row-span-1;
+          }
 
-          .description {
-            @apply text-sm text-gray-400;
+          .checkboxes {
+            @apply row-span-2;
           }
         }
 
@@ -96,7 +107,6 @@ body {
       }
 
     }
-
   }
 }
 
