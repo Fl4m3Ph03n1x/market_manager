@@ -26,13 +26,18 @@ As previously mentioned, this project only talks to the Manager.
 It is for this reason, that is you launch the project, you won't be able to make real petitions nor fake ones because
 even though the Manager process is spun up (as a direct dependency of web_interface) the others aren't.
 
-To fix this one could create a fake implementation of Manager just for dev play time, but at the moment this doesn't exist.
-
 ```mermaid
 graph TD;
     web_interface-->manager;
     manager-->auction_house;
     manager-->store;
+```
+
+To fix this one could create a fake implementation of Manager just for dev play time, but at the moment this doesn't exist.
+
+```mermaid
+graph TD;
+    web_interface-->fake_manager;
 ```
 
 Your best option would be therefore to run it through the tests:
