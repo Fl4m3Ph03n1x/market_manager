@@ -127,7 +127,6 @@ defmodule WebInterfaceWeb.CommandsLive do
     new_syndicates =
       synds
       |> Enum.filter(&by_not_empty_string/1)
-      |> Enum.map(&String.to_existing_atom/1)
       |> Enum.map(&Syndicates.get_syndicate/1)
 
     socket = assign(socket, selected_strategy: new_strategy, selected_syndicates: new_syndicates)
@@ -169,7 +168,6 @@ defmodule WebInterfaceWeb.CommandsLive do
     do:
       syndicates
       |> Enum.map(&Syndicates.get_id/1)
-      |> Enum.map(&Atom.to_string/1)
       |> Enum.join(";")
 
   defp string_to_selected_syndicates(syndicates_string),
@@ -177,13 +175,13 @@ defmodule WebInterfaceWeb.CommandsLive do
       syndicates_string
       |> String.split(";")
       |> Enum.filter(&by_not_empty_string/1)
-      |> Enum.map(&String.to_existing_atom/1)
       |> Enum.map(&Syndicates.get_syndicate/1)
 
   defp by_not_empty_string(string), do: string !== ""
 
-  defp handle_commands_response({:ok, _result}, socket), do: {:noreply, socket}
+  defp handle_commands_response({:error, errors}, socket),
+    do: {:noreply, put_flash(socket, :error, "The following errors occurred: #{inspect(errors)}")}
 
-  defp handle_commands_response({:error, reason}, socket),
-    do: {:noreply, put_flash(socket, :error, "Request failed: #{inspect(reason)}")}
+  defp handle_commands_response(results, socket),
+    do: {:noreply, put_flash(socket, :info, "Request completed: #{inspect(results)}")}
 end

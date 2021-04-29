@@ -25,6 +25,7 @@ defmodule WebInterface.MixProject do
 
   defp deps,
     do: [
+      # Phoenix deps
       {:phoenix, "~> 1.5.7"},
       {:phoenix_live_view, "~> 0.15.0"},
       {:floki, ">= 0.27.0", only: :test},
@@ -35,15 +36,12 @@ defmodule WebInterface.MixProject do
       {:telemetry_poller, "~> 0.4"},
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
-      {:plug_cowboy, "~> 2.0"}
+      {:plug_cowboy, "~> 2.0"},
+
+      # Umbrella deps
+      {:manager, in_umbrella: true}
     ]
 
-  # Aliases are shortcuts or tasks specific to the current project.
-  # For example, to install project dependencies and perform other setup tasks, run:
-  #
-  #     $ mix setup
-  #
-  # See the documentation for `Mix` for more info on aliases.
   defp aliases,
     do: [
       setup: ["deps.get", "cmd npm install --prefix assets"]
