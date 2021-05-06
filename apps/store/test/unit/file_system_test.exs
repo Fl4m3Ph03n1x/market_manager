@@ -225,4 +225,39 @@ defmodule MarketManager.Store.FileSystemTest do
       assert actual == expected
     end
   end
+
+  describe "setup/2" do
+    test "returns login_info if setup was saved successfully" do
+      # Arrange
+      login_info = %{"token" => "a_token", "cookie" => "a_cookie"}
+
+      deps = [
+        write_fn: fn _file_name, _content -> :ok end
+      ]
+
+      # Act
+      actual = FileSystem.setup(login_info, deps)
+      expected = {:ok, login_info}
+
+      # Assert
+      assert actual == expected
+    end
+
+    test "returns error if saving to file fails" do
+      # Arrange
+      login_info = %{"token" => "a_token", "cookie" => "a_cookie"}
+
+      deps = [
+        write_fn: fn _file_name, _content -> {:error, :enoent} end
+      ]
+
+      # Act
+      actual = FileSystem.setup(login_info, deps)
+      expected = {:error, :enoent}
+
+      # Assert
+      assert actual == expected
+    end
+
+  end
 end

@@ -9,6 +9,7 @@ defmodule Store.FileSystem do
 
   @orders_filename Application.compile_env!(:store, :current_orders)
   @products_filename Application.compile_env!(:store, :products)
+  @setup_filename Application.compile_env!(:store, :setup)
 
   @default_deps [
     read_fn: &File.read/1,
@@ -50,6 +51,13 @@ defmodule Store.FileSystem do
     @products_filename
     |> read_syndicate_data(syndicate, deps[:read_fn])
     |> syndicate_found?()
+
+  @spec setup(Store.login_info) :: Store.setup_response
+  def setup(login_info, deps \\ @default_deps), do:
+    login_info
+    |> Jason.encode()
+    >>> save_setup(@setup_filename, deps)
+    |> handle_setup_response(login_info)
 
   ###########
   # Private #
@@ -108,4 +116,13 @@ defmodule Store.FileSystem do
 
   @spec send_ok_response(:new_orders_saved, Store.order_id) :: {:ok, Store.order_id}
   defp send_ok_response(:new_orders_saved, order_id), do: {:ok, order_id}
+
+  @spec save_setup(String.t, String.t, Store.deps) :: :ok | {:error, :file.posix}
+  defp save_setup(data, filename, deps), do:
+    deps[:write_fn].(filename, data)
+
+  @spec handle_setup_response(:ok | {:error, :file.posix}, Store.login_info) :: {:ok, Store.login_info} | {:error, :file.posix}
+  defp handle_setup_response(:ok, login_info), do: {:ok, login_info}
+  defp handle_setup_response(err, _login_info), do: err
+
 end

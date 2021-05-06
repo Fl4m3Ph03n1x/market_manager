@@ -9,6 +9,7 @@ defmodule StoreTest do
 
   @products_file Application.compile_env!(:store, :products)
   @current_orders_file Application.compile_env!(:store, :current_orders)
+  @setup_file Application.compile_env!(:store, :setup)
 
   defp create_products_file do
     content =
@@ -46,6 +47,8 @@ defmodule StoreTest do
   end
 
   defp delete_current_orders_file, do: File.rm!(@current_orders_file)
+
+  defp delete_setup_file, do: File.rm!(@setup_file)
 
   ##########
   # Tests  #
@@ -141,6 +144,24 @@ defmodule StoreTest do
       # Act
       actual = Store.delete_order(order_id, syndicate)
       expected = {:ok, order_id}
+
+      # Assert
+      assert actual == expected
+    end
+  end
+
+  describe "setup/2" do
+    setup do
+      on_exit(&delete_setup_file/0)
+    end
+
+    test "returns login_info if login_info was saved successfully" do
+      # Arrange
+      login_info = %{"token" => "a_token", "cookie" => "a_cookie"}
+
+      # Act
+      actual = Store.setup(login_info)
+      expected = {:ok, login_info}
 
       # Assert
       assert actual == expected

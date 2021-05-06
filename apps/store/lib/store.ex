@@ -9,6 +9,10 @@ defmodule Store do
   # Types  #
   ##########
 
+  @type login_info :: %{
+    (token :: String.t()) => String.t(),
+    (cookie :: String.t()) => String.t()
+  }
   @type order_id :: String.t
   @type syndicate :: String.t
   @type deps :: keyword
@@ -32,6 +36,7 @@ defmodule Store do
   # Responses #
   #############
 
+  @type setup_response :: {:ok, login_info} | {:error, :file.posix}
   @type list_products_response :: {:ok, [product]} | error
   @type list_orders_response :: {:ok, [order_id]} | error
   @type save_order_response :: {:ok, order_id} | error
@@ -130,4 +135,20 @@ defmodule Store do
   """
   @spec syndicate_exists?(syndicate) :: {:ok, boolean} | error
   defdelegate syndicate_exists?(syndicate), to: FileSystem
+
+  @doc """
+  Saves the setup information from the user into the storage system.
+  Does not perform validation.
+
+  Example:
+  ```
+  > Store.setup(%{"token" => "a_token", "cookie" => "a_cookie"})
+  {:ok, %{"token" => "a_token", "cookie" => "a_cookie"}}
+
+  > Store.setup(%{"token" => "a_token", "cookie" => "a_cookie"})
+  {:error, :no_permissions}
+  ```
+  """
+  @spec setup(login_info) :: setup_response
+  defdelegate setup(login_info), to: FileSystem
 end
