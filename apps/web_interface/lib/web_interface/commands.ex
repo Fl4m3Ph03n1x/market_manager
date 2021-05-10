@@ -13,15 +13,15 @@ defmodule WebInterface.Commands do
 
   @type command_id :: :activate | :deactivate
   @type command :: %{
-          (name :: atom) => String.t(),
-          (description :: atom) => String.t(),
-          (id :: atom) => command_id
+          name: String.t(),
+          description: String.t(),
+          id: command_id
         }
   @type dependencies :: %{manager: module}
   @type request :: %{
-          (command :: atom) => command_id,
-          (strategy :: atom) => Manager.strategy(),
-          (syndicates :: atom) => [Manager.syndicate()]
+          command: command_id,
+          strategy: Manager.strategy(),
+          syndicates: [Manager.syndicate()]
         }
 
   @spec list_commands :: [command]

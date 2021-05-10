@@ -1,4 +1,8 @@
 defmodule WebInterfaceWeb.CommandsLive do
+  @moduledoc """
+  Logic and rendering for the commands UI presented to the user.
+  """
+
   use WebInterfaceWeb, :live_view
 
   alias Phoenix.LiveView
@@ -62,7 +66,6 @@ defmodule WebInterfaceWeb.CommandsLive do
               </div>
               </div>
             </div>
-
 
             <div class="syndicates">
               <div class="intro">

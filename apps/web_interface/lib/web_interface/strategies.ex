@@ -1,4 +1,8 @@
 defmodule WebInterface.Strategies do
+  @moduledoc """
+  Contains information about the strategies for price setting available to the user.
+  """
+
   def list_strategies,
     do: [
       %{
