@@ -1,7 +1,7 @@
 defmodule Store.MixProject do
   use Mix.Project
 
-  def project do
+  def project, do:
     [
       app: :store,
       version: "1.0.0",
@@ -14,20 +14,18 @@ defmodule Store.MixProject do
       deps: deps(),
       test_coverage: [tool: ExCoveralls]
     ]
-  end
 
-  def application do
+  def application, do:
     [
       extra_applications: [:logger]
     ]
-  end
 
-  defp deps do
+  defp deps, do:
     [
-      {:rop, "~> 0.5"},
       {:jason, "~> 1.2"},
+      {:rop, "~> 0.5"},
 
       {:mix_test_watch, "~> 1.0", only: :dev, runtime: false}
     ]
-  end
+
 end
