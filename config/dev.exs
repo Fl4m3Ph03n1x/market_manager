@@ -8,4 +8,5 @@ config :auction_house,
 
 config :store,
   products: "test/products.json",
-  current_orders: "test/current_orders.json"
+  current_orders: "test/current_orders.json",
+  setup: "test/setup.json"
