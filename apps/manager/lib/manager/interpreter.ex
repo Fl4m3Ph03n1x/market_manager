@@ -4,10 +4,12 @@ defmodule Manager.Interpreter do
   layers is. Currently, it works more like a bridge between the different ports
   of the application and manages data between them.
   """
+
   use Rop
 
   alias Manager
   alias Manager.PriceAnalyst
+  alias Store
 
   @type order_request :: %{
     (order_type :: String.t) => String.t,
@@ -23,7 +25,8 @@ defmodule Manager.Interpreter do
     (quantity :: String.t) => non_neg_integer
   }
 
-  @actions ["activate", "deactivate"]
+  @mandatory_keys_login_info ["token", "cookie"]
+  @actions ["activate", "deactivate", "setup"]
   @default_deps [
     store: Store,
     auction_house: AuctionHouse
@@ -55,6 +58,13 @@ defmodule Manager.Interpreter do
     |> check_non_existent_orders()
     |> delete_orders(syndicate, deps[:store])
     |> to_human_response(:delete)
+
+  @spec setup(Store.login_info, keyword) :: Manager.setup_response
+  def setup(info, deps \\ @default_deps), do:
+    info
+    |> validate_login_info()
+    >>> save_setup(deps[:store])
+    |> handle_setup_response(info)
 
   ###########
   # Private #
@@ -183,6 +193,26 @@ defmodule Manager.Interpreter do
   defp order_non_existent?({:error, :order_non_existent, _order_id}), do: true
   defp order_non_existent?(_), do: false
 
+  @spec validate_login_info(Store.login_info) :: {:ok, Store.login_info} | {:error, {:missing_keys, [String.t]}}
+  defp validate_login_info(info) do
+    login_keys =
+      info
+      |> Map.keys()
+      |> MapSet.new()
+
+    obligatory_keys = MapSet.new(@mandatory_keys_login_info)
+    missing_keys = MapSet.difference(obligatory_keys, login_keys)
+
+    if Enum.empty?(missing_keys) do
+      {:ok, info}
+    else
+      {:error, {:missing_keys, MapSet.to_list(missing_keys)}}
+    end
+  end
+
+  @spec save_setup(Store.login_info, module) :: Store.setup_response
+  defp save_setup(info, store), do: store.setup(info)
+
   @spec to_human_response({[any], [any]}, :delete | :place) ::
     {:ok, :success}
     | {
@@ -210,4 +240,15 @@ defmodule Manager.Interpreter do
 
   defp to_human_response({_successfull, failed}, _op), do:
     {:partial_success, [failed_orders: failed]}
+
+  @spec handle_setup_response({:ok, Store.login_info} | {:error, {:missing_keys, [String.t]} | :file.posix}, Store.login_info) ::
+  {:ok, Store.login_info}
+  | {:error, :unable_to_save_setup, {:missing_mandatory_keys, [String.t], Store.login_info} | {:file.posix, Store.login_info}}
+  defp handle_setup_response({:error, {:missing_keys, keys}}, login_info), do:
+    {:error, :unable_to_save_setup, {:missing_mandatory_keys, keys, login_info}}
+
+  defp handle_setup_response({:error, reason}, login_info), do:
+    {:error, :unable_to_save_setup, {reason, login_info}}
+
+  defp handle_setup_response(ok_response, _login_info), do: ok_response
 end

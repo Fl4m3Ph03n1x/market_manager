@@ -530,6 +530,109 @@ defmodule Manager.InterpreterTest do
     end
   end
 
+  describe "setup/1" do
+
+    test "Returns ok tuple if login info is correct and it persisted data successfuly" do
+      with_mocks([
+        {
+          Store,
+          [],
+          [
+            setup: fn login_info -> {:ok, login_info} end,
+          ]
+        }
+      ]) do
+        # Arrange
+        deps = [store: Store]
+        login_info = %{"token" => "123", "cookie" => "abc"}
+
+        # Act
+        actual = Interpreter.setup(login_info, deps)
+        expected = {:ok, login_info}
+
+        # Assert
+        assert actual == expected
+
+        assert_called Store.setup(login_info)
+      end
+    end
+
+    test "Returns error if login info is missing one parameter" do
+      with_mocks([
+        {
+          Store,
+          [],
+          [
+            setup: fn login_info -> {:ok, login_info} end,
+          ]
+        }
+      ]) do
+        # Arrange
+        deps = [store: Store]
+        login_info = %{"cookie" => "abc"}
+
+        # Act
+        actual = Interpreter.setup(login_info, deps)
+        expected =  {:error, :unable_to_save_setup, {:missing_mandatory_keys, ["token"], login_info}}
+
+        # Assert
+        assert actual == expected
+
+        assert_not_called Store.setup(login_info)
+      end
+    end
+
+    test "Returns error if login info is missing multiple parameters" do
+      with_mocks([
+        {
+          Store,
+          [],
+          [
+            setup: fn login_info -> {:ok, login_info} end,
+          ]
+        }
+      ]) do
+        # Arrange
+        deps = [store: Store]
+        login_info = %{}
+
+        # Act
+        actual = Interpreter.setup(login_info, deps)
+        expected = {:error, :unable_to_save_setup, {:missing_mandatory_keys, ["cookie", "token"], login_info}}
+
+        # Assert
+        assert actual == expected
+
+        assert_not_called Store.setup(login_info)
+      end
+    end
+
+    test "Returns error if login info is correct but fails to persist data" do
+      with_mocks([
+        {
+          Store,
+          [],
+          [
+            setup: fn _login_info -> {:error, :enoent} end,
+          ]
+        }
+      ]) do
+        # Arrange
+        deps = [store: Store]
+        login_info = %{"token" => "123", "cookie" => "abc"}
+
+        # Act
+        actual = Interpreter.setup(login_info, deps)
+        expected = {:error, :unable_to_save_setup, {:enoent, login_info}}
+
+        # Assert
+        assert actual == expected
+
+        assert_called Store.setup(login_info)
+      end
+    end
+  end
+
   #####################
   # Helper Functions  #
   #####################
