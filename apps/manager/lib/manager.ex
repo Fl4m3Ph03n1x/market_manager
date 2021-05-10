@@ -32,7 +32,6 @@ defmodule Manager do
     | {:partial_success, [{:error, error_reason, order_id}, ...]}
     | {:error, :unable_to_delete_orders, [{:error, error_reason, order_id}]}
 
-
   @type setup_response ::
     {:ok, Store.login_info}
     | {:error, :unable_to_save_setup, [{:error, :missing_token | :missing_cookie | :file.posix, Store.login_info}]}
@@ -117,7 +116,6 @@ defmodule Manager do
   """
   @spec valid_syndicate?(syndicate) :: Store.syndicate_exists_response
   defdelegate valid_syndicate?(syndicate), to: Store, as: :syndicate_exists?
-
 
   @doc """
   Saves the setup login information used in all requests.
