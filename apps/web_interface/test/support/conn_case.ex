@@ -1,4 +1,4 @@
-defmodule WebInterfaceWeb.ConnCase do
+defmodule WebInterface.ConnCase do
   @moduledoc """
   This module defines the test case to be used by
   tests that require setting up a connection.
@@ -11,7 +11,7 @@ defmodule WebInterfaceWeb.ConnCase do
   we enable the SQL sandbox, so changes done to the database
   are reverted at the end of every test. If you are using
   PostgreSQL, you can even run database tests asynchronously
-  by setting `use WebInterfaceWeb.ConnCase, async: true`, although
+  by setting `use WebInterface.ConnCase, async: true`, although
   this option is not recommended for other databases.
   """
 
@@ -22,12 +22,12 @@ defmodule WebInterfaceWeb.ConnCase do
       # Import conveniences for testing with connections
       import Plug.Conn
       import Phoenix.ConnTest
-      import WebInterfaceWeb.ConnCase
+      import WebInterface.ConnCase
 
-      alias WebInterfaceWeb.Router.Helpers, as: Routes
+      alias WebInterface.Router.Helpers, as: Routes
 
       # The default endpoint for testing
-      @endpoint WebInterfaceWeb.Endpoint
+      @endpoint WebInterface.Endpoint
     end
   end
 

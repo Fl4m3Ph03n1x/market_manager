@@ -1,45 +1,36 @@
 defmodule WebInterface.Application do
+  # See https://hexdocs.pm/elixir/Application.html
+  # for more information on OTP Applications
   @moduledoc false
 
   use Application
 
-  require Logger
+    alias Desktop
 
+  @impl true
   def start(_type, _args) do
     children = [
-      WebInterfaceWeb.Telemetry,
+      WebInterface.Telemetry,
       {Phoenix.PubSub, name: WebInterface.PubSub},
-      WebInterfaceWeb.Endpoint
+      WebInterface.Endpoint,
+      {Desktop.Window,
+       [
+         app: :web_interface,
+         id: WebInterface,
+         title: "Web Interface",
+         size: {600, 500},
+         menubar: WebInterface.MenuBar,
+         url: &WebInterface.Endpoint.url/0
+       ]}
     ]
 
     opts = [strategy: :one_for_one, name: WebInterface.Supervisor]
-    result = Supervisor.start_link(children, opts)
-
-    operative_system = :os.type()
-    start_browser_command = browser_start_cmd(operative_system)
-
-    if System.find_executable(start_browser_command) do
-      System.cmd(start_browser_command, browser_start_args(operative_system))
-    else
-      Logger.warn(
-        "Unable to open browser window, user needs to open it manually by going to #{
-          WebInterfaceWeb.Endpoint.url()
-        }"
-      )
-    end
-
-    result
+    Supervisor.start_link(children, opts)
   end
 
+  @impl true
   def config_change(changed, _new, removed) do
-    WebInterfaceWeb.Endpoint.config_change(changed, removed)
+    WebInterface.Endpoint.config_change(changed, removed)
     :ok
   end
-
-  defp browser_start_cmd({:win32, _}), do: "cmd.exe"
-  defp browser_start_cmd({:unix, :darwin}), do: "open"
-  defp browser_start_cmd({:unix, _}), do: "xdg-open"
-
-  defp browser_start_args({:win32, _}), do: ["/C", "start", WebInterfaceWeb.Endpoint.url()]
-  defp browser_start_args({:unix, _}), do: [WebInterfaceWeb.Endpoint.url()]
 end

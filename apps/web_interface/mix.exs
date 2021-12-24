@@ -1,49 +1,53 @@
 defmodule WebInterface.MixProject do
   use Mix.Project
 
-  def project do
+  def project, do:
     [
       app: :web_interface,
       version: "0.1.0",
-      elixir: "~> 1.7",
+      build_path: "../../_build",
+      config_path: "../../config/config.exs",
+      deps_path: "../../deps",
+      lockfile: "../../mix.lock",
+      elixir: "~> 1.12",
       elixirc_paths: elixirc_paths(Mix.env()),
-      compilers: [:phoenix, :gettext] ++ Mix.compilers(),
+      compilers: [:gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps()
     ]
-  end
 
-  def application,
-    do: [
+  def application, do:
+    [
       mod: {WebInterface.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :inets, :wx]
     ]
 
   defp elixirc_paths(:test), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
 
-  defp deps,
-    do: [
-      # Phoenix deps
-      {:phoenix, "~> 1.5.7"},
-      {:phoenix_live_view, "~> 0.15.0"},
-      {:floki, ">= 0.27.0", only: :test},
-      {:phoenix_html, "~> 2.11"},
+  defp deps, do:
+    [
+      {:phoenix, "~> 1.6.5"},
+      {:phoenix_html, "~> 3.0"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
-      {:phoenix_live_dashboard, "~> 0.4"},
-      {:telemetry_metrics, "~> 0.4"},
-      {:telemetry_poller, "~> 0.4"},
-      {:gettext, "~> 0.11"},
-      {:jason, "~> 1.0"},
-      {:plug_cowboy, "~> 2.0"},
+      {:phoenix_live_view, "~> 0.17.5"},
+      {:floki, ">= 0.30.0", only: :test},
+      {:phoenix_live_dashboard, "~> 0.6"},
+      {:esbuild, "~> 0.3", runtime: Mix.env() == :dev},
+      {:telemetry_metrics, "~> 0.6"},
+      {:telemetry_poller, "~> 1.0"},
+      {:gettext, "~> 0.18"},
+      {:jason, "~> 1.2"},
+      {:plug_cowboy, "~> 2.5"},
 
-      # Umbrella deps
-      {:manager, in_umbrella: true}
+      {:desktop, github: "elixir-desktop/desktop", tag: "v1.4.0"},
     ]
 
-  defp aliases,
-    do: [
-      setup: ["deps.get", "cmd npm install --prefix assets"]
+  defp aliases, do:
+    [
+      setup: ["deps.get"],
+      "assets.deploy": ["esbuild default --minify", "phx.digest"]
     ]
-end
+
+  end
