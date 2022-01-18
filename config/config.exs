@@ -9,6 +9,11 @@
 # move said applications out of the umbrella.
 import Config
 
+config :store,
+  products: "test/products.json",
+  current_orders: "test/current_orders.json",
+  setup: "test/setup.json"
+
 config :web_interface,
   generators: [context_app: false]
 
@@ -17,7 +22,7 @@ config :web_interface, WebInterface.Endpoint,
   url: [host: "localhost"],
   render_errors: [view: WebInterface.ErrorView, accepts: ~w(html json), layout: false],
   pubsub_server: WebInterface.PubSub,
-  live_view: [signing_salt: "DZoNo2Tn"]
+  live_view: [signing_salt: "j3hbjc+u"]
 
 # Configure esbuild (the version is required)
 config :esbuild,

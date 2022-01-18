@@ -5,21 +5,25 @@ defmodule WebInterface.Application do
 
   use Application
 
-    alias Desktop
+  alias Desktop
+  alias Manager
+  alias WebInterface.{Endpoint, Telemetry}
+  alias WebInterface.Live.MenuBar
 
   @impl true
   def start(_type, _args) do
     children = [
-      WebInterface.Telemetry,
+      Telemetry,
       {Phoenix.PubSub, name: WebInterface.PubSub},
-      WebInterface.Endpoint,
+      Endpoint,
+      Manager,
       {Desktop.Window,
        [
          app: :web_interface,
          id: WebInterface,
          title: "Web Interface",
-         size: {600, 500},
-         menubar: WebInterface.MenuBar,
+         size: {900, 920},
+         menubar: MenuBar,
          url: &WebInterface.Endpoint.url/0
        ]}
     ]

@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.27.3">
+    <meta name="project" content="Market Manager v1.2.0">
+
+    <title>Store — Market Manager v1.2.0</title>
+    <link rel="stylesheet" href="dist/elixir-784c12ef29cae13371ff.css" />
+
+    <script src="dist/sidebar_items-d47ddd5930.js"></script>
+
+      <script src="docs_config.js"></script>
+
+    <script async src="dist/app-38f5da25bdde1981e2f0.js"></script>
+
+
+  </head>
+  <body data-type="modules">
+    <script>
+
+      try {
+        if (localStorage.getItem('night-mode') === 'true') {
+          document.body.classList.add('night-mode');
+        }
+      } catch (error) { }
+    </script>
+
+<div class="main">
+
+<button class="sidebar-button sidebar-toggle">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<section class="sidebar">
+  <form class="sidebar-search" action="search.html">
+    <button type="submit" class="search-button" aria-label="Submit Search">
+      <i class="ri-search-2-line" aria-hidden="true" title="Submit search"></i>
+    </button>
+    <button type="button" tabindex="-1" class="search-close-button" aria-label="Cancel Search">
+      <i class="ri-close-line ri-lg" aria-hidden="true" title="Cancel search"></i>
+    </button>
+    <label class="search-label">
+      <input name="q" type="text" class="search-input" placeholder="Search..." aria-label="Input your search terms" autocomplete="off" />
+    </label>
+  </form>
+
+  <div class="autocomplete">
+    <div class="autocomplete-results">
+    </div>
+  </div>
+
+  <div class="sidebar-header">
+
+      <a href="https://fl4m3ph03n1x.github.io/market_manager/">
+        <img src="assets/logo.png" alt="Market Manager" class="sidebar-projectImage">
+      </a>
+
+    <div class="sidebar-projectDetails">
+      <a href="https://fl4m3ph03n1x.github.io/market_manager/" class="sidebar-projectName" translate="no">
+Market Manager
+      </a>
+      <strong class="sidebar-projectVersion" translate="no">
+        v1.2.0
+      </strong>
+    </div>
+    <ul class="sidebar-listNav">
+      <li><a id="extras-list-link" href="#full-list">Pages</a></li>
+
+        <li><a id="modules-list-link" href="#full-list">Modules</a></li>
+
+
+    </ul>
+  </div>
+
+  <div class="gradient"></div>
+  <ul id="full-list" class="sidebar-fullList"></ul>
+</section>
+
+<section class="content">
+  <div class="content-outer">
+    <div id="content" class="content-inner">
+
+<h1>
+<button class="settings display-settings">
+  <i class="ri-settings-3-line"></i>
+  <span class="sr-only">Settings</span>
+</button>
+
+
+    <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/store/lib/store.ex#L1" title="View Source" class="view-source" rel="help">
+      <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+      <span class="sr-only">View Source</span>
+    </a>
+
+  <span translate="no">Store</span> 
+  <small class="app-vsn" translate="no">(Market Manager v1.2.0)</small>
+
+</h1>
+
+
+  <section id="moduledoc">
+<p>Port for the persistency layer.
+This module contains the Public API for the storage app.</p>
+  </section>
+
+
+  <section id="summary" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#summary">
+        <i class="ri-link-m" aria-hidden="true"></i>
+        <span class="sr-only">Link to this section</span>
+      </a>
+      Summary
+    </h1>
+
+  <div class="summary-types summary">
+    <h2>
+      <a href="#types">Types</a>
+    </h2>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#t:all_orders_store/0" translate="no">all_orders_store()</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#t:delete_order_response/0" translate="no">delete_order_response()</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#t:deps/0" translate="no">deps()</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#t:error/0" translate="no">error()</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#t:list_orders_response/0" translate="no">list_orders_response()</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#t:list_products_response/0" translate="no">list_products_response()</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#t:login_info/0" translate="no">login_info()</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#t:order_id/0" translate="no">order_id()</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#t:product/0" translate="no">product()</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#t:save_order_response/0" translate="no">save_order_response()</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#t:setup_response/0" translate="no">setup_response()</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#t:syndicate/0" translate="no">syndicate()</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#t:syndicate_exists_response/0" translate="no">syndicate_exists_response()</a>
+
+        </div>
+
+      </div>
+
+  </div>
+
+  <div class="summary-functions summary">
+    <h2>
+      <a href="#functions">Functions</a>
+    </h2>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#delete_order/2" translate="no">delete_order(order_id, syndicate)</a>
+
+        </div>
+
+          <div class="summary-synopsis"><p>Deletes the given orderId from the given syndicate from the storage system.</p></div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#list_orders/1" translate="no">list_orders(syndicate)</a>
+
+        </div>
+
+          <div class="summary-synopsis"><p>Lists the ids of currently active orders from the given syndicate.</p></div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#list_products/1" translate="no">list_products(syndicate)</a>
+
+        </div>
+
+          <div class="summary-synopsis"><p>Lists the products from the given syndicate.</p></div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#save_order/2" translate="no">save_order(order_id, syndicate)</a>
+
+        </div>
+
+          <div class="summary-synopsis"><p>Saves the given orderId for the given syndicate in the storage system.</p></div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#setup/1" translate="no">setup(login_info)</a>
+
+        </div>
+
+          <div class="summary-synopsis"><p>Saves the setup information from the user into the storage system.
+Does not perform validation.</p></div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#syndicate_exists?/1" translate="no">syndicate_exists?(syndicate)</a>
+
+        </div>
+
+          <div class="summary-synopsis"><p>Returns true if the given syndicate exists, false otherwise. Returns an
+error if an error occurs.</p></div>
+
+      </div>
+
+  </div>
+
+  </section>
+
+
+  <section id="types" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#types">
+        <i class="ri-link-m" aria-hidden="true"></i>
+        <span class="sr-only">Link to this section</span>
+      </a>
+Types
+    </h1>
+    <div class="types-list">
+<section class="detail" id="t:all_orders_store/0">
+
+  <div class="detail-header">
+    <a href="#t:all_orders_store/0" class="detail-link" title="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature" translate="no">all_orders_store()</h1>
+
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/store/lib/store.ex#L28" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre translate="no">all_orders_store() :: %{
+  required(new_loka :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; [<a href="#t:order_id/0">order_id</a>()],
+  required(perrin_sequence :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; [<a href="#t:order_id/0">order_id</a>()],
+  required(red_veil :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; [<a href="#t:order_id/0">order_id</a>()],
+  required(simaris :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; [<a href="#t:order_id/0">order_id</a>()]
+}</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="t:delete_order_response/0">
+
+  <div class="detail-header">
+    <a href="#t:delete_order_response/0" class="detail-link" title="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature" translate="no">delete_order_response()</h1>
+
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/store/lib/store.ex#L44" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre translate="no">delete_order_response() :: {:ok, <a href="#t:order_id/0">order_id</a>()} | <a href="#t:error/0">error</a>()</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="t:deps/0">
+
+  <div class="detail-header">
+    <a href="#t:deps/0" class="detail-link" title="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature" translate="no">deps()</h1>
+
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/store/lib/store.ex#L19" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre translate="no">deps() :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">keyword</a>()</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="t:error/0">
+
+  <div class="detail-header">
+    <a href="#t:error/0" class="detail-link" title="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature" translate="no">error()</h1>
+
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/store/lib/store.ex#L34" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre translate="no">error() :: {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="t:list_orders_response/0">
+
+  <div class="detail-header">
+    <a href="#t:list_orders_response/0" class="detail-link" title="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature" translate="no">list_orders_response()</h1>
+
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/store/lib/store.ex#L42" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre translate="no">list_orders_response() :: {:ok, [<a href="#t:order_id/0">order_id</a>()]} | <a href="#t:error/0">error</a>()</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="t:list_products_response/0">
+
+  <div class="detail-header">
+    <a href="#t:list_products_response/0" class="detail-link" title="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature" translate="no">list_products_response()</h1>
+
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/store/lib/store.ex#L41" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre translate="no">list_products_response() :: {:ok, [<a href="#t:product/0">product</a>()]} | <a href="#t:error/0">error</a>()</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="t:login_info/0">
+
+  <div class="detail-header">
+    <a href="#t:login_info/0" class="detail-link" title="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature" translate="no">login_info()</h1>
+
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/store/lib/store.ex#L13" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre translate="no">login_info() :: %{
+  required(token :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  required(cookie :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()
+}</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="t:order_id/0">
+
+  <div class="detail-header">
+    <a href="#t:order_id/0" class="detail-link" title="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature" translate="no">order_id()</h1>
+
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/store/lib/store.ex#L17" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre translate="no">order_id() :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="t:product/0">
+
+  <div class="detail-header">
+    <a href="#t:product/0" class="detail-link" title="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature" translate="no">product()</h1>
+
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/store/lib/store.ex#L20" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre translate="no">product() :: %{
+  required(name :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  required(id :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  required(min_price :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>(),
+  required(default_price :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>(),
+  required(quantity :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>(),
+  required(rank :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>() | <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()
+}</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="t:save_order_response/0">
+
+  <div class="detail-header">
+    <a href="#t:save_order_response/0" class="detail-link" title="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature" translate="no">save_order_response()</h1>
+
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/store/lib/store.ex#L43" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre translate="no">save_order_response() :: {:ok, <a href="#t:order_id/0">order_id</a>()} | <a href="#t:error/0">error</a>()</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="t:setup_response/0">
+
+  <div class="detail-header">
+    <a href="#t:setup_response/0" class="detail-link" title="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature" translate="no">setup_response()</h1>
+
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/store/lib/store.ex#L40" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre translate="no">setup_response() :: {:ok, <a href="#t:login_info/0">login_info</a>()} | {:error, <a href="https://www.erlang.org/doc/man/file.html#type-posix">:file.posix</a>()}</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="t:syndicate/0">
+
+  <div class="detail-header">
+    <a href="#t:syndicate/0" class="detail-link" title="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature" translate="no">syndicate()</h1>
+
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/store/lib/store.ex#L18" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre translate="no">syndicate() :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="t:syndicate_exists_response/0">
+
+  <div class="detail-header">
+    <a href="#t:syndicate_exists_response/0" class="detail-link" title="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature" translate="no">syndicate_exists_response()</h1>
+
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/store/lib/store.ex#L45" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre translate="no">syndicate_exists_response() :: {:ok, <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()} | <a href="#t:error/0">error</a>()</pre>
+
+      </div>
+
+
+  </section>
+</section>
+
+    </div>
+  </section>
+
+  <section id="functions" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#functions">
+        <i class="ri-link-m" aria-hidden="true"></i>
+        <span class="sr-only">Link to this section</span>
+      </a>
+Functions
+    </h1>
+    <div class="functions-list">
+<section class="detail" id="delete_order/2">
+
+  <div class="detail-header">
+    <a href="#delete_order/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">delete_order(order_id, syndicate)</h1>
+
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/store/lib/store.ex#L119" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre translate="no">delete_order(<a href="#t:order_id/0">order_id</a>(), <a href="#t:syndicate/0">syndicate</a>()) :: <a href="#t:delete_order_response/0">delete_order_response</a>()</pre>
+
+      </div>
+
+<p>Deletes the given orderId from the given syndicate from the storage system.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">delete_order</span><span class="p" data-group-id="7473288733-1">(</span><span class="s">&quot;00f83ca2-67d9-4019-9fea-587b9fc4037c&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;red_veil&quot;</span><span class="p" data-group-id="7473288733-1">)</span><span class="w">
+</span><span class="p" data-group-id="7473288733-2">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;00f83ca2-67d9-4019-9fea-587b9fc4037c&quot;</span><span class="p" data-group-id="7473288733-2">}</span><span class="w">
+
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">delete_order</span><span class="p" data-group-id="7473288733-3">(</span><span class="s">&quot;invalid_syndicate&quot;</span><span class="p" data-group-id="7473288733-3">)</span><span class="w">
+</span><span class="p" data-group-id="7473288733-4">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:enoent</span><span class="p" data-group-id="7473288733-4">}</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="list_orders/1">
+
+  <div class="detail-header">
+    <a href="#list_orders/1" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">list_orders(syndicate)</h1>
+
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/store/lib/store.ex#L89" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre translate="no">list_orders(<a href="#t:syndicate/0">syndicate</a>()) :: <a href="#t:list_orders_response/0">list_orders_response</a>()</pre>
+
+      </div>
+
+<p>Lists the ids of currently active orders from the given syndicate.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">list_orders</span><span class="p" data-group-id="0197529208-1">(</span><span class="s">&quot;red_veil&quot;</span><span class="p" data-group-id="0197529208-1">)</span><span class="w">
+</span><span class="p" data-group-id="0197529208-2">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="0197529208-3">[</span><span class="s">&quot;5a750686-956f-42a6-8194-11925ec9281e&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;58f0b7e7-0ded-4932-8ccd-380cc5634c82&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">...</span><span class="p" data-group-id="0197529208-3">]</span><span class="p" data-group-id="0197529208-2">}</span><span class="w">
+
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">list_orders</span><span class="p" data-group-id="0197529208-4">(</span><span class="s">&quot;invalid_syndicate&quot;</span><span class="p" data-group-id="0197529208-4">)</span><span class="w">
+</span><span class="p" data-group-id="0197529208-5">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:syndicate_not_found</span><span class="p" data-group-id="0197529208-5">}</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="list_products/1">
+
+  <div class="detail-header">
+    <a href="#list_products/1" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">list_products(syndicate)</h1>
+
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/store/lib/store.ex#L74" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre translate="no">list_products(<a href="#t:syndicate/0">syndicate</a>()) :: <a href="#t:list_products_response/0">list_products_response</a>()</pre>
+
+      </div>
+
+<p>Lists the products from the given syndicate.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">list_products</span><span class="p" data-group-id="0035843613-1">(</span><span class="s">&quot;red_veil&quot;</span><span class="p" data-group-id="0035843613-1">)</span><span class="w">
+</span><span class="p" data-group-id="0035843613-2">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="0035843613-3">[</span><span class="w">
+  </span><span class="p" data-group-id="0035843613-4">%{</span><span class="w">
+    </span><span class="s">&quot;name&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;Eternal War&quot;</span><span class="p">,</span><span class="w">
+    </span><span class="s">&quot;id&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;8ee5b3b0-fa43-4dbc-9363-a52930dc742e&quot;</span><span class="p">,</span><span class="w">
+    </span><span class="s">&quot;min_price&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="mi">14</span><span class="p">,</span><span class="w">
+    </span><span class="s">&quot;default_price&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="mi">15</span><span class="p">,</span><span class="w">
+    </span><span class="s">&quot;quantity&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+    </span><span class="s">&quot;rank&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="mi">0</span><span class="w">
+  </span><span class="p" data-group-id="0035843613-4">}</span><span class="p">,</span><span class="w">
+  </span><span class="n">...</span><span class="w">
+</span><span class="p" data-group-id="0035843613-3">]</span><span class="p" data-group-id="0035843613-2">}</span><span class="w">
+
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">list_products</span><span class="p" data-group-id="0035843613-5">(</span><span class="s">&quot;invalid_syndicate&quot;</span><span class="p" data-group-id="0035843613-5">)</span><span class="w">
+</span><span class="p" data-group-id="0035843613-6">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:syndicate_not_found</span><span class="p" data-group-id="0035843613-6">}</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="save_order/2">
+
+  <div class="detail-header">
+    <a href="#save_order/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">save_order(order_id, syndicate)</h1>
+
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/store/lib/store.ex#L104" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre translate="no">save_order(<a href="#t:order_id/0">order_id</a>(), <a href="#t:syndicate/0">syndicate</a>()) :: <a href="#t:save_order_response/0">save_order_response</a>()</pre>
+
+      </div>
+
+<p>Saves the given orderId for the given syndicate in the storage system.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">save_order</span><span class="p" data-group-id="0482447132-1">(</span><span class="s">&quot;00f83ca2-67d9-4019-9fea-587b9fc4037c&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;red_veil&quot;</span><span class="p" data-group-id="0482447132-1">)</span><span class="w">
+</span><span class="p" data-group-id="0482447132-2">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;00f83ca2-67d9-4019-9fea-587b9fc4037c&quot;</span><span class="p" data-group-id="0482447132-2">}</span><span class="w">
+
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">save_order</span><span class="p" data-group-id="0482447132-3">(</span><span class="s">&quot;invalid_syndicate&quot;</span><span class="p" data-group-id="0482447132-3">)</span><span class="w">
+</span><span class="p" data-group-id="0482447132-4">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:enoent</span><span class="p" data-group-id="0482447132-4">}</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="setup/1">
+
+  <div class="detail-header">
+    <a href="#setup/1" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">setup(login_info)</h1>
+
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/store/lib/store.ex#L154" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre translate="no">setup(<a href="#t:login_info/0">login_info</a>()) :: <a href="#t:setup_response/0">setup_response</a>()</pre>
+
+      </div>
+
+<p>Saves the setup information from the user into the storage system.
+Does not perform validation.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">setup</span><span class="p" data-group-id="5272516544-1">(</span><span class="p" data-group-id="5272516544-2">%{</span><span class="s">&quot;token&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;a_token&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;cookie&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;a_cookie&quot;</span><span class="p" data-group-id="5272516544-2">}</span><span class="p" data-group-id="5272516544-1">)</span><span class="w">
+</span><span class="p" data-group-id="5272516544-3">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="5272516544-4">%{</span><span class="s">&quot;token&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;a_token&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;cookie&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;a_cookie&quot;</span><span class="p" data-group-id="5272516544-4">}</span><span class="p" data-group-id="5272516544-3">}</span><span class="w">
+
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">setup</span><span class="p" data-group-id="5272516544-5">(</span><span class="p" data-group-id="5272516544-6">%{</span><span class="s">&quot;token&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;a_token&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;cookie&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;a_cookie&quot;</span><span class="p" data-group-id="5272516544-6">}</span><span class="p" data-group-id="5272516544-5">)</span><span class="w">
+</span><span class="p" data-group-id="5272516544-7">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:no_permissions</span><span class="p" data-group-id="5272516544-7">}</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="syndicate_exists?/1">
+
+  <div class="detail-header">
+    <a href="#syndicate_exists?/1" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">syndicate_exists?(syndicate)</h1>
+
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/store/lib/store.ex#L138" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre translate="no">syndicate_exists?(<a href="#t:syndicate/0">syndicate</a>()) :: {:ok, <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()} | <a href="#t:error/0">error</a>()</pre>
+
+      </div>
+
+<p>Returns true if the given syndicate exists, false otherwise. Returns an
+error if an error occurs.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">syndicate_exists?</span><span class="p" data-group-id="8822531689-1">(</span><span class="n">red_veil</span><span class="s">&quot;)
+{:ok, true}
+
+&gt; Store.syndicate_exists?(&quot;</span><span class="n">nonexistent_syndicate</span><span class="s">&quot;)
+{:ok, false}
+
+&gt; Store.syndicate_exists?(&quot;</span><span class="n">syndicate</span><span class="err">&quot;</span><span class="p" data-group-id="8822531689-1">)</span><span class="w"> </span><span class="c1"># world explodes meanwhile</span><span class="w">
+</span><span class="p" data-group-id="8822531689-2">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:enoent</span><span class="p" data-group-id="8822531689-2">}</span></code></pre>
+  </section>
+</section>
+
+    </div>
+  </section>
+
+      <footer class="footer">
+
+        <p>
+          Built using
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.27.3) for the
+          <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+        </p>
+      </footer>
+    </div>
+  </div>
+</section>
+</div>
+
+
+  </body>
+</html>

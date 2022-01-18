@@ -4,33 +4,53 @@ defmodule MarketManager.MixProject do
   def project, do:
     [
       apps_path: "apps",
-      version: "0.1.0",
+      version: "1.2.0",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      releases: releases()
-    ]
+      test_coverage: [tool: ExCoveralls],
+      preferred_cli_env: preferred_cli_env(),
+      releases: releases(),
 
-  # Dependencies listed here are available only for this
-  # project and cannot be accessed from applications inside
-  # the apps folder.
-  #
-  # Run "mix help deps" for examples and options.
-  defp deps, do:
-    [
-      {:bakeware, "~> 0.2.2"}
-    ]
-
-
-  defp releases, do:
-    [
-      desktop: [
-        steps: [:assemble, &Bakeware.assemble/1],
-        applications: [
-          web_interface: :permanent,
-          runtime_tools: :permanent
-        ],
-        include_executables_for: [:windows]
+      # Docs
+      name: "Market Manager",
+      source_url: "https://github.com/Fl4m3Ph03n1x/market_manager",
+      homepage_url: "https://fl4m3ph03n1x.github.io/market_manager/",
+      docs: [
+        main: "Manager", # The main page in the docs
+        logo: "images/resized_logo.png",
+        extras: ["README.md"],
+        output: "docs"
       ]
     ]
 
+  defp deps, do: [
+    {:bakeware, "~> 0.2.2"},
+    {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
+    {:excoveralls, "~> 0.10", only: :test},
+    {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
+    {:ex_doc, "~> 0.22", only: :dev, runtime: false}
+  ]
+
+  defp preferred_cli_env, do:
+    [
+      coveralls: :test,
+      "coveralls.detail": :test,
+      "coveralls.post": :test,
+      "coveralls.html": :test
+    ]
+
+  defp releases, do:
+  [
+    desktop: [
+      steps: [:assemble, &Bakeware.assemble/1],
+      applications: [
+        web_interface: :permanent,
+        runtime_tools: :permanent
+      ],
+      include_executables_for: [:windows]
+    ],
+    cli: [
+      applications: [cli: :permanent]
+    ],
+  ]
 end

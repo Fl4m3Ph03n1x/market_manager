@@ -22,7 +22,6 @@ defmodule WebInterface do
       use Phoenix.Controller, namespace: WebInterface
 
       import Plug.Conn
-      import WebInterface.Gettext
       alias WebInterface.Router.Helpers, as: Routes
     end
   end
@@ -80,7 +79,6 @@ defmodule WebInterface do
   def channel do
     quote do
       use Phoenix.Channel
-      import WebInterface.Gettext
     end
   end
 
@@ -96,7 +94,6 @@ defmodule WebInterface do
       import Phoenix.View
 
       import WebInterface.ErrorHelpers
-      import WebInterface.Gettext
       alias WebInterface.Router.Helpers, as: Routes
     end
   end
