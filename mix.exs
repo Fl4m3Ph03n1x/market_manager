@@ -48,9 +48,6 @@ defmodule MarketManager.MixProject do
         runtime_tools: :permanent
       ],
       include_executables_for: [:windows]
-    ],
-    cli: [
-      applications: [cli: :permanent]
-    ],
+    ]
   ]
 end
