@@ -8,9 +8,9 @@ config :web_interface, WebInterface.Endpoint,
   server: false
 
 config :store,
-  products: "../../test_setup/products.json",
-  current_orders: "../../test_setup/current_orders.json",
-  setup: "../../test_setup/setup.json"
+  products: "products.json",
+  current_orders: "current_orders.json",
+  setup: "setup.json"
 
 config :auction_house,
   api_base_url: "http://localhost:8082/v1/profile/orders",

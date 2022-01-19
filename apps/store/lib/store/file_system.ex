@@ -66,12 +66,13 @@ defmodule Store.FileSystem do
   @spec read_syndicate_data(
       filename :: String.t, Store.syndicate, file_read_fn :: function
     ) :: {:ok, [Store.order_id | [Store.product]]} | {:error, any}
-  defp read_syndicate_data(filename, syndicate, read_fn), do:
-    "../../#{filename}"
-    |> Path.expand(__DIR__)
+  defp read_syndicate_data(filename, syndicate, read_fn) do
+    File.cwd!()
+    |> Path.join(filename)
     |> read_fn.()
     >>> Jason.decode()
     >>> find_syndicate(syndicate)
+  end
 
   @spec find_syndicate(Store.all_orders_store, Store.syndicate) ::
     {:ok, [Store.order_id] | [Store.product]} | {:error, :syndicate_not_found}
@@ -105,7 +106,7 @@ defmodule Store.FileSystem do
     {:ok, :new_orders_saved}
     | {:error, any}
   defp save_new_orders(orders, write_fn) do
-    case write_fn.(Path.expand("../../#{@orders_filename}", __DIR__), orders) do
+    case write_fn.(Path.join(File.cwd!, @orders_filename), orders) do
       :ok -> {:ok, :new_orders_saved}
       err -> err
     end
@@ -121,7 +122,9 @@ defmodule Store.FileSystem do
 
   @spec save_setup(String.t, String.t, Store.deps) :: :ok | {:error, :file.posix}
   defp save_setup(data, filename, deps), do:
-    deps[:write_fn].(filename, data)
+    File.cwd!
+    |> Path.join(filename)
+    |> deps[:write_fn].(data)
 
   @spec handle_setup_response(:ok | {:error, :file.posix}, Store.login_info) :: {:ok, Store.login_info} | {:error, :file.posix}
   defp handle_setup_response(:ok, login_info), do: {:ok, login_info}

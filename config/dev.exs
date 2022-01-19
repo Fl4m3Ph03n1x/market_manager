@@ -29,13 +29,14 @@ config :web_interface, WebInterface.Endpoint,
     ]
   ]
 
+# Files will be DELETED after running integration tests!
 config :store,
   products: "../../test_setup/products.json",
   current_orders: "../../test_setup/current_orders.json",
   setup: "../../test_setup/setup.json"
 
 config :auction_house,
-  api_base_url: "http://localhost:8081/v1/profile/orders",
-  api_search_url: "http://localhost:8081/v1/items",
-  auction_house_cookie: "cookie",
-  auction_house_token: "token"
+  api_search_url: "http://localhost:8082/v1/items",
+  api_base_url: "http://localhost:8082/v1/profile/orders",
+  auction_house_cookie: System.fetch_env!("MARKET_MANAGER_WM_COOKIE"),
+  auction_house_token: System.fetch_env!("MARKET_MANAGER_WM_XCSRFTOKEN")

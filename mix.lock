@@ -10,7 +10,7 @@
   "credo": {:hex, :credo, "1.6.2", "2f82b29a47c0bb7b72f023bf3a34d151624f1cbe1e6c4e52303b05a11166a701", [:mix], [{:bunt, "~> 0.2.0", [hex: :bunt, repo: "hexpm", optional: false]}, {:file_system, "~> 0.2.8", [hex: :file_system, repo: "hexpm", optional: false]}, {:jason, "~> 1.0", [hex: :jason, repo: "hexpm", optional: false]}], "hexpm", "ae9dc112bc368e7b145c547bec2ed257ef88955851c15057c7835251a17211c6"},
   "dbus": {:hex, :dbus, "0.8.0", "7c800681f35d909c199265e55a8ee4aea9ebe4acccce77a0740f89f29cc57648", [:make], [], "hexpm", "a9784f2d9717ffa1f74169144a226c39633ac0d9c7fe8cb3594aeb89c827cca5"},
   "debouncer": {:hex, :debouncer, "0.1.5", "1d993bd01400585a6bf463d36ea50386deea2c09bc6e55d613b7b6c0b4ccb4f9", [:mix], [], "hexpm", "cecc2a4c4e9b51c7fbc5474c317a50cd5870334eb3e2b95d85d578ed58c4fa24"},
-  "desktop": {:git, "https://github.com/elixir-desktop/desktop.git", "96d185dc1ee2cca3f460add84a5a315bbe6e161f", []},
+  "desktop": {:git, "https://github.com/elixir-desktop/desktop.git", "174e69ba3265df2bee3ac609bc2335718267df76", []},
   "dialyxir": {:hex, :dialyxir, "1.1.0", "c5aab0d6e71e5522e77beff7ba9e08f8e02bad90dfbeffae60eaf0cb47e29488", [:mix], [{:erlex, ">= 0.2.6", [hex: :erlex, repo: "hexpm", optional: false]}], "hexpm", "07ea8e49c45f15264ebe6d5b93799d4dd56a44036cf42d0ad9c960bc266c0b9a"},
   "earmark_parser": {:hex, :earmark_parser, "1.4.19", "de0d033d5ff9fc396a24eadc2fcf2afa3d120841eb3f1004d138cbf9273210e8", [:mix], [], "hexpm", "527ab6630b5c75c3a3960b75844c314ec305c76d9899bb30f71cb85952a9dc45"},
   "elixir_make": {:hex, :elixir_make, "0.6.3", "bc07d53221216838d79e03a8019d0839786703129599e9619f4ab74c8c096eac", [:mix], [], "hexpm", "f5cbd651c5678bcaabdbb7857658ee106b12509cd976c2c2fca99688e1daf716"},
@@ -60,5 +60,5 @@
   "telemetry_metrics": {:hex, :telemetry_metrics, "0.6.1", "315d9163a1d4660aedc3fee73f33f1d355dcc76c5c3ab3d59e76e3edf80eef1f", [:mix], [{:telemetry, "~> 0.4 or ~> 1.0", [hex: :telemetry, repo: "hexpm", optional: false]}], "hexpm", "7be9e0871c41732c233be71e4be11b96e56177bf15dde64a8ac9ce72ac9834c6"},
   "telemetry_poller": {:hex, :telemetry_poller, "1.0.0", "db91bb424e07f2bb6e73926fcafbfcbcb295f0193e0a00e825e589a0a47e8453", [:rebar3], [{:telemetry, "~> 1.0", [hex: :telemetry, repo: "hexpm", optional: false]}], "hexpm", "b3a24eafd66c3f42da30fc3ca7dda1e9d546c12250a2d60d7b81d264fbec4f6e"},
   "unicode_util_compat": {:hex, :unicode_util_compat, "0.7.0", "bc84380c9ab48177092f43ac89e4dfa2c6d62b40b8bd132b1059ecc7232f9a78", [:rebar3], [], "hexpm", "25eee6d67df61960cf6a794239566599b09e17e668d3700247bc498638152521"},
-  "xdiff_plus": {:hex, :xdiff_plus, "0.1.0", "0ddbd14459fc29e4cbcdcd47fc80394039a098bfbf423197fd7e37081b7cd410", [:mix], [], "hexpm", "8bcfc93533e1ea4ff104fa73e2078cf17c164726efe577a2672cd2b2e6a57b00"},
+  "xdiff_plus": {:hex, :xdiff_plus, "0.1.1", "dbd289963daad0ca8b4a0604e39b8cf4fc620aae0fdc9e245849f97e9697590a", [:mix], [], "hexpm", "54968856c4b06f0bf3ce3db9eb8599e937a4c430d1930e142023763f78bd7b26"},
 }
