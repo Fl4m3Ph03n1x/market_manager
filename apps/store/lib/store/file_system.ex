@@ -52,7 +52,7 @@ defmodule Store.FileSystem do
     |> read_syndicate_data(syndicate, deps[:read_fn])
     |> syndicate_found?()
 
-  @spec save_credentials(Store.login_info) :: Store.save_credentials
+  @spec save_credentials(Store.login_info) :: Store.save_credentials_response
   def save_credentials(login_info, deps \\ @default_deps), do:
     login_info
     |> Jason.encode()
