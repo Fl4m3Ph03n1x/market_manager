@@ -32,9 +32,9 @@ defmodule Manager do
     | {:partial_success, [{:error, error_reason, order_id}, ...]}
     | {:error, :unable_to_delete_orders, [{:error, error_reason, order_id}]}
 
-  @type setup_response ::
+  @type authenticate_response ::
     {:ok, Store.login_info}
-    | {:error, :unable_to_save_setup, [{:error, :missing_token | :missing_cookie | :file.posix, Store.login_info}]}
+    | {:error, :unable_to_save_authenticate, [{:error, :missing_token | :missing_cookie | :file.posix, Store.login_info}]}
 
   ##########
   # Public #
@@ -118,7 +118,7 @@ defmodule Manager do
   defdelegate valid_syndicate?(syndicate), to: Store, as: :syndicate_exists?
 
   @doc """
-  Saves the setup login information used in all requests.
+  Saves the login information used in all requests.
   Required parameters are:
 
     - token: the xrfc-token used to send requests
@@ -128,18 +128,18 @@ defmodule Manager do
 
   Example:
   ```
-  > MarketManager.setup(%{"token" => "abc", "cookie" => "123"})
+  > MarketManager.authenticate(%{"token" => "abc", "cookie" => "123"})
   {:ok, %{"token" => "abc", "cookie" => "123"}}
 
-  > MarketManager.setup(%{"token" => "abc"})
-  {:error, :unable_to_save_setup, {:missing_mandatory_keys, ["cookie"], %{"token" => "abc"}}}
+  > MarketManager.authenticate(%{"token" => "abc"})
+  {:error, :unable_to_save_authentication, {:missing_mandatory_keys, ["cookie"], %{"token" => "abc"}}}
 
-  > MarketManager.setup(%{"token" => "abc", "cookie" => "123"})
-  {:error, :unable_to_save_setup, {:enoent, %{"token" => "abc", "cookie" => "123"}}}
+  > MarketManager.authenticate(%{"token" => "abc", "cookie" => "123"})
+  {:error, :unable_to_save_authentication, {:enoent, %{"token" => "abc", "cookie" => "123"}}}
   ```
   """
-  @spec setup(Store.login_info) :: setup_response
-  defdelegate setup(data), to: Interpreter
+  @spec authenticate(Store.login_info) :: authenticate_response
+  defdelegate authenticate(data), to: Interpreter
 
   @doc false
   @spec child_spec(any) :: %{

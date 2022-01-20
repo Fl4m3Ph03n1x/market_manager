@@ -26,7 +26,7 @@ defmodule Manager.Interpreter do
   }
 
   @mandatory_keys_login_info ["token", "cookie"]
-  @actions ["activate", "deactivate", "setup"]
+  @actions ["activate", "deactivate", "authenticate"]
   @default_deps [
     store: Store,
     auction_house: AuctionHouse
@@ -59,12 +59,12 @@ defmodule Manager.Interpreter do
     |> delete_orders(syndicate, deps[:store])
     |> to_human_response(:delete)
 
-  @spec setup(Store.login_info, keyword) :: Manager.setup_response
-  def setup(info, deps \\ @default_deps), do:
+  @spec authenticate(Store.login_info, keyword) :: Manager.authenticate_response
+  def authenticate(info, deps \\ @default_deps), do:
     info
     |> validate_login_info()
-    >>> save_setup(deps[:store])
-    |> handle_setup_response(info)
+    >>> save_credentials(deps[:store])
+    |> handle_authenticate_response(info)
 
   ###########
   # Private #
@@ -210,8 +210,8 @@ defmodule Manager.Interpreter do
     end
   end
 
-  @spec save_setup(Store.login_info, module) :: Store.setup_response
-  defp save_setup(info, store), do: store.setup(info)
+  @spec save_credentials(Store.login_info, module) :: Store.save_credentials_response
+  defp save_credentials(info, store), do: store.save_credentials(info)
 
   @spec to_human_response({[any], [any]}, :delete | :place) ::
     {:ok, :success}
@@ -241,14 +241,14 @@ defmodule Manager.Interpreter do
   defp to_human_response({_successfull, failed}, _op), do:
     {:partial_success, [failed_orders: failed]}
 
-  @spec handle_setup_response({:ok, Store.login_info} | {:error, {:missing_keys, [String.t]} | :file.posix}, Store.login_info) ::
+  @spec handle_authenticate_response({:ok, Store.login_info} | {:error, {:missing_keys, [String.t]} | :file.posix}, Store.login_info) ::
   {:ok, Store.login_info}
-  | {:error, :unable_to_save_setup, {:missing_mandatory_keys, [String.t], Store.login_info} | {:file.posix, Store.login_info}}
-  defp handle_setup_response({:error, {:missing_keys, keys}}, login_info), do:
-    {:error, :unable_to_save_setup, {:missing_mandatory_keys, keys, login_info}}
+  | {:error, :unable_to_save_authentication, {:missing_mandatory_keys, [String.t], Store.login_info} | {:file.posix, Store.login_info}}
+  defp handle_authenticate_response({:error, {:missing_keys, keys}}, login_info), do:
+    {:error, :unable_to_save_authentication, {:missing_mandatory_keys, keys, login_info}}
 
-  defp handle_setup_response({:error, reason}, login_info), do:
-    {:error, :unable_to_save_setup, {reason, login_info}}
+  defp handle_authenticate_response({:error, reason}, login_info), do:
+    {:error, :unable_to_save_authentication, {reason, login_info}}
 
-  defp handle_setup_response(ok_response, _login_info), do: ok_response
+  defp handle_authenticate_response(ok_response, _login_info), do: ok_response
 end

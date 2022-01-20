@@ -530,7 +530,7 @@ defmodule Manager.InterpreterTest do
     end
   end
 
-  describe "setup/1" do
+  describe "authenticate/1" do
 
     test "Returns ok tuple if login info is correct and it persisted data successfuly" do
       with_mocks([
@@ -538,7 +538,7 @@ defmodule Manager.InterpreterTest do
           Store,
           [],
           [
-            setup: fn login_info -> {:ok, login_info} end,
+            save_credentials: fn login_info -> {:ok, login_info} end,
           ]
         }
       ]) do
@@ -547,13 +547,13 @@ defmodule Manager.InterpreterTest do
         login_info = %{"token" => "123", "cookie" => "abc"}
 
         # Act
-        actual = Interpreter.setup(login_info, deps)
+        actual = Interpreter.authenticate(login_info, deps)
         expected = {:ok, login_info}
 
         # Assert
         assert actual == expected
 
-        assert_called Store.setup(login_info)
+        assert_called Store.save_credentials(login_info)
       end
     end
 
@@ -563,7 +563,7 @@ defmodule Manager.InterpreterTest do
           Store,
           [],
           [
-            setup: fn login_info -> {:ok, login_info} end,
+            save_credentials: fn login_info -> {:ok, login_info} end,
           ]
         }
       ]) do
@@ -572,13 +572,13 @@ defmodule Manager.InterpreterTest do
         login_info = %{"cookie" => "abc"}
 
         # Act
-        actual = Interpreter.setup(login_info, deps)
-        expected =  {:error, :unable_to_save_setup, {:missing_mandatory_keys, ["token"], login_info}}
+        actual = Interpreter.authenticate(login_info, deps)
+        expected =  {:error, :unable_to_save_authentication, {:missing_mandatory_keys, ["token"], login_info}}
 
         # Assert
         assert actual == expected
 
-        assert_not_called Store.setup(login_info)
+        assert_not_called Store.save_credentials(login_info)
       end
     end
 
@@ -588,7 +588,7 @@ defmodule Manager.InterpreterTest do
           Store,
           [],
           [
-            setup: fn login_info -> {:ok, login_info} end,
+            save_credentials: fn login_info -> {:ok, login_info} end,
           ]
         }
       ]) do
@@ -597,13 +597,13 @@ defmodule Manager.InterpreterTest do
         login_info = %{}
 
         # Act
-        actual = Interpreter.setup(login_info, deps)
-        expected = {:error, :unable_to_save_setup, {:missing_mandatory_keys, ["cookie", "token"], login_info}}
+        actual = Interpreter.authenticate(login_info, deps)
+        expected = {:error, :unable_to_save_authentication, {:missing_mandatory_keys, ["cookie", "token"], login_info}}
 
         # Assert
         assert actual == expected
 
-        assert_not_called Store.setup(login_info)
+        assert_not_called Store.save_credentials(login_info)
       end
     end
 
@@ -613,7 +613,7 @@ defmodule Manager.InterpreterTest do
           Store,
           [],
           [
-            setup: fn _login_info -> {:error, :enoent} end,
+            save_credentials: fn _login_info -> {:error, :enoent} end,
           ]
         }
       ]) do
@@ -622,13 +622,13 @@ defmodule Manager.InterpreterTest do
         login_info = %{"token" => "123", "cookie" => "abc"}
 
         # Act
-        actual = Interpreter.setup(login_info, deps)
-        expected = {:error, :unable_to_save_setup, {:enoent, login_info}}
+        actual = Interpreter.authenticate(login_info, deps)
+        expected = {:error, :unable_to_save_authentication, {:enoent, login_info}}
 
         # Assert
         assert actual == expected
 
-        assert_called Store.setup(login_info)
+        assert_called Store.save_credentials(login_info)
       end
     end
   end

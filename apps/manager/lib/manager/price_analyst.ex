@@ -38,11 +38,11 @@ defmodule Manager.PriceAnalyst do
 
   defp pre_process_orders(all_orders), do:
     all_orders
-    |> Enum.filter(&visible?/1)
-    |> Enum.filter(&user_ingame?/1)
-    |> Enum.filter(&platform_pc?/1)
-    |> Enum.filter(&sell_order?/1)
+    |> Enum.filter(&valid_order?/1)
     |> Enum.sort(&price_ascending/2)
+
+  @spec valid_order?(AuctionHouse.order_info) :: boolean
+  defp valid_order?(order), do: visible?(order) and user_ingame?(order) and platform_pc?(order) and sell_order?(order)
 
   @spec visible?(AuctionHouse.order_info) :: boolean
   defp visible?(order), do: Map.get(order, "visible") == true

@@ -32,7 +32,7 @@ defmodule Manager.MixProject do
       {:auction_house, in_umbrella: true},
 
       # Testing and Dev
-      {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
+      {:mix_test_watch, "~> 1.0", only: [:dev, :test], runtime: false},
       {:mock, "~> 0.3.0", only: :test}
     ]
   end
