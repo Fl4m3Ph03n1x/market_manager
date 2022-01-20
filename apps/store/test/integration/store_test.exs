@@ -150,7 +150,7 @@ defmodule StoreTest do
     end
   end
 
-  describe "setup/2" do
+  describe "save_credentials/2" do
     setup do
       on_exit(&delete_setup_file/0)
     end
@@ -160,7 +160,7 @@ defmodule StoreTest do
       login_info = %{"token" => "a_token", "cookie" => "a_cookie"}
 
       # Act
-      actual = Store.setup(login_info)
+      actual = Store.save_credentials(login_info)
       expected = {:ok, login_info}
 
       # Assert

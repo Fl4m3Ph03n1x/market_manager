@@ -226,7 +226,7 @@ defmodule MarketManager.Store.FileSystemTest do
     end
   end
 
-  describe "setup/2" do
+  describe "save_creadentials/2" do
     test "returns login_info if setup was saved successfully" do
       # Arrange
       login_info = %{"token" => "a_token", "cookie" => "a_cookie"}
@@ -236,7 +236,7 @@ defmodule MarketManager.Store.FileSystemTest do
       ]
 
       # Act
-      actual = FileSystem.setup(login_info, deps)
+      actual = FileSystem.save_credentials(login_info, deps)
       expected = {:ok, login_info}
 
       # Assert
@@ -252,7 +252,7 @@ defmodule MarketManager.Store.FileSystemTest do
       ]
 
       # Act
-      actual = FileSystem.setup(login_info, deps)
+      actual = FileSystem.save_credentials(login_info, deps)
       expected = {:error, :enoent}
 
       # Assert

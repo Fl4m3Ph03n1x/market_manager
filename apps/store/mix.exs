@@ -28,7 +28,7 @@ defmodule Store.MixProject do
       {:rop, "~> 0.5"},
 
       # Test and Dev
-      {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
+      {:mix_test_watch, "~> 1.0", only: [:dev, :test], runtime: false},
     ]
   end
 end

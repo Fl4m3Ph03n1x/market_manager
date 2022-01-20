@@ -34,7 +34,7 @@ defmodule Store.FileSystem do
     >>> decode_orders_or_empty_orders()
     >>> add_order(order_id, syndicate)
     >>> Jason.encode()
-    >>> save_new_orders(deps[:write_fn])
+    >>> store(@orders_filename, deps)
     >>> send_ok_response(order_id)
 
   @spec delete_order(Store.order_id, Store.syndicate) :: Store.delete_order_response
@@ -43,7 +43,7 @@ defmodule Store.FileSystem do
     >>> decode_orders_or_empty_orders()
     >>> remove_order(order_id, syndicate)
     >>> Jason.encode()
-    >>> save_new_orders(deps[:write_fn])
+    >>> store(@orders_filename, deps)
     >>> send_ok_response(order_id)
 
   @spec syndicate_exists?(Store.syndicate) :: Store.syndicate_exists_response
@@ -52,12 +52,12 @@ defmodule Store.FileSystem do
     |> read_syndicate_data(syndicate, deps[:read_fn])
     |> syndicate_found?()
 
-  @spec setup(Store.login_info) :: Store.setup_response
-  def setup(login_info, deps \\ @default_deps), do:
+  @spec save_credentials(Store.login_info) :: Store.save_credentials
+  def save_credentials(login_info, deps \\ @default_deps), do:
     login_info
     |> Jason.encode()
-    >>> save_setup(@setup_filename, deps)
-    |> handle_setup_response(login_info)
+    >>> store(@setup_filename, deps)
+    >>> send_ok_response(login_info)
 
   ###########
   # Private #
@@ -102,32 +102,23 @@ defmodule Store.FileSystem do
     {:ok, Map.put(all_orders, syndicate, updated_syndicate_orders)}
   end
 
-  @spec save_new_orders(orders_json :: String.t, file_write_fn :: function) ::
-    {:ok, :new_orders_saved}
-    | {:error, any}
-  defp save_new_orders(orders, write_fn) do
-    case write_fn.(Path.join(File.cwd!, @orders_filename), orders) do
-      :ok -> {:ok, :new_orders_saved}
-      err -> err
-    end
-  end
-
   @spec syndicate_found?({:error, any} | {:ok, map}) :: {:ok, boolean} | {:error, any}
   defp syndicate_found?({:error, :syndicate_not_found}), do: {:ok, false}
   defp syndicate_found?({:ok, _data}), do: {:ok, true}
   defp syndicate_found?({:error, _reason} = error), do: error
 
-  @spec send_ok_response(:new_orders_saved, Store.order_id) :: {:ok, Store.order_id}
-  defp send_ok_response(:new_orders_saved, order_id), do: {:ok, order_id}
+  @spec send_ok_response(saved_data :: any, response_data :: any) :: {:ok, response_data :: any}
+  defp send_ok_response(_saved_data, response_data), do: {:ok, response_data}
 
-  @spec save_setup(String.t, String.t, Store.deps) :: :ok | {:error, :file.posix}
-  defp save_setup(data, filename, deps), do:
+  @spec store(any, String.t, Store.deps) :: {:ok, any} | {:error, :file.posix}
+  defp store(data, filename, deps) do
     File.cwd!
     |> Path.join(filename)
     |> deps[:write_fn].(data)
-
-  @spec handle_setup_response(:ok | {:error, :file.posix}, Store.login_info) :: {:ok, Store.login_info} | {:error, :file.posix}
-  defp handle_setup_response(:ok, login_info), do: {:ok, login_info}
-  defp handle_setup_response(err, _login_info), do: err
+    |> case do
+      :ok -> {:ok, data}
+      err -> err
+    end
+  end
 
 end
