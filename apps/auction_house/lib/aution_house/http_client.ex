@@ -5,12 +5,10 @@ defmodule AuctionHouse.HTTPClient do
 
   use Rop
 
-  alias AuctionHouse
+  alias AuctionHouse.Type
 
   @url Application.compile_env!(:auction_house, :api_base_url)
   @search_url Application.compile_env!(:auction_house, :api_search_url)
-  @cookie Application.compile_env!(:auction_house, :auction_house_cookie)
-  @token Application.compile_env!(:auction_house, :auction_house_token)
 
   @static_headers [
     {"Accept", "application/json"},
@@ -46,25 +44,25 @@ defmodule AuctionHouse.HTTPClient do
 
   @spec http_post(order_json :: String.t, deps :: map) ::
     {:ok, HTTPoison.Response.t} | {:error, HTTPoison.Error.t}
-  defp http_post(order, %{post_fn: post, run_fn: run, requests_queue: queue}), do:
-    run.(queue, fn -> post.(@url, order, headers()) end)
+  defp http_post(order, %{post_fn: post, run_fn: run, requests_queue: queue, cookie: cookie, token: token}), do:
+    run.(queue, fn -> post.(@url, order, build_hearders(cookie, token)) end)
 
   @spec http_delete(url :: String.t, deps :: map) ::
     {:ok, HTTPoison.Response.t} | {:error, HTTPoison.Error.t}
-  defp http_delete(url, %{delete_fn: delete, run_fn: run, requests_queue: queue}), do:
-    run.(queue, fn -> delete.(url, headers()) end)
+  defp http_delete(url, %{delete_fn: delete, run_fn: run, requests_queue: queue, cookie: cookie, token: token}), do:
+    run.(queue, fn -> delete.(url, build_hearders(cookie, token)) end)
 
   @spec http_get(url :: String.t, deps :: map) ::
     {:ok, HTTPoison.Response.t} | {:error, HTTPoison.Error.t}
-  defp http_get(url, %{get_fn: get, run_fn: run, requests_queue: queue}), do:
-    run.(queue, fn -> get.(url, headers()) end)
+  defp http_get(url, %{get_fn: get, run_fn: run, requests_queue: queue, cookie: cookie, token: token}), do:
+    run.(queue, fn -> get.(url, build_hearders(cookie, token)) end)
 
   @spec to_auction_house_response(
         {:ok, HTTPoison.Response.t} | {:error, HTTPoison.Error.t},
-        AuctionHouse.order | AuctionHouse.item_id,
+        Type.order | Type.item_id,
         success_handler_fn :: function) ::
-        {:ok, AuctionHouse.order_id}
-        | {:error, reason :: atom, AuctionHouse.order_id | AuctionHouse.item_id}
+        {:ok, Type.order_id}
+        | {:error, reason :: atom, Type.order_id | Type.item_id}
   defp to_auction_house_response({:ok, %HTTPoison.Response{status_code: 400, body: error_body}}, data, _handler), do:
     error_body
     |> Jason.decode()
@@ -85,7 +83,7 @@ defmodule AuctionHouse.HTTPClient do
   defp to_auction_house_response({:error, %HTTPoison.Error{id: _id, reason: reason}}, data, _handler),
     do: build_error_response({:error, reason}, data)
 
-  @spec get_orders(response :: map) :: [AuctionHouse.order_info]
+  @spec get_orders(response :: map) :: [Type.order_info]
   defp get_orders(%{"payload" => %{"orders" => orders}}), do: orders
 
   @spec map_error(error_response :: map | String.t) :: {:error,
@@ -104,28 +102,28 @@ defmodule AuctionHouse.HTTPClient do
 
   defp map_error(html) when is_binary(html), do: {:error, :server_unavailable}
 
-  @spec get_id(response :: map) :: AuctionHouse.order_id | AuctionHouse.item_id
+  @spec get_id(response :: map) :: Type.order_id | Type.item_id
   defp get_id(%{"payload" => %{"order" => %{"id" => id}}}), do: id
   defp get_id(%{"payload" => %{"order_id" => id}}), do: id
 
-  @spec build_success_response(AuctionHouse.order_id | [AuctionHouse.order_info])
-    :: {:ok, AuctionHouse.order_id | [AuctionHouse.order_info]}
+  @spec build_success_response(Type.order_id | [Type.order_info])
+    :: {:ok, Type.order_id | [Type.order_info]}
   defp build_success_response(data), do: {:ok, data}
 
-  @spec build_error_response({:error, reason :: atom}, AuctionHouse.order_id | AuctionHouse.order) ::
-          {:error, reason :: atom, AuctionHouse.order_id | AuctionHouse.item_id}
+  @spec build_error_response({:error, reason :: atom}, Type.order_id | Type.order) ::
+          {:error, reason :: atom, Type.order_id | Type.item_id}
   defp build_error_response({:error, reason}, order) when is_map(order),
     do: {:error, reason, Map.get(order, "item_id")}
 
   defp build_error_response({:error, reason}, order_id) when is_binary(order_id),
     do: {:error, reason, order_id}
 
-  @spec build_delete_url(AuctionHouse.order_id) :: (url :: String.t)
+  @spec build_delete_url(Type.order_id) :: (url :: String.t)
   defp build_delete_url(id), do:
     URI.encode(@url <> "/" <> id)
 
-  @spec headers :: [{String.t, String.t}]
-  defp headers, do: [{"x-csrftoken", @token}, {"Cookie", @cookie}] ++ @static_headers
+  @spec build_hearders(String.t, String.t) :: [{String.t, String.t}]
+  defp build_hearders(cookie, token), do: [{"x-csrftoken", token}, {"Cookie", cookie}] ++ @static_headers
 
   @spec build_get_orders_url(item_name :: String.t) :: (uri :: String.t)
   defp build_get_orders_url(item_search_name), do:

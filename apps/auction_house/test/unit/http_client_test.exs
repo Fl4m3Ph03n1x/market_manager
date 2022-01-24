@@ -23,7 +23,9 @@ defmodule AuctionHouse.HTTPClientTest do
            }}
         end,
         run_fn: fn _queue_name, func -> func.() end,
-        requests_queue: nil
+        requests_queue: nil,
+        cookie: nil,
+        token: nil
       }
 
       # Act
@@ -53,7 +55,9 @@ defmodule AuctionHouse.HTTPClientTest do
            }}
         end,
         run_fn: fn _queue_name, func -> func.() end,
-        requests_queue: nil
+        requests_queue: nil,
+        cookie: nil,
+        token: nil
       }
 
       # Act
@@ -83,7 +87,9 @@ defmodule AuctionHouse.HTTPClientTest do
            }}
         end,
         run_fn: fn _queue_name, func -> func.() end,
-        requests_queue: nil
+        requests_queue: nil,
+        cookie: nil,
+        token: nil
       }
 
       # Act
@@ -113,7 +119,9 @@ defmodule AuctionHouse.HTTPClientTest do
            }}
         end,
         run_fn: fn _queue_name, func -> func.() end,
-        requests_queue: nil
+        requests_queue: nil,
+        cookie: nil,
+        token: nil
       }
 
       # Act
@@ -143,7 +151,9 @@ defmodule AuctionHouse.HTTPClientTest do
            }}
         end,
         run_fn: fn _queue_name, func -> func.() end,
-        requests_queue: nil
+        requests_queue: nil,
+        cookie: nil,
+        token: nil
       }
 
       # Act
@@ -169,7 +179,9 @@ defmodule AuctionHouse.HTTPClientTest do
           {:error, %HTTPoison.Error{id: nil, reason: :timeout}}
         end,
         run_fn: fn _queue_name, func -> func.() end,
-        requests_queue: nil
+        requests_queue: nil,
+        cookie: nil,
+        token: nil
       }
 
       # Act
@@ -195,7 +207,9 @@ defmodule AuctionHouse.HTTPClientTest do
            }}
         end,
         run_fn: fn _queue_name, func -> func.() end,
-        requests_queue: nil
+        requests_queue: nil,
+        cookie: nil,
+        token: nil
       }
 
       # Act
@@ -219,7 +233,9 @@ defmodule AuctionHouse.HTTPClientTest do
            }}
         end,
         run_fn: fn _queue_name, func -> func.() end,
-        requests_queue: nil
+        requests_queue: nil,
+        cookie: nil,
+        token: nil
       }
 
       # Act
@@ -239,7 +255,9 @@ defmodule AuctionHouse.HTTPClientTest do
           {:error, %HTTPoison.Error{id: nil, reason: :timeout}}
         end,
         run_fn: fn _queue_name, func -> func.() end,
-        requests_queue: nil
+        requests_queue: nil,
+        cookie: nil,
+        token: nil
       }
 
       # Act
@@ -265,7 +283,9 @@ defmodule AuctionHouse.HTTPClientTest do
            }}
         end,
         run_fn: fn _queue_name, func -> func.() end,
-        requests_queue: nil
+        requests_queue: nil,
+        cookie: nil,
+        token: nil
       }
 
       # Act

@@ -6,7 +6,7 @@ defmodule AuctionHouse.ServerTest do
 
   test "init/1 returns the correct state" do
     # Act
-    {:ok, deps, {:continue, :setup_queue}} = Server.init(nil)
+    {:ok, deps, {:continue, :setup_queue}} = Server.init(%{"cookie" => nil, "token" => nil})
 
     # Assert
     assert is_function Map.get(deps, :get_fn)

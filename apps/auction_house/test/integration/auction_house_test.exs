@@ -8,7 +8,7 @@ defmodule AuctionHouseTest do
   @test_port 8082
 
   setup do
-    start_supervised(Server)
+    start_supervised({Server, %{"cookie" => nil, "token" => nil}})
     bypass = Bypass.open(port: @test_port)
     %{bypass: bypass}
   end

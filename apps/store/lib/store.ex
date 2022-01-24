@@ -124,6 +124,6 @@ defmodule Store do
   {:error, :enonent}
   ```
   """
-  @spec get_credentials :: Type.get_cedentials_response
+  @spec get_credentials :: Type.get_credentials_response
   defdelegate get_credentials, to: FileSystem
 end

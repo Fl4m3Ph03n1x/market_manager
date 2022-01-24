@@ -6,25 +6,24 @@ defmodule AuctionHouse.Server do
 
   use GenServer
 
-  alias AuctionHouse
-  alias AuctionHouse.{HTTPClient, Settings}
+  alias AuctionHouse.{HTTPClient, Settings, Type}
 
   ##############
   # Public API #
   ##############
 
-  @spec start_link(any) :: :ignore | {:error, any} | {:ok, pid}
-  def start_link(_), do: GenServer.start_link(__MODULE__, nil, name: __MODULE__)
+  @spec start_link(map) :: :ignore | {:error, any} | {:ok, pid}
+  def start_link(credentials), do: GenServer.start_link(__MODULE__, credentials, name: __MODULE__)
 
-  @spec get_all_orders(AuctionHouse.item_name) :: AuctionHouse.get_all_orders_response
+  @spec get_all_orders(Type.item_name) :: Type.get_all_orders_response
   def get_all_orders(item_name), do:
     GenServer.call(__MODULE__, {:get_all_orders, item_name})
 
-  @spec place_order(AuctionHouse.order) :: AuctionHouse.place_order_response
+  @spec place_order(Type.order) :: Type.place_order_response
   def place_order(order), do:
     GenServer.call(__MODULE__, {:place_order, order})
 
-  @spec delete_order(AuctionHouse.order_id) :: AuctionHouse.delete_order_response
+  @spec delete_order(Type.order_id) :: Type.delete_order_response
   def delete_order(order_id), do:
     GenServer.call(__MODULE__, {:delete_order, order_id})
 
@@ -33,8 +32,8 @@ defmodule AuctionHouse.Server do
   #############
 
   @impl GenServer
-  @spec init(nil) :: {:ok, map, {:continue, :setup_queue}}
-  def init(nil) do
+  @spec init(map) :: {:ok, map, {:continue, :setup_queue}}
+  def init(%{"cookie" => cookie, "token" => token}) do
     Process.flag(:trap_exit, true)
     {
       :ok,
@@ -43,10 +42,12 @@ defmodule AuctionHouse.Server do
         post_fn: &HTTPoison.post/3,
         delete_fn: &HTTPoison.delete/2,
         run_fn: &:jobs.run/2,
+        create_queue_fn: &:jobs.add_queue/2,
+        delete_queue_fn: &:jobs.delete_queue/1,
         requests_queue: Settings.requests_queue(),
         requests_per_second: Settings.requests_per_second(),
-        create_queue_fn: &:jobs.add_queue/2,
-        delete_queue_fn: &:jobs.delete_queue/1
+        cookie: cookie,
+        token: token
       },
       {:continue, :setup_queue}
     }
