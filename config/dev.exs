@@ -37,6 +37,4 @@ config :store,
 
 config :auction_house,
   api_search_url: "http://localhost:8082/v1/items",
-  api_base_url: "http://localhost:8082/v1/profile/orders",
-  auction_house_cookie: System.fetch_env!("MARKET_MANAGER_WM_COOKIE"),
-  auction_house_token: System.fetch_env!("MARKET_MANAGER_WM_XCSRFTOKEN")
+  api_base_url: "http://localhost:8082/v1/profile/orders"
