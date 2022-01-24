@@ -5,48 +5,7 @@ defmodule Store do
   """
 
   alias Store.FileSystem
-
-  ##########
-  # Types  #
-  ##########
-
-  @type login_info :: %{
-    (token :: String.t()) => String.t(),
-    (cookie :: String.t()) => String.t()
-  }
-  @type order_id :: String.t
-  @type syndicate :: String.t
-  @type deps :: keyword
-  @type product :: %{
-    (name :: String.t()) => String.t(),
-    (id :: String.t()) => String.t(),
-    (min_price :: String.t()) => non_neg_integer,
-    (default_price :: String.t()) => non_neg_integer,
-    (quantity :: String.t()) => non_neg_integer,
-    (rank :: String.t()) => non_neg_integer | String.t()
-  }
-  @type all_orders_store :: %{
-    (new_loka :: String.t()) => [order_id],
-    (perrin_sequence :: String.t()) => [order_id],
-    (red_veil :: String.t()) => [order_id],
-    (simaris :: String.t()) => [order_id]
-  }
-  @type error :: {:error, any}
-
-  #############
-  # Responses #
-  #############
-
-  @type save_credentials_response :: {:ok, login_info} | {:error, :file.posix}
-  @type list_products_response :: {:ok, [product]} | error
-  @type list_orders_response :: {:ok, [order_id]} | error
-  @type save_order_response :: {:ok, order_id} | error
-  @type delete_order_response :: {:ok, order_id} | error
-  @type syndicate_exists_response :: {:ok, boolean} | error
-
-  ##########
-  # Public #
-  ##########
+  alias Store.Type
 
   @doc """
   Lists the products from the given syndicate.
@@ -70,7 +29,7 @@ defmodule Store do
   {:error, :syndicate_not_found}
   ```
   """
-  @spec list_products(syndicate) :: list_products_response
+  @spec list_products(Type.syndicate) :: Type.list_products_response
   defdelegate list_products(syndicate), to: FileSystem
 
   @doc """
@@ -85,7 +44,7 @@ defmodule Store do
   {:error, :syndicate_not_found}
   ```
   """
-  @spec list_orders(syndicate) :: list_orders_response
+  @spec list_orders(Type.syndicate) :: Type.list_orders_response
   defdelegate list_orders(syndicate), to: FileSystem
 
   @doc """
@@ -100,7 +59,7 @@ defmodule Store do
   {:error, :enoent}
   ```
   """
-  @spec save_order(order_id, syndicate) :: save_order_response
+  @spec save_order(Type.order_id, Type.syndicate) :: Type.save_order_response
   defdelegate save_order(order_id, syndicate), to: FileSystem
 
   @doc """
@@ -115,7 +74,7 @@ defmodule Store do
   {:error, :enoent}
   ```
   """
-  @spec delete_order(order_id, syndicate) :: delete_order_response
+  @spec delete_order(Type.order_id, Type.syndicate) :: Type.delete_order_response
   defdelegate delete_order(order_id, syndicate), to: FileSystem
 
   @doc """
@@ -134,11 +93,11 @@ defmodule Store do
   {:error, :enoent}
   ```
   """
-  @spec syndicate_exists?(syndicate) :: {:ok, boolean} | error
+  @spec syndicate_exists?(Type.syndicate) :: {:ok, boolean} | Type.error
   defdelegate syndicate_exists?(syndicate), to: FileSystem
 
   @doc """
-  Saves the autehntication information from the user into the storage system.
+  Saves the authentication information from the user into the storage system.
   Does not perform validation.
 
   Example:
@@ -150,6 +109,21 @@ defmodule Store do
   {:error, :no_permissions}
   ```
   """
-  @spec save_credentials(login_info) :: save_credentials_response
+  @spec save_credentials(Type.login_info) :: Type.save_credentials_response
   defdelegate save_credentials(login_info), to: FileSystem
+
+  @doc """
+  Retrieves the user's authentication from Storage.
+
+  Example:
+  ```
+  > Store.get_credentials()
+  {:ok, %{"token" => "a_token", "cookie" => "a_cookie"}}
+
+  > Store.get_credentials()
+  {:error, :enonent}
+  ```
+  """
+  @spec get_credentials :: Type.get_cedentials_response
+  defdelegate get_credentials, to: FileSystem
 end

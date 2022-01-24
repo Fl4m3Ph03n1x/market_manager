@@ -5,7 +5,7 @@ defmodule Store.FileSystem do
 
   use Rop
 
-  alias Store
+  alias Store.Type
 
   @orders_filename Application.compile_env!(:store, :current_orders)
   @products_filename Application.compile_env!(:store, :products)
@@ -20,15 +20,15 @@ defmodule Store.FileSystem do
   # Public #
   ##########
 
-  @spec list_products(Store.syndicate) :: Store.list_products_response
+  @spec list_products(Type.syndicate) :: Type.list_products_response
   def list_products(syndicate, deps \\ @default_deps), do:
     read_syndicate_data(@products_filename, syndicate, deps[:read_fn])
 
-  @spec list_orders(Store.syndicate) :: Store.list_orders_response
+  @spec list_orders(Type.syndicate) :: Type.list_orders_response
   def list_orders(syndicate, deps \\ @default_deps), do:
     read_syndicate_data(@orders_filename, syndicate, deps[:read_fn])
 
-  @spec save_order(Store.order_id, Store.syndicate) :: Store.save_order_response
+  @spec save_order(Type.order_id, Type.syndicate) :: Type.save_order_response
   def save_order(order_id, syndicate, deps \\ @default_deps), do:
     deps[:read_fn].(@orders_filename)
     >>> decode_orders_or_empty_orders()
@@ -37,7 +37,7 @@ defmodule Store.FileSystem do
     >>> store(@orders_filename, deps)
     >>> send_ok_response(order_id)
 
-  @spec delete_order(Store.order_id, Store.syndicate) :: Store.delete_order_response
+  @spec delete_order(Type.order_id, Type.syndicate) :: Type.delete_order_response
   def delete_order(order_id, syndicate, deps \\ @default_deps), do:
     deps[:read_fn].(@orders_filename)
     >>> decode_orders_or_empty_orders()
@@ -46,26 +46,33 @@ defmodule Store.FileSystem do
     >>> store(@orders_filename, deps)
     >>> send_ok_response(order_id)
 
-  @spec syndicate_exists?(Store.syndicate) :: Store.syndicate_exists_response
+  @spec syndicate_exists?(Type.syndicate) :: Type.syndicate_exists_response
   def syndicate_exists?(syndicate, deps \\ @default_deps), do:
     @products_filename
     |> read_syndicate_data(syndicate, deps[:read_fn])
     |> syndicate_found?()
 
-  @spec save_credentials(Store.login_info) :: Store.save_credentials_response
+  @spec save_credentials(Type.login_info) :: Type.save_credentials_response
   def save_credentials(login_info, deps \\ @default_deps), do:
     login_info
     |> Jason.encode()
     >>> store(@setup_filename, deps)
     >>> send_ok_response(login_info)
 
+  @spec get_credentials :: Type.get_credentials_response
+  def get_credentials(deps \\ @default_deps), do:
+    File.cwd!()
+    |> Path.join(@setup_filename)
+    |> deps[:read_fn].()
+    >>> Jason.decode()
+
   ###########
   # Private #
   ###########
 
   @spec read_syndicate_data(
-      filename :: String.t, Store.syndicate, file_read_fn :: function
-    ) :: {:ok, [Store.order_id | [Store.product]]} | {:error, any}
+      filename :: String.t, Type.syndicate, file_read_fn :: function
+    ) :: {:ok, [Type.order_id | [Type.product]]} | {:error, any}
   defp read_syndicate_data(filename, syndicate, read_fn) do
     File.cwd!()
     |> Path.join(filename)
@@ -74,8 +81,8 @@ defmodule Store.FileSystem do
     >>> find_syndicate(syndicate)
   end
 
-  @spec find_syndicate(Store.all_orders_store, Store.syndicate) ::
-    {:ok, [Store.order_id] | [Store.product]} | {:error, :syndicate_not_found}
+  @spec find_syndicate(Type.all_orders_store, Type.syndicate) ::
+    {:ok, [Type.order_id] | [Type.product]} | {:error, :syndicate_not_found}
   defp find_syndicate(orders, syndicate) when is_map_key(orders, syndicate), do:
     {:ok, Map.get(orders, syndicate)}
 
@@ -86,13 +93,13 @@ defmodule Store.FileSystem do
   defp decode_orders_or_empty_orders(""), do: {:ok, %{}}
   defp decode_orders_or_empty_orders(content), do: Jason.decode(content)
 
-  @spec add_order(Store.all_orders_store, Store.order_id, Store.syndicate)
-    :: {:ok, Store.all_orders_store}
+  @spec add_order(Type.all_orders_store, Type.order_id, Type.syndicate)
+    :: {:ok, Type.all_orders_store}
   defp add_order(all_orders, order_id, syndicate), do:
     {:ok, Map.put(all_orders, syndicate, Map.get(all_orders, syndicate, []) ++ [order_id])}
 
-  @spec remove_order(Store.all_orders_store, Store.order_id, Store.syndicate)
-    :: {:ok, Store.all_orders_store}
+  @spec remove_order(Type.all_orders_store, Type.order_id, Type.syndicate)
+    :: {:ok, Type.all_orders_store}
   defp remove_order(all_orders, order_id, syndicate) do
     updated_syndicate_orders =
       all_orders
@@ -110,7 +117,7 @@ defmodule Store.FileSystem do
   @spec send_ok_response(saved_data :: any, response_data :: any) :: {:ok, response_data :: any}
   defp send_ok_response(_saved_data, response_data), do: {:ok, response_data}
 
-  @spec store(any, String.t, Store.deps) :: {:ok, any} | {:error, :file.posix}
+  @spec store(any, String.t, Type.deps) :: {:ok, any} | {:error, :file.posix}
   defp store(data, filename, deps) do
     File.cwd!
     |> Path.join(filename)

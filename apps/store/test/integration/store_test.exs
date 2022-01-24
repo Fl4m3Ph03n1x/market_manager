@@ -48,6 +48,11 @@ defmodule StoreTest do
 
   defp delete_current_orders_file, do: File.rm!(@current_orders_file)
 
+  defp create_setup_file do
+    content = Jason.encode!(%{"cookie" => "a_cookie", "token" => "a_token"})
+    File.write(@setup_file, content)
+  end
+
   defp delete_setup_file, do: File.rm!(@setup_file)
 
   ##########
@@ -161,6 +166,25 @@ defmodule StoreTest do
 
       # Act
       actual = Store.save_credentials(login_info)
+      expected = {:ok, login_info}
+
+      # Assert
+      assert actual == expected
+    end
+  end
+
+  describe "get_credentials/0" do
+    setup do
+      create_setup_file()
+      on_exit(&delete_setup_file/0)
+    end
+
+    test "returns login_info if login_info" do
+      # Arrange
+      login_info = %{"token" => "a_token", "cookie" => "a_cookie"}
+
+      # Act
+      actual = Store.get_credentials()
       expected = {:ok, login_info}
 
       # Assert

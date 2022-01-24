@@ -260,4 +260,37 @@ defmodule MarketManager.Store.FileSystemTest do
     end
 
   end
+
+  describe "get_creadentials/0" do
+    test "returns login_info" do
+      # Arrange
+      login_info = %{"token" => "a_token", "cookie" => "a_cookie"}
+
+      deps = [
+        read_fn: fn _file_name -> {:ok, '{"cookie":"a_cookie","token":"a_token"}'} end
+      ]
+
+      # Act
+      actual = FileSystem.get_credentials(deps)
+      expected = {:ok, login_info}
+
+      # Assert
+      assert actual == expected
+    end
+
+    test "returns error if reading file fails" do
+      # Arrange
+      deps = [
+        read_fn: fn _file_name -> {:error, :enoent} end
+      ]
+
+      # Act
+      actual = FileSystem.get_credentials(deps)
+      expected = {:error, :enoent}
+
+      # Assert
+      assert actual == expected
+    end
+
+  end
 end
