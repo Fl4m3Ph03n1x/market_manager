@@ -11,17 +11,21 @@ defmodule WebInterface.Commands do
     manager: Manager
   }
 
-  @type command_id :: :activate | :deactivate
+  @type command_id :: :activate | :deactivate | :authenticate
   @type command :: %{
-          name: String.t(),
-          description: String.t(),
+          name: String.t,
+          description: String.t,
           id: command_id
         }
   @type dependencies :: %{manager: module}
   @type request :: %{
           command: command_id,
-          strategy: Manager.strategy(),
-          syndicates: [Manager.syndicate()]
+          strategy: Manager.strategy,
+          syndicates: [Manager.syndicate]
+        } | %{
+          command: command_id,
+          cookie: String.t,
+          token: String.t
         }
 
   @spec list_commands :: [command]
@@ -41,6 +45,14 @@ defmodule WebInterface.Commands do
           Deactivating a syndicate removes all sell orders from waframe.market for the given syndicate.
         ",
         id: :deactivate
+      },
+      %{
+        name: "Authenticate",
+        description: "
+          Saving authentication information will allow this application to make requests in your behalf.
+          It is a required step for the application to work.
+        ",
+        id: :authenticate
       }
     ]
 
@@ -61,6 +73,10 @@ defmodule WebInterface.Commands do
       synds
       |> Enum.map(&Syndicates.get_id/1)
       |> Enum.map(&manager.deactivate/1)
+
+  def execute(%{command: :authenticate, cookie: cookie, token: token}, %{manager: manager}),
+    do:
+      manager.authenticate(%{"cookie" => cookie, "token" => token})
 
   @spec get_command(atom) :: command | nil
   def get_command(id),

@@ -74,6 +74,15 @@ defmodule WebInterface.Live.Window do
         |> Commands.execute()
         |> handle_commands_response(socket)
 
+  def handle_event("authenticate", %{"cookie" => cookie, "token" => token}, socket), do:
+    %{
+      command: :authenticate,
+      cookie: cookie,
+      token: token
+    }
+    |> Commands.execute()
+    |> handle_commands_response(socket)
+
   def handle_event("filters", %{"strategy" => strat, "syndicates" => synds}, socket) do
     new_strategy =
       strat
