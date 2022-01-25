@@ -63,6 +63,12 @@ body {
     border-radius: 1rem;
 }
 
+/* Window */
+
+div #commands {
+  height: 67rem;
+}
+
 /* Sidebar */
 
 .sidebar {

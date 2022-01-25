@@ -22,7 +22,7 @@ defmodule WebInterface.Application do
          app: :web_interface,
          id: WebInterface,
          title: "Web Interface",
-         size: {900, 920},
+         size: {920, 980},
          menubar: MenuBar,
          url: &WebInterface.Endpoint.url/0
        ]}

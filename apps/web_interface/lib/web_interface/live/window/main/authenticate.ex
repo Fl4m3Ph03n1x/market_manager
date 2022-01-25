@@ -23,13 +23,16 @@ defmodule WebInterface.Live.Window.Main.Authenticate do
         <form phx-submit="authenticate">
           <div class="intro">
             <h3>Authentication</h3>
-            <p>Fill the Cookie and token. Lorem Ipsum.</p>
+            <p>
+              Fill the Cookie and token.
+              This information expires from time to time and it is normal if you need to fill these forms again in the future.
+            </p>
           </div>
           <label for="cookie">Cookie: </label>
-          <input type="text" id="cookie" name="cookie"/>
+          <textarea id="cookie" name="cookie"/>
 
           <label for="token">Token: </label>
-          <input type="text" id="token" name="token"/>
+          <textarea id="token" name="token"/>
 
           <button type="submit">Save</button>
         </form>
