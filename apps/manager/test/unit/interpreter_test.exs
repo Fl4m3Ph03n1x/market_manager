@@ -540,10 +540,17 @@ defmodule Manager.InterpreterTest do
           [
             save_credentials: fn login_info -> {:ok, login_info} end,
           ]
+        },
+        {
+          AuctionHouse,
+          [],
+          [
+            update_credentials: fn credentials -> {:ok, credentials} end,
+          ]
         }
       ]) do
         # Arrange
-        deps = [store: Store]
+        deps = [store: Store, auction_house: AuctionHouse]
         login_info = %{"token" => "123", "cookie" => "abc"}
 
         # Act
@@ -553,6 +560,7 @@ defmodule Manager.InterpreterTest do
         # Assert
         assert actual == expected
 
+        assert_called AuctionHouse.update_credentials(login_info)
         assert_called Store.save_credentials(login_info)
       end
     end
@@ -565,10 +573,17 @@ defmodule Manager.InterpreterTest do
           [
             save_credentials: fn login_info -> {:ok, login_info} end,
           ]
+        },
+        {
+          AuctionHouse,
+          [],
+          [
+            update_credentials: fn credentials -> {:ok, credentials} end,
+          ]
         }
       ]) do
         # Arrange
-        deps = [store: Store]
+        deps = [store: Store, auction_house: AuctionHouse]
         login_info = %{"cookie" => "abc"}
 
         # Act
@@ -578,6 +593,7 @@ defmodule Manager.InterpreterTest do
         # Assert
         assert actual == expected
 
+        assert_not_called AuctionHouse.update_credentials(login_info)
         assert_not_called Store.save_credentials(login_info)
       end
     end
@@ -590,10 +606,17 @@ defmodule Manager.InterpreterTest do
           [
             save_credentials: fn login_info -> {:ok, login_info} end,
           ]
+        },
+        {
+          AuctionHouse,
+          [],
+          [
+            update_credentials: fn credentials -> {:ok, credentials} end,
+          ]
         }
       ]) do
         # Arrange
-        deps = [store: Store]
+        deps = [store: Store, auction_house: AuctionHouse]
         login_info = %{}
 
         # Act
@@ -603,6 +626,7 @@ defmodule Manager.InterpreterTest do
         # Assert
         assert actual == expected
 
+        assert_not_called AuctionHouse.update_credentials(login_info)
         assert_not_called Store.save_credentials(login_info)
       end
     end
@@ -615,10 +639,17 @@ defmodule Manager.InterpreterTest do
           [
             save_credentials: fn _login_info -> {:error, :enoent} end,
           ]
+        },
+        {
+          AuctionHouse,
+          [],
+          [
+            update_credentials: fn credentials -> {:ok, credentials} end,
+          ]
         }
       ]) do
         # Arrange
-        deps = [store: Store]
+        deps = [store: Store, auction_house: AuctionHouse]
         login_info = %{"token" => "123", "cookie" => "abc"}
 
         # Act
@@ -628,7 +659,41 @@ defmodule Manager.InterpreterTest do
         # Assert
         assert actual == expected
 
+        assert_called AuctionHouse.update_credentials(login_info)
         assert_called Store.save_credentials(login_info)
+      end
+    end
+
+    test "Returns error if it failed to update state in AuctionHouse" do
+      with_mocks([
+        {
+          Store,
+          [],
+          [
+            save_credentials: fn _login_info -> {:error, :enoent} end,
+          ]
+        },
+        {
+          AuctionHouse,
+          [],
+          [
+            update_credentials: fn _credentials -> {:error, :timeout} end,
+          ]
+        }
+      ]) do
+        # Arrange
+        deps = [store: Store, auction_house: AuctionHouse]
+        login_info = %{"token" => "123", "cookie" => "abc"}
+
+        # Act
+        actual = Interpreter.authenticate(login_info, deps)
+        expected = {:error, :unable_to_save_authentication, {:timeout, login_info}}
+
+        # Assert
+        assert actual == expected
+
+        assert_called AuctionHouse.update_credentials(login_info)
+        assert_not_called Store.save_credentials(login_info)
       end
     end
   end
