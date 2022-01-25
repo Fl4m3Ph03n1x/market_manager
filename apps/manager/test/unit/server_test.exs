@@ -14,7 +14,7 @@ defmodule Manager.ServerTest do
     assert %{
       id: Server,
       start: {Server, :start_link, [nil]},
-      type: :supervisor} =
-         Manager.child_spec(nil)
+      type: :supervisor
+    } = Manager.child_spec(nil)
   end
 end
