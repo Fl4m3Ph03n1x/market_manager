@@ -8,6 +8,7 @@ defmodule Manager.Server do
   use Supervisor
 
   alias AuctionHouse
+  alias Store
 
   ##############
   # Public API #
@@ -24,8 +25,10 @@ defmodule Manager.Server do
   @impl Supervisor
   @spec init(nil) :: {:ok, {:supervisor.sup_flags, [:supervisor.child_spec]}} | :ignore
   def init(nil) do
+    credentials = Store.get_credentials()
+
     children = [
-      AuctionHouse
+      {AuctionHouse, credentials}
     ]
     Supervisor.init(children, strategy: :one_for_one)
   end

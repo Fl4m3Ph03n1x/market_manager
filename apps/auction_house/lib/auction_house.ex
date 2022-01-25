@@ -21,6 +21,9 @@ defmodule AuctionHouse do
   @spec get_all_orders(Type.item_name) :: Type.get_all_orders_response
   defdelegate get_all_orders(item_name), to: Server
 
+  @spec update_credentials(Type.credentials) :: Type.update_credentials_response
+  defdelegate update_credentials(credentials), to: Server
+
   @spec child_spec(any) :: %{
           :id => any,
           :start => {atom, atom, [any]},

@@ -8,7 +8,7 @@ defmodule AuctionHouseTest do
   @test_port 8082
 
   setup do
-    start_supervised({Server, %{"cookie" => nil, "token" => nil}})
+    start_supervised({Server,{:ok, %{"cookie" => nil, "token" => nil}}})
     bypass = Bypass.open(port: @test_port)
     %{bypass: bypass}
   end
@@ -196,6 +196,23 @@ defmodule AuctionHouseTest do
           "quantity" => 2
         }
       ]}
+
+      # Assert
+      assert actual == expected
+    end
+  end
+
+  describe "update_credentials/1" do
+    test "returns {:ok, credentials} when the update is successfull" do
+      # Arrange
+      credentials = %{
+        "cookie" => "a_cookie",
+        "token" => "a_token"
+      }
+
+      # Act
+      actual = AuctionHouse.update_credentials(credentials)
+      expected = {:ok, credentials}
 
       # Assert
       assert actual == expected

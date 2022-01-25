@@ -13,7 +13,8 @@ defmodule AuctionHouse.Server do
   ##############
 
   @spec start_link(map) :: :ignore | {:error, any} | {:ok, pid}
-  def start_link(credentials), do: GenServer.start_link(__MODULE__, credentials, name: __MODULE__)
+  def start_link(credentials), do:
+    GenServer.start_link(__MODULE__, credentials, name: __MODULE__)
 
   @spec get_all_orders(Type.item_name) :: Type.get_all_orders_response
   def get_all_orders(item_name), do:
@@ -27,13 +28,17 @@ defmodule AuctionHouse.Server do
   def delete_order(order_id), do:
     GenServer.call(__MODULE__, {:delete_order, order_id})
 
+  @spec update_credentials(Type.credentials) :: Type.update_credentials_response
+  def update_credentials(credentials), do:
+    GenServer.call(__MODULE__, {:update_credentials, credentials})
+
   #############
   # Callbacks #
   #############
 
   @impl GenServer
-  @spec init(map) :: {:ok, map, {:continue, :setup_queue}}
-  def init(%{"cookie" => cookie, "token" => token}) do
+  @spec init({:ok, map}) :: {:ok, map, {:continue, :setup_queue}}
+  def init({:ok, %{"cookie" => cookie, "token" => token}}) do
     Process.flag(:trap_exit, true)
     {
       :ok,
@@ -77,6 +82,10 @@ defmodule AuctionHouse.Server do
   @impl GenServer
   def handle_call({:get_all_orders, item_name}, _from, deps), do:
     {:reply, HTTPClient.get_all_orders(item_name, deps), deps}
+
+  @impl GenServer
+  def handle_call({:update_credentials, credentials = %{"cookie" => cookie, "token" => token}}, _from, deps), do:
+    {:reply, {:ok, credentials}, deps |> Map.put(:cookie, cookie) |> Map.put(:token, token)}
 
   @impl GenServer
   @spec terminate(atom, any) :: any

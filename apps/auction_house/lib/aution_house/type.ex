@@ -30,6 +30,11 @@ defmodule AuctionHouse.Type do
     }
   }
 
+  @type credentials :: %{
+    (cookie :: String.t) => String.t,
+    (token :: String.t) => String.t
+  }
+
   #############
   # Responses #
   #############
@@ -37,5 +42,6 @@ defmodule AuctionHouse.Type do
   @type place_order_response :: {:ok, order_id} | {:error, atom, order}
   @type delete_order_response :: {:ok, order_id} | {:error, atom, order_id}
   @type get_all_orders_response :: {:ok, [order_info]} | {:error, atom, item_name}
+  @type update_credentials_response :: {:ok, credentials}
 
 end
