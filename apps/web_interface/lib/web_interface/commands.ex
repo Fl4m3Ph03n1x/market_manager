@@ -5,6 +5,7 @@ defmodule WebInterface.Commands do
   """
 
   alias Manager
+  alias Manager.Type, as: ManagerTypes
   alias WebInterface.Syndicates
 
   @default_deps %{
@@ -20,8 +21,8 @@ defmodule WebInterface.Commands do
   @type dependencies :: %{manager: module}
   @type request :: %{
           command: command_id,
-          strategy: Manager.strategy,
-          syndicates: [Manager.syndicate]
+          strategy: ManagerTypes.strategy,
+          syndicates: [ManagerTypes.syndicate]
         } | %{
           command: command_id,
           cookie: String.t,

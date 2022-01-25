@@ -5,36 +5,8 @@ defmodule Manager do
   and you need to talk to MarketManager, this is who you call, the public API.
   """
 
-  alias Manager.{Interpreter, PriceAnalyst, Server}
-  alias Store
-
-  ##########
-  # Types  #
-  ##########
-
-  @type syndicate :: String.t
-  @type strategy :: atom
-  @type error_reason :: atom
-  @type order_id :: String.t
-  @type item_id :: String.t
-
-  #############
-  # Responses #
-  #############
-
-  @type activate_response ::
-    {:ok, :success}
-    | {:partial_success, [{:error, error_reason, item_id}, ...]}
-    | {:error, :unable_to_place_requests, [{:error, error_reason, item_id}]}
-
-  @type deactivate_response ::
-    {:ok, :success}
-    | {:partial_success, [{:error, error_reason, order_id}, ...]}
-    | {:error, :unable_to_delete_orders, [{:error, error_reason, order_id}]}
-
-  @type authenticate_response ::
-    {:ok, Store.login_info}
-    | {:error, :unable_to_save_authenticate, [{:error, :missing_token | :missing_cookie | :file.posix, Store.login_info}]}
+  alias Manager.{Interpreter, PriceAnalyst, Server, Type}
+  alias Store.Type, as: StoreTypes
 
   ##########
   # Public #
@@ -52,7 +24,7 @@ defmodule Manager do
   {:ok, :success}
   ```
   """
-  @spec activate(syndicate, strategy) :: activate_response
+  @spec activate(Type.syndicate, Type.strategy) :: Type.activate_response
   defdelegate activate(syndicate, strategy), to: Interpreter
 
   @doc """
@@ -65,7 +37,7 @@ defmodule Manager do
   {:ok, :success}
   ```
   """
-  @spec deactivate(syndicate) :: deactivate_response
+  @spec deactivate(Type.syndicate) :: Type.deactivate_response
   defdelegate deactivate(syndicate), to: Interpreter
 
   @doc """
@@ -114,7 +86,7 @@ defmodule Manager do
   {:error, :enoent}
   ```
   """
-  @spec valid_syndicate?(syndicate) :: Store.syndicate_exists_response
+  @spec valid_syndicate?(Type.syndicate) :: StoreTypes.syndicate_exists_response
   defdelegate valid_syndicate?(syndicate), to: Store, as: :syndicate_exists?
 
   @doc """
@@ -138,8 +110,8 @@ defmodule Manager do
   {:error, :unable_to_save_authentication, {:enoent, %{"token" => "abc", "cookie" => "123"}}}
   ```
   """
-  @spec authenticate(Store.login_info) :: authenticate_response
-  defdelegate authenticate(data), to: Interpreter
+  @spec authenticate(Type.credentials) :: Type.authenticate_response
+  defdelegate authenticate(credentials), to: Interpreter
 
   @doc false
   @spec child_spec(any) :: %{
@@ -151,4 +123,5 @@ defmodule Manager do
     optional(:type) => :supervisor | :worker
   }
   defdelegate child_spec(args), to: Server
+
 end

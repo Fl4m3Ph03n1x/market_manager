@@ -4,11 +4,11 @@ defmodule WebInterface.Syndicates do
   to work with them.
   """
 
-  alias Manager
+  alias Manager.Type, as: ManagerTypes
 
   @type syndicate_info :: %{
           (name :: atom) => String.t(),
-          (id :: atom) => Manager.syndicate()
+          (id :: atom) => ManagerTypes.syndicate()
         }
 
   @spec list_syndicates :: [syndicate_info]
@@ -54,6 +54,6 @@ defmodule WebInterface.Syndicates do
   @spec by_id(syndicate_info, String.t()) :: boolean
   defp by_id(%{id: synd_id}, id), do: synd_id == id
 
-  @spec get_id(syndicate_info) :: Manager.syndicate() | nil
+  @spec get_id(syndicate_info) :: ManagerTypes.syndicate() | nil
   def get_id(syndicate), do: Map.get(syndicate, :id)
 end

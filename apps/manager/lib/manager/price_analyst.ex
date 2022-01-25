@@ -6,9 +6,9 @@ defmodule Manager.PriceAnalyst do
   on getting more profit.
   """
 
-  alias AuctionHouse
-  alias Manager
-  alias Store
+  alias AuctionHouse.Type, as: AuctionHouseTypes
+  alias Manager.Type
+  alias Store.Type, as: StoreTypes
 
   @strategies [
     "top_five_average",
@@ -24,7 +24,7 @@ defmodule Manager.PriceAnalyst do
   @spec valid_strategy?(String.t) :: boolean
   def valid_strategy?(strategy), do: strategy in @strategies
 
-  @spec calculate_price(Store.product, [AuctionHouse.order_info], Manager.strategy) :: non_neg_integer
+  @spec calculate_price(StoreTypes.product, [AuctionHouseTypes.order_info], Type.strategy) :: non_neg_integer
   def calculate_price(product, all_orders, strategy), do:
     all_orders
     |> pre_process_orders()
@@ -41,25 +41,25 @@ defmodule Manager.PriceAnalyst do
     |> Enum.filter(&valid_order?/1)
     |> Enum.sort(&price_ascending/2)
 
-  @spec valid_order?(AuctionHouse.order_info) :: boolean
+  @spec valid_order?(AuctionHouseTypes.order_info) :: boolean
   defp valid_order?(order), do: visible?(order) and user_ingame?(order) and platform_pc?(order) and sell_order?(order)
 
-  @spec visible?(AuctionHouse.order_info) :: boolean
+  @spec visible?(AuctionHouseTypes.order_info) :: boolean
   defp visible?(order), do: Map.get(order, "visible") == true
 
-  @spec user_ingame?(AuctionHouse.order_info) :: boolean
+  @spec user_ingame?(AuctionHouseTypes.order_info) :: boolean
   defp user_ingame?(order), do: get_in(order, ["user", "status"]) == "ingame"
 
-  @spec platform_pc?(AuctionHouse.order_info) :: boolean
+  @spec platform_pc?(AuctionHouseTypes.order_info) :: boolean
   defp platform_pc?(order), do: Map.get(order, "platform") == "pc"
 
-  @spec sell_order?(AuctionHouse.order_info) :: boolean
+  @spec sell_order?(AuctionHouseTypes.order_info) :: boolean
   defp sell_order?(order), do: Map.get(order, "order_type") == "sell"
 
-  @spec price_ascending(AuctionHouse.order_info, AuctionHouse.order_info) :: boolean
+  @spec price_ascending(AuctionHouseTypes.order_info, AuctionHouseTypes.order_info) :: boolean
   defp price_ascending(order1, order2), do: Map.get(order1, "platinum") < Map.get(order2, "platinum")
 
-  @spec apply_strategy([AuctionHouse.order_info], Manager.strategy) :: number
+  @spec apply_strategy([AuctionHouseTypes.order_info], Type.strategy) :: number
   defp apply_strategy([], _strategy), do: 0
 
   defp apply_strategy([%{"platinum" => price}], _strategy), do: price
@@ -88,16 +88,16 @@ defmodule Manager.PriceAnalyst do
     |> Enum.map(&platinum_minus_one/1)
     |> List.first()
 
-  @spec platinum(AuctionHouse.order_info) :: non_neg_integer
+  @spec platinum(AuctionHouseTypes.order_info) :: non_neg_integer
   defp platinum(order), do: Map.get(order, "platinum")
 
-  @spec platinum_minus_one(AuctionHouse.order_info) :: integer
+  @spec platinum_minus_one(AuctionHouseTypes.order_info) :: integer
   defp platinum_minus_one(order), do: Map.get(order, "platinum") - 1
 
   @spec average([number]) :: number
   defp average(prices), do: Enum.sum(prices) / length(prices)
 
-  @spec apply_boundaries(non_neg_integer, Store.product) :: non_neg_integer
+  @spec apply_boundaries(non_neg_integer, StoreTypes.product) :: non_neg_integer
   defp apply_boundaries(price, %{"default_price" => default}) when price == 0, do: default
   defp apply_boundaries(price, %{"min_price" => min}) when price < min, do: min
   defp apply_boundaries(price, _product), do: price

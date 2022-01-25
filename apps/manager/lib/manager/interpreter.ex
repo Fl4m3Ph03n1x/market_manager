@@ -7,9 +7,9 @@ defmodule Manager.Interpreter do
 
   use Rop
 
-  alias Manager
-  alias Manager.PriceAnalyst
+  alias Manager.{PriceAnalyst, Type}
   alias Store
+  alias Store.Type, as: StoreTypes
 
   @type order_request :: %{
     (order_type :: String.t) => String.t,
@@ -39,8 +39,8 @@ defmodule Manager.Interpreter do
   @spec valid_action?(String.t) :: boolean
   def valid_action?(action), do: action in @actions
 
-  @spec activate(Manager.syndicate, Manager.strategy, keyword) ::
-    Manager.activate_response
+  @spec activate(Type.syndicate, Type.strategy, keyword) ::
+    Type.activate_response
   def activate(syndicate, strategy, deps \\ @default_deps), do:
     syndicate
     |> list_products(deps[:store])
@@ -49,8 +49,8 @@ defmodule Manager.Interpreter do
     |> save_orders(syndicate, deps[:store])
     |> to_human_response(:place)
 
-  @spec deactivate(Manager.syndicate, keyword) ::
-    Manager.deactivate_response
+  @spec deactivate(Type.syndicate, keyword) ::
+    Type.deactivate_response
   def deactivate(syndicate, deps \\ @default_deps), do:
     syndicate
     |> list_orders(deps[:store])
@@ -59,22 +59,22 @@ defmodule Manager.Interpreter do
     |> delete_orders(syndicate, deps[:store])
     |> to_human_response(:delete)
 
-  @spec authenticate(Store.login_info, keyword) :: Manager.authenticate_response
+  @spec authenticate(Type.credentials, keyword(module)) :: Type.authenticate_response
   def authenticate(info, deps \\ @default_deps), do:
     info
     |> validate_login_info()
-    >>> save_credentials(deps[:store])
+    >>> save_credentials(deps)
     |> handle_authenticate_response(info)
 
   ###########
   # Private #
   ###########
 
-  @spec list_products(Manager.syndicate, deps :: module)
-    :: Store.list_products_response
+  @spec list_products(Type.syndicate, deps :: module)
+    :: StoreTypes.list_products_response
   defp list_products(syndicate, store), do: store.list_products(syndicate)
 
-  @spec calculate_prices([Store.product], Manager.strategy, deps :: module) :: [Store.product]
+  @spec calculate_prices([StoreTypes.product], Type.strategy, deps :: module) :: [StoreTypes.product]
   defp calculate_prices(products, strategy, auction_house_api), do:
     Enum.map(products, &update_product_price(&1, strategy, auction_house_api))
 
@@ -85,25 +85,25 @@ defmodule Manager.Interpreter do
     |> calculate_price(strategy, product)
     |> update_price(product)
 
-  @spec calculate_price(any, Manager.strategy, Store.product) :: non_neg_integer
+  @spec calculate_price(any, Type.strategy, StoreTypes.product) :: non_neg_integer
   defp calculate_price({:ok, all_orders}, strategy, product), do:
     PriceAnalyst.calculate_price(product, all_orders, strategy)
 
   defp calculate_price(_error, _strategy, product), do:
     Map.get(product, "default_price")
 
-  @spec update_price(non_neg_integer, Store.product) :: map
+  @spec update_price(non_neg_integer, StoreTypes.product) :: map
   defp update_price(price, product), do: Map.put(product, "price", price)
 
-  @spec make_place_requests([Store.product], deps :: module)
-    :: {[{:ok, Manager.order_id}], [{:error, atom, Manager.order_id}]}
+  @spec make_place_requests([StoreTypes.product], deps :: module)
+    :: {[{:ok, Type.order_id}], [{:error, atom, Type.order_id}]}
   defp make_place_requests(products, auction_house_api), do:
     products
     |> Enum.map(&build_order/1)
     |> Enum.map(&auction_house_api.place_order/1)
     |> Enum.split_with(&status_ok?/1)
 
-  @spec build_order(Store.product) :: order_request | order_request_without_rank
+  @spec build_order(StoreTypes.product) :: order_request | order_request_without_rank
   defp build_order(product) do
     case Map.get(product, "rank") do
       "n/a" ->
@@ -126,10 +126,10 @@ defmodule Manager.Interpreter do
   end
 
   @spec save_orders(
-    {[{:ok, Manager.order_id}], [{:error, atom, Manager.order_id}]},
-    Manager.syndicate,
+    {[{:ok, Type.order_id}], [{:error, atom, Type.order_id}]},
+    Type.syndicate,
     deps :: module
-  ) :: {[{:ok, Manager.order_id}], [{:error, atom, Manager.order_id} | {:error, any}]}
+  ) :: {[{:ok, Type.order_id}], [{:error, atom, Type.order_id} | {:error, any}]}
   defp save_orders({success_resps, failed_resps}, syndicate, store_api) do
     {successfull_saves, failed_saves} =
       success_resps
@@ -140,21 +140,21 @@ defmodule Manager.Interpreter do
     {successfull_saves, failed_resps ++ failed_saves}
   end
 
-  @spec list_orders(Manager.syndicate, deps :: module)
-    :: Store.list_orders_response
+  @spec list_orders(Type.syndicate, deps :: module)
+    :: StoreTypes.list_orders_response
   defp list_orders(syndicate, store), do: store.list_orders(syndicate)
 
-  @spec make_delete_requests([Manager.order_id], deps :: module) ::
-    {[{:ok, Manager.order_id}], [{:error, atom, Manager.order_id}]}
+  @spec make_delete_requests([Type.order_id], deps :: module) ::
+    {[{:ok, Type.order_id}], [{:error, atom, Type.order_id}]}
   defp make_delete_requests(order_ids, auction_house_api), do:
     order_ids
     |> Enum.map(&auction_house_api.delete_order/1)
     |> Enum.split_with(&status_ok?/1)
 
   @spec check_non_existent_orders(
-    {[{:ok, Manager.order_id}], [{:error, atom, Manager.order_id}]}
-  ) :: {[{:ok, Manager.order_id} | {:error, :order_non_existent, Manager.order_id}],
-        [{:error, atom, Manager.order_id}]}
+    {[{:ok, Type.order_id}], [{:error, atom, Type.order_id}]}
+  ) :: {[{:ok, Type.order_id} | {:error, :order_non_existent, Type.order_id}],
+        [{:error, atom, Type.order_id}]}
   defp check_non_existent_orders({success_resps, failed_resps}) do
     non_existent_orders =
       Enum.filter(failed_resps, &order_non_existent?/1)
@@ -163,11 +163,11 @@ defmodule Manager.Interpreter do
   end
 
   @spec delete_orders(
-    {[{:ok, Manager.order_id} | {:error, :order_non_existent, Manager.order_id}],
-    [{:error, atom, Manager.order_id}]},
-    Manager.syndicate,
+    {[{:ok, Type.order_id} | {:error, :order_non_existent, Type.order_id}],
+    [{:error, atom, Type.order_id}]},
+    Type.syndicate,
     deps :: keyword
-  ) :: {[{:ok, Manager.order_id}], [{:error, atom, Manager.order_id} | {:error, any}]}
+  ) :: {[{:ok, Type.order_id}], [{:error, atom, Type.order_id} | {:error, any}]}
   defp delete_orders({success_resps, failed_resps}, syndicate, store_api) do
     {successfull_deletions, failed_deletions} =
       success_resps
@@ -183,9 +183,9 @@ defmodule Manager.Interpreter do
   defp status_ok?(_order), do: false
 
   @spec get_order_id(
-    {:ok, Manager.order_id}
-    | {:error, :order_non_existent, Manager.order_id}
-  ) :: Manager.order_id
+    {:ok, Type.order_id}
+    | {:error, :order_non_existent, Type.order_id}
+  ) :: Type.order_id
   defp get_order_id({:ok, order_id}), do: order_id
   defp get_order_id({:error, :order_non_existent, order_id}), do: order_id
 
@@ -193,7 +193,7 @@ defmodule Manager.Interpreter do
   defp order_non_existent?({:error, :order_non_existent, _order_id}), do: true
   defp order_non_existent?(_), do: false
 
-  @spec validate_login_info(Store.login_info) :: {:ok, Store.login_info} | {:error, {:missing_keys, [String.t]}}
+  @spec validate_login_info(StoreTypes.login_info) :: {:ok, StoreTypes.login_info} | {:error, {:missing_keys, [String.t]}}
   defp validate_login_info(info) do
     login_keys =
       info
@@ -210,24 +210,27 @@ defmodule Manager.Interpreter do
     end
   end
 
-  @spec save_credentials(Store.login_info, module) :: Store.save_credentials_response
-  defp save_credentials(info, store), do: store.save_credentials(info)
+  @spec save_credentials(Type.credentials, keyword) :: {:ok, Type.credentials} | {:error, any}
+  defp save_credentials(info, [store: store, auction_house: auction_house]), do:
+    info
+    |> auction_house.update_credentials()
+    >>> store.save_credentials()
 
   @spec to_human_response({[any], [any]}, :delete | :place) ::
     {:ok, :success}
     | {
         :partial_success,
-        [failed_orders: [{:error, Manager.error_reason, Manager.order_id | Manager.item_id}, ...]]
+        [failed_orders: [{:error, Type.error_reason, Type.order_id | Type.item_id}, ...]]
       }
     | {
         :error,
         :unable_to_place_requests,
-        [{:error, Manager.error_reason, Manager.order_id | Manager.item_id}]
+        [{:error, Type.error_reason, Type.order_id | Type.item_id}]
       }
     | {
         :error,
         :unable_to_delete_orders,
-        [{:error, Manager.error_reason, Manager.order_id | Manager.item_id}]
+        [{:error, Type.error_reason, Type.order_id | Type.item_id}]
       }
   defp to_human_response({successfull, failed}, :place) when successfull == [], do:
     {:error, :unable_to_place_requests, failed}
@@ -241,14 +244,14 @@ defmodule Manager.Interpreter do
   defp to_human_response({_successfull, failed}, _op), do:
     {:partial_success, [failed_orders: failed]}
 
-  @spec handle_authenticate_response({:ok, Store.login_info} | {:error, {:missing_keys, [String.t]} | :file.posix}, Store.login_info) ::
-  {:ok, Store.login_info}
-  | {:error, :unable_to_save_authentication, {:missing_mandatory_keys, [String.t], Store.login_info} | {:file.posix, Store.login_info}}
+  @spec handle_authenticate_response({:ok, Type.credentials} | {:error, {:missing_keys, [String.t]} | :file.posix}, Type.credentials) ::
+  {:ok, Type.credentials}
+  | {:error, :unable_to_save_authentication, {:missing_mandatory_keys, [String.t], Type.credentials} | {:file.posix, Type.credentials}}
   defp handle_authenticate_response({:error, {:missing_keys, keys}}, login_info), do:
     {:error, :unable_to_save_authentication, {:missing_mandatory_keys, keys, login_info}}
 
   defp handle_authenticate_response({:error, reason}, login_info), do:
     {:error, :unable_to_save_authentication, {reason, login_info}}
 
-  defp handle_authenticate_response(ok_response, _login_info), do: ok_response
+  defp handle_authenticate_response({:ok, _credentials} = ok_response, _login_info), do: ok_response
 end
