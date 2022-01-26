@@ -144,10 +144,10 @@ with a single purpose in mind:
 
 ![dependencies-graph](./deps_graph.svg)
 
-`web_interface` is a Phoenix application that holds all the code for the front-end. 
-`manager` is the core of the application, the entry point for all user requests. It talks to the rest of the layers. 
-`auction_house` is the app responsible for understanding and making requests to the given auction house. In this case, warframe market.
-`store` is the persistency layer. It saves your data and remembers what is being selled or not.
+- `web_interface` is a Phoenix application that holds all the code for the front-end. 
+- `manager` is the core of the application, the entry point for all user requests. It talks to the rest of the layers. 
+- `auction_house` is the app responsible for understanding and making requests to the given auction house. In this case, warframe market.
+- `store` is the persistency layer. It saves your data and remembers what is being selled or not.
 
 For more information, feel free to read the README file of each application. 
 
