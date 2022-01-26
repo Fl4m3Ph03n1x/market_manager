@@ -126,7 +126,7 @@ This guide describes a developer setup for Windows.
 - wxWidget: https://www.wxwidgets.org/downloads/
 - While it doesn't require a lot of memory to run, it does require a lot of memory to compile, at least 4GB.
 - Setup powershell environment variables `$env:CC="gcc"` and `$env:MAKE="make"`
-- An editor of your choise. I use VScode with some plugins and Fira Code font: https://github.com/tonsky/FiraCode
+- An editor of your choice. I use VScode with some plugins and the `Fira Code` font: https://github.com/tonsky/FiraCode
 
 ## How to run it
 
@@ -139,7 +139,7 @@ After the initial setup, the following commands are used to get started:
 
 ## Architecture
 
-MarketManager is divided into multiple small applications/libraries, ech one 
+MarketManager is divided into multiple small applications/libraries, each one 
 with a single purpose in mind:
 
 ![dependencies-graph](./deps_graph.svg)
@@ -156,4 +156,4 @@ with `manager`. This can still be seen in the `v1` branch, which is being saved
 for posterity: https://github.com/Fl4m3Ph03n1x/market_manager/tree/v1
 
 Do note that `v1` was the alpha release and is no longer being supported. It is 
-still a very good resrouce for applicatinons with CLI interfaces though.
+still a very good resource for applicatinons with CLI interfaces though.
