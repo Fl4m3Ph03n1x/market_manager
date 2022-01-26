@@ -18,9 +18,23 @@
 Makes sell requests in batch to warframe market.
 Used when you want to sell a lot of things or remove them from your list all at
 once. Specially useful for syndicates because you don't have to buy everything
-in advance and if you want to avoid the 100 items limit without being a Patreon,
-which if you want to support the site, you should totally become.
+in advance and then sell. You only need to do 3 things:
 
+- Launch the manager
+- Activate a syndicate(s) you want
+- Sit back and relax
+
+Then, when someone pings you to buy an item, you can go the syndicate, buy it 
+and sell it on the spot.
+
+WarframeMarket (the website) does have a 100 items limit though, so you may want
+to keep this in mind as you won't be able to activate everything (unless you 
+are a Patreon, in which case the limit does not apply).
+
+# User guide
+
+This section has some basic references and help for users that want to learn how
+to use the applciation.
 ## Setup
 
 Before using this application you need to get access to two things:
@@ -39,16 +53,15 @@ To get both of them you can:
 9. Inspect the request and look for "Request headers"
 10. Copy the cookie and the token to somewhere
 
-Once you have the cookie and the token, you need to set the follow environment variables in your machine:
-- MARKET_MANAGER_WM_COOKIE={cookie}
-- MARKET_MANAGER_WM_XCSRFTOKEN={xrfctoken}
+Once you have the cookie and the token, go to the `Authenticate` menu on the 
+sidebar and save them.
 
-Where {cookie} and {token} are the cookie and the xrfctoken you got from the website previously.
-
+You are now ready to use the appliction.
 ## Usage
 
-Place the things you want to sell under a file called `products.json`. This file
-should contain a list of objects, each one with an array of things to sell:
+The inventory file is called `products.json`. This file contain a list of 
+objects, each one with an array of things to sell alongside some additional 
+information.
 
 It only supports mods currently.
 
@@ -89,64 +102,58 @@ The format of each item is the following:
 
 ```
 {
-  "name": "Disarming purity",       //name of the item
-  "id": "5911f11d97a0add8e9d5da4c", //warframe.market item id
-  "min_price": 14,                  //prices are calculated by the chosen strategy. This makes will overried the startegie's price if the calculated price is inferior. A safety net, this is the minimum price you will sell this item for. 
+  "name": "Disarming purity",       //name of the item. DON'T TOUCH THIS.
+  "id": "5911f11d97a0add8e9d5da4c", //warframe.market item id. DON'T TOUCH THIS.
+  "min_price": 14,                  //prices are calculated by the chosen strategy. This will overried the startegie's price if the calculated price is inferior. A safety net, this is the minimum price you will sell this item for. 
   "default_price":16,               //if no one is selling this item or if the strategy was unable to calculte a price for the item, this is the value you will sell it for.
   "rank": 1,                        //rank of the mod, defaults to 0. If the mod has no rank use "n/a" instead
   "quantity": 1                     //number of items to sell, defaults to 1
 }
 ```
 
-Once you have the `products.json` file set up, you can use the shell application:
+I provide some basic defualts in the `products.json` based on my personal 
+experience. Feel free to change the defaults to your liking. Once this is done, 
+you are ready to go.
 
-```
-./market_manager --action=activate --syndicates=red_veil,new_loka --strategy=top_three_average
-```
+# Developmer Guide
 
-The name of the syndicates must be the same name on the `products.json` file.
+This guide describes a developer setup for Windows. 
 
-For more information on how to use type:
+## Requirements
 
-```
-./market_manager -h
-```
+- Erlang OTP >= 24: https://www.erlang.org/downloads
+- Elixir >= 1.13 (I recommend the installer): https://elixir-lang.org/install.html#windows
+- wxWidget: https://www.wxwidgets.org/downloads/
+- While it doesn't require a lot of memory to run, it does require a lot of memory to compile, at least 4GB.
+- Setup powershell environment variables `$env:CC="gcc"` and `$env:MAKE="make"`
+- An editor of your choise. I use VScode with some plugins and Fira Code font: https://github.com/tonsky/FiraCode
 
-## Development
+## How to run it
 
-This project has a dependency Erlang 22.1. While it doesn't require a lot of memory to run, it does require a lot of memory to compile, at least 4GB.
-
-Some of the dependencies also require rebar3 to work. Sometimes it is problematic to install rebar3 so, this script for Linux does the job:
-
-```
-curl -O https://rebar3.s3.amazonaws.com/rebar3 -k
-rm -rf /root/.mix/rebar3
-mv rebar3 /root/.mix/
-mix local.rebar rebar3 /root/.mix/rebar3 --force
-```
-
-After the initial setup, the following commands are used to run the tests:
+After the initial setup, the following commands are used to get started:
+- `mix local.hex` to install / update hex
+- `mix archive.install hex phx_new` to install the Phoenix framework
+- `mix deps.get` fetches and installs all the dependencies
 - `mix test` run all tests
-- `mix test.unit` runs only unit tests
-- `mix test.integration` runs only integration tests
 - `mix test.watch` runs all tests continuously and re-runs them every time a file changes
-- `mix test.watch.unit` runs unit tests continuously and re-runs them every time a file changes
-- `mix test.watch.integration` runs integration tests continuously and re-runs them every time a file changes
 
 ## Architecture
 
-MarketManager is divided into multiple small applications, ech one with one purpose in mind:
+MarketManager is divided into multiple small applications/libraries, ech one 
+with a single purpose in mind:
 
-```mermaid
-graph TD;
-    cli-->manager;
-    manager-->auction_house;
-    manager-->store;
-```
+![dependencies-graph](./deps_graph.svg)
 
-`cli` is a command line interface and currently it is the only interface with the manager.
-`manager` is the core of the application, the entry point for all user requests. It talks to the rest of the layers.
+`web_interface` is a Phoenix application that holds all the code for the front-end. 
+`manager` is the core of the application, the entry point for all user requests. It talks to the rest of the layers. 
 `auction_house` is the app responsible for understanding and making requests to the given auction house. In this case, warframe market.
 `store` is the persistency layer. It saves your data and remembers what is being selled or not.
 
 For more information, feel free to read the README file of each application. 
+
+A previous version of MarketManager also had a `cli` application interfacing 
+with `manager`. This can still be seen in the `v1` branch, which is being saved 
+for posterity: https://github.com/Fl4m3Ph03n1x/market_manager/tree/v1
+
+Do note that `v1` was the alpha release and is no longer being supported. It is 
+still a very good resrouce for applicatinons with CLI interfaces though.
