@@ -120,7 +120,7 @@ The format of each item is the following:
 
 I provide some basic defualts in the `products.json` based on my personal experience. Feel free to change the defaults to your liking. Once this is done, you are ready to go.
 
-# Developmer Guide
+# Developer Guide
 
 This guide describes a developer setup for Windows.
 
