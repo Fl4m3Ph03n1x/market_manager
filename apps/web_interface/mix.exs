@@ -24,7 +24,7 @@ defmodule WebInterface.MixProject do
   def application do
     [
       mod: {WebInterface.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :wx]
     ]
   end
 
@@ -46,7 +46,9 @@ defmodule WebInterface.MixProject do
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
 
+      # Direct link to master branch because it has bugfixes that were not released yet to Hex
       {:desktop, github: "elixir-desktop/desktop"},
+      # {:desktop, "~> 1.4"},
 
        # Umbrella deps
        {:manager, in_umbrella: true},

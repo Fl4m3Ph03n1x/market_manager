@@ -10,7 +10,7 @@
   "credo": {:hex, :credo, "1.6.2", "2f82b29a47c0bb7b72f023bf3a34d151624f1cbe1e6c4e52303b05a11166a701", [:mix], [{:bunt, "~> 0.2.0", [hex: :bunt, repo: "hexpm", optional: false]}, {:file_system, "~> 0.2.8", [hex: :file_system, repo: "hexpm", optional: false]}, {:jason, "~> 1.0", [hex: :jason, repo: "hexpm", optional: false]}], "hexpm", "ae9dc112bc368e7b145c547bec2ed257ef88955851c15057c7835251a17211c6"},
   "dbus": {:hex, :dbus, "0.8.0", "7c800681f35d909c199265e55a8ee4aea9ebe4acccce77a0740f89f29cc57648", [:make], [], "hexpm", "a9784f2d9717ffa1f74169144a226c39633ac0d9c7fe8cb3594aeb89c827cca5"},
   "debouncer": {:hex, :debouncer, "0.1.5", "1d993bd01400585a6bf463d36ea50386deea2c09bc6e55d613b7b6c0b4ccb4f9", [:mix], [], "hexpm", "cecc2a4c4e9b51c7fbc5474c317a50cd5870334eb3e2b95d85d578ed58c4fa24"},
-  "desktop": {:git, "https://github.com/elixir-desktop/desktop.git", "cf8322cc8d8e4a2148e528bf0f0b2ee9edb6a10b", []},
+  "desktop": {:git, "https://github.com/elixir-desktop/desktop.git", "a961544da45b1db68a0ddee8df83a4651b8abcf7", []},
   "dialyxir": {:hex, :dialyxir, "1.1.0", "c5aab0d6e71e5522e77beff7ba9e08f8e02bad90dfbeffae60eaf0cb47e29488", [:mix], [{:erlex, ">= 0.2.6", [hex: :erlex, repo: "hexpm", optional: false]}], "hexpm", "07ea8e49c45f15264ebe6d5b93799d4dd56a44036cf42d0ad9c960bc266c0b9a"},
   "earmark_parser": {:hex, :earmark_parser, "1.4.19", "de0d033d5ff9fc396a24eadc2fcf2afa3d120841eb3f1004d138cbf9273210e8", [:mix], [], "hexpm", "527ab6630b5c75c3a3960b75844c314ec305c76d9899bb30f71cb85952a9dc45"},
   "elixir_make": {:hex, :elixir_make, "0.6.3", "bc07d53221216838d79e03a8019d0839786703129599e9619f4ab74c8c096eac", [:mix], [], "hexpm", "f5cbd651c5678bcaabdbb7857658ee106b12509cd976c2c2fca99688e1daf716"},

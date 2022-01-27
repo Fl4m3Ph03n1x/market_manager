@@ -6,9 +6,9 @@ defmodule WebInterface.Live.MenuBar do
 
   use Desktop.Menu
 
-  alias Desktop.Window
+  alias Desktop.{Menu, Window}
 
-  @impl Desktop.Menu
+  @impl Menu
   def render(assigns) do
     ~H"""
     <menubar>
@@ -23,7 +23,7 @@ defmodule WebInterface.Live.MenuBar do
     """
   end
 
-  @impl Desktop.Menu
+  @impl Menu
   def handle_event("quit", menu) do
     Window.quit()
     {:noreply, menu}
@@ -37,13 +37,10 @@ defmodule WebInterface.Live.MenuBar do
     {:noreply, menu}
   end
 
-  @impl Desktop.Menu
-  def mount(menu) do
-    {:ok, menu}
-  end
+  @impl Menu
+  def mount(menu), do: {:ok, menu}
 
-  @impl Desktop.Menu
-  def handle_info(:changed, menu) do
-    {:noreply, menu}
-  end
+  @impl Menu
+  def handle_info(:changed, menu), do: {:noreply, menu}
+
 end
