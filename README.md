@@ -35,13 +35,16 @@ are a Patreon, in which case the limit does not apply).
 
 This section has some basic references and help for users that want to learn how
 to use the applciation.
+
 ## Setup
 
 Before using this application you need to get access to two things:
+
 1. x-rfctoken from warframe.market
 2. a cookie from warframe.market
 
 To get both of them you can:
+
 1. Login with your account to warframe.market
 2. Set you status to "Invisible"
 3. Go to "My profile"
@@ -57,6 +60,7 @@ Once you have the cookie and the token, go to the `Authenticate` menu on the
 sidebar and save them.
 
 You are now ready to use the appliction.
+
 ## Usage
 
 The inventory file is called `products.json`. This file contain a list of 
@@ -78,7 +82,7 @@ It only supports mods currently.
             "name": "Eroding Blight",
             "id": "54a74454e779892d5e5155a0",
             "min_price": 14,
-	    "default_price": 16
+            "default_price": 16
         }
     ],
     "new_loka": [
@@ -86,13 +90,13 @@ It only supports mods currently.
             "name": "Winds of purity",
             "id": "54a74455e779892d5e51569a",
             "min_price": 14,
-	    "default_price": 16
+            "default_price": 16
         },
         {
             "name": "Disarming purity",
             "id": "5911f11d97a0add8e9d5da4c",
             "min_price": 14,
-	    "default_price": 16
+            "default_price": 16
         }
     ]
 }
@@ -100,7 +104,7 @@ It only supports mods currently.
 
 The format of each item is the following:
 
-```
+```javascript
 {
   "name": "Disarming purity",       //name of the item. DON'T TOUCH THIS.
   "id": "5911f11d97a0add8e9d5da4c", //warframe.market item id. DON'T TOUCH THIS.
@@ -117,20 +121,24 @@ you are ready to go.
 
 # Developmer Guide
 
-This guide describes a developer setup for Windows. 
+This guide describes a developer setup for Windows.
 
 ## Requirements
 
-- Erlang OTP >= 24: https://www.erlang.org/downloads
-- Elixir >= 1.13 (I recommend the installer): https://elixir-lang.org/install.html#windows
-- wxWidget: https://www.wxwidgets.org/downloads/
+- Erlang OTP >= 24: <https://www.erlang.org/downloads>
+- Elixir >= 1.13 (I recommend the installer): <https://elixir-lang.org/install.html#windows>
+- wxWidget: <https://www.wxwidgets.org/downloads/>
 - While it doesn't require a lot of memory to run, it does require a lot of memory to compile, at least 4GB.
+- If using powershell, you need to have permissions to run scripts: `Set-ExecutionPolicy -ExecutionPolicy Bypass`
+- Install chocolatey: <https://chocolatey.org/install>
+- Install bakeware dependencies: `choco install -y zstandard make mingw`
 - Setup powershell environment variables `$env:CC="gcc"` and `$env:MAKE="make"`
-- An editor of your choice. I use VScode with some plugins and the `Fira Code` font: https://github.com/tonsky/FiraCode
+- An editor of your choice. I use VScode with some plugins and the `Fira Code` font: <https://github.com/tonsky/FiraCode>
 
 ## How to run it
 
 After the initial setup, the following commands are used to get started:
+
 - `mix local.hex` to install / update hex
 - `mix archive.install hex phx_new` to install the Phoenix framework
 - `mix deps.get` fetches and installs all the dependencies
@@ -139,8 +147,7 @@ After the initial setup, the following commands are used to get started:
 
 ## Architecture
 
-MarketManager is divided into multiple small applications/libraries, each one 
-with a single purpose in mind:
+MarketManager is divided into multiple small applications/libraries, each one with a single purpose in mind:
 
 ![dependencies-graph](./deps_graph.svg)
 
@@ -153,7 +160,7 @@ For more information, feel free to read the README file of each application.
 
 A previous version of MarketManager also had a `cli` application interfacing 
 with `manager`. This can still be seen in the `v1` branch, which is being saved 
-for posterity: https://github.com/Fl4m3Ph03n1x/market_manager/tree/v1
+for posterity: <https://github.com/Fl4m3Ph03n1x/market_manager/tree/v1>
 
 Do note that `v1` was the alpha release and is no longer being supported. It is 
 still a very good resource for applicatinons with CLI interfaces though.
