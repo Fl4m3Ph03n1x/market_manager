@@ -24,24 +24,23 @@ in advance and then sell. You only need to do 3 things:
 - Activate a syndicate(s) you want
 - Sit back and relax
 
-Then, when someone pings you to buy an item, you can go the syndicate, buy it 
-and sell it on the spot.
+Then, when someone pings you to buy an item, you can go the syndicate, buy it and sell it on the spot.
 
-WarframeMarket (the website) does have a 100 items limit though, so you may want
-to keep this in mind as you won't be able to activate everything (unless you 
-are a Patreon, in which case the limit does not apply).
+WarframeMarket (the website) does have a 100 items limit though, so you may want to keep this in mind as you won't be able to activate everything (unless you are a Patreon, in which case the limit does not apply).
 
 # User guide
 
-This section has some basic references and help for users that want to learn how
-to use the applciation.
+This section has some basic references and help for users that want to learn how to use the applciation.
+
 ## Setup
 
 Before using this application you need to get access to two things:
+
 1. x-rfctoken from warframe.market
 2. a cookie from warframe.market
 
 To get both of them you can:
+
 1. Login with your account to warframe.market
 2. Set you status to "Invisible"
 3. Go to "My profile"
@@ -53,15 +52,23 @@ To get both of them you can:
 9. Inspect the request and look for "Request headers"
 10. Copy the cookie and the token to somewhere
 
-Once you have the cookie and the token, go to the `Authenticate` menu on the 
-sidebar and save them.
+Once you have the cookie and the token, go to the `Authenticate` menu on the sidebar and save them.
 
-You are now ready to use the appliction.
+You are now ready to use the application.
+
+## Windowed mode
+
+By default the application will open a separate browser window and it will run there using your localhost.
+
+If however, you wish to run the application in windowed mode, you can do so by downloading and installing WebView2 support for Edge:
+
+- <https://msedge.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/d1f50f11-2c31-4c24-8961-3dc1bb3b8ea3/MicrosoftEdgeWebview2Setup.exe>
+
+After the installation, the application will default to the windowed mode. You can however still use the browser if you wish by going to **Extras -> Open in browser**.
+
 ## Usage
 
-The inventory file is called `products.json`. This file contain a list of 
-objects, each one with an array of things to sell alongside some additional 
-information.
+The inventory file is called `products.json`. This file contain a list of objects, each one with an array of things to sell alongside some additional information.
 
 It only supports mods currently.
 
@@ -78,7 +85,7 @@ It only supports mods currently.
             "name": "Eroding Blight",
             "id": "54a74454e779892d5e5155a0",
             "min_price": 14,
-	    "default_price": 16
+            "default_price": 16
         }
     ],
     "new_loka": [
@@ -86,13 +93,13 @@ It only supports mods currently.
             "name": "Winds of purity",
             "id": "54a74455e779892d5e51569a",
             "min_price": 14,
-	    "default_price": 16
+            "default_price": 16
         },
         {
             "name": "Disarming purity",
             "id": "5911f11d97a0add8e9d5da4c",
             "min_price": 14,
-	    "default_price": 16
+            "default_price": 16
         }
     ]
 }
@@ -100,7 +107,7 @@ It only supports mods currently.
 
 The format of each item is the following:
 
-```
+```javascript
 {
   "name": "Disarming purity",       //name of the item. DON'T TOUCH THIS.
   "id": "5911f11d97a0add8e9d5da4c", //warframe.market item id. DON'T TOUCH THIS.
@@ -111,26 +118,29 @@ The format of each item is the following:
 }
 ```
 
-I provide some basic defualts in the `products.json` based on my personal 
-experience. Feel free to change the defaults to your liking. Once this is done, 
-you are ready to go.
+I provide some basic defualts in the `products.json` based on my personal experience. Feel free to change the defaults to your liking. Once this is done, you are ready to go.
 
 # Developmer Guide
 
-This guide describes a developer setup for Windows. 
+This guide describes a developer setup for Windows.
 
 ## Requirements
 
-- Erlang OTP >= 24: https://www.erlang.org/downloads
-- Elixir >= 1.13 (I recommend the installer): https://elixir-lang.org/install.html#windows
-- wxWidget: https://www.wxwidgets.org/downloads/
+- Erlang OTP >= 24: <https://www.erlang.org/downloads>
+- Elixir >= 1.13 (I recommend the installer): <https://elixir-lang.org/install.html#windows>
+- wxWidget: <https://www.wxwidgets.org/downloads/>
 - While it doesn't require a lot of memory to run, it does require a lot of memory to compile, at least 4GB.
+- If using powershell, you need to have permissions to run scripts: `Set-ExecutionPolicy -ExecutionPolicy Bypass`
+- Install chocolatey: <https://chocolatey.org/install>
+- Install bakeware dependencies: `choco install -y zstandard make mingw`
 - Setup powershell environment variables `$env:CC="gcc"` and `$env:MAKE="make"`
-- An editor of your choice. I use VScode with some plugins and the `Fira Code` font: https://github.com/tonsky/FiraCode
+- An editor of your choice. I use VScode with some plugins and the `Fira Code` font: <https://github.com/tonsky/FiraCode>
+- To test the application in Windowed mode, you also need to install WebView2 support for Edge. Refer to the **User Guide** section for more information.
 
 ## How to run it
 
 After the initial setup, the following commands are used to get started:
+
 - `mix local.hex` to install / update hex
 - `mix archive.install hex phx_new` to install the Phoenix framework
 - `mix deps.get` fetches and installs all the dependencies
@@ -139,21 +149,17 @@ After the initial setup, the following commands are used to get started:
 
 ## Architecture
 
-MarketManager is divided into multiple small applications/libraries, each one 
-with a single purpose in mind:
+MarketManager is divided into multiple small applications/libraries, each one with a single purpose in mind:
 
 ![dependencies-graph](./deps_graph.svg)
 
-- `web_interface` is a Phoenix application that holds all the code for the front-end. 
-- `manager` is the core of the application, the entry point for all user requests. It talks to the rest of the layers. 
+- `web_interface` is a Phoenix application that holds all the code for the front-end.
+- `manager` is the core of the application, the entry point for all user requests. It talks to the rest of the layers.
 - `auction_house` is the app responsible for understanding and making requests to the given auction house. In this case, warframe market.
 - `store` is the persistency layer. It saves your data and remembers what is being selled or not.
 
-For more information, feel free to read the README file of each application. 
+For more information, feel free to read the README file of each application.
 
-A previous version of MarketManager also had a `cli` application interfacing 
-with `manager`. This can still be seen in the `v1` branch, which is being saved 
-for posterity: https://github.com/Fl4m3Ph03n1x/market_manager/tree/v1
+A previous version of MarketManager also had a `cli` application interfacing with `manager`. This can still be seen in the `v1` branch, which is being saved for posterity: <https://github.com/Fl4m3Ph03n1x/market_manager/tree/v1>
 
-Do note that `v1` was the alpha release and is no longer being supported. It is 
-still a very good resource for applicatinons with CLI interfaces though.
+Do note that `v1` was the alpha release and is no longer being supported. It is still a very good resource for applicatinons with CLI interfaces though.
