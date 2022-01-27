@@ -1,1 +1,4 @@
-{"cookie":"a_cookie","token":"a_token"}
+{
+    "cookie": "a_cookie",
+    "token": "a_token"
+}
