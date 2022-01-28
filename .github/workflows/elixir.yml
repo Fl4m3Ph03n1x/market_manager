@@ -2,6 +2,8 @@ name: build
 
 env:
   MIX_ENV: test
+  CC: gcc
+  MAKE: make
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 on:
@@ -34,6 +36,7 @@ jobs:
       run: choco install -y zstandard make mingw
 
     - name: Install Dependencies
+      shell: powershell
       run: mix deps.get
     
     # - name: Run Tests
@@ -43,6 +46,7 @@ jobs:
     #   run: mix coveralls.github
     
     - name: Run credo code analyser
+      shell: powershell
       run: mix credo --strict
     
     # - name: Run typechecks
