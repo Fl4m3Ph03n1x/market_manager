@@ -15,6 +15,10 @@ jobs:
   build:
     name: Build on Windows
     runs-on: windows-2019
+    env: 
+        CC: gcc
+        MAKE: make
+    shell: powershell
 
     steps:
     - uses: actions/checkout@v2
@@ -24,7 +28,6 @@ jobs:
         otp-version: '24.2.x' # Define the OTP version [required]
     
     - name: Install choco
-      shell: powershell
       run: |
         Set-ExecutionPolicy -ExecutionPolicy Bypass
         Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
@@ -34,7 +37,6 @@ jobs:
       run: choco install -y zstandard make mingw
 
     - name: Install Dependencies
-      shell: powershell
       run: mix deps.get
     
     # - name: Run Tests
@@ -44,10 +46,6 @@ jobs:
     #   run: mix coveralls.github
     
     - name: Run credo code analyser
-      env: 
-        CC: gcc
-        MAKE: make
-      shell: powershell
       run: mix credo --strict
     
     # - name: Run typechecks
