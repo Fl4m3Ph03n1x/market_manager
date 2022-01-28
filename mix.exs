@@ -1,6 +1,9 @@
 defmodule MarketManager.MixProject do
   use Mix.Project
 
+  alias Bakeware
+  alias ExCoveralls
+
   def project, do:
     [
       apps_path: "apps",
