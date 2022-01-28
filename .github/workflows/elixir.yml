@@ -2,8 +2,6 @@ name: build
 
 env:
   MIX_ENV: test
-  MARKET_MANAGER_WM_COOKIE: ${{ secrets.MARKET_MANAGER_WM_COOKIE }}
-  MARKET_MANAGER_WM_XCSRFTOKEN: ${{ secrets.MARKET_MANAGER_WM_XCSRFTOKEN }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 on:
@@ -15,29 +13,37 @@ on:
 jobs:
 
   build:
-    runs-on: ubuntu-latest
+    name: Build on Windows
+    runs-on: windows-latest
+
     steps:
     - uses: actions/checkout@v2
     - name: Setup elixir
       uses: actions/setup-elixir@v1
       with:
-        elixir-version: '1.10.x' # Define the elixir version [required]
-        otp-version: '22.1.x' # Define the OTP version [required]
+        elixir-version: '1.13.x' # Define the elixir version [required]
+        otp-version: '24.2.x' # Define the OTP version [required]
+    
     - name: Install Dependencies
       run: mix deps.get
-    - name: Run Tests
-      run: mix test
-    - name: Run Coverage
-      run: mix coveralls.github
+    
+    # - name: Run Tests
+    #   run: mix test
+    
+    # - name: Run Coverage
+    #   run: mix coveralls.github
+    
     - name: Run credo code analyser
       run: mix credo --strict
-    - name: Run typechecks
-      run: mix dialyzer
-      env:
-        MIX_ENV: dev
-    - name: Build executable
-      working-directory: ./apps/cli
-      run: mix escript.build
-      env:
-        MIX_ENV: prod
+    
+    # - name: Run typechecks
+    #   run: mix dialyzer
+    #   env:
+    #     MIX_ENV: dev
+    
+    # - name: Build executable
+    #   working-directory: ./apps/cli
+    #   run: mix escript.build
+    #   env:
+    #     MIX_ENV: prod
 
