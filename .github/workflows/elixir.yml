@@ -2,8 +2,6 @@ name: build
 
 env:
   MIX_ENV: test
-  CC: gcc
-  MAKE: make
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 on:
@@ -46,6 +44,9 @@ jobs:
     #   run: mix coveralls.github
     
     - name: Run credo code analyser
+      env: 
+        CC: gcc
+        MAKE: make
       shell: powershell
       run: mix credo --strict
     
