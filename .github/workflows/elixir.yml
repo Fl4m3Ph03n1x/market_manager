@@ -14,16 +14,15 @@ jobs:
 
   build:
     name: Build on Windows
-    runs-on: windows-latest
+    runs-on: windows-2019
 
     steps:
     - uses: actions/checkout@v2
-    - name: Setup elixir
-      uses: actions/setup-elixir@v1
+    - uses: erlef/setup-beam@v1
       with:
         elixir-version: '1.13.x' # Define the elixir version [required]
         otp-version: '24.2.x' # Define the OTP version [required]
-    
+
     - name: Install Dependencies
       run: mix deps.get
     
