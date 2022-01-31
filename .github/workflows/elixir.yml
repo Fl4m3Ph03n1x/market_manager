@@ -32,7 +32,7 @@ jobs:
     - name: Install bakeware dependencies
       shell: powershell
       run: |
-        echo (Get-Service actions.runner.*).name
+        echo "NAME IS: $((Get-Service actions.runner.*).name)"
         choco install -y zstandard make mingw
 
     - name: Install Dependencies
