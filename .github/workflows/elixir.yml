@@ -36,9 +36,10 @@ jobs:
     - name: Install Dependencies
       shell: powershell
       run: |
-        mix deps.get
         echo (get-command make.exe).Path
         echo (get-command gcc.exe).Path
+        mix deps.get
+        mix compile
       env: 
         CC: C:\ProgramData\Chocolatey\bin\gcc.exe
         MAKE: C:\ProgramData\Chocolatey\bin\make.exe
