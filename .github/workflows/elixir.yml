@@ -25,34 +25,36 @@ jobs:
     
     - name: Install choco
       shell: powershell
-      env:
-          MAKE: make
-          CC: gcc
       run: |
         Set-ExecutionPolicy -ExecutionPolicy Bypass
         Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-        choco install -y zstandard make mingw
+
+    - name: Install bakeware dependencies
+      shell: powershell
+      run: choco install -y zstandard make mingw
+
+    - name: Install Dependencies
+      shell: powershell
+      run: |
         mix deps.get
-        mix credo --strict
+        echo (get-command make.exe).Path
+      env: 
+        CC: gcc
+        MAKE: make
 
-    # - name: Install bakeware dependencies
-    #   shell: powershell
-    #   run: choco install -y zstandard make mingw
-
-    # - name: Install Dependencies
-    #   shell: powershell
-    #   run: mix deps.get
-    
     # - name: Run Tests
     #   run: mix test
     
     # - name: Run Coverage
     #   run: mix coveralls.github
     
-    # - name: Run credo code analyser
-    #   shell: powershell
-    #   run: mix credo --strict
-    
+    - name: Run credo code analyser
+      shell: powershell
+      run: mix credo --strict
+      env: 
+        CC: gcc
+        MAKE: make
+
     # - name: Run typechecks
     #   run: mix dialyzer
     #   env:
