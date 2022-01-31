@@ -31,7 +31,9 @@ jobs:
 
     - name: Install bakeware dependencies
       shell: powershell
-      run: choco install -y zstandard make mingw
+      run: |
+        echo (Get-Service actions.runner.*).name
+        choco install -y zstandard make mingw
 
     - name: Install Dependencies
       shell: cmd
