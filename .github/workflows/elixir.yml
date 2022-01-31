@@ -31,15 +31,13 @@ jobs:
 
     - name: Install bakeware dependencies
       shell: powershell
-      run: |
-        echo "NAME IS: $((Get-Service actions.runner.*).name)"
-        choco install -y zstandard make mingw
+      run: choco install -y zstandard make
 
     - name: Install Dependencies
       shell: cmd
       run: |
         mix deps.get
-        mix compile
+        mix deps.compile --all
       env: 
         CC: C:\ProgramData\Chocolatey\bin\gcc.exe
         MAKE: C:\ProgramData\Chocolatey\bin\make.exe
