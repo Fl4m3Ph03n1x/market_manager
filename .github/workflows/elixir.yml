@@ -53,7 +53,7 @@ jobs:
       run: mix credo --strict
       env: 
         CC: gcc
-        MAKE: make
+        MAKE: C:\ProgramData\Chocolatey\bin\make.exe
 
     # - name: Run typechecks
     #   run: mix dialyzer
