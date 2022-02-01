@@ -34,16 +34,14 @@ jobs:
       run: choco install -y zstandard make
 
     - name: Install Dependencies
-      shell: cmd
-      run: |
-        mix deps.get
-        mix deps.compile --all
+      shell: powershell
+      run: mix deps.get
       env: 
         CC: C:\ProgramData\Chocolatey\bin\gcc.exe
         MAKE: C:\ProgramData\Chocolatey\bin\make.exe
 
     - name: Compile everything
-      shell: cmd
+      shell: powershell
       run: |
         mix deps.compile --all
         mix compile
@@ -58,7 +56,7 @@ jobs:
     #   run: mix coveralls.github
     
     - name: Run credo code analyser
-      shell: cmd
+      shell: powershell
       run: mix credo --strict
       env: 
         CC: C:\ProgramData\Chocolatey\bin\gcc.exe
