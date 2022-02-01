@@ -42,6 +42,15 @@ jobs:
         CC: C:\ProgramData\Chocolatey\bin\gcc.exe
         MAKE: C:\ProgramData\Chocolatey\bin\make.exe
 
+    - name: Compile everything
+      shell: cmd
+      run: |
+        mix deps.compile --all
+        mix compile
+      env: 
+        CC: C:\ProgramData\Chocolatey\bin\gcc.exe
+        MAKE: C:\ProgramData\Chocolatey\bin\make.exe
+  
     # - name: Run Tests
     #   run: mix test
     
