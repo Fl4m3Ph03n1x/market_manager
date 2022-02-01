@@ -1,7 +1,7 @@
 name: build
 
 env:
-  MIX_ENV: test
+  MIX_ENV: dev
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 on:
