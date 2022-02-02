@@ -46,7 +46,7 @@ jobs:
         mkdir "d:/a/market_manager/market_manager/_build/test/lib/bakeware/obj"
         mkdir "d:/a/market_manager/market_manager/_build/test/lib/bakeware/launcher"
         mkdir "d:/a/market_manager/market_manager/_build/test/lib/bakeware/obj/zstd/lib/decompress"
-        ls
+        ls .\_build\test\lib\bakeware
         mix deps.compile --all
         mix compile
       env: 
