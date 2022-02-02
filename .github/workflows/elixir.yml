@@ -45,8 +45,8 @@ jobs:
       run: |
         mkdir "d:/a/market_manager/market_manager/_build/test/lib/bakeware/obj"
         mkdir "d:/a/market_manager/market_manager/_build/test/lib/bakeware/launcher"
-        mkdir "d:/a/market_manager/market_manager/_build/test/lib/bakeware/obj/zstd/lib/decompress"
-        ls .\_build\test\lib\bakeware\obj\zstd\lib\decompress
+        mkdir "d:/a/market_manager/market_manager/_build/test/lib/bakeware/obj/zstd/lib/"
+        ls .\_build\test\lib\bakeware\obj\zstd\lib\
         Test-Path -Path 'd:/a/market_manager/market_manager/_build/test/lib/bakeware/obj/zstd/lib/decompress'
         Test-Path -Path "d:/a/market_manager/market_manager/_build/test/lib/bakeware/obj/zstd/lib/decompress"
         mix deps.compile --all
