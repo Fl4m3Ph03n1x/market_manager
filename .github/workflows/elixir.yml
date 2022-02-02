@@ -34,18 +34,18 @@ jobs:
       run: choco install -y zstandard make
 
     - name: Install Dependencies
-      shell: powershell
+      shell: cmd
       run: mix deps.get
       env: 
         CC: C:\ProgramData\Chocolatey\bin\gcc.exe
         MAKE: C:\ProgramData\Chocolatey\bin\make.exe
 
     - name: Compile everything
-      shell: powershell
+      shell: cmd
       run: |
-        mkdir -p "d:/a/market_manager/market_manager/_build/test/lib/bakeware/obj"
-        mkdir -p "d:/a/market_manager/market_manager/_build/test/lib/bakeware/launcher"
-        mkdir -p "d:/a/market_manager/market_manager/_build/test/lib/bakeware/obj/zstd/lib/decompress"
+        mkdir "d:/a/market_manager/market_manager/_build/test/lib/bakeware/obj"
+        mkdir "d:/a/market_manager/market_manager/_build/test/lib/bakeware/launcher"
+        mkdir "d:/a/market_manager/market_manager/_build/test/lib/bakeware/obj/zstd/lib/decompress"
         mix deps.compile --all
         mix compile
       env: 
@@ -59,7 +59,7 @@ jobs:
     #   run: mix coveralls.github
     
     - name: Run credo code analyser
-      shell: powershell
+      shell: cmd
       run: mix credo --strict
       env: 
         CC: C:\ProgramData\Chocolatey\bin\gcc.exe
