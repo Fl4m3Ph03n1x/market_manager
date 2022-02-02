@@ -1,7 +1,7 @@
 name: build
 
 env:
-  MIX_ENV: dev
+  MIX_ENV: test
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 on:
@@ -14,7 +14,7 @@ jobs:
 
   build:
     name: Build on Windows
-    runs-on: windows-latest
+    runs-on: windows-2019
 
     steps:
     - uses: actions/checkout@v2
@@ -43,6 +43,9 @@ jobs:
     - name: Compile everything
       shell: powershell
       run: |
+        mkdir "d:/a/market_manager/market_manager/_build/test/lib/bakeware/obj"
+        mkdir "d:/a/market_manager/market_manager/_build/test/lib/bakeware/launcher"
+        mkdir "d:/a/market_manager/market_manager/_build/test/lib/bakeware/obj/zstd/lib/decompress"
         mix deps.compile --all
         mix compile
       env: 
