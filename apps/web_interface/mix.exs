@@ -35,6 +35,7 @@ defmodule WebInterface.MixProject do
 
   defp deps do
     [
+      # Phoenix deps
       {:phoenix, "~> 1.6.5"},
       {:phoenix_html, "~> 3.0"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
@@ -46,9 +47,8 @@ defmodule WebInterface.MixProject do
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
 
-      # Direct link to master branch because it has bugfixes that were not released yet to Hex
-      {:desktop, github: "elixir-desktop/desktop"},
-      # {:desktop, "~> 1.4"},
+      # Project deps
+      {:desktop, "~> 1.4"},
 
        # Umbrella deps
        {:manager, in_umbrella: true},
