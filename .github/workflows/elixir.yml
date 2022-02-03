@@ -47,6 +47,27 @@ jobs:
           mix format --check-formatted
           mix dialyzer --halt-exit-status
 
+  macos:
+    name: Test on MacOS
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install Homebrew packages
+        run: brew install elixir zstd
+      - name: Restore deps and _build
+        uses: actions/cache@v2
+        with:
+          path: |
+            deps
+            _build
+          key: ${{ runner.os }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
+      - run: mix local.hex --force
+      - run: mix deps.get
+      - run: mix local.rebar --force
+      - run: MIX_ENV=test mix compile --warnings-as-errors
+      - run: mix test
 
   windows:
     name: Test on Windows
