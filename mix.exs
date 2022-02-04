@@ -27,7 +27,7 @@ defmodule MarketManager.MixProject do
     ]
 
   defp deps, do: [
-    {:bakeware, "~> 0.2.2"},
+    {:bakeware, github: "bake-bake-bake/bakeware"},
     {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
     {:excoveralls, "~> 0.10", only: :test},
     {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
