@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.28.0">
+    <meta name="project" content="Market Manager v2.1.3">
+
+    <title>API Reference — Market Manager v2.1.3</title>
+    <link rel="stylesheet" href="dist/elixir-a816d167216329cc463d.css" />
+
+    <script src="dist/sidebar_items-f11c4ae843.js"></script>
+
+      <script src="docs_config.js"></script>
+
+    <script async src="dist/app-80aa23c1d96b6dc3c064.js"></script>
+
+
+  </head>
+  <body data-type="extras">
+    <script>
+
+      try {
+        if (localStorage.getItem('night-mode') === 'true') {
+          document.body.classList.add('night-mode');
+        }
+      } catch (error) { }
+    </script>
+
+<div class="main">
+
+
+<section class="sidebar">
+  <button class="sidebar-button sidebar-toggle">
+    <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+  </button>
+
+  <form class="sidebar-search" action="search.html">
+    <button type="submit" class="search-button" aria-label="Submit Search">
+      <i class="ri-search-2-line" aria-hidden="true" title="Submit search"></i>
+    </button>
+    <button type="button" tabindex="-1" class="search-close-button" aria-label="Cancel Search">
+      <i class="ri-close-line ri-lg" aria-hidden="true" title="Cancel search"></i>
+    </button>
+    <label class="search-label">
+      <input name="q" type="text" class="search-input" placeholder="Search..." aria-label="Input your search terms" autocomplete="off" />
+    </label>
+  </form>
+
+  <div class="autocomplete">
+    <div class="autocomplete-results">
+    </div>
+  </div>
+
+  <div class="sidebar-header">
+
+      <a href="https://fl4m3ph03n1x.github.io/market_manager/">
+        <img src="assets/logo.png" alt="Market Manager" class="sidebar-projectImage">
+      </a>
+
+    <div class="sidebar-projectDetails">
+      <a href="https://fl4m3ph03n1x.github.io/market_manager/" class="sidebar-projectName" translate="no">
+Market Manager
+      </a>
+      <strong class="sidebar-projectVersion" translate="no">
+        v2.1.3
+      </strong>
+    </div>
+    <ul class="sidebar-listNav">
+      <li><a id="extras-list-link" href="#full-list">Pages</a></li>
+
+        <li><a id="modules-list-link" href="#full-list">Modules</a></li>
+
+
+    </ul>
+  </div>
+
+  <div class="gradient"></div>
+  <ul id="full-list" class="sidebar-fullList"></ul>
+</section>
+
+<section class="content">
+  <div class="content-outer">
+    <div id="content" class="content-inner">
+
+<h1>
+<button class="settings display-settings">
+  <i class="ri-settings-3-line"></i>
+  <span class="sr-only">Settings</span>
+</button>
+
+
+  <span>API Reference <small class="app-vsn">Market Manager v2.1.3</small></span>
+</h1>
+
+
+  <section class="details-list">
+    <h2 id="modules" class="section-heading">
+  <a href="#modules" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a>
+  Modules
+</h2>
+
+    <div class="summary">
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="AuctionHouse.html" translate="no">AuctionHouse</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Librabry representing the interface for the auction house.
+Responsible for making calls and decoding the answers from the auction house
+into a format the manager understands.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="AuctionHouse.HTTPClient.html" translate="no">AuctionHouse.HTTPClient</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Adapter for the interface AuctionHouse</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="AuctionHouse.Server.html" translate="no">AuctionHouse.Server</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Process responsible for managing requests to the auction house.
+Talks to the logic layer and terminates gracefully.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="AuctionHouse.Settings.html" translate="no">AuctionHouse.Settings</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Holds configurations that do not depend on the environment. 12 factor app
+standard states that only configurations that depend on the environment should
+be configurable in config files (config folder).</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="AuctionHouse.Type.html" translate="no">AuctionHouse.Type</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Holds the types for this library.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Manager.html" translate="no">Manager</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>MarketManager is an application that allows you to make batch requests to
+warframe.market. This is the entrypoint of everything. If you have a module
+and you need to talk to MarketManager, this is who you call, the public API.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Manager.Interpreter.html" translate="no">Manager.Interpreter</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Core of the manager, where all the logic and communication with outer
+layers is. Currently, it works more like a bridge between the different ports
+of the application and manages data between them.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Manager.PriceAnalyst.html" translate="no">Manager.PriceAnalyst</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Contains the formulas and calculations for all the strategies.
+Strategies calculate the optimum price for you to sell an item.
+There are several stretagies, some focus more on selling fast, while others
+on getting more profit.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Manager.Server.html" translate="no">Manager.Server</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Process responsible for taking requests from the interface and directing them
+to the appropriate layers. Supervises dependencies to make sure they are
+regenerated should something fail.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Manager.Type.html" translate="no">Manager.Type</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Holds the types for the Manager library.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Store.html" translate="no">Store</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Port for the persistency layer.
+This module contains the Public API for the storage app.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Store.FileSystem.html" translate="no">Store.FileSystem</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Adapter for the Store port, implements it using the file system.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Store.Type.html" translate="no">Store.Type</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Contains the types for the Store library.
+Because we separate this file from the API and implementation, we also avoid
+a cyclical dependency between them.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="WebInterface.html" translate="no">WebInterface</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>The entrypoint for defining your web interface, such
+as controllers, views, channels and so on.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="WebInterface.Commands.html" translate="no">WebInterface.Commands</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Contains information about the commands the web_interface understands.
+Works as a bridge between the web interface and the Manager application, which does the real work.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="WebInterface.Endpoint.html" translate="no">WebInterface.Endpoint</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="WebInterface.ErrorHelpers.html" translate="no">WebInterface.ErrorHelpers</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Conveniences for translating and building error messages.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="WebInterface.ErrorView.html" translate="no">WebInterface.ErrorView</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="WebInterface.LayoutView.html" translate="no">WebInterface.LayoutView</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="WebInterface.Live.MenuBar.html" translate="no">WebInterface.Live.MenuBar</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Menubar that is shown as part of the main Window on Windows/Linux. In
+MacOS this Menubar appears at the very top of the screen.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="WebInterface.Live.Window.html" translate="no">WebInterface.Live.Window</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Rrepresents the full interface. This module is responsible for receiving
+messages from its LiveView subcomponents and to give them the information
+they need to perform adequatly.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="WebInterface.Live.Window.Main.html" translate="no">WebInterface.Live.Window.Main</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>LiveView subcomponent for the Main Page. It is next to the sidebar and it
+renders a description of what the action is plus it have the options to and
+the button to perform said action.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="WebInterface.Live.Window.Main.Activate.html" translate="no">WebInterface.Live.Window.Main.Activate</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>LiveView subcomponent for the Activate page as part of the Main subcomponent.
+This subcomponent has the options to activate a syndicate given a strategy.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="WebInterface.Live.Window.Main.Authenticate.html" translate="no">WebInterface.Live.Window.Main.Authenticate</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>LiveView subcomponent for the Authenticate page as part of the Main subcomponent.
+This subcomponent has the forms for the user's authentication.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="WebInterface.Live.Window.Main.Deactivate.html" translate="no">WebInterface.Live.Window.Main.Deactivate</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>LiveView subcomponent for the Deactivate page as part of the Main subcomponent.
+This subcomponent has the options to deactivate a previously activated syndicate.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="WebInterface.Live.Window.Sidebar.html" translate="no">WebInterface.Live.Window.Sidebar</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>LiveView subcomponent for the sidebar of the UI. The sidebar is basically a
+menu that has all the actions the user is able to perform.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="WebInterface.Router.html" translate="no">WebInterface.Router</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="WebInterface.Router.Helpers.html" translate="no">WebInterface.Router.Helpers</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Module with named helpers generated from WebInterface.Router.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="WebInterface.Strategies.html" translate="no">WebInterface.Strategies</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Contains information about the strategies for price setting available to the user.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="WebInterface.Syndicates.html" translate="no">WebInterface.Syndicates</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Contains information about the available syndicates that Manager supports as well as utility functions
+to work with them.</p></div>
+
+</div>
+
+    </div>
+  </section>
+
+
+<div class="bottom-actions">
+  <div class="bottom-actions-item">
+
+  </div>
+  <div class="bottom-actions-item">
+
+      <a href="readme.html" class="bottom-actions-button" rel="next">
+        <span class="subheader">
+          Next Page →
+        </span>
+        <span class="title">
+README
+        </span>
+      </a>
+
+  </div>
+</div>
+
+      <footer class="footer">
+
+        <p>
+          Built using
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.28.0) for the
+          <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+        </p>
+      </footer>
+    </div>
+  </div>
+</section>
+</div>
+
+
+  </body>
+</html>
