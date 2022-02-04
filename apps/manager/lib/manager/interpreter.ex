@@ -193,7 +193,8 @@ defmodule Manager.Interpreter do
   defp order_non_existent?({:error, :order_non_existent, _order_id}), do: true
   defp order_non_existent?(_), do: false
 
-  @spec validate_login_info(StoreTypes.login_info) :: {:ok, StoreTypes.login_info} | {:error, {:missing_keys, [String.t]}}
+  @spec validate_login_info(StoreTypes.login_info) :: {:ok, StoreTypes.login_info}
+  | {:error, {:missing_keys, [String.t]}}
   defp validate_login_info(info) do
     login_keys =
       info

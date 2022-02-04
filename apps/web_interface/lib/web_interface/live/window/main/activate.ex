@@ -60,7 +60,6 @@ defmodule WebInterface.Live.Window.Main.Activate do
   defp display_class(:activate), do: "show"
   defp display_class(_), do: "hidden"
 
-
   defp selected_syndicates_to_string(syndicates), do:
     Enum.map_join(syndicates, ";", &Syndicates.get_id/1)
 

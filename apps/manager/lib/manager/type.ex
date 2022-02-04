@@ -35,5 +35,4 @@ defmodule Manager.Type do
     {:ok, credentials}
     | {:error, :unable_to_save_authenticate, [{:error, :missing_token | :missing_cookie | :file.posix, credentials}]}
 
-
 end
