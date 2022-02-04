@@ -25,11 +25,24 @@ defmodule Manager.Server do
   @impl Supervisor
   @spec init(nil) :: {:ok, {:supervisor.sup_flags, [:supervisor.child_spec]}} | :ignore
   def init(nil) do
-    credentials = Store.get_credentials()
+    credentials = credentials_or_default()
 
     children = [
       {AuctionHouse, credentials}
     ]
     Supervisor.init(children, strategy: :one_for_one)
   end
+
+  # If we have no setup.json, we provide some default credentials. The user will have to
+  # update them anyway when making the requests, and when he does, we save them correctly.
+  @spec credentials_or_default :: Store.Type.get_credentials_response
+  defp credentials_or_default do
+    default_credentials = %{"cookie" => "cookie", "token" => "token"}
+
+    case Store.get_credentials() do
+      {:error, :enoent} -> {:ok, default_credentials}
+      creds -> creds
+    end
+  end
+
 end
