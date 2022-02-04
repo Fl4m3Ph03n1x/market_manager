@@ -28,6 +28,7 @@ jobs:
       run: |
         Set-ExecutionPolicy -ExecutionPolicy Bypass
         Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+    
     - name: Install bakeware dependencies
       shell: powershell
       run: choco install -y zstandard make
@@ -38,6 +39,14 @@ jobs:
         mix local.rebar --force
         mix deps.get
     
+    - name: Compile project
+      run: |
+        mix deps.compile
+        mix compile
+      env:
+          MAKE: make
+          CC: gcc
+
     # - name: Run Tests
     #   run: mix test
     
@@ -50,10 +59,11 @@ jobs:
           MAKE: make
           CC: gcc
     
-    # - name: Run typechecks
-    #   run: mix dialyzer
-    #   env:
-    #     MIX_ENV: dev
+    - name: Run typechecks
+      run: mix dialyzer
+      env:
+          MAKE: make
+          CC: gcc
     
     # - name: Build executable
     #   working-directory: ./apps/cli
