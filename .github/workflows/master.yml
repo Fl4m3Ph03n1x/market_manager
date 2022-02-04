@@ -20,8 +20,8 @@ jobs:
     - uses: actions/checkout@v2
     - uses: erlef/setup-beam@v1
       with:
-        elixir-version: '1.13.x' # Define the elixir version [required]
-        otp-version: '24.2.x' # Define the OTP version [required]
+        elixir-version: '1.13.x'  # Define the elixir version [required]
+        otp-version: '24.2.x'     # Define the OTP version [required]
     
     - name: Install choco
       shell: powershell
@@ -44,36 +44,40 @@ jobs:
         mix deps.compile
         mix compile
       env:
-          MAKE: make
-          CC: gcc
+        MAKE: make
+        CC: gcc
 
     - name: Run Tests
       run: mix test
       env:
-            MAKE: make
-            CC: gcc
+        MAKE: make
+        CC: gcc
 
     - name: Run Coverage
       run: mix coveralls.github
       env:
-          MAKE: make
-          CC: gcc
+        MAKE: make
+        CC: gcc
     
     - name: Run credo code analyser
       run: mix credo --strict
       env:
-          MAKE: make
-          CC: gcc
+        MAKE: make
+        CC: gcc
     
     - name: Run typechecks
+      uses: actions/cache@v2
+        with:
+          path: priv/plts
+          key: ${{ runner.os }}-dialyzer-${{ matrix.elixir_version }}-${{ matrix.otp_version }}-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
       run: mix dialyzer
       env:
-          MAKE: make
-          CC: gcc
+        MAKE: make
+        CC: gcc
     
     - name: Build executable
       run: mix release
       env:
-          MAKE: make
-          CC: gcc
-          MIX_ENV: prod
+        MAKE: make
+        CC: gcc
+        MIX_ENV: prod
