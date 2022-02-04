@@ -47,9 +47,12 @@ jobs:
           MAKE: make
           CC: gcc
 
-    # - name: Run Tests
-    #   run: mix test
-    
+    - name: Run Tests
+      run: mix test
+      env:
+            MAKE: make
+            CC: gcc
+
     # - name: Run Coverage
     #   run: mix coveralls.github
     
