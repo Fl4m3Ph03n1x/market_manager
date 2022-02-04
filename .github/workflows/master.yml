@@ -53,8 +53,11 @@ jobs:
             MAKE: make
             CC: gcc
 
-    # - name: Run Coverage
-    #   run: mix coveralls.github
+    - name: Run Coverage
+      run: mix coveralls
+      env:
+          MAKE: make
+          CC: gcc
     
     - name: Run credo code analyser
       run: mix credo --strict
@@ -68,8 +71,9 @@ jobs:
           MAKE: make
           CC: gcc
     
-    # - name: Build executable
-    #   working-directory: ./apps/cli
-    #   run: mix escript.build
-    #   env:
-    #     MIX_ENV: prod
+    - name: Build executable
+      run: mix release
+      env:
+          MAKE: make
+          CC: gcc
+          MIX_ENV: prod
