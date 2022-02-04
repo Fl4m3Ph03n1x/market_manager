@@ -1,142 +1,62 @@
-name: CI
+name: build
 
 env:
+  MIX_ENV: test
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-on: [pull_request, push]
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
 
 jobs:
-  linux:
-    name: Test on Ubuntu (Elixir ${{ matrix.elixir_version }}, OTP ${{ matrix.otp_version }})
-    runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        elixir_version: ['1.10.4', '1.11.4', '1.12.3']
-        otp_version: ['23.3.4.7', '24.1']
-        exclude:
-          - elixir_version: '1.10.4'
-            otp_version: '24.1'
+  build:
+    name: Build on Windows
+    runs-on: windows-2019
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Setup Elixir
-        uses: erlef/setup-beam@v1
-        with:
-          elixir-version: ${{ matrix.elixir_version }}
-          otp-version: ${{ matrix.otp_version }}
-      - name: Restore deps and _build
-        uses: actions/cache@v2
-        with:
-          path: |
-            deps
-            _build
-          key: ${{ runner.os }}-mix-${{ matrix.elixir_version }}-${{ matrix.otp_version }}-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
-      - name: Restore plts
-        uses: actions/cache@v2
-        with:
-          path: priv/plts
-          key: ${{ runner.os }}-dialyzer-${{ matrix.elixir_version }}-${{ matrix.otp_version }}-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
-      - run: mix deps.get
-      - run: MIX_ENV=test mix compile --warnings-as-errors
-      - run: mix test
-      - name: Extra checks
-        if: ${{ contains(matrix.elixir_version, '1.12') }}
-        run: |
-          mix format --check-formatted
-          mix dialyzer --halt-exit-status
+    - uses: actions/checkout@v2
+    - uses: erlef/setup-beam@v1
+      with:
+        elixir-version: '1.13.x' # Define the elixir version [required]
+        otp-version: '24.2.x' # Define the OTP version [required]
+    
+    - name: Install choco
+      shell: powershell
+      run: |
+        Set-ExecutionPolicy -ExecutionPolicy Bypass
+        Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+    - name: Install bakeware dependencies
+      shell: powershell
+      run: choco install -y zstandard make
 
-  macos:
-    name: Test on MacOS
-    runs-on: macos-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Install Homebrew packages
-        run: brew install elixir zstd
-      - name: Restore deps and _build
-        uses: actions/cache@v2
-        with:
-          path: |
-            deps
-            _build
-          key: ${{ runner.os }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
-      - run: mix local.hex --force
-      - run: mix deps.get
-      - run: mix local.rebar --force
-      - run: MIX_ENV=test mix compile --warnings-as-errors
-      - run: mix test
-
-  windows:
-    name: Test on Windows
-    runs-on: windows-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Cache scoop downloads
-        uses: actions/cache@v2
-        with:
-          path: C:\Users\runneradmin\scoop\cache
-          key: ${{ runner.os }}-scoop-${{ github.sha }}
-          restore-keys: ${{ runner.os }}-scoop-
-      - name: Setup scoop
-        uses: MinoruSekine/setup-scoop@v1
-      - name: Install erlang, elixir and make
-        run: |
-          scoop install erlang 
-          scoop install elixir 
-          echo $env:USERPROFILE\scoop\apps\erlang\current\bin | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-          echo $env:USERPROFILE\scoop\apps\elixir\current\bin | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-      - run: mix local.hex --force
-      - run: mix local.rebar --force
-      - run: mix deps.get
-
-      - name: Build (Command Prompt)
-        run: mix compile --warnings-as-errors
-        shell: cmd
-        env:
+    - name: Install Dependencies
+      run: |
+        mix local.hex --force
+        mix local.rebar --force
+        mix deps.get
+    
+    # - name: Run Tests
+    #   run: mix test
+    
+    # - name: Run Coverage
+    #   run: mix coveralls.github
+    
+    - name: Run credo code analyser
+      run: mix credo --strict
+      env:
           MAKE: make
           CC: gcc
-      - name: Test (Command Prompt)
-        run: mix test
-        shell: cmd
-        env:
-          MAKE: make
-          CC: gcc
-
-      - name: Clean up test files
-        run: Remove-Item 'tmp' -Recurse -Force
-      - run: mix clean --deps
-        env:
-          MAKE: make
-          CC: gcc
-
-      - name: Compile (PowerShell)
-        run: mix compile --warnings-as-errors
-        env:
-          MAKE: make
-          CC: gcc
-      - name: Test (PowerShell)
-        run: mix test
-        env:
-          MAKE: make
-          CC: gcc
-
-      - name: Setup MSYS2
-        uses: msys2/setup-msys2@v2
-        with:
-          path-type: inherit
-      - name: Compile and test (MSYS2)
-        env:
-          MAKE: make
-          CC: gcc
-        shell: msys2 {0}
-        run: |
-          rm -rf ./tmp
-          mix clean --deps
-          mix deps.get
-          mix compile --warnings-as-errors
-          mix test
+    
+    # - name: Run typechecks
+    #   run: mix dialyzer
+    #   env:
+    #     MIX_ENV: dev
+    
+    # - name: Build executable
+    #   working-directory: ./apps/cli
+    #   run: mix escript.build
+    #   env:
+    #     MIX_ENV: prod
