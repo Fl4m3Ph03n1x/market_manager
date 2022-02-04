@@ -54,7 +54,7 @@ jobs:
             CC: gcc
 
     - name: Run Coverage
-      run: mix coveralls
+      run: mix coveralls.github
       env:
           MAKE: make
           CC: gcc
