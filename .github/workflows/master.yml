@@ -19,9 +19,12 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - uses: erlef/setup-beam@v1
+    - uses: actions/cache@v2
       with:
         elixir-version: '1.13.x'  # Define the elixir version [required]
         otp-version: '24.2.x'     # Define the OTP version [required]
+        path: priv/plts
+        key: ${{ runner.os }}-dialyzer-${{ matrix.elixir_version }}-${{ matrix.otp_version }}-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
     
     - name: Install choco
       shell: powershell
@@ -65,11 +68,7 @@ jobs:
         MAKE: make
         CC: gcc
     
-    - name: Run typechecks
-      uses: actions/cache@v2
-      with:
-        path: priv/plts
-        key: ${{ runner.os }}-dialyzer-${{ matrix.elixir_version }}-${{ matrix.otp_version }}-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
+    - name: Run Dialyzer
       run: mix dialyzer
       env:
         MAKE: make
