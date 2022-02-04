@@ -44,7 +44,7 @@ defmodule MarketManager.MixProject do
 
   defp releases, do:
   [
-    desktop: [
+    market_manager: [
       steps: [:assemble, &Bakeware.assemble/1],
       applications: [
         web_interface: :permanent,
