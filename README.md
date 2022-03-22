@@ -30,7 +30,7 @@ WarframeMarket (the website) does have a 100 items limit though, so you may want
 
 # User guide
 
-This section has some basic references and help for users that want to learn how to use the applciation.
+This section has some basic references and help for users that want to learn how to use the application.
 
 ## Setup
 
@@ -111,14 +111,14 @@ The format of each item is the following:
 {
   "name": "Disarming purity",       //name of the item. DON'T TOUCH THIS.
   "id": "5911f11d97a0add8e9d5da4c", //warframe.market item id. DON'T TOUCH THIS.
-  "min_price": 14,                  //prices are calculated by the chosen strategy. This will overried the startegie's price if the calculated price is inferior. A safety net, this is the minimum price you will sell this item for. 
-  "default_price":16,               //if no one is selling this item or if the strategy was unable to calculte a price for the item, this is the value you will sell it for.
+  "min_price": 14,                  //prices are calculated by the chosen strategy. This will override the strategy's price if the calculated price is inferior. A safety net, this is the minimum price you will sell this item for. 
+  "default_price":16,               //if no one is selling this item or if the strategy was unable to calculate a price for the item, this is the value you will sell it for.
   "rank": 1,                        //rank of the mod, defaults to 0. If the mod has no rank use "n/a" instead
   "quantity": 1                     //number of items to sell, defaults to 1
 }
 ```
 
-I provide some basic defualts in the `products.json` based on my personal experience. Feel free to change the defaults to your liking. Once this is done, you are ready to go.
+I provide some basic defaults in the `products.json` based on my personal experience. Feel free to change the defaults to your liking. Once this is done, you are ready to go.
 
 # Developer Guide
 
@@ -156,10 +156,10 @@ MarketManager is divided into multiple small applications/libraries, each one wi
 - `web_interface` is a Phoenix application that holds all the code for the front-end.
 - `manager` is the core of the application, the entry point for all user requests. It talks to the rest of the layers.
 - `auction_house` is the app responsible for understanding and making requests to the given auction house. In this case, warframe market.
-- `store` is the persistency layer. It saves your data and remembers what is being selled or not.
+- `store` is the persistency layer. It saves your data and remembers what is being sold or not.
 
 For more information, feel free to read the README file of each application.
 
 A previous version of MarketManager also had a `cli` application interfacing with `manager`. This can still be seen in the `v1` branch, which is being saved for posterity: <https://github.com/Fl4m3Ph03n1x/market_manager/tree/v1>
 
-Do note that `v1` was the alpha release and is no longer being supported. It is still a very good resource for applicatinons with CLI interfaces though.
+Do note that `v1` was the alpha release and is no longer being supported. It is still a very good resource for applications with CLI interfaces though.
