@@ -20,7 +20,7 @@ defmodule WebInterface.Live.Window.Main.Activate do
         <p><%= @selected_command.description %></p>
       </div>
       <div class="body">
-        <form phx-change="filters">
+        <form phx-change="activate-filters">
           <div class="strategies">
             <div>
               <h3>Strategies</h3>
@@ -40,7 +40,7 @@ defmodule WebInterface.Live.Window.Main.Activate do
             <div class="checkboxes">
                 <input type="hidden" name="syndicates[]" value="">
                 <%= for synd <- @syndicates  do %>
-                  <%= syndicate_checkbox(synd: synd, checked: synd in @selected_syndicates) %>
+                  <%= syndicate_checkbox(synd: synd, checked: synd in @syndicates_to_activate) %>
                 <% end %>
             </div>
           </div>
@@ -49,7 +49,7 @@ defmodule WebInterface.Live.Window.Main.Activate do
           phx-click="execute_command"
           phx-value-command={@selected_command.id}
           phx-value-strategy={@selected_strategy.id}
-          phx-value-syndicates={selected_syndicates_to_string(@selected_syndicates)}>
+          phx-value-syndicates={syndicates_to_string(@syndicates_to_activate)}>
             Execute Command
         </button>
       </div>
@@ -60,21 +60,31 @@ defmodule WebInterface.Live.Window.Main.Activate do
   defp display_class(:activate), do: "show"
   defp display_class(_), do: "hidden"
 
-  defp selected_syndicates_to_string(syndicates), do:
+  defp syndicates_to_string(syndicates), do:
     Enum.map_join(syndicates, ";", &Syndicates.get_id/1)
 
   defp syndicate_checkbox(assigns) do
     assigns = Enum.into(assigns, %{})
 
-    ~L"""
+    if Map.get(assigns, :checked) do
+      ~H"""
       <div class="row single-syndicate">
-        <input class="column single-checkbox" type="checkbox" id="<%= @synd.id %>"
-                name="syndicates[]" value="<%= @synd.id %>"
-                <%= if @checked, do: "checked" %>>
+        <input class="column single-checkbox" type="checkbox" id={@synd.id}
+                name="syndicates[]" value={@synd.id} checked>
 
-        <label for="<%= @synd.id %>" class="column"><%= @synd.name %></label>
+        <label for={@synd.id} class="column"><%= @synd.name %></label>
       </div>
     """
+    else
+      ~H"""
+      <div class="row single-syndicate">
+        <input class="column single-checkbox" type="checkbox" id={@synd.id}
+                name="syndicates[]" value={@synd.id}>
+
+        <label for={@synd.id} class="column"><%= @synd.name %></label>
+      </div>
+    """
+    end
   end
 
   defp strategy_radio_button(assigns) do

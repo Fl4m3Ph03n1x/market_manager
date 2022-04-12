@@ -20,16 +20,16 @@ defmodule WebInterface.Live.Window.Main do
       <%= live_component(Activate, [
         selected_command: @selected_command,
         selected_strategy: @selected_strategy,
-        selected_syndicates: @selected_syndicates,
         strategies: @strategies,
-        syndicates: @syndicates
+        syndicates: @syndicates,
+        syndicates_to_activate: @syndicates_to_activate,
+        active_syndicates: @active_syndicates
       ], id: 4) %>
       <%= live_component(Deactivate, [
         selected_command: @selected_command,
-        selected_strategy: @selected_strategy,
-        selected_syndicates: @selected_syndicates,
-        strategies: @strategies,
-        syndicates: @syndicates
+        syndicates: @syndicates,
+        syndicates_to_deactivate: @syndicates_to_deactivate,
+        active_syndicates: @active_syndicates
       ], id: 5) %>
     </div>
     """
