@@ -144,35 +144,28 @@ defmodule WebInterface.Live.Window do
   end
 
   defp handle_activate_response(results, socket, syndicates) do
+    assigns = Map.get(socket, :assigns)
     result_per_syndicate = Enum.zip(syndicates, results)
 
-    successful_synds = Enum.filter(
-      result_per_syndicate,
-      fn  {_syn, {:ok, :success}} -> true
-          {_syn, _result} -> false
-      end
-    )
-    |> Enum.map(fn {syn, _result} -> syn end)
+    successful_synds =
+      result_per_syndicate
+      |> Enum.filter(&success_result?/1)
+      |> Enum.map(&syndicate_from_result_tuple/1)
 
-    socket = assign(socket, active_syndicates: successful_synds)
+    socket =
+      socket
+      |> assign(active_syndicates: Map.get(assigns, :active_syndicates) -- successful_synds)
+      |> assign(syndicates_to_activate: Map.get(assigns, :syndicates_to_activate) -- successful_synds)
 
     # we consider partial success a failure
-    failures = Enum.filter(
-      result_per_syndicate,
-      fn  {_syn, {:ok, :success}} -> false
-          {_syn, _result} -> true
-      end
-    )
+    failures = Enum.filter(result_per_syndicate, &failure_result?/1)
 
     if Enum.empty?(failures) do
       {:noreply, put_flash(socket, :info, "All syndicate requests were placed successfully!")}
     else
       Logger.error("#{inspect(failures)}")
+      syndicate_names = Enum.map_join(failures, ", ", &syndicate_name/1)
 
-      syndicate_names =
-        failures
-        |> Enum.map(fn {syn, _result} -> syn.name end)
-        |> Enum.join(", ")
       {:noreply, put_flash(socket, :error, "The following syndicate requests failed due to errors: #{syndicate_names}")}
     end
   end
@@ -182,13 +175,10 @@ defmodule WebInterface.Live.Window do
     assigns = Map.get(socket, :assigns)
     result_per_syndicate = Enum.zip(syndicates, results)
 
-    successful_synds = Enum.filter(
-      result_per_syndicate,
-      fn  {_syn, {:ok, :success}} -> true
-          {_syn, _result} -> false
-      end
-    )
-    |> Enum.map(fn {syn, _result} -> syn end)
+    successful_synds =
+      result_per_syndicate
+      |> Enum.filter(&success_result?/1)
+      |> Enum.map(&syndicate_from_result_tuple/1)
 
     socket =
       socket
@@ -196,23 +186,28 @@ defmodule WebInterface.Live.Window do
       |> assign(syndicates_to_deactivate: Map.get(assigns, :syndicates_to_deactivate) -- successful_synds)
 
     # we consider partial success a failure
-    failures = Enum.filter(
-      result_per_syndicate,
-      fn  {_syn, {:ok, :success}} -> false
-          {_syn, _result} -> true
-      end
-    )
+    failures = Enum.filter(result_per_syndicate, &failure_result?/1)
 
     if Enum.empty?(failures) do
       {:noreply, put_flash(socket, :info, "All syndicate orders were removed successfully!")}
     else
       Logger.error("#{inspect(failures)}")
+      syndicate_names = Enum.map_join(failures, ", ", &syndicate_name/1)
 
-      syndicate_names =
-        failures
-        |> Enum.map(fn {syn, _result} -> syn.name end)
-        |> Enum.join(", ")
       {:noreply, put_flash(socket, :error, "The following syndicate requests failed due to errors: #{syndicate_names}")}
     end
   end
+
+  @spec syndicate_from_result_tuple({map, any}) :: map
+  defp syndicate_from_result_tuple({syn, _result}), do: syn
+
+  @spec syndicate_name({map, any}) :: String.t()
+  defp syndicate_name({syn, _result}), do: syn.name
+
+  @spec success_result?({map, any}) :: boolean
+  defp success_result?({_syn, {:ok, :success}}), do: true
+  defp success_result?({_syn, _result}), do: false
+
+  @spec failure_result?({map, any}) :: boolean
+  defp failure_result?(tuple), do: not success_result?(tuple)
 end
