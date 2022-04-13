@@ -71,21 +71,17 @@ defmodule WebInterface.Live.Window.Main.Deactivate do
   defp syndicates_to_string(syndicates), do:
     Enum.map_join(syndicates, ";", &Syndicates.get_id/1)
 
-  @spec syndicate_checkbox(map) :: Rendered.t
   defp syndicate_checkbox(assigns) do
     assigns = Enum.into(assigns, %{})
 
     ~H"""
-      <div class={display(@checked)}>
-        <div class="row single-syndicate">
-          <input class="column single-checkbox" type="checkbox" id={@synd.id}
-                  name="syndicates[]" value={@synd.id}>
-
-          <label for={@synd.id} class="column"><%= @synd.name %></label>
-        </div>
-      </div>
+    <div class="row single-syndicate">
+      <input class="column single-checkbox" type="checkbox" id={checkbox_id(@synd)} name="syndicates[]" value={@synd.id} checked={@checked}>
+      <label for={checkbox_id(@synd)} class="column"><%= @synd.name %></label>
+    </div>
     """
   end
 
-
+  @spec checkbox_id(map) :: String.t()
+  defp checkbox_id(syndicate), do: "deactivate:#{syndicate.id}"
 end

@@ -72,7 +72,7 @@ defmodule WebInterface.Live.Window do
         socket
       ), do:
         %{
-          command: String.to_existing_atom("activate"),
+          command: :activate,
           strategy: String.to_existing_atom(strategy),
           syndicates: string_to_selected_syndicates(syndicates)
         }
@@ -81,16 +81,15 @@ defmodule WebInterface.Live.Window do
 
   def handle_event(
         "execute_command",
-        %{"command" => command, "strategy" => strategy, "syndicates" => syndicates},
+        %{"command" => "deactivate", "syndicates" => syndicates},
         socket
       ), do:
         %{
-          command: String.to_existing_atom(command),
-          strategy: String.to_existing_atom(strategy),
+          command: :deactivate,
           syndicates: string_to_selected_syndicates(syndicates)
         }
         |> Commands.execute()
-        |> handle_commands_response(socket)
+        |> handle_deactivate_response(socket, string_to_selected_syndicates(syndicates))
 
   def handle_event("authenticate", %{"cookie" => cookie, "token" => token}, socket), do:
     %{
@@ -99,7 +98,7 @@ defmodule WebInterface.Live.Window do
       token: token
     }
     |> Commands.execute()
-    |> handle_commands_response(socket)
+    |> handle_authenticate_response(socket)
 
   def handle_event("activate-filters", %{"strategy" => strat, "syndicates" => synds}, socket) do
     new_strategy =
@@ -135,18 +134,16 @@ defmodule WebInterface.Live.Window do
 
   defp by_not_empty_string(string), do: string !== ""
 
-  defp handle_commands_response({:ok, :success}, socket),
-    do: {:noreply, put_flash(socket, :info, "All orders placed successfully !}")}
 
-  defp handle_commands_response(results, socket),
-    do: {:noreply, put_flash(socket, :info, "Request completed: #{inspect(results)}")}
+  defp handle_authenticate_response({:ok, :success}, socket),
+    do: {:noreply, put_flash(socket, :info, "Authentication saved successfully!}")}
 
-  defp handle_activate_response({:ok, :success}, socket, syndicates) do
-    socket = assign(socket, active_syndicates: syndicates)
-    {:noreply, put_flash(socket, :info, "All orders placed successfully!}")}
+  defp handle_authenticate_response(results, socket) do
+    Logger.error("#{inspect(results)}")
+    {:noreply, put_flash(socket, :error, "Unable to persist authentication information.")}
   end
 
-  defp handle_activate_response(results, socket, syndicates) when is_list(results) do
+  defp handle_activate_response(results, socket, syndicates) do
     result_per_syndicate = Enum.zip(syndicates, results)
 
     successful_synds = Enum.filter(
@@ -159,6 +156,7 @@ defmodule WebInterface.Live.Window do
 
     socket = assign(socket, active_syndicates: successful_synds)
 
+    # we consider partial success a failure
     failures = Enum.filter(
       result_per_syndicate,
       fn  {_syn, {:ok, :success}} -> false
@@ -175,8 +173,46 @@ defmodule WebInterface.Live.Window do
         failures
         |> Enum.map(fn {syn, _result} -> syn.name end)
         |> Enum.join(", ")
-      {:noreply, put_flash(socket, :error, "The following syndicate requests failed due errors: #{syndicate_names}")}
+      {:noreply, put_flash(socket, :error, "The following syndicate requests failed due to errors: #{syndicate_names}")}
     end
   end
 
+
+  defp handle_deactivate_response(results, socket, syndicates) do
+    assigns = Map.get(socket, :assigns)
+    result_per_syndicate = Enum.zip(syndicates, results)
+
+    successful_synds = Enum.filter(
+      result_per_syndicate,
+      fn  {_syn, {:ok, :success}} -> true
+          {_syn, _result} -> false
+      end
+    )
+    |> Enum.map(fn {syn, _result} -> syn end)
+
+    socket =
+      socket
+      |> assign(active_syndicates: Map.get(assigns, :active_syndicates) -- successful_synds)
+      |> assign(syndicates_to_deactivate: Map.get(assigns, :syndicates_to_deactivate) -- successful_synds)
+
+    # we consider partial success a failure
+    failures = Enum.filter(
+      result_per_syndicate,
+      fn  {_syn, {:ok, :success}} -> false
+          {_syn, _result} -> true
+      end
+    )
+
+    if Enum.empty?(failures) do
+      {:noreply, put_flash(socket, :info, "All syndicate orders were removed successfully!")}
+    else
+      Logger.error("#{inspect(failures)}")
+
+      syndicate_names =
+        failures
+        |> Enum.map(fn {syn, _result} -> syn.name end)
+        |> Enum.join(", ")
+      {:noreply, put_flash(socket, :error, "The following syndicate requests failed due to errors: #{syndicate_names}")}
+    end
+  end
 end

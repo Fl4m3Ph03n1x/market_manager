@@ -66,37 +66,22 @@ defmodule WebInterface.Live.Window.Main.Activate do
   defp syndicate_checkbox(assigns) do
     assigns = Enum.into(assigns, %{})
 
-    if Map.get(assigns, :checked) do
-      ~H"""
-      <div class="row single-syndicate">
-        <input class="column single-checkbox" type="checkbox" id={@synd.id}
-                name="syndicates[]" value={@synd.id} checked>
-
-        <label for={@synd.id} class="column"><%= @synd.name %></label>
-      </div>
-    """
-    else
-      ~H"""
-      <div class="row single-syndicate">
-        <input class="column single-checkbox" type="checkbox" id={@synd.id}
-                name="syndicates[]" value={@synd.id}>
-
-        <label for={@synd.id} class="column"><%= @synd.name %></label>
-      </div>
-    """
-    end
+    ~H"""
+    <div class="row single-syndicate">
+      <input class="column single-checkbox" type="checkbox" id={checkbox_id(@synd)} name="syndicates[]" value={@synd.id} checked={@checked}>
+      <label for={checkbox_id(@synd)} class="column"><%= @synd.name %></label>
+    </div>
+  """
   end
 
   defp strategy_radio_button(assigns) do
     assigns = Enum.into(assigns, %{})
 
-    ~L"""
+    ~H"""
     <div class="radio-button row">
       <div class="choice column column-25">
-        <input type="radio" id="<%= @strat.id %>"
-                name="strategy" value="<%= @strat.id %>"
-                <%= if @checked, do: "checked" %> />
-        <label for="<%= @strat.id %>"><%= @strat.name %></label>
+        <input type="radio" id={@strat.id} name="strategy" value={@strat.id} checked={@checked}/>
+        <label for={@strat.id}><%= @strat.name %></label>
       </div>
       <div class="description column">
         <p><%= @strat.description %></p>
@@ -105,4 +90,6 @@ defmodule WebInterface.Live.Window.Main.Activate do
     """
   end
 
+  @spec checkbox_id(map) :: String.t()
+  defp checkbox_id(syndicate), do: "activate:#{syndicate.id}"
 end
