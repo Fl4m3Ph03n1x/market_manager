@@ -157,11 +157,13 @@ defmodule WebInterface.Live.Window do
       result_per_syndicate
       |> Enum.filter(&by_success_result/1)
       |> Enum.map(&syndicate_from_result_tuple/1)
+      |> IO.inspect(label: "successful_synds")
 
     socket =
       socket
-      |> assign(active_syndicates: Map.get(assigns, :active_syndicates) -- successful_synds)
+      |> assign(active_syndicates: Map.get(assigns, :active_syndicates) ++ successful_synds)
       |> assign(syndicates_to_activate: Map.get(assigns, :syndicates_to_activate) -- successful_synds)
+      |> IO.inspect(label: "socket")
 
     # we consider partial success a failure
     failures = Enum.filter(result_per_syndicate, &by_failure_result/1)
