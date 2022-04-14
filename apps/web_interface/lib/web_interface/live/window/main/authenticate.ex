@@ -9,11 +9,12 @@ defmodule WebInterface.Live.Window.Main.Authenticate do
   use WebInterface, :live_component
 
   alias Elixir.Phoenix.LiveView.Rendered
+  alias WebInterface.Commands
 
   @spec render(map) :: Rendered.t
   def render(assigns) do
     ~H"""
-    <div class={display_class(@selected_command.id)}>
+    <div class={display(@selected_command.id)}>
       <div class="header">
         <h2>Description</h2>
         <p><%= @selected_command.description %></p>
@@ -42,7 +43,8 @@ defmodule WebInterface.Live.Window.Main.Authenticate do
     """
   end
 
-  defp display_class(:authenticate), do: "show"
-  defp display_class(_), do: "hidden"
+  @spec display(Commands.command_id) :: String.t
+  defp display(:authenticate), do: "show"
+  defp display(_), do: "hidden"
 
 end

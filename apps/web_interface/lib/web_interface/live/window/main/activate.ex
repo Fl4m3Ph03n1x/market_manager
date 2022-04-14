@@ -9,12 +9,12 @@ defmodule WebInterface.Live.Window.Main.Activate do
   use WebInterface, :live_component
 
   alias Elixir.Phoenix.LiveView.Rendered
-  alias WebInterface.Syndicates
+  alias WebInterface.{Commands, Syndicates}
 
   @spec render(map) :: Rendered.t
   def render(assigns) do
     ~H"""
-    <div class={display_class(@selected_command.id)}>
+    <div class={display(@selected_command.id)}>
       <div class="header">
         <h2>Description</h2>
         <p><%= @selected_command.description %></p>
@@ -57,12 +57,15 @@ defmodule WebInterface.Live.Window.Main.Activate do
     """
   end
 
-  defp display_class(:activate), do: "show"
-  defp display_class(_), do: "hidden"
+  @spec display(Commands.command_id) :: String.t
+  defp display(:activate), do: "show"
+  defp display(_), do: "hidden"
 
+  @spec syndicates_to_string([Syndicates.syndicate_info]) :: String.t
   defp syndicates_to_string(syndicates), do:
     Enum.map_join(syndicates, ";", &Syndicates.get_id/1)
 
+  @spec syndicate_checkbox(keyword(any)) :: Rendered.t
   defp syndicate_checkbox(assigns) do
     assigns = Enum.into(assigns, %{})
 
@@ -74,6 +77,7 @@ defmodule WebInterface.Live.Window.Main.Activate do
   """
   end
 
+  @spec strategy_radio_button(keyword(any)) :: Rendered.t
   defp strategy_radio_button(assigns) do
     assigns = Enum.into(assigns, %{})
 
@@ -90,6 +94,6 @@ defmodule WebInterface.Live.Window.Main.Activate do
     """
   end
 
-  @spec checkbox_id(map) :: String.t()
+  @spec checkbox_id(Syndicates.syndicate_info) :: String.t()
   defp checkbox_id(syndicate), do: "activate:#{syndicate.id}"
 end

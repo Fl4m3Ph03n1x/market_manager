@@ -12,6 +12,7 @@ defmodule WebInterface.Live.Window do
   require Logger
 
   alias Phoenix.LiveView
+  alias Phoenix.LiveView.{Rendered, Socket}
   alias WebInterface.{Commands, Strategies, Syndicates}
 
   alias __MODULE__.{Main, Sidebar}
@@ -38,6 +39,7 @@ defmodule WebInterface.Live.Window do
   end
 
   @impl LiveView
+  @spec render(map) :: Rendered.t
   def render(assigns) do
     ~H"""
     <div id="commands" class="container row">
@@ -56,6 +58,7 @@ defmodule WebInterface.Live.Window do
   end
 
   @impl LiveView
+  @spec handle_event(String.t, map, Socket.t) :: {:noreply, Socket.t}
   def handle_event("show", %{"id" => id}, socket) do
     command =
       id
@@ -125,6 +128,7 @@ defmodule WebInterface.Live.Window do
     {:noreply, socket}
   end
 
+  @spec string_to_selected_syndicates(String.t) :: [Syndicates.syndicate_info]
   defp string_to_selected_syndicates(syndicates_string),
     do:
       syndicates_string
@@ -132,9 +136,10 @@ defmodule WebInterface.Live.Window do
       |> Enum.filter(&by_not_empty_string/1)
       |> Enum.map(&Syndicates.get_syndicate/1)
 
+  @spec by_not_empty_string(String.t) :: boolean
   defp by_not_empty_string(string), do: string !== ""
 
-
+  @spec handle_authenticate_response(any, Socket.t) :: {:noreply, Socket.t}
   defp handle_authenticate_response({:ok, :success}, socket),
     do: {:noreply, put_flash(socket, :info, "Authentication saved successfully!}")}
 
@@ -143,13 +148,14 @@ defmodule WebInterface.Live.Window do
     {:noreply, put_flash(socket, :error, "Unable to persist authentication information.")}
   end
 
+  @spec handle_activate_response(any, Socket.t, [Syndicates.syndicate_info]) :: {:noreply, Socket.t}
   defp handle_activate_response(results, socket, syndicates) do
     assigns = Map.get(socket, :assigns)
     result_per_syndicate = Enum.zip(syndicates, results)
 
     successful_synds =
       result_per_syndicate
-      |> Enum.filter(&success_result?/1)
+      |> Enum.filter(&by_success_result/1)
       |> Enum.map(&syndicate_from_result_tuple/1)
 
     socket =
@@ -158,7 +164,7 @@ defmodule WebInterface.Live.Window do
       |> assign(syndicates_to_activate: Map.get(assigns, :syndicates_to_activate) -- successful_synds)
 
     # we consider partial success a failure
-    failures = Enum.filter(result_per_syndicate, &failure_result?/1)
+    failures = Enum.filter(result_per_syndicate, &by_failure_result/1)
 
     if Enum.empty?(failures) do
       {:noreply, put_flash(socket, :info, "All syndicate requests were placed successfully!")}
@@ -170,14 +176,14 @@ defmodule WebInterface.Live.Window do
     end
   end
 
-
+  @spec handle_deactivate_response(any, Socket.t, [Syndicates.syndicate_info]) :: {:noreply, Socket.t}
   defp handle_deactivate_response(results, socket, syndicates) do
     assigns = Map.get(socket, :assigns)
     result_per_syndicate = Enum.zip(syndicates, results)
 
     successful_synds =
       result_per_syndicate
-      |> Enum.filter(&success_result?/1)
+      |> Enum.filter(&by_success_result/1)
       |> Enum.map(&syndicate_from_result_tuple/1)
 
     socket =
@@ -186,7 +192,7 @@ defmodule WebInterface.Live.Window do
       |> assign(syndicates_to_deactivate: Map.get(assigns, :syndicates_to_deactivate) -- successful_synds)
 
     # we consider partial success a failure
-    failures = Enum.filter(result_per_syndicate, &failure_result?/1)
+    failures = Enum.filter(result_per_syndicate, &by_failure_result/1)
 
     if Enum.empty?(failures) do
       {:noreply, put_flash(socket, :info, "All syndicate orders were removed successfully!")}
@@ -204,10 +210,10 @@ defmodule WebInterface.Live.Window do
   @spec syndicate_name({map, any}) :: String.t()
   defp syndicate_name({syn, _result}), do: syn.name
 
-  @spec success_result?({map, any}) :: boolean
-  defp success_result?({_syn, {:ok, :success}}), do: true
-  defp success_result?({_syn, _result}), do: false
+  @spec by_success_result({map, any}) :: boolean
+  defp by_success_result({_syn, {:ok, :success}}), do: true
+  defp by_success_result({_syn, _result}), do: false
 
-  @spec failure_result?({map, any}) :: boolean
-  defp failure_result?(tuple), do: not success_result?(tuple)
+  @spec by_failure_result({map, any}) :: boolean
+  defp by_failure_result(tuple), do: not by_success_result(tuple)
 end

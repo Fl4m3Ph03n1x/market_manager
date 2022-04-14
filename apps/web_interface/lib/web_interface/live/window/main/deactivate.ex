@@ -9,7 +9,7 @@ defmodule WebInterface.Live.Window.Main.Deactivate do
   use WebInterface, :live_component
 
   alias Elixir.Phoenix.LiveView.Rendered
-  alias WebInterface.Syndicates
+  alias WebInterface.{Commands, Syndicates}
 
   @spec render(map) :: Rendered.t
   def render(assigns) do
@@ -51,26 +51,26 @@ defmodule WebInterface.Live.Window.Main.Deactivate do
     """
   end
 
-  @spec deactivate?(atom) :: boolean
+  @spec deactivate?(Commands.command_id) :: boolean
   defp deactivate?(:deactivate), do: true
   defp deactivate?(_), do: false
 
-  @spec display(boolean) :: String.t()
+  @spec display(boolean) :: String.t
   defp display(true), do: "show"
   defp display(_), do: "hidden"
 
-  @spec any_active?([map]) :: boolean
+  @spec any_active?([Syndicates.syndicate_info]) :: boolean
   defp any_active?([]), do: false
   defp any_active?(_), do: true
 
-  @spec none_active?([map]) :: boolean
+  @spec none_active?([Syndicates.syndicate_info]) :: boolean
   defp none_active?(data), do: !any_active?(data)
 
-
-  @spec syndicates_to_string([map]) :: String.t()
+  @spec syndicates_to_string([Syndicates.syndicate_info]) :: String.t()
   defp syndicates_to_string(syndicates), do:
     Enum.map_join(syndicates, ";", &Syndicates.get_id/1)
 
+  @spec syndicate_checkbox(keyword(any)) :: Rendered.t
   defp syndicate_checkbox(assigns) do
     assigns = Enum.into(assigns, %{})
 
@@ -82,6 +82,6 @@ defmodule WebInterface.Live.Window.Main.Deactivate do
     """
   end
 
-  @spec checkbox_id(map) :: String.t()
+  @spec checkbox_id(Syndicates.syndicate_info) :: String.t()
   defp checkbox_id(syndicate), do: "deactivate:#{syndicate.id}"
 end
