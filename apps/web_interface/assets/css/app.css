@@ -73,7 +73,7 @@ div #commands {
 
 .sidebar {
     background-color: #42389D;
-	border-radius: 1rem;
+  	border-radius: 1rem;
     margin-right: 0.8rem;
 }
 
@@ -181,6 +181,12 @@ label {
 .column .single-checkbox {
     flex: 0 0 3%;
     max-width: 3%;
+}
+
+.nothing-to-see {
+  text-align: center;
+  font-weight: bold;
+  font-size: large;
 }
 
 /* Button */

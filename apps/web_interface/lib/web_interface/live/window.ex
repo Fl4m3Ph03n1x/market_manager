@@ -9,7 +9,10 @@ defmodule WebInterface.Live.Window do
 
   use WebInterface, :live_view
 
+  require Logger
+
   alias Phoenix.LiveView
+  alias Phoenix.LiveView.{Rendered, Socket}
   alias WebInterface.{Commands, Strategies, Syndicates}
 
   alias __MODULE__.{Main, Sidebar}
@@ -27,13 +30,16 @@ defmodule WebInterface.Live.Window do
         strategies: strategies,
         selected_strategy: hd(strategies),
         syndicates: syndicates,
-        selected_syndicates: []
+        syndicates_to_deactivate: [],
+        syndicates_to_activate: [],
+        active_syndicates: []
       )
 
     {:ok, socket}
   end
 
   @impl LiveView
+  @spec render(map) :: Rendered.t
   def render(assigns) do
     ~H"""
     <div id="commands" class="container row">
@@ -41,7 +47,9 @@ defmodule WebInterface.Live.Window do
       <%= live_component(Main, [
         selected_command: @selected_command,
         selected_strategy: @selected_strategy,
-        selected_syndicates: @selected_syndicates,
+        syndicates_to_activate: @syndicates_to_activate,
+        syndicates_to_deactivate: @syndicates_to_deactivate,
+        active_syndicates: @active_syndicates,
         strategies: @strategies,
         syndicates: @syndicates
       ], id: 2) %>
@@ -50,6 +58,7 @@ defmodule WebInterface.Live.Window do
   end
 
   @impl LiveView
+  @spec handle_event(String.t, map, Socket.t) :: {:noreply, Socket.t}
   def handle_event("show", %{"id" => id}, socket) do
     command =
       id
@@ -62,17 +71,28 @@ defmodule WebInterface.Live.Window do
 
   def handle_event(
         "execute_command",
-        %{"command" => command, "strategy" => strategy, "syndicates" => syndicates},
+        %{"command" => "activate", "strategy" => strategy, "syndicates" => syndicates},
         socket
-      ),
-      do:
+      ), do:
         %{
-          command: String.to_existing_atom(command),
+          command: :activate,
           strategy: String.to_existing_atom(strategy),
           syndicates: string_to_selected_syndicates(syndicates)
         }
         |> Commands.execute()
-        |> handle_commands_response(socket)
+        |> handle_activate_response(socket, string_to_selected_syndicates(syndicates))
+
+  def handle_event(
+        "execute_command",
+        %{"command" => "deactivate", "syndicates" => syndicates},
+        socket
+      ), do:
+        %{
+          command: :deactivate,
+          syndicates: string_to_selected_syndicates(syndicates)
+        }
+        |> Commands.execute()
+        |> handle_deactivate_response(socket, string_to_selected_syndicates(syndicates))
 
   def handle_event("authenticate", %{"cookie" => cookie, "token" => token}, socket), do:
     %{
@@ -81,9 +101,9 @@ defmodule WebInterface.Live.Window do
       token: token
     }
     |> Commands.execute()
-    |> handle_commands_response(socket)
+    |> handle_authenticate_response(socket)
 
-  def handle_event("filters", %{"strategy" => strat, "syndicates" => synds}, socket) do
+  def handle_event("activate-filters", %{"strategy" => strat, "syndicates" => synds}, socket) do
     new_strategy =
       strat
       |> String.to_existing_atom()
@@ -94,10 +114,21 @@ defmodule WebInterface.Live.Window do
       |> Enum.filter(&by_not_empty_string/1)
       |> Enum.map(&Syndicates.get_syndicate/1)
 
-    socket = assign(socket, selected_strategy: new_strategy, selected_syndicates: new_syndicates)
+    socket = assign(socket, selected_strategy: new_strategy, syndicates_to_activate: new_syndicates)
     {:noreply, socket}
   end
 
+  def handle_event("deactivate-filters", %{"syndicates" => synds}, socket) do
+    new_syndicates =
+      synds
+      |> Enum.filter(&by_not_empty_string/1)
+      |> Enum.map(&Syndicates.get_syndicate/1)
+
+    socket = assign(socket, syndicates_to_deactivate: new_syndicates)
+    {:noreply, socket}
+  end
+
+  @spec string_to_selected_syndicates(String.t) :: [Syndicates.syndicate_info]
   defp string_to_selected_syndicates(syndicates_string),
     do:
       syndicates_string
@@ -105,8 +136,86 @@ defmodule WebInterface.Live.Window do
       |> Enum.filter(&by_not_empty_string/1)
       |> Enum.map(&Syndicates.get_syndicate/1)
 
+  @spec by_not_empty_string(String.t) :: boolean
   defp by_not_empty_string(string), do: string !== ""
 
-  defp handle_commands_response(results, socket),
-    do: {:noreply, put_flash(socket, :info, "Request completed: #{inspect(results)}")}
+  @spec handle_authenticate_response(any, Socket.t) :: {:noreply, Socket.t}
+  defp handle_authenticate_response({:ok, :success}, socket),
+    do: {:noreply, put_flash(socket, :info, "Authentication saved successfully!}")}
+
+  defp handle_authenticate_response(results, socket) do
+    Logger.error("#{inspect(results)}")
+    {:noreply, put_flash(socket, :error, "Unable to persist authentication information.")}
+  end
+
+  @spec handle_activate_response(any, Socket.t, [Syndicates.syndicate_info]) :: {:noreply, Socket.t}
+  defp handle_activate_response(results, socket, syndicates) do
+    assigns = Map.get(socket, :assigns)
+    result_per_syndicate = Enum.zip(syndicates, results)
+
+    successful_synds =
+      result_per_syndicate
+      |> Enum.filter(&by_success_result/1)
+      |> Enum.map(&syndicate_from_result_tuple/1)
+      |> IO.inspect(label: "successful_synds")
+
+    socket =
+      socket
+      |> assign(active_syndicates: Map.get(assigns, :active_syndicates) ++ successful_synds)
+      |> assign(syndicates_to_activate: Map.get(assigns, :syndicates_to_activate) -- successful_synds)
+      |> IO.inspect(label: "socket")
+
+    # we consider partial success a failure
+    failures = Enum.filter(result_per_syndicate, &by_failure_result/1)
+
+    if Enum.empty?(failures) do
+      {:noreply, put_flash(socket, :info, "All syndicate requests were placed successfully!")}
+    else
+      Logger.error("#{inspect(failures)}")
+      syndicate_names = Enum.map_join(failures, ", ", &syndicate_name/1)
+
+      {:noreply, put_flash(socket, :error, "The following syndicate requests failed due to errors: #{syndicate_names}")}
+    end
+  end
+
+  @spec handle_deactivate_response(any, Socket.t, [Syndicates.syndicate_info]) :: {:noreply, Socket.t}
+  defp handle_deactivate_response(results, socket, syndicates) do
+    assigns = Map.get(socket, :assigns)
+    result_per_syndicate = Enum.zip(syndicates, results)
+
+    successful_synds =
+      result_per_syndicate
+      |> Enum.filter(&by_success_result/1)
+      |> Enum.map(&syndicate_from_result_tuple/1)
+
+    socket =
+      socket
+      |> assign(active_syndicates: Map.get(assigns, :active_syndicates) -- successful_synds)
+      |> assign(syndicates_to_deactivate: Map.get(assigns, :syndicates_to_deactivate) -- successful_synds)
+
+    # we consider partial success a failure
+    failures = Enum.filter(result_per_syndicate, &by_failure_result/1)
+
+    if Enum.empty?(failures) do
+      {:noreply, put_flash(socket, :info, "All syndicate orders were removed successfully!")}
+    else
+      Logger.error("#{inspect(failures)}")
+      syndicate_names = Enum.map_join(failures, ", ", &syndicate_name/1)
+
+      {:noreply, put_flash(socket, :error, "The following syndicate requests failed due to errors: #{syndicate_names}")}
+    end
+  end
+
+  @spec syndicate_from_result_tuple({map, any}) :: map
+  defp syndicate_from_result_tuple({syn, _result}), do: syn
+
+  @spec syndicate_name({map, any}) :: String.t()
+  defp syndicate_name({syn, _result}), do: syn.name
+
+  @spec by_success_result({map, any}) :: boolean
+  defp by_success_result({_syn, {:ok, :success}}), do: true
+  defp by_success_result({_syn, _result}), do: false
+
+  @spec by_failure_result({map, any}) :: boolean
+  defp by_failure_result(tuple), do: not by_success_result(tuple)
 end

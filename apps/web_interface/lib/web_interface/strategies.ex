@@ -3,13 +3,14 @@ defmodule WebInterface.Strategies do
   Contains information about the strategies for price setting available to the user.
   """
 
-  @spec list_strategies :: [
-          %{
-            description: String.t,
-            id: :equal_to_lowest | :lowest_minus_one | :top_five_average | :top_three_average,
-            name: String.t
-          }
-        ]
+  @type strategy_id :: :equal_to_lowest | :lowest_minus_one | :top_five_average | :top_three_average
+  @type strategy :: %{
+    description: String.t,
+    id: strategy_id,
+    name: String.t
+  }
+
+  @spec list_strategies :: [strategy]
   def list_strategies,
     do: [
       %{
@@ -42,11 +43,13 @@ defmodule WebInterface.Strategies do
       }
     ]
 
+  @spec get_strategy(strategy_id) :: strategy
   def get_strategy(id),
     do:
       list_strategies()
       |> Enum.filter(&by_id(&1, id))
       |> hd()
 
+  @spec by_id(strategy, strategy_id) :: boolean
   defp by_id(%{id: strat_id}, id), do: strat_id == id
 end
