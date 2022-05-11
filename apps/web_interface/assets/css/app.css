@@ -1,66 +1,78 @@
 /* This file is for your main application CSS */
 @import "./phoenix.css";
-
+@import "progress_bar.css";
 
 /* General */
 
+:root {
+  --darkpurple: #42389d;
+  --lightpurple: #6961b3;
+}
+
 .hidden {
-    opacity: 0;
-    display: none;
-    z-index: -1
+  overflow: hidden;
+  /* Hide the element content, while height = 0 */
+  height: 0;
+  width: 0;
+  opacity: 0;
+  transition: height 0ms 600ms, opacity 400ms 0ms;
 }
 
 .show {
+  height: auto;
+  width: auto;
   opacity: 1;
-  transition: opacity 0.6s linear;
-  z-index: 100 !important;
+  transition: height 0ms 0ms, opacity 700ms 0ms;
 }
 
 
 p {
-    font-size: 1.4rem;
-    line-height: 120%;
-    text-align: justify;
-    margin-bottom: 1rem;
-    margin-top: 0.5rem;
-    margin-right: 1rem;
+  font-size: 1.4rem;
+  line-height: 120%;
+  text-align: justify;
+  margin-bottom: 1rem;
+  margin-top: 0.5rem;
+  margin-right: 1rem;
 }
 
-a:hover{
-    color: white;
+a:hover {
+  color: white;
 }
 
 header {
-    background-color: lightgray;
-    border-bottom: none;
+  background-color: lightgray;
+  border-bottom: none;
 }
 
 body {
-    background-color: lightgray;
-} 
+  background-color: lightgray;
+}
 
 /* logo */
 
 .container {
-    max-width: 90rem;
-    padding: 0rem;
+  max-width: 90rem;
+  padding: 0rem;
 }
 
-.mm-logo{
-    width:20%;
-    margin:auto;
-    padding-top: 1rem;
-    padding-bottom: 1rem;
-    display: block;
-    border-radius: 3rem;
+.mm-logo {
+  width: 20%;
+  margin: auto;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  display: block;
+  border-radius: 3rem;
 }
 
 .logo-background {
-    background: #bdc3c7;  /* fallback for old browsers */
-    background: -webkit-linear-gradient(to right, #2c3e50, #bdc3c7);  /* Chrome 10-25, Safari 5.1-6 */
-    background: linear-gradient(to right, #2c3e50, #bdc3c7); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-    width: 100%;
-    border-radius: 1rem;
+  background: #bdc3c7;
+  /* fallback for old browsers */
+  background: -webkit-linear-gradient(to right, #2c3e50, #bdc3c7);
+  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to right, #2c3e50, #bdc3c7);
+  /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  width: 100%;
+  border-radius: 1rem;
 }
 
 /* Window */
@@ -72,68 +84,68 @@ div #commands {
 /* Sidebar */
 
 .sidebar {
-    background-color: #42389D;
-  	border-radius: 1rem;
-    margin-right: 0.8rem;
+  background-color: var(--darkpurple);
+  border-radius: 1rem;
+  margin-right: 0.8rem;
 }
 
 .nav {
-    margin-top: 2rem;
+  margin-top: 2rem;
 }
 
 .sidebar-button:hover {
-    background-color: #6961b3;
-    border-radius: 0.5rem;
-    width: 100%;
-    font-weight: bold;
+  background-color: var(--lightpurple);
+  border-radius: 0.5rem;
+  width: 100%;
+  font-weight: bold;
 }
 
 .sidebar-button {
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-    color: white;
-    font-size: 1.4rem;
-    padding-left: 1rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  color: white;
+  font-size: 1.4rem;
+  padding-left: 1rem;
 }
 
-a.active{
-    font-weight: bold;
-    background-color: #362f78;
+a.active {
+  font-weight: bold;
+  background-color: #362f78;
 }
 
-.active .sidebar-button{
-    background-color: #362f78;
-    border-radius: 0.5rem;
+.active .sidebar-button {
+  background-color: #362f78;
+  border-radius: 0.5rem;
 }
 
 /* Main */
 
-.main{
-    background-color: white;
-    border-radius: 1rem;
+.main {
+  background-color: white;
+  border-radius: 1rem;
 }
 
 /* Description */
 
 .main .header {
-    border-bottom: 1px solid lightgray;
+  border-bottom: 1px solid lightgray;
 }
 
-.main .header h2{
-    color: #42389d;
-    font-weight: bold;
-    margin: auto;
-    font-size: 1.9rem;
-    margin-top: 1.3rem;
+.main .header h2 {
+  color: var(--darkpurple);
+  font-weight: bold;
+  margin: auto;
+  font-size: 1.9rem;
+  margin-top: 1.3rem;
 }
 
-.main .header p{
-    margin-bottom: 1.5rem;
+.main .header p {
+  margin-bottom: 1.5rem;
 }
 
-.main  h3{
+.main h3 {
   text-align: justify;
-  color: #42389d;
+  color: var(--darkpurple);
   font-weight: bold;
   margin: auto;
   font-size: 1.1em;
@@ -142,45 +154,45 @@ a.active{
 
 /* Strategies */
 
-.main .strategies .radio-button{
-    text-align: justify;
-    margin: auto;
-    font-size: 0.9em;
+.main .strategies .radio-button {
+  text-align: justify;
+  margin: auto;
+  font-size: 0.9em;
 }
 
-.main .strategies .radio-button{
-    margin: auto;
-    font-size: 1.1em;
+.main .strategies .radio-button {
+  margin: auto;
+  font-size: 1.1em;
 }
 
-.main .strategies .radio-button .choice{
-    display: flex;
-    padding-left: 0rem;
+.main .strategies .radio-button .choice {
+  display: flex;
+  padding-left: 0rem;
 }
 
 label {
-    margin-bottom: 0.5rem;
-    margin-left: 0.5rem;
-    font-size: 1.4rem;
-    text-align: left;
-    font-weight: normal;
+  margin-bottom: 0.5rem;
+  margin-left: 0.5rem;
+  font-size: 1.4rem;
+  text-align: left;
+  font-weight: normal;
 }
 
-.main .strategies .radio-button .description{
-    margin: auto;
-    font-size: 1.6rem;
-    color: rgb(146, 141, 141);
+.main .strategies .radio-button .description {
+  margin: auto;
+  font-size: 1.6rem;
+  color: rgb(146, 141, 141);
 }
 
 /* Syndicates */
 
 .row .single-syndicate {
-    margin-left: inherit;
+  margin-left: inherit;
 }
 
 .column .single-checkbox {
-    flex: 0 0 3%;
-    max-width: 3%;
+  flex: 0 0 3%;
+  max-width: 3%;
 }
 
 .nothing-to-see {
@@ -191,130 +203,160 @@ label {
 
 /* Button */
 button {
-    background-color: #42389d;
-    border-radius: 25px;
-    width: 100%;
+  background-color: var(--darkpurple);
+  border-radius: 25px;
+  width: 100%;
 }
 
-button:hover{
-    background-color: #6961b3;
+button:hover {
+  background-color: var(--lightpurple);
 }
 
 /* Alerts and form errors used by phx.new */
 .alert {
-    padding: 15px;
-    margin-bottom: 20px;
-    border: 1px solid transparent;
-    border-radius: 4px;
+  padding: 15px;
+  margin-bottom: 20px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+}
+
+.alert-info {
+  color: #31708f;
+  background-color: #d9edf7;
+  border-color: #bce8f1;
+}
+
+.alert-warning {
+  color: #8a6d3b;
+  background-color: #fcf8e3;
+  border-color: #faebcc;
+}
+
+.alert-danger {
+  color: #a94442;
+  background-color: #f2dede;
+  border-color: #ebccd1;
+}
+
+.alert p {
+  margin-bottom: 0;
+}
+
+.alert:empty {
+  display: none;
+}
+
+.invalid-feedback {
+  color: #a94442;
+  display: block;
+  margin: -1rem 0 2rem;
+}
+
+/* LiveView specific classes for your customization */
+.phx-no-feedback.invalid-feedback,
+.phx-no-feedback .invalid-feedback {
+  display: none;
+}
+
+.phx-click-loading {
+  opacity: 0.5;
+  transition: opacity 1s ease-out;
+}
+
+.phx-loading {
+  cursor: wait;
+}
+
+.phx-modal {
+  opacity: 1 !important;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.phx-modal-content {
+  background-color: #fefefe;
+  margin: 15vh auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+}
+
+.phx-modal-close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.phx-modal-close:hover,
+.phx-modal-close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.fade-in-scale {
+  animation: 0.2s ease-in 0s normal forwards 1 fade-in-scale-keys;
+}
+
+.fade-out-scale {
+  animation: 0.2s ease-out 0s normal forwards 1 fade-out-scale-keys;
+}
+
+.fade-in {
+  animation: 0.2s ease-out 0s normal forwards 1 fade-in-keys;
+}
+
+.fade-out {
+  animation: 0.2s ease-out 0s normal forwards 1 fade-out-keys;
+}
+
+@keyframes fade-in-scale-keys {
+  0% {
+    scale: 0.95;
+    opacity: 0;
   }
-  .alert-info {
-    color: #31708f;
-    background-color: #d9edf7;
-    border-color: #bce8f1;
+
+  100% {
+    scale: 1.0;
+    opacity: 1;
   }
-  .alert-warning {
-    color: #8a6d3b;
-    background-color: #fcf8e3;
-    border-color: #faebcc;
+}
+
+@keyframes fade-out-scale-keys {
+  0% {
+    scale: 1.0;
+    opacity: 1;
   }
-  .alert-danger {
-    color: #a94442;
-    background-color: #f2dede;
-    border-color: #ebccd1;
+
+  100% {
+    scale: 0.95;
+    opacity: 0;
   }
-  .alert p {
-    margin-bottom: 0;
+}
+
+@keyframes fade-in-keys {
+  0% {
+    opacity: 0;
   }
-  .alert:empty {
-    display: none;
+
+  100% {
+    opacity: 1;
   }
-  .invalid-feedback {
-    color: #a94442;
-    display: block;
-    margin: -1rem 0 2rem;
+}
+
+@keyframes fade-out-keys {
+  0% {
+    opacity: 1;
   }
-  
-  /* LiveView specific classes for your customization */
-  .phx-no-feedback.invalid-feedback,
-  .phx-no-feedback .invalid-feedback {
-    display: none;
+
+  100% {
+    opacity: 0;
   }
-  
-  .phx-click-loading {
-    opacity: 0.5;
-    transition: opacity 1s ease-out;
-  }
-  
-  .phx-loading{
-    cursor: wait;
-  }
-  
-  .phx-modal {
-    opacity: 1!important;
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0,0,0,0.4);
-  }
-  
-  .phx-modal-content {
-    background-color: #fefefe;
-    margin: 15vh auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-  }
-  
-  .phx-modal-close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-  }
-  
-  .phx-modal-close:hover,
-  .phx-modal-close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-  }
-  
-  .fade-in-scale {
-    animation: 0.2s ease-in 0s normal forwards 1 fade-in-scale-keys;
-  }
-  
-  .fade-out-scale {
-    animation: 0.2s ease-out 0s normal forwards 1 fade-out-scale-keys;
-  }
-  
-  .fade-in {
-    animation: 0.2s ease-out 0s normal forwards 1 fade-in-keys;
-  }
-  .fade-out {
-    animation: 0.2s ease-out 0s normal forwards 1 fade-out-keys;
-  }
-  
-  @keyframes fade-in-scale-keys{
-    0% { scale: 0.95; opacity: 0; }
-    100% { scale: 1.0; opacity: 1; }
-  }
-  
-  @keyframes fade-out-scale-keys{
-    0% { scale: 1.0; opacity: 1; }
-    100% { scale: 0.95; opacity: 0; }
-  }
-  
-  @keyframes fade-in-keys{
-    0% { opacity: 0; }
-    100% { opacity: 1; }
-  }
-  
-  @keyframes fade-out-keys{
-    0% { opacity: 1; }
-    100% { opacity: 0; }
-  }
-  
+}

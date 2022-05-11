@@ -2,7 +2,7 @@ defmodule AuctionHouseTest do
   use ExUnit.Case
 
   alias AuctionHouse
-  alias AuctionHouse.Server
+  alias AuctionHouse.Runtime.Server
   alias Bypass
 
   @test_port 8082
@@ -53,6 +53,7 @@ defmodule AuctionHouseTest do
             }
           }
         }
+
         Plug.Conn.resp(conn, 200, Jason.encode!(response))
       end)
 
@@ -77,7 +78,7 @@ defmodule AuctionHouseTest do
     test "returns {:ok, order_id} if order was deleted correctly", %{bypass: bypass} do
       # Arrange
       Bypass.expect(bypass, "DELETE", "/v1/profile/orders/:id", fn conn ->
-        response =  %{"payload" => %{"order_id" => "5ee71a2604d55c0a5cbdc3c2"}}
+        response = %{"payload" => %{"order_id" => "5ee71a2604d55c0a5cbdc3c2"}}
         Plug.Conn.resp(conn, 200, Jason.encode!(response))
       end)
 
@@ -93,7 +94,9 @@ defmodule AuctionHouseTest do
   end
 
   describe "get_all_orders/2" do
-    test "returns {:ok, [order_info]} if request for orders about item succeeded", %{bypass: bypass} do
+    test "returns {:ok, [order_info]} if request for orders about item succeeded", %{
+      bypass: bypass
+    } do
       # Arrange
       Bypass.expect(bypass, "GET", "/v1/items/:item_name/orders", fn conn ->
         response = %{
@@ -130,7 +133,8 @@ defmodule AuctionHouseTest do
                 "quantity" => 2,
                 "region" => "en",
                 "user" => %{
-                  "avatar" => "user/avatar/55d77904e779893a9827aee2.png?9b0eed7b4885f4ec4275240b3035aa55",
+                  "avatar" =>
+                    "user/avatar/55d77904e779893a9827aee2.png?9b0eed7b4885f4ec4275240b3035aa55",
                   "id" => "55d77904e779893a9827aee2",
                   "ingame_name" => "porottaja",
                   "last_seen" => "2020-07-18T13:58:49.665+00:00",
@@ -152,50 +156,54 @@ defmodule AuctionHouseTest do
 
       # Act
       actual = AuctionHouse.get_all_orders(item_name)
-      expected = {:ok, [
-        %{
-          "order_type" => "sell",
-          "platform" => "pc",
-          "platinum" => 45,
-          "region" => "en",
-          "user" => %{
-            "status" => "ingame",
-            "avatar" => nil,
-            "id" => "598c96d60f313948524a2b66",
-            "ingame_name" => "Elect4k",
-            "last_seen" => "2020-07-20T18:20:28.422+00:00",
-            "region" => "en",
-            "reputation" => 2,
-            "reputation_bonus" => 0
-            },
-          "visible" => true,
-          "creation_date" => "2019-01-05T20:52:40.000+00:00",
-          "id" => "5c311918716c98021463eb32",
-          "last_update" => "2019-04-01T09:39:58.000+00:00",
-          "quantity" => 1
-        },
-        %{
-          "order_type" => "sell",
-          "platform" => "pc",
-          "platinum" => 30.0,
-          "region" => "en",
-          "user" => %{
-            "status" => "ingame",
-            "avatar" => "user/avatar/55d77904e779893a9827aee2.png?9b0eed7b4885f4ec4275240b3035aa55",
-            "id" => "55d77904e779893a9827aee2",
-            "ingame_name" => "porottaja",
-            "last_seen" => "2020-07-18T13:58:49.665+00:00",
-            "region" => "en",
-            "reputation" => 28,
-            "reputation_bonus" => 0
-          },
-          "visible" => true,
-          "creation_date" => "2019-02-08T22:11:22.000+00:00",
-          "id" => "5c5dfe8a83d1620563a75a7d",
-          "last_update" => "2020-07-02T14:53:06.000+00:00",
-          "quantity" => 2
-        }
-      ]}
+
+      expected =
+        {:ok,
+         [
+           %{
+             "order_type" => "sell",
+             "platform" => "pc",
+             "platinum" => 45,
+             "region" => "en",
+             "user" => %{
+               "status" => "ingame",
+               "avatar" => nil,
+               "id" => "598c96d60f313948524a2b66",
+               "ingame_name" => "Elect4k",
+               "last_seen" => "2020-07-20T18:20:28.422+00:00",
+               "region" => "en",
+               "reputation" => 2,
+               "reputation_bonus" => 0
+             },
+             "visible" => true,
+             "creation_date" => "2019-01-05T20:52:40.000+00:00",
+             "id" => "5c311918716c98021463eb32",
+             "last_update" => "2019-04-01T09:39:58.000+00:00",
+             "quantity" => 1
+           },
+           %{
+             "order_type" => "sell",
+             "platform" => "pc",
+             "platinum" => 30.0,
+             "region" => "en",
+             "user" => %{
+               "status" => "ingame",
+               "avatar" =>
+                 "user/avatar/55d77904e779893a9827aee2.png?9b0eed7b4885f4ec4275240b3035aa55",
+               "id" => "55d77904e779893a9827aee2",
+               "ingame_name" => "porottaja",
+               "last_seen" => "2020-07-18T13:58:49.665+00:00",
+               "region" => "en",
+               "reputation" => 28,
+               "reputation_bonus" => 0
+             },
+             "visible" => true,
+             "creation_date" => "2019-02-08T22:11:22.000+00:00",
+             "id" => "5c5dfe8a83d1620563a75a7d",
+             "last_update" => "2020-07-02T14:53:06.000+00:00",
+             "quantity" => 2
+           }
+         ]}
 
       # Assert
       assert actual == expected

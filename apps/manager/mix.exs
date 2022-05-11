@@ -4,13 +4,13 @@ defmodule Manager.MixProject do
   def project do
     [
       app: :manager,
-      version: "2.1.1",
+      version: "3.0.0",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
       elixir: "~> 1.13",
-      elixirc_paths: elixirc_paths(Mix.env),
+      elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       test_coverage: [tool: ExCoveralls]
@@ -27,7 +27,6 @@ defmodule Manager.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:rop, "~> 0.5"},
       {:store, in_umbrella: true},
       {:auction_house, in_umbrella: true},
 
@@ -38,5 +37,5 @@ defmodule Manager.MixProject do
   end
 
   defp elixirc_paths(:test), do: ["test/support", "lib"]
-  defp elixirc_paths(_),     do: ["lib"]
+  defp elixirc_paths(_), do: ["lib"]
 end

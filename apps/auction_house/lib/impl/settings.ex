@@ -1,4 +1,4 @@
-defmodule AuctionHouse.Settings do
+defmodule AuctionHouse.Impl.Settings do
   @moduledoc """
   Holds configurations that do not depend on the environment. 12 factor app
   standard states that only configurations that depend on the environment should

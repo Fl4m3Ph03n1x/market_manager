@@ -12,10 +12,10 @@ defmodule WebInterface.Live.Window.Main do
   alias Elixir.Phoenix.LiveView.Rendered
   alias WebInterface.Live.Window.Main.{Activate, Authenticate, Deactivate}
 
-  @spec render(map) :: Rendered.t
+  @spec render(map) :: Rendered.t()
   def render(assigns) do
     ~H"""
-    <div class="main column column-80">
+    <div class={display(@operation_in_progress)}>
       <%= live_component(Authenticate, [selected_command: @selected_command], id: 3) %>
       <%= live_component(Activate, [
         selected_command: @selected_command,
@@ -35,4 +35,7 @@ defmodule WebInterface.Live.Window.Main do
     """
   end
 
+  @spec display(boolean()) :: String.t()
+  defp display(true), do: "hidden"
+  defp display(_), do: "main column column-80 show"
 end

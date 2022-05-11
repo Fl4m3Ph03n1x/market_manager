@@ -5,8 +5,11 @@ defmodule Manager do
   and you need to talk to MarketManager, this is who you call, the public API.
   """
 
-  alias Manager.{Interpreter, PriceAnalyst, Server, Type}
+  alias Manager.Type
+  alias Manager.Impl.{Interpreter, PriceAnalyst}
+  alias Manager.Runtime.{Server, Worker}
   alias Store.Type, as: StoreTypes
+  alias Supervisor
 
   ##########
   # Public #
@@ -18,14 +21,27 @@ defmodule Manager do
   file. The price of each mod will be calculated via a PriceAnalyst depending on
   which strategy you choose.
 
+  This is an asynchronous operation, which will return immediatly.
+  The caller must have implemented a `handle_info` in its Server to have messages with the
+  following format:
+
+  - `{:activate, {index :: pos_integer(), total :: pos_integer(), result :: any}}`: Each time an
+    a placement for an item is done. This message contains the current index, the total and the
+    result of the operation.
+  - `{:activate, :done}`: Once all orders have been placed (successfully or not). It is the end
+    of the `:activate` operation.
+  - `{:activate, error :: any}`: If a critical error occurred while trying to perform the
+    `:activate` operation and this cannot continue/succeed. It also signals the end of the
+    operation.
+
   Example:
   ```
   > MarketManager.activate("simaris", :lowest_minus_one)
-  {:ok, :success}
+  :ok
   ```
   """
-  @spec activate(Type.syndicate, Type.strategy) :: Type.activate_response
-  defdelegate activate(syndicate, strategy), to: Interpreter
+  @spec activate(Type.syndicate(), Type.strategy()) :: :ok
+  defdelegate activate(syndicate, strategy), to: Worker
 
   @doc """
   Deactivates a syndicate in warframe.market. Deactivating a syndicate means you
@@ -37,8 +53,8 @@ defmodule Manager do
   {:ok, :success}
   ```
   """
-  @spec deactivate(Type.syndicate) :: Type.deactivate_response
-  defdelegate deactivate(syndicate), to: Interpreter
+  @spec deactivate(Type.syndicate()) :: :ok
+  defdelegate deactivate(syndicate), to: Worker
 
   @doc """
   Returns true if the given strategy is valid, false otherwise.
@@ -51,7 +67,7 @@ defmodule Manager do
   true
   ```
   """
-  @spec valid_strategy?(String.t) :: boolean
+  @spec valid_strategy?(String.t()) :: boolean
   defdelegate valid_strategy?(strategy), to: PriceAnalyst
 
   @doc """
@@ -65,7 +81,7 @@ defmodule Manager do
   true
   ```
   """
-  @spec valid_action?(String.t) :: boolean
+  @spec valid_action?(String.t()) :: boolean
   defdelegate valid_action?(action), to: Interpreter
 
   @doc """
@@ -86,7 +102,7 @@ defmodule Manager do
   {:error, :enoent}
   ```
   """
-  @spec valid_syndicate?(Type.syndicate) :: StoreTypes.syndicate_exists_response
+  @spec valid_syndicate?(Type.syndicate()) :: StoreTypes.syndicate_exists_response()
   defdelegate valid_syndicate?(syndicate), to: Store, as: :syndicate_exists?
 
   @doc """
@@ -110,18 +126,10 @@ defmodule Manager do
   {:error, :unable_to_save_authentication, {:enoent, %{"token" => "abc", "cookie" => "123"}}}
   ```
   """
-  @spec authenticate(Type.credentials) :: Type.authenticate_response
+  @spec authenticate(Type.credentials()) :: Type.authenticate_response()
   defdelegate authenticate(credentials), to: Interpreter
 
   @doc false
-  @spec child_spec(any) :: %{
-    :id => any,
-    :start => {atom, atom, [any]},
-    optional(:modules) => :dynamic | [atom],
-    optional(:restart) => :permanent | :temporary | :transient,
-    optional(:shutdown) => :brutal_kill | :infinity | non_neg_integer,
-    optional(:type) => :supervisor | :worker
-  }
+  @spec child_spec(any) :: Supervisor.child_spec()
   defdelegate child_spec(args), to: Server
-
 end

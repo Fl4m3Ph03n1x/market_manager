@@ -3,7 +3,8 @@ defmodule Manager.InterpreterTest do
 
   import Mock
 
-  alias Manager.Interpreter
+  alias Helpers
+  alias Manager.Impl.Interpreter
 
   describe "valid_action?/2" do
     test "Returns true if action is valid" do
@@ -23,8 +24,7 @@ defmodule Manager.InterpreterTest do
     end
   end
 
-  describe "activate/2" do
-
+  describe "activate/3" do
     setup do
       syndicate = "red_veil"
       strategy = :top_five_average
@@ -34,13 +34,13 @@ defmodule Manager.InterpreterTest do
       product2_name = "Eroding Blight"
       invalid_id = "some_invalid_id"
 
-      product1 = create_product(product1_name, id1)
-      product2 = create_product(product2_name, id2, "n/a")
-      invalid_product = create_product(product2_name, invalid_id, "n/a")
+      product1 = Helpers.create_product(product1_name, id1)
+      product2 = Helpers.create_product(product2_name, id2, "n/a")
+      invalid_product = Helpers.create_product(product2_name, invalid_id, "n/a")
 
-      order1 = create_order(id1, 52, 0)
-      order2 = create_order(id2, 50)
-      invalid_order = create_order(invalid_id, 50)
+      order1 = Helpers.create_order(id1, 52, 0)
+      order2 = Helpers.create_order(id2, 50)
+      invalid_order = Helpers.create_order(invalid_id, 50)
 
       order1_without_market_info = %{
         "item_id" => "54a74454e779892d5e5155d5",
@@ -211,21 +211,66 @@ defmodule Manager.InterpreterTest do
         # Arrange
         deps = [store: Store, auction_house: AuctionHouse]
 
+        handle = fn content ->
+          send(self(), content)
+          :ok
+        end
+
         # Act
-        actual = Interpreter.activate(syndicate, strategy, deps)
-        expected = {:ok, :success}
+        actual = Interpreter.activate(syndicate, strategy, handle, deps)
+        expected = :ok
 
         # Assert
         assert actual == expected
 
-        assert_called Store.list_products(syndicate)
-        assert_called Store.save_order(id1, syndicate)
-        assert_called Store.save_order(id2, syndicate)
+        assert_called(Store.list_products(syndicate))
+        assert_called(Store.save_order(id1, syndicate))
+        assert_called(Store.save_order(id2, syndicate))
 
-        assert_called AuctionHouse.get_all_orders(product1_name)
-        assert_called AuctionHouse.get_all_orders(product2_name)
-        assert_called AuctionHouse.place_order(order1)
-        assert_called AuctionHouse.place_order(order2)
+        assert_called(AuctionHouse.get_all_orders(product1_name))
+        assert_called(AuctionHouse.get_all_orders(product2_name))
+        assert_called(AuctionHouse.place_order(order1))
+        assert_called(AuctionHouse.place_order(order2))
+
+        assert_received({:activate, {1, 2, {:ok, "54a74454e779892d5e5155d5"}}})
+        assert_received({:activate, {2, 2, {:ok, "54a74454e779892d5e5155a0"}}})
+        assert_received({:activate, :done})
+      end
+    end
+
+    test "Finishes normally if there are no products from Store", %{
+      syndicate: syndicate,
+      strategy: strategy
+    } do
+      with_mocks([
+        {
+          Store,
+          [],
+          [
+            list_products: fn _syndicate -> {:ok, []} end,
+            save_order: fn id, _syndicate -> {:ok, id} end
+          ]
+        }
+      ]) do
+        # Arrange
+        deps = [store: Store]
+
+        handle = fn content ->
+          send(self(), content)
+          :ok
+        end
+
+        # Act
+        actual = Interpreter.activate(syndicate, strategy, handle, deps)
+        expected = :ok
+
+        # Assert
+        assert actual == expected
+
+        assert_called(Store.list_products(syndicate))
+        assert_not_called(Store.save_order(:_, :_))
+
+        assert_received({:activate, :done})
       end
     end
 
@@ -239,7 +284,7 @@ defmodule Manager.InterpreterTest do
       id1: id1,
       id2: id2,
       order1_without_market_info: order1,
-      order2_without_market_info: order2,
+      order2_without_market_info: order2
     } do
       with_mocks([
         {
@@ -262,27 +307,36 @@ defmodule Manager.InterpreterTest do
         }
       ]) do
         # Arrange
+        handle = fn content ->
+          send(self(), content)
+          :ok
+        end
+
         deps = [store: Store, auction_house: AuctionHouse]
 
         # Act
-        actual = Interpreter.activate(syndicate, strategy, deps)
-        expected = {:ok, :success}
+        actual = Interpreter.activate(syndicate, strategy, handle, deps)
+        expected = :ok
 
         # Assert
         assert actual == expected
 
-        assert_called Store.list_products(syndicate)
-        assert_called Store.save_order(id1, syndicate)
-        assert_called Store.save_order(id2, syndicate)
+        assert_called(Store.list_products(syndicate))
+        assert_called(Store.save_order(id1, syndicate))
+        assert_called(Store.save_order(id2, syndicate))
 
-        assert_called AuctionHouse.get_all_orders(product1_name)
-        assert_called AuctionHouse.get_all_orders(product2_name)
-        assert_called AuctionHouse.place_order(order1)
-        assert_called AuctionHouse.place_order(order2)
+        assert_called(AuctionHouse.get_all_orders(product1_name))
+        assert_called(AuctionHouse.get_all_orders(product2_name))
+        assert_called(AuctionHouse.place_order(order1))
+        assert_called(AuctionHouse.place_order(order2))
+
+        assert_received({:activate, {1, 2, {:ok, "54a74454e779892d5e5155d5"}}})
+        assert_received({:activate, {2, 2, {:ok, "54a74454e779892d5e5155a0"}}})
+        assert_received({:activate, :done})
       end
     end
 
-    test "Returns partial success if some orders failed to be placed", %{
+    test "Continues even if some order placements failed in AuctionHouse", %{
       syndicate: syndicate,
       strategy: strategy,
       product1: product1,
@@ -320,21 +374,30 @@ defmodule Manager.InterpreterTest do
         }
       ]) do
         # Arrange
+        handle = fn content ->
+          send(self(), content)
+          :ok
+        end
+
         deps = [store: Store, auction_house: AuctionHouse]
 
         # Act
-        actual = Interpreter.activate(syndicate, strategy, deps)
-        expected = {:partial_success, failed_orders: [{:error, :invalid_item_id, invalid_order}]}
+        actual = Interpreter.activate(syndicate, strategy, handle, deps)
+        expected = :ok
 
         # Assert
         assert actual == expected
 
-        assert_called Store.list_products(syndicate)
-        assert_called Store.save_order(id1, syndicate)
+        assert_called(Store.list_products(syndicate))
+        assert_called(Store.save_order(id1, syndicate))
+
+        assert_received({:activate, {1, 2, {:ok, "54a74454e779892d5e5155d5"}}})
+        assert_received({:activate, {2, 2, {:error, :invalid_item_id, ^invalid_order}}})
+        assert_received({:activate, :done})
       end
     end
 
-    test "Returns error if it is unable to place any orders", %{
+    test "Finishes even if it was unable to place any orders in AuctionHouse", %{
       syndicate: syndicate,
       strategy: strategy,
       product1: product1,
@@ -351,7 +414,7 @@ defmodule Manager.InterpreterTest do
           Store,
           [],
           [
-            list_products: fn _syndicate -> {:ok, [product1, product2]} end,
+            list_products: fn _syndicate -> {:ok, [product1, product2]} end
           ]
         },
         {
@@ -370,27 +433,67 @@ defmodule Manager.InterpreterTest do
         }
       ]) do
         # Arrange
+        handle = fn content ->
+          send(self(), content)
+          :ok
+        end
+
         deps = [store: Store, auction_house: AuctionHouse]
 
         # Act
-        actual = Interpreter.activate(syndicate, strategy, deps)
-        expected =
-          {:error, :unable_to_place_requests,
-          [
-            {:error, :order_already_placed, order1},
-            {:error, :invalid_item_id, order2}
-          ]}
+        actual = Interpreter.activate(syndicate, strategy, handle, deps)
+
+        expected = :ok
 
         # Assert
         assert actual == expected
 
-        assert_called Store.list_products(syndicate)
+        assert_called(Store.list_products(syndicate))
+        assert_not_called(Store.save_order(:_, :_))
+        assert_received({:activate, {1, 2, {:error, :order_already_placed, ^order1}}})
+        assert_received({:activate, {2, 2, {:error, :invalid_item_id, ^order2}}})
+        assert_received({:activate, :done})
+      end
+    end
+
+    test "Finishes immediatly if it cannot read products from Store", %{
+      syndicate: syndicate,
+      strategy: strategy
+    } do
+      with_mocks([
+        {
+          Store,
+          [],
+          [
+            list_products: fn _syndicate -> {:error, :enoent} end
+          ]
+        }
+      ]) do
+        # Arrange
+        handle = fn content ->
+          send(self(), content)
+          :ok
+        end
+
+        deps = [store: Store]
+
+        # Act
+        actual = Interpreter.activate(syndicate, strategy, handle, deps)
+        expected = :ok
+
+        # Assert
+        assert actual == expected
+
+        assert_called(Store.list_products(syndicate))
+        assert_not_called(Store.save_order(:_, :_))
+
+        assert_received({:activate, {:error, :enoent}})
+        assert_received({:activate, :done})
       end
     end
   end
 
   describe "deactivate/1" do
-
     setup do
       syndicate = "red_veil"
       order_id1 = "54a74454e779892d5e5155d5"
@@ -430,17 +533,27 @@ defmodule Manager.InterpreterTest do
         # Arrange
         deps = [store: Store, auction_house: AuctionHouse]
 
+        handle = fn content ->
+          send(self(), content)
+          :ok
+        end
+
         # Act
-        actual = Interpreter.deactivate(syndicate, deps)
-        expected = {:ok, :success}
+        actual = Interpreter.deactivate(syndicate, handle, deps)
+        expected = :ok
 
         # Assert
         assert actual == expected
-        assert_called Store.list_orders(syndicate)
-        assert_called Store.delete_order(order_id1, syndicate)
-        assert_called Store.delete_order(order_id2, syndicate)
-        assert_called AuctionHouse.delete_order(order_id1)
-        assert_called AuctionHouse.delete_order(order_id2)
+        assert_called(Store.list_orders(syndicate))
+        assert_called(Store.delete_order(order_id1, syndicate))
+        assert_called(Store.delete_order(order_id2, syndicate))
+
+        assert_called(AuctionHouse.delete_order(order_id1))
+        assert_called(AuctionHouse.delete_order(order_id2))
+
+        assert_received({:deactivate, {1, 2, {:ok, "54a74454e779892d5e5155d5"}}})
+        assert_received({:deactivate, {2, 2, {:ok, "54a74454e779892d5e5155a0"}}})
+        assert_received({:deactivate, :done})
       end
     end
 
@@ -462,42 +575,108 @@ defmodule Manager.InterpreterTest do
           AuctionHouse,
           [],
           [
-            delete_order:
-              fn
-                ^bad_order_id -> {:error, :order_non_existent, bad_order_id}
-                order_id -> {:ok, order_id}
-              end
+            delete_order: fn
+              ^bad_order_id -> {:error, :order_non_existent, bad_order_id}
+              order_id -> {:ok, order_id}
+            end
           ]
         }
       ]) do
         # Arrange
         deps = [store: Store, auction_house: AuctionHouse]
 
+        handle = fn content ->
+          send(self(), content)
+          :ok
+        end
+
         # Act
-        actual = Interpreter.deactivate(syndicate, deps)
-        expected = {:partial_success, failed_orders: [{:error, :order_non_existent, bad_order_id}]}
+        actual = Interpreter.deactivate(syndicate, handle, deps)
+        expected = :ok
 
         # Assert
         assert actual == expected
-        assert_called Store.list_orders(syndicate)
-        assert_called Store.delete_order(order_id1, syndicate)
-        assert_called Store.delete_order(bad_order_id, syndicate)
-        assert_called AuctionHouse.delete_order(order_id1)
-        assert_called AuctionHouse.delete_order(bad_order_id)
+        assert_called(Store.list_orders(syndicate))
+        assert_called(Store.delete_order(order_id1, syndicate))
+        assert_called(Store.delete_order(bad_order_id, syndicate))
+
+        assert_called(AuctionHouse.delete_order(order_id1))
+        assert_called(AuctionHouse.delete_order(bad_order_id))
+
+        assert_received({:deactivate, {1, 2, {:ok, "54a74454e779892d5e5155d5"}}})
+        assert_received({:deactivate, {2, 2, {:ok, "bad_order_id"}}})
+        assert_received({:deactivate, :done})
       end
     end
 
-    test "Returns error if it is unable to delete any orders", %{
-      syndicate: syndicate,
-      order_id1: order_id1,
-      order_id2: order_id2
-    } do
+    test "Returns error if it fails to delete an order in auction_house and then fails to delete it in storage",
+         %{
+           syndicate: syndicate,
+           order_id1: order_id1,
+           bad_order_id: bad_order_id
+         } do
       with_mocks([
         {
           Store,
           [],
           [
-            list_orders: fn _syndicate -> {:ok, [order_id1, order_id2]} end,
+            list_orders: fn _syndicate -> {:ok, [order_id1, bad_order_id]} end,
+            delete_order: fn
+              ^order_id1, _syndicate -> {:ok, order_id1}
+              ^bad_order_id, _syndicate -> {:error, :enoent}
+            end
+          ]
+        },
+        {
+          AuctionHouse,
+          [],
+          [
+            delete_order: fn
+              ^bad_order_id -> {:error, :order_non_existent, bad_order_id}
+              order_id -> {:ok, order_id}
+            end
+          ]
+        }
+      ]) do
+        # Arrange
+        deps = [store: Store, auction_house: AuctionHouse]
+
+        handle = fn content ->
+          send(self(), content)
+          :ok
+        end
+
+        # Act
+        actual = Interpreter.deactivate(syndicate, handle, deps)
+        expected = :ok
+
+        # Assert
+        assert actual == expected
+        assert_called(Store.list_orders(syndicate))
+        assert_called(Store.delete_order(order_id1, syndicate))
+        assert_called(Store.delete_order(bad_order_id, syndicate))
+
+        assert_called(AuctionHouse.delete_order(order_id1))
+        assert_called(AuctionHouse.delete_order(bad_order_id))
+
+        assert_received({:deactivate, {1, 2, {:ok, "54a74454e779892d5e5155d5"}}})
+        assert_received({:deactivate, {2, 2, {:error, :enoent, "bad_order_id"}}})
+        assert_received({:deactivate, :done})
+      end
+    end
+
+    test "Returns error if it is unable to delete orders from auction house and it does NOT attempt to delete them from storage",
+         %{
+           syndicate: syndicate,
+           order_id1: order_id1,
+           order_id2: order_id2
+         } do
+      with_mocks([
+        {
+          Store,
+          [],
+          [
+            list_orders: fn _syndicate -> {:ok, [order_id1, order_id2]} end
           ]
         },
         {
@@ -511,41 +690,47 @@ defmodule Manager.InterpreterTest do
         # Arrange
         deps = [store: Store, auction_house: AuctionHouse]
 
-        # Act
-        actual = Interpreter.deactivate(syndicate, deps)
+        handle = fn content ->
+          send(self(), content)
+          :ok
+        end
 
-        expected =
-          {:error, :unable_to_delete_orders,
-          [
-            {:error, :timeout, order_id1},
-            {:error, :timeout, order_id2}
-          ]}
+        # Act
+        actual = Interpreter.deactivate(syndicate, handle, deps)
+        expected = :ok
 
         # Assert
         assert actual == expected
-        assert_called Store.list_orders(syndicate)
-        assert_called AuctionHouse.delete_order(order_id1)
-        assert_called AuctionHouse.delete_order(order_id2)
+
+        assert_called(Store.list_orders(syndicate))
+        assert_not_called(Store.delete_order(order_id1, syndicate))
+        assert_not_called(Store.delete_order(order_id2, syndicate))
+
+        assert_called(AuctionHouse.delete_order(order_id1))
+        assert_called(AuctionHouse.delete_order(order_id2))
+
+        assert_received({:deactivate, {1, 2, {:error, :timeout, "54a74454e779892d5e5155d5"}}})
+        assert_received({:deactivate, {2, 2, {:error, :timeout, "54a74454e779892d5e5155a0"}}})
+        assert_received({:deactivate, :done})
       end
     end
   end
 
   describe "authenticate/1" do
-
     test "Returns ok tuple if login info is correct and it persisted data successfuly" do
       with_mocks([
         {
           Store,
           [],
           [
-            save_credentials: fn login_info -> {:ok, login_info} end,
+            save_credentials: fn login_info -> {:ok, login_info} end
           ]
         },
         {
           AuctionHouse,
           [],
           [
-            update_credentials: fn credentials -> {:ok, credentials} end,
+            update_credentials: fn credentials -> {:ok, credentials} end
           ]
         }
       ]) do
@@ -560,8 +745,8 @@ defmodule Manager.InterpreterTest do
         # Assert
         assert actual == expected
 
-        assert_called AuctionHouse.update_credentials(login_info)
-        assert_called Store.save_credentials(login_info)
+        assert_called(AuctionHouse.update_credentials(login_info))
+        assert_called(Store.save_credentials(login_info))
       end
     end
 
@@ -571,14 +756,14 @@ defmodule Manager.InterpreterTest do
           Store,
           [],
           [
-            save_credentials: fn login_info -> {:ok, login_info} end,
+            save_credentials: fn login_info -> {:ok, login_info} end
           ]
         },
         {
           AuctionHouse,
           [],
           [
-            update_credentials: fn credentials -> {:ok, credentials} end,
+            update_credentials: fn credentials -> {:ok, credentials} end
           ]
         }
       ]) do
@@ -588,13 +773,16 @@ defmodule Manager.InterpreterTest do
 
         # Act
         actual = Interpreter.authenticate(login_info, deps)
-        expected =  {:error, :unable_to_save_authentication, {:missing_mandatory_keys, ["token"], login_info}}
+
+        expected =
+          {:error, :unable_to_save_authentication,
+           {:missing_mandatory_keys, ["token"], login_info}}
 
         # Assert
         assert actual == expected
 
-        assert_not_called AuctionHouse.update_credentials(login_info)
-        assert_not_called Store.save_credentials(login_info)
+        assert_not_called(AuctionHouse.update_credentials(login_info))
+        assert_not_called(Store.save_credentials(login_info))
       end
     end
 
@@ -604,14 +792,14 @@ defmodule Manager.InterpreterTest do
           Store,
           [],
           [
-            save_credentials: fn login_info -> {:ok, login_info} end,
+            save_credentials: fn login_info -> {:ok, login_info} end
           ]
         },
         {
           AuctionHouse,
           [],
           [
-            update_credentials: fn credentials -> {:ok, credentials} end,
+            update_credentials: fn credentials -> {:ok, credentials} end
           ]
         }
       ]) do
@@ -621,13 +809,16 @@ defmodule Manager.InterpreterTest do
 
         # Act
         actual = Interpreter.authenticate(login_info, deps)
-        expected = {:error, :unable_to_save_authentication, {:missing_mandatory_keys, ["cookie", "token"], login_info}}
+
+        expected =
+          {:error, :unable_to_save_authentication,
+           {:missing_mandatory_keys, ["cookie", "token"], login_info}}
 
         # Assert
         assert actual == expected
 
-        assert_not_called AuctionHouse.update_credentials(login_info)
-        assert_not_called Store.save_credentials(login_info)
+        assert_not_called(AuctionHouse.update_credentials(login_info))
+        assert_not_called(Store.save_credentials(login_info))
       end
     end
 
@@ -637,14 +828,14 @@ defmodule Manager.InterpreterTest do
           Store,
           [],
           [
-            save_credentials: fn _login_info -> {:error, :enoent} end,
+            save_credentials: fn _login_info -> {:error, :enoent} end
           ]
         },
         {
           AuctionHouse,
           [],
           [
-            update_credentials: fn credentials -> {:ok, credentials} end,
+            update_credentials: fn credentials -> {:ok, credentials} end
           ]
         }
       ]) do
@@ -659,8 +850,8 @@ defmodule Manager.InterpreterTest do
         # Assert
         assert actual == expected
 
-        assert_called AuctionHouse.update_credentials(login_info)
-        assert_called Store.save_credentials(login_info)
+        assert_called(AuctionHouse.update_credentials(login_info))
+        assert_called(Store.save_credentials(login_info))
       end
     end
 
@@ -670,14 +861,14 @@ defmodule Manager.InterpreterTest do
           Store,
           [],
           [
-            save_credentials: fn _login_info -> {:error, :enoent} end,
+            save_credentials: fn _login_info -> {:error, :enoent} end
           ]
         },
         {
           AuctionHouse,
           [],
           [
-            update_credentials: fn _credentials -> {:error, :timeout} end,
+            update_credentials: fn _credentials -> {:error, :timeout} end
           ]
         }
       ]) do
@@ -692,47 +883,9 @@ defmodule Manager.InterpreterTest do
         # Assert
         assert actual == expected
 
-        assert_called AuctionHouse.update_credentials(login_info)
-        assert_not_called Store.save_credentials(login_info)
+        assert_called(AuctionHouse.update_credentials(login_info))
+        assert_not_called(Store.save_credentials(login_info))
       end
     end
   end
-
-  #####################
-  # Helper Functions  #
-  #####################
-
-  defp create_order(item_id, platinum), do:
-      %{
-        "order_type" => "sell",
-        "item_id" => item_id,
-        "platinum" => platinum,
-        "quantity" => 1
-      }
-
-  defp create_order(item_id, platinum, rank), do:
-    %{
-      "order_type" => "sell",
-      "item_id" => item_id,
-      "platinum" => platinum,
-      "quantity" => 1,
-      "mod_rank" => rank
-    }
-
-  defp create_product(name, id), do:
-    %{
-      "name" => name,
-      "id" => id,
-      "min_price" => 15,
-      "default_price" => 16
-    }
-
-  defp create_product(name, id, rank), do:
-    %{
-      "name" => name,
-      "id" => id,
-      "min_price" => 15,
-      "default_price" => 16,
-      "rank" => rank
-    }
 end

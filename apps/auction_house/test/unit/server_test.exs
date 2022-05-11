@@ -2,21 +2,24 @@ defmodule AuctionHouse.ServerTest do
   use ExUnit.Case
 
   alias AuctionHouse
-  alias AuctionHouse.Server
+  alias AuctionHouse.Runtime.Server
 
   test "init/1 returns the correct state" do
     # Act
-    {:ok, deps, {:continue, :setup_queue}} = Server.init({:ok, %{"cookie" => nil, "token" => nil}})
+    {:ok, deps, {:continue, :setup_queue}} =
+      Server.init({:ok, %{"cookie" => "a_cookie", "token" => "a_token"}})
 
     # Assert
-    assert is_function Map.get(deps, :get_fn)
-    assert is_function Map.get(deps, :post_fn)
-    assert is_function Map.get(deps, :delete_fn)
-    assert is_function Map.get(deps, :create_queue_fn)
-    assert is_function Map.get(deps, :delete_queue_fn)
-    assert is_function Map.get(deps, :run_fn)
-    assert is_integer Map.get(deps, :requests_per_second)
-    assert is_atom Map.get(deps, :requests_queue)
+    assert is_function(Map.get(deps, :get_fn))
+    assert is_function(Map.get(deps, :post_fn))
+    assert is_function(Map.get(deps, :delete_fn))
+    assert is_function(Map.get(deps, :create_queue_fn))
+    assert is_function(Map.get(deps, :delete_queue_fn))
+    assert is_function(Map.get(deps, :run_fn))
+    assert is_integer(Map.get(deps, :requests_per_second))
+    assert is_atom(Map.get(deps, :requests_queue))
+    assert is_binary(Map.get(deps, :cookie))
+    assert is_binary(Map.get(deps, :token))
   end
 
   test "handle_continue/2 creates queue" do
