@@ -16,9 +16,9 @@ defmodule WebInterface.Live.Window.OperationProgress do
     <div class={display(@operation_in_progress)}>
 
       <div class="wrap-circles">
-    <p>Operation in progress</p>
+        <p><%= progress_message(@current_syndicate) %></p>
 
-            <div class={circle(@progress_bar_value)}>
+        <div class={circle(@progress_bar_value)}>
           <div class="inner"><%= @progress_bar_value %>%</div>
         </div>
       </div>
@@ -32,4 +32,8 @@ defmodule WebInterface.Live.Window.OperationProgress do
 
   @spec circle(progress :: non_neg_integer()) :: String.t()
   defp circle(progress), do: "circle per-#{progress}"
+
+  @spec progress_message(String.t() | nil) :: String.t()
+  defp progress_message(nil), do: "Setting up ..."
+  defp progress_message(syndicate), do: "Operation in progress for #{syndicate} ..."
 end

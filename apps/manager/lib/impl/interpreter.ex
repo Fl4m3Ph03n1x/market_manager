@@ -50,14 +50,14 @@ defmodule Manager.Impl.Interpreter do
         indexed_products,
         fn {product, index} ->
           result = place_request(product, syndicate, strategy, deps)
-          handle.({:activate, {index + 1, total_products, result}})
+          handle.({:activate, syndicate, {index + 1, total_products, result}})
         end
       )
     else
-      error -> handle.({:activate, error})
+      error -> handle.({:activate, syndicate, error})
     end
 
-    handle.({:activate, :done})
+    handle.({:activate, syndicate, :done})
   end
 
   @spec list_products(Type.syndicate(), store :: module) ::
@@ -91,14 +91,14 @@ defmodule Manager.Impl.Interpreter do
         indexed_orders,
         fn {order, index} ->
           result = delete_order(order, syndicate, deps)
-          handle.({:deactivate, {index + 1, total_orders, result}})
+          handle.({:deactivate, syndicate, {index + 1, total_orders, result}})
         end
       )
     else
-      error -> handle.({:deactivate, error})
+      error -> handle.({:deactivate, syndicate, error})
     end
 
-    handle.({:deactivate, :done})
+    handle.({:deactivate, syndicate, :done})
   end
 
   @spec list_orders(Type.syndicate(), deps :: module) ::

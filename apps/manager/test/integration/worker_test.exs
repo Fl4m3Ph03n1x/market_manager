@@ -193,9 +193,9 @@ defmodule Manager.WorkerTest do
         {:ok, _pid} = start_supervised(Worker)
         Worker.activate(syndicate, strategy)
 
-        assert_receive {:activate, {1, 2, {:ok, "54a74454e779892d5e5155d5"}}}
-        assert_receive {:activate, {2, 2, {:ok, "54a74454e779892d5e5155a0"}}}
-        assert_receive {:activate, :done}
+        assert_receive {:activate, ^syndicate, {1, 2, {:ok, "54a74454e779892d5e5155d5"}}}
+        assert_receive {:activate, ^syndicate, {2, 2, {:ok, "54a74454e779892d5e5155a0"}}}
+        assert_receive {:activate, ^syndicate, :done}
 
         assert_called(Store.list_products(syndicate))
         assert_called(Store.save_order(id1, syndicate))
@@ -247,9 +247,9 @@ defmodule Manager.WorkerTest do
         {:ok, _pid} = start_supervised(Worker)
         Worker.deactivate(syndicate)
 
-        assert_receive {:deactivate, {1, 2, {:ok, "54a74454e779892d5e5155d5"}}}
-        assert_receive {:deactivate, {2, 2, {:ok, "54a74454e779892d5e5155a0"}}}
-        assert_receive {:deactivate, :done}
+        assert_receive {:deactivate, ^syndicate, {1, 2, {:ok, "54a74454e779892d5e5155d5"}}}
+        assert_receive {:deactivate, ^syndicate, {2, 2, {:ok, "54a74454e779892d5e5155a0"}}}
+        assert_receive {:deactivate, ^syndicate, :done}
 
         assert_called(Store.list_orders(syndicate))
         assert_called(Store.delete_order(order_id1, syndicate))

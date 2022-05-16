@@ -14,17 +14,17 @@ defmodule StoreTest do
   defp create_products_file do
     content =
       Jason.encode!(%{
-        "simaris" => [
+        "cephalon_simaris" => [
           %{
-              "name" => "Looter",
-              "id" => "5740c1879d238d4a03d28518",
-              "price" => 50
+            "name" => "Looter",
+            "id" => "5740c1879d238d4a03d28518",
+            "price" => 50
           },
           %{
-              "name" => "Astral Autopsy",
-              "id" => "588a789c3cf52c408a2f88dc",
-              "price" => 50,
-              "rank" => "n/a"
+            "name" => "Astral Autopsy",
+            "id" => "588a789c3cf52c408a2f88dc",
+            "price" => 50,
+            "rank" => "n/a"
           }
         ]
       })
@@ -67,25 +67,26 @@ defmodule StoreTest do
 
     test "returns list of available products from given syndicate" do
       # Arrange
-      syndicate = "simaris"
+      syndicate = "cephalon_simaris"
 
       # Act
       actual = Store.list_products(syndicate)
 
       expected =
-        {:ok, [
-          %{
-            "name" => "Looter",
-            "id" => "5740c1879d238d4a03d28518",
-            "price" => 50
-          },
-          %{
-            "name" => "Astral Autopsy",
-            "id" => "588a789c3cf52c408a2f88dc",
-            "price" => 50,
-            "rank" => "n/a"
-          }
-        ]}
+        {:ok,
+         [
+           %{
+             "name" => "Looter",
+             "id" => "5740c1879d238d4a03d28518",
+             "price" => 50
+           },
+           %{
+             "name" => "Astral Autopsy",
+             "id" => "588a789c3cf52c408a2f88dc",
+             "price" => 50,
+             "rank" => "n/a"
+           }
+         ]}
 
       # Assert
       assert actual == expected
@@ -100,7 +101,7 @@ defmodule StoreTest do
 
     test "returns list of available orders from given syndicate" do
       # Arrange
-      syndicate = "simaris"
+      syndicate = "cephalon_simaris"
 
       # Act
       actual = Store.list_orders(syndicate)
@@ -143,7 +144,7 @@ defmodule StoreTest do
 
     test "returns order_id if order was deleted successfully" do
       # Arrange
-      syndicate = "simaris"
+      syndicate = "cephalon_simaris"
       order_id = "5ee71a2604d55c0a5cbdc3c2"
 
       # Act

@@ -38,7 +38,8 @@ defmodule WebInterface.Live.Window do
         syndicates_to_activate: [],
         active_syndicates: [],
         progress_bar_value: 0,
-        operation_in_progress: false
+        operation_in_progress: false,
+        current_syndicate: nil
       )
 
     {:ok, socket}
@@ -60,7 +61,11 @@ defmodule WebInterface.Live.Window do
         syndicates: @syndicates,
         operation_in_progress: @operation_in_progress
       ], id: 2) %>
-      <%= live_component(OperationProgress, [progress_bar_value: @progress_bar_value, operation_in_progress: @operation_in_progress], id: 100) %>
+      <%= live_component(OperationProgress, [
+        progress_bar_value: @progress_bar_value,
+        operation_in_progress: @operation_in_progress,
+        current_syndicate: @current_syndicate
+      ], id: 100) %>
     </div>
     """
   end
@@ -96,12 +101,12 @@ defmodule WebInterface.Live.Window do
         %{"command" => "deactivate", "syndicates" => syndicates},
         socket
       ) do
-    %{
+    Commands.execute(%{
       command: :deactivate,
       syndicates: string_to_selected_syndicates(syndicates)
-    }
-    |> Commands.execute()
-    |> handle_deactivate_response(socket, string_to_selected_syndicates(syndicates))
+    })
+
+    {:noreply, socket}
   end
 
   def handle_event("authenticate", %{"cookie" => cookie, "token" => token}, socket),
@@ -142,42 +147,136 @@ defmodule WebInterface.Live.Window do
   end
 
   @impl LiveView
-  def handle_info({:activate, :done}, socket) do
-    socket = assign(socket, operation_in_progress: false)
+  def handle_info({:activate, syndicate, :done}, socket) do
+    assigns = Map.get(socket, :assigns)
+
+    syndicates_to_activate =
+      Map.get(assigns, :syndicates_to_activate) -- [Syndicates.get_syndicate(syndicate)]
+
+    operation_in_progress =
+      if syndicates_to_activate |> Enum.empty?() do
+        false
+      else
+        true
+      end
+
+    socket =
+      assign(socket,
+        operation_in_progress: operation_in_progress,
+        syndicates_to_activate: syndicates_to_activate,
+        progress_bar_value: 0,
+        current_syndicate: nil,
+        active_syndicates:
+          Map.get(assigns, :active_syndicates) ++ [Syndicates.get_syndicate(syndicate)]
+      )
+
+    IO.inspect(self(), label: "PID")
+    Logger.info("#{syndicate} activation completed")
     {:noreply, socket}
   end
 
-  def handle_info({:activate, {current, total, {:error, _reason, _id} = result}}, socket) do
+  def handle_info(
+        {:activate, syndicate, {current, total, {:error, _reason, _id} = result}},
+        socket
+      ) do
     socket =
       assign(
         socket,
         progress_bar_value: round(current / total * 100),
-        operation_in_progress: true
+        operation_in_progress: true,
+        current_syndicate: syndicate |> Syndicates.get_syndicate() |> Map.get(:name)
       )
 
     Logger.error("Ordered placement failed: #{inspect(result)}")
     {:noreply, socket}
   end
 
-  def handle_info({:activate, {current, total, result}}, socket) do
+  def handle_info({:activate, syndicate, {current, total, {:ok, _order_id} = result}}, socket) do
     socket =
       assign(
         socket,
         progress_bar_value: round(current / total * 100),
-        operation_in_progress: true
+        operation_in_progress: true,
+        current_syndicate: syndicate |> Syndicates.get_syndicate() |> Map.get(:name)
       )
 
-    Logger.error("Ordered placement succeeded: #{inspect(result)}")
+    Logger.info("Ordered placement succeeded: #{inspect(result)}")
     {:noreply, socket}
   end
 
-  def handle_info({:activate, {:error, result}}, socket) do
+  def handle_info({:activate, _syndicate, {:error, result}}, socket) do
     Logger.error("Operation failed: #{inspect(result)}")
     {:noreply, socket}
   end
 
-  def handle_info({:activate, data}, socket) do
-    Logger.info("Operation succeeded: #{inspect(data)}")
+  def handle_info({:activate, _syndicate, data}, socket) do
+    Logger.warning("Operation completed with unknown event: #{inspect(data)}")
+    {:noreply, socket}
+  end
+
+  def handle_info({:deactivate, syndicate, :done}, socket) do
+    assigns = Map.get(socket, :assigns)
+
+    syndicates_to_deactivate =
+      Map.get(assigns, :syndicates_to_deactivate) -- [Syndicates.get_syndicate(syndicate)]
+
+    operation_in_progress =
+      if syndicates_to_deactivate |> Enum.empty?() do
+        false
+      else
+        true
+      end
+
+    socket =
+      assign(socket,
+        operation_in_progress: operation_in_progress,
+        syndicates_to_deactivate: syndicates_to_deactivate,
+        progress_bar_value: 0,
+        current_syndicate: nil,
+        active_syndicates:
+          Map.get(assigns, :active_syndicates) -- [Syndicates.get_syndicate(syndicate)]
+      )
+
+    Logger.info("#{syndicate} deactivation completed")
+    {:noreply, socket}
+  end
+
+  def handle_info(
+        {:deactivate, syndicate, {current, total, {:error, _reason, _id} = result}},
+        socket
+      ) do
+    socket =
+      assign(
+        socket,
+        progress_bar_value: round(current / total * 100),
+        operation_in_progress: true,
+        current_syndicate: syndicate |> Syndicates.get_syndicate() |> Map.get(:name)
+      )
+
+    Logger.error("Ordered deletion failed: #{inspect(result)}")
+    {:noreply, socket}
+  end
+
+  def handle_info({:deactivate, syndicate, {current, total, {:ok, _order_id} = result}}, socket) do
+    socket =
+      assign(
+        socket,
+        progress_bar_value: round(current / total * 100),
+        operation_in_progress: true,
+        current_syndicate: syndicate |> Syndicates.get_syndicate() |> Map.get(:name)
+      )
+
+    Logger.info("Ordered deletion succeeded: #{inspect(result)}")
+    {:noreply, socket}
+  end
+
+  def handle_info({:deactivate, _syndicate, {:error, result}}, socket) do
+    Logger.error("Operation failed: #{inspect(result)}")
+    {:noreply, socket}
+  end
+
+  def handle_info({:deactivate, _syndicate, data}, socket) do
+    Logger.warning("Operation completed with unknown event: #{inspect(data)}")
     {:noreply, socket}
   end
 
@@ -204,53 +303,4 @@ defmodule WebInterface.Live.Window do
     Logger.error("#{inspect(results)}")
     {:noreply, put_flash(socket, :error, "Unable to persist authentication information.")}
   end
-
-  @spec handle_deactivate_response(any, Socket.t(), [Syndicates.syndicate_info()]) ::
-          {:noreply, Socket.t()}
-  defp handle_deactivate_response(results, socket, syndicates) do
-    assigns = Map.get(socket, :assigns)
-    result_per_syndicate = Enum.zip(syndicates, results)
-
-    successful_synds =
-      result_per_syndicate
-      |> Enum.filter(&by_success_result/1)
-      |> Enum.map(&syndicate_from_result_tuple/1)
-
-    socket =
-      socket
-      |> assign(active_syndicates: Map.get(assigns, :active_syndicates) -- successful_synds)
-      |> assign(
-        syndicates_to_deactivate: Map.get(assigns, :syndicates_to_deactivate) -- successful_synds
-      )
-
-    # we consider partial success a failure
-    failures = Enum.filter(result_per_syndicate, &by_failure_result/1)
-
-    if Enum.empty?(failures) do
-      {:noreply, put_flash(socket, :info, "All syndicate orders were removed successfully!")}
-    else
-      Logger.error("#{inspect(failures)}")
-      syndicate_names = Enum.map_join(failures, ", ", &syndicate_name/1)
-
-      {:noreply,
-       put_flash(
-         socket,
-         :error,
-         "The following syndicate requests failed due to errors: #{syndicate_names}"
-       )}
-    end
-  end
-
-  @spec syndicate_from_result_tuple({map, any}) :: map
-  defp syndicate_from_result_tuple({syn, _result}), do: syn
-
-  @spec syndicate_name({map, any}) :: String.t()
-  defp syndicate_name({syn, _result}), do: syn.name
-
-  @spec by_success_result({map, any}) :: boolean
-  defp by_success_result({_syn, {:ok, :success}}), do: true
-  defp by_success_result({_syn, _result}), do: false
-
-  @spec by_failure_result({map, any}) :: boolean
-  defp by_failure_result(tuple), do: not by_success_result(tuple)
 end

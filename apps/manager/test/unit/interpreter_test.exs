@@ -232,9 +232,9 @@ defmodule Manager.InterpreterTest do
         assert_called(AuctionHouse.place_order(order1))
         assert_called(AuctionHouse.place_order(order2))
 
-        assert_received({:activate, {1, 2, {:ok, "54a74454e779892d5e5155d5"}}})
-        assert_received({:activate, {2, 2, {:ok, "54a74454e779892d5e5155a0"}}})
-        assert_received({:activate, :done})
+        assert_received({:activate, ^syndicate, {1, 2, {:ok, "54a74454e779892d5e5155d5"}}})
+        assert_received({:activate, ^syndicate, {2, 2, {:ok, "54a74454e779892d5e5155a0"}}})
+        assert_received({:activate, ^syndicate, :done})
       end
     end
 
@@ -270,7 +270,7 @@ defmodule Manager.InterpreterTest do
         assert_called(Store.list_products(syndicate))
         assert_not_called(Store.save_order(:_, :_))
 
-        assert_received({:activate, :done})
+        assert_received({:activate, ^syndicate, :done})
       end
     end
 
@@ -330,9 +330,9 @@ defmodule Manager.InterpreterTest do
         assert_called(AuctionHouse.place_order(order1))
         assert_called(AuctionHouse.place_order(order2))
 
-        assert_received({:activate, {1, 2, {:ok, "54a74454e779892d5e5155d5"}}})
-        assert_received({:activate, {2, 2, {:ok, "54a74454e779892d5e5155a0"}}})
-        assert_received({:activate, :done})
+        assert_received({:activate, ^syndicate, {1, 2, {:ok, "54a74454e779892d5e5155d5"}}})
+        assert_received({:activate, ^syndicate, {2, 2, {:ok, "54a74454e779892d5e5155a0"}}})
+        assert_received({:activate, ^syndicate, :done})
       end
     end
 
@@ -391,9 +391,13 @@ defmodule Manager.InterpreterTest do
         assert_called(Store.list_products(syndicate))
         assert_called(Store.save_order(id1, syndicate))
 
-        assert_received({:activate, {1, 2, {:ok, "54a74454e779892d5e5155d5"}}})
-        assert_received({:activate, {2, 2, {:error, :invalid_item_id, ^invalid_order}}})
-        assert_received({:activate, :done})
+        assert_received({:activate, ^syndicate, {1, 2, {:ok, "54a74454e779892d5e5155d5"}}})
+
+        assert_received(
+          {:activate, ^syndicate, {2, 2, {:error, :invalid_item_id, ^invalid_order}}}
+        )
+
+        assert_received({:activate, ^syndicate, :done})
       end
     end
 
@@ -450,9 +454,9 @@ defmodule Manager.InterpreterTest do
 
         assert_called(Store.list_products(syndicate))
         assert_not_called(Store.save_order(:_, :_))
-        assert_received({:activate, {1, 2, {:error, :order_already_placed, ^order1}}})
-        assert_received({:activate, {2, 2, {:error, :invalid_item_id, ^order2}}})
-        assert_received({:activate, :done})
+        assert_received({:activate, ^syndicate, {1, 2, {:error, :order_already_placed, ^order1}}})
+        assert_received({:activate, ^syndicate, {2, 2, {:error, :invalid_item_id, ^order2}}})
+        assert_received({:activate, ^syndicate, :done})
       end
     end
 
@@ -487,8 +491,8 @@ defmodule Manager.InterpreterTest do
         assert_called(Store.list_products(syndicate))
         assert_not_called(Store.save_order(:_, :_))
 
-        assert_received({:activate, {:error, :enoent}})
-        assert_received({:activate, :done})
+        assert_received({:activate, ^syndicate, {:error, :enoent}})
+        assert_received({:activate, ^syndicate, :done})
       end
     end
   end
@@ -551,9 +555,9 @@ defmodule Manager.InterpreterTest do
         assert_called(AuctionHouse.delete_order(order_id1))
         assert_called(AuctionHouse.delete_order(order_id2))
 
-        assert_received({:deactivate, {1, 2, {:ok, "54a74454e779892d5e5155d5"}}})
-        assert_received({:deactivate, {2, 2, {:ok, "54a74454e779892d5e5155a0"}}})
-        assert_received({:deactivate, :done})
+        assert_received({:deactivate, ^syndicate, {1, 2, {:ok, "54a74454e779892d5e5155d5"}}})
+        assert_received({:deactivate, ^syndicate, {2, 2, {:ok, "54a74454e779892d5e5155a0"}}})
+        assert_received({:deactivate, ^syndicate, :done})
       end
     end
 
@@ -603,9 +607,9 @@ defmodule Manager.InterpreterTest do
         assert_called(AuctionHouse.delete_order(order_id1))
         assert_called(AuctionHouse.delete_order(bad_order_id))
 
-        assert_received({:deactivate, {1, 2, {:ok, "54a74454e779892d5e5155d5"}}})
-        assert_received({:deactivate, {2, 2, {:ok, "bad_order_id"}}})
-        assert_received({:deactivate, :done})
+        assert_received({:deactivate, ^syndicate, {1, 2, {:ok, "54a74454e779892d5e5155d5"}}})
+        assert_received({:deactivate, ^syndicate, {2, 2, {:ok, "bad_order_id"}}})
+        assert_received({:deactivate, ^syndicate, :done})
       end
     end
 
@@ -659,9 +663,9 @@ defmodule Manager.InterpreterTest do
         assert_called(AuctionHouse.delete_order(order_id1))
         assert_called(AuctionHouse.delete_order(bad_order_id))
 
-        assert_received({:deactivate, {1, 2, {:ok, "54a74454e779892d5e5155d5"}}})
-        assert_received({:deactivate, {2, 2, {:error, :enoent, "bad_order_id"}}})
-        assert_received({:deactivate, :done})
+        assert_received({:deactivate, ^syndicate, {1, 2, {:ok, "54a74454e779892d5e5155d5"}}})
+        assert_received({:deactivate, ^syndicate, {2, 2, {:error, :enoent, "bad_order_id"}}})
+        assert_received({:deactivate, ^syndicate, :done})
       end
     end
 
@@ -709,9 +713,15 @@ defmodule Manager.InterpreterTest do
         assert_called(AuctionHouse.delete_order(order_id1))
         assert_called(AuctionHouse.delete_order(order_id2))
 
-        assert_received({:deactivate, {1, 2, {:error, :timeout, "54a74454e779892d5e5155d5"}}})
-        assert_received({:deactivate, {2, 2, {:error, :timeout, "54a74454e779892d5e5155a0"}}})
-        assert_received({:deactivate, :done})
+        assert_received(
+          {:deactivate, ^syndicate, {1, 2, {:error, :timeout, "54a74454e779892d5e5155d5"}}}
+        )
+
+        assert_received(
+          {:deactivate, ^syndicate, {2, 2, {:error, :timeout, "54a74454e779892d5e5155a0"}}}
+        )
+
+        assert_received({:deactivate, ^syndicate, :done})
       end
     end
   end

@@ -36,7 +36,7 @@ defmodule Manager do
 
   Example:
   ```
-  > MarketManager.activate("simaris", :lowest_minus_one)
+  > MarketManager.activate("cephalon_simaris", :lowest_minus_one)
   :ok
   ```
   """
@@ -49,7 +49,7 @@ defmodule Manager do
 
   Example:
   ```
-  > MarketManager.deactivate("simaris")
+  > MarketManager.deactivate("cephalon_simaris")
   {:ok, :success}
   ```
   """

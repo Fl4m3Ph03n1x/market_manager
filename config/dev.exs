@@ -35,6 +35,10 @@ config :store,
   current_orders: "../../test_setup/current_orders.json",
   setup: "../../test_setup/setup.json"
 
+# config :auction_house,
+#   api_search_url: "http://localhost:8082/v1/items",
+#   api_base_url: "http://localhost:8082/v1/profile/orders"
+
 config :auction_house,
-  api_search_url: "http://localhost:8082/v1/items",
-  api_base_url: "http://localhost:8082/v1/profile/orders"
+  api_search_url: "https://api.warframe.market/v1/items",
+  api_base_url: "https://api.warframe.market/v1/profile/orders"
