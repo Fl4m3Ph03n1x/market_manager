@@ -1,4 +1,11 @@
 defmodule Manager.Runtime.Worker do
+  @moduledoc """
+  Process responsible for doing asynchrnous tasks. The Worker is supervised by the `Server` and is
+  restarted should something fail. It communicates with the calling client via `send/2`, since we
+  don't know if the client is a `GenServer` or not. Should this change (and we are sure the client
+  is a `GenServer`) then `GenServer.cast` should be used instead.
+  """
+
   use GenServer
 
   alias Manager.Impl.Interpreter

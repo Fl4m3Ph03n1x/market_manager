@@ -7,9 +7,9 @@ defmodule Manager.Runtime.Server do
 
   use Supervisor
 
-  alias Manager.Runtime.Worker
-  alias Manager.Impl.Interpreter
   alias AuctionHouse
+  alias Manager.Impl.Interpreter
+  alias Manager.Runtime.Worker
   alias Store
 
   ##############

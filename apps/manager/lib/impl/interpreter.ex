@@ -5,8 +5,8 @@ defmodule Manager.Impl.Interpreter do
   of the application and manages data between them.
   """
 
-  alias Manager.Type
   alias Manager.Impl.PriceAnalyst
+  alias Manager.Type
   alias Store
   alias Store.Type, as: StoreTypes
 
