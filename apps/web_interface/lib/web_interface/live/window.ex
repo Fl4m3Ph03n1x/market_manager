@@ -174,7 +174,6 @@ defmodule WebInterface.Live.Window do
           Map.get(assigns, :active_syndicates) ++ [Syndicates.get_syndicate(syndicate)]
       )
 
-    IO.inspect(self(), label: "PID")
     Logger.info("#{syndicate} activation completed")
     {:noreply, socket}
   end
