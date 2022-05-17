@@ -1013,6 +1013,9 @@
 			"default_price": 16
 		}
 	],
+	"arbiters_of_hexis": [],
+	"steel_meridian": [],
+	"cephalon_suda": [],
 	"cephalon_simaris": [
 		{
 			"name": "Looter",
