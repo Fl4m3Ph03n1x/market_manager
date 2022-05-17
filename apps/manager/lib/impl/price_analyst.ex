@@ -10,19 +10,9 @@ defmodule Manager.Impl.PriceAnalyst do
   alias Manager.Type
   alias Store.Type, as: StoreTypes
 
-  @strategies [
-    "top_five_average",
-    "top_three_average",
-    "equal_to_lowest",
-    "lowest_minus_one"
-  ]
-
   ##########
   # Public #
   ##########
-
-  @spec valid_strategy?(String.t()) :: boolean
-  def valid_strategy?(strategy), do: strategy in @strategies
 
   @spec calculate_price(StoreTypes.product(), [AuctionHouseTypes.order_info()], Type.strategy()) ::
           non_neg_integer

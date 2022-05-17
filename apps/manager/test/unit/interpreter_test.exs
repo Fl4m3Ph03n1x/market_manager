@@ -6,24 +6,6 @@ defmodule Manager.InterpreterTest do
   alias Helpers
   alias Manager.Impl.Interpreter
 
-  describe "valid_action?/2" do
-    test "Returns true if action is valid" do
-      # Arrange
-      action = "activate"
-
-      # Act & Assert
-      assert Interpreter.valid_action?(action)
-    end
-
-    test "Returns false if action is valid" do
-      # Arrange
-      action = "bad_action"
-
-      # Act & Assert
-      refute Interpreter.valid_action?(action)
-    end
-  end
-
   describe "activate/3" do
     setup do
       syndicate = "red_veil"

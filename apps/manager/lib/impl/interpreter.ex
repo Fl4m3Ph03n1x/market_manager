@@ -27,7 +27,6 @@ defmodule Manager.Impl.Interpreter do
   @type dependencies :: keyword(module())
 
   @mandatory_keys_login_info ["token", "cookie"]
-  @actions ["activate", "deactivate", "authenticate"]
 
   @default_deps [
     store: Store,
@@ -37,9 +36,6 @@ defmodule Manager.Impl.Interpreter do
   ##########
   # Public #
   ##########
-
-  @spec valid_action?(String.t()) :: boolean
-  def valid_action?(action), do: action in @actions
 
   @spec activate(Type.syndicate(), Type.strategy(), Type.handle(), dependencies) :: :ok
   def activate(syndicate, strategy, handle, deps \\ @default_deps) do
@@ -58,27 +54,6 @@ defmodule Manager.Impl.Interpreter do
     end
 
     handle.({:activate, syndicate, :done})
-  end
-
-  @spec list_products(Type.syndicate(), store :: module) ::
-          StoreTypes.list_products_response()
-  defp list_products(syndicate, store), do: store.list_products(syndicate)
-
-  @spec place_request(StoreTypes.product(), Type.syndicate(), Type.strategy(), dependencies) ::
-          {:ok, Type.order_id()} | {:error, any}
-  defp place_request(
-         product,
-         syndicate,
-         strategy,
-         store: store,
-         auction_house: auction_house
-       ) do
-    with updated_product <- update_product_price(product, strategy, auction_house),
-         order <- build_order(updated_product),
-         {:ok, order_id} <- auction_house.place_order(order),
-         {:ok, _order_id} <- store.save_order(order_id, syndicate) do
-      {:ok, order_id}
-    end
   end
 
   @spec deactivate(Type.syndicate(), Type.handle(), dependencies()) ::
@@ -101,28 +76,6 @@ defmodule Manager.Impl.Interpreter do
     handle.({:deactivate, syndicate, :done})
   end
 
-  @spec list_orders(Type.syndicate(), deps :: module) ::
-          StoreTypes.list_orders_response()
-  defp list_orders(syndicate, store), do: store.list_orders(syndicate)
-
-  @spec delete_order(Type.order_id(), Type.syndicate(), dependencies()) ::
-          {:ok, Type.order_id()} | {:error, atom, Type.order_id()}
-  defp delete_order(order_id, syndicate, store: store, auction_house: auction_house) do
-    with {:ok, _order_id} <- auction_house.delete_order(order_id),
-         {:ok, _order_id} <- store.delete_order(order_id, syndicate) do
-      {:ok, order_id}
-    else
-      {:error, :order_non_existent, order_id} ->
-        case store.delete_order(order_id, syndicate) do
-          {:error, reason} -> {:error, reason, order_id}
-          result -> result
-        end
-
-      error ->
-        error
-    end
-  end
-
   @spec authenticate(Type.credentials(), keyword(module)) :: Type.authenticate_response()
   def authenticate(info, deps \\ @default_deps) do
     with {:ok, login_info} <- validate_login_info(info),
@@ -136,6 +89,27 @@ defmodule Manager.Impl.Interpreter do
   ###########
   # Private #
   ###########
+
+  @spec list_products(Type.syndicate(), store :: module) ::
+          StoreTypes.list_products_response()
+  defp list_products(syndicate, store), do: store.list_products(syndicate)
+
+  @spec place_request(StoreTypes.product(), Type.syndicate(), Type.strategy(), dependencies) ::
+          {:ok, Type.order_id()} | {:error, any}
+  defp place_request(
+         product,
+         syndicate,
+         strategy,
+         store: store,
+         auction_house: auction_house
+       ) do
+    with updated_product <- update_product_price(product, strategy, auction_house),
+         order <- build_order(updated_product),
+         {:ok, order_id} <- auction_house.place_order(order),
+         {:ok, _order_id} <- store.save_order(order_id, syndicate) do
+      {:ok, order_id}
+    end
+  end
 
   @spec update_product_price(StoreTypes.product(), Type.strategy(), deps :: module) ::
           StoreTypes.product()
@@ -175,6 +149,28 @@ defmodule Manager.Impl.Interpreter do
           "quantity" => Map.get(product, "quantity", 1),
           "mod_rank" => Map.get(product, "rank", 0)
         }
+    end
+  end
+
+  @spec list_orders(Type.syndicate(), deps :: module) ::
+          StoreTypes.list_orders_response()
+  defp list_orders(syndicate, store), do: store.list_orders(syndicate)
+
+  @spec delete_order(Type.order_id(), Type.syndicate(), dependencies()) ::
+          {:ok, Type.order_id()} | {:error, atom, Type.order_id()}
+  defp delete_order(order_id, syndicate, store: store, auction_house: auction_house) do
+    with {:ok, _order_id} <- auction_house.delete_order(order_id),
+         {:ok, _order_id} <- store.delete_order(order_id, syndicate) do
+      {:ok, order_id}
+    else
+      {:error, :order_non_existent, order_id} ->
+        case store.delete_order(order_id, syndicate) do
+          {:error, reason} -> {:error, reason, order_id}
+          result -> result
+        end
+
+      error ->
+        error
     end
   end
 

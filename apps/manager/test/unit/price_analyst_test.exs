@@ -187,13 +187,6 @@ defmodule Manager.PriceAnalystTest do
     end
   end
 
-  describe "valid strategy" do
-    test "returns wether a strategy is valid or not" do
-      assert PriceAnalyst.valid_strategy?("equal_to_lowest") == true
-      assert PriceAnalyst.valid_strategy?("bananas") == false
-    end
-  end
-
   ###########
   # Private #
   ###########

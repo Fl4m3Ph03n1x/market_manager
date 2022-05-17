@@ -6,9 +6,8 @@ defmodule Manager do
   """
 
   alias Manager.Type
-  alias Manager.Impl.{Interpreter, PriceAnalyst}
+  alias Manager.Impl.Interpreter
   alias Manager.Runtime.{Server, Worker}
-  alias Store.Type, as: StoreTypes
   alias Supervisor
 
   ##########
@@ -17,22 +16,28 @@ defmodule Manager do
 
   @doc """
   Activates a syndicate in warframe.market. Activating a syndicate means you
-  put on sell all the mods the syndicate has with that are in the *products.json*
-  file. The price of each mod will be calculated via a PriceAnalyst depending on
-  which strategy you choose.
+  put on sell all the mods the syndicate has. The price of each mod will be calculated via a
+  `PriceAnalyst` depending on which strategy you choose.
 
-  This is an asynchronous operation, which will return immediatly.
-  The caller must have implemented a `handle_info` in its Server to have messages with the
+  This is an asynchronous operation, which will return `:ok` immediatly.
+  The caller must have implemented a `handle_info` in its Server to handle messages with the
   following format:
 
-  - `{:activate, {index :: pos_integer(), total :: pos_integer(), result :: any}}`: Each time an
-    a placement for an item is done. This message contains the current index, the total and the
-    result of the operation.
-  - `{:activate, :done}`: Once all orders have been placed (successfully or not). It is the end
-    of the `:activate` operation.
-  - `{:activate, error :: any}`: If a critical error occurred while trying to perform the
-    `:activate` operation and this cannot continue/succeed. It also signals the end of the
-    operation.
+  - `{:activate, syndicate :: String.t(), {index :: pos_integer(), total :: pos_integer(), result :: any}}`:
+    Each time a placement for an item is done. This message contains the current index, the total
+    and the result of the operation. It also has the id of the syndicate this order placement
+    belongs to.
+    The `result` of an operation, will be a tagged tuple. Some common formats are:
+
+     - `{:ok, order_id :: String.t()}`, when the placement was successfull
+     - `{:error, reason :: any(), item_id :: String.t()}`, when the placement failed
+
+  - `{:activate, syndicate :: String.t(), :done}`: Once all orders have been placed (successfully
+    or not). It is the end of the `:activate` operation. It also has the id of the syndicate for
+    which this operation was completed for.
+  - `{:activate, syndicate :: String.t(), error :: any}`: If a critical error occurred while trying
+    to perform the `:activate` operation and this cannot continue/succeed. It also signals the end
+    of the operation. Contains the id of the syndicate for which the operation failed.
 
   Example:
   ```
@@ -47,63 +52,34 @@ defmodule Manager do
   Deactivates a syndicate in warframe.market. Deactivating a syndicate means you
   delete all orders you have placed before that belong to the given syndicate.
 
+  This is an asynchronous operation, which will return `:ok` immediatly.
+  The caller must have implemented a `handle_info` in its Server to handle messages with the
+  following format:
+
+  - `{:deactivate, syndicate :: String.t(), {index :: pos_integer(), total :: pos_integer(), result :: any}}`:
+    Each time a placement for an item is done. This message contains the current index, the total
+    and the result of the operation. It also has the id of the syndicate this order placement
+    belongs to.
+    The `result` of an operation, will be a tagged tuple. Some common formats are:
+
+     - `{:ok, order_id :: String.t()}`, when the deletion was successfull
+     - `{:error, reason :: any(), order_id :: String.t()}`, when the deletion failed
+
+  - `{:deactivate, syndicate :: String.t(), :done}`: Once all orders have been deleted (successfully
+    or not). It is the end of the `:deactivate` operation. It also has the id of the syndicate for
+    which this operation was completed for.
+  - `{:deactivate, syndicate :: String.t(), error :: any}`: If a critical error occurred while trying
+    to perform the `:deactivate` operation and this cannot continue/succeed. It also signals the end
+    of the operation. Contains the id of the syndicate for which the operation failed.
+
   Example:
   ```
   > MarketManager.deactivate("cephalon_simaris")
-  {:ok, :success}
+  :ok
   ```
   """
   @spec deactivate(Type.syndicate()) :: :ok
   defdelegate deactivate(syndicate), to: Worker
-
-  @doc """
-  Returns true if the given strategy is valid, false otherwise.
-
-  Example:
-  ```
-  > MarketManager.valid_strategy?("bananas")
-  false
-  > MarketManager.valid_strategy?("equal_to_lowest")
-  true
-  ```
-  """
-  @spec valid_strategy?(String.t()) :: boolean
-  defdelegate valid_strategy?(strategy), to: PriceAnalyst
-
-  @doc """
-  Returns true if the given action is valid, false otherwise.
-
-  Example:
-  ```
-  > MarketManager.valid_action?("bananas")
-  false
-  > MarketManager.valid_action?("activate")
-  true
-  ```
-  """
-  @spec valid_action?(String.t()) :: boolean
-  defdelegate valid_action?(action), to: Interpreter
-
-  @doc """
-  Returns true if the given syndicate is valid, false otherwise.
-  A syndicate is considered to be valid if it has an entry in the products.json
-  file, even if that entry is empty. Returns error if an error occurs, like for
-  example the products.json file not existing.
-
-  Example:
-  ```
-  > MarketManager.valid_syndicate?("bananas")
-  {:ok, false}
-
-  > MarketManager.valid_syndicate?("red_veil")
-  {:ok, true}
-
-  > MarketManager.valid_syndicate?("red_veil") # products.json not found
-  {:error, :enoent}
-  ```
-  """
-  @spec valid_syndicate?(Type.syndicate()) :: StoreTypes.syndicate_exists_response()
-  defdelegate valid_syndicate?(syndicate), to: Store, as: :syndicate_exists?
 
   @doc """
   Saves the login information used in all requests.
