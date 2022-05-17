@@ -3,7 +3,7 @@ defmodule WebInterface.Live.Window.OperationProgress do
   LiveView subcomponent for the Operation Progress Page. It hides both sidebar and main
   subcomponents and displays information about operations taking place.
 
-  Receives messages back to the ``windows` component.
+  Receives messages back to the `windows` component.
   """
 
   use WebInterface, :live_component
