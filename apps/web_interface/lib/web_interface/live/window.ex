@@ -209,8 +209,8 @@ defmodule WebInterface.Live.Window do
     {:noreply, socket}
   end
 
-  def handle_info({:activate, _syndicate, data}, socket) do
-    Logger.warning("Operation completed with unknown event: #{inspect(data)}")
+  def handle_info({:activate, syndicate, data}, socket) do
+    Logger.warning("Unknown event detected for #{syndicate}: #{inspect(data)}")
     {:noreply, socket}
   end
 
@@ -275,8 +275,8 @@ defmodule WebInterface.Live.Window do
     {:noreply, socket}
   end
 
-  def handle_info({:deactivate, _syndicate, data}, socket) do
-    Logger.warning("Operation completed with unknown event: #{inspect(data)}")
+  def handle_info({:deactivate, syndicate, data}, socket) do
+    Logger.warning("Unknown event detected for #{syndicate}: #{inspect(data)}")
     {:noreply, socket}
   end
 
