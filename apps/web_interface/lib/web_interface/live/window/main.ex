@@ -4,7 +4,7 @@ defmodule WebInterface.Live.Window.Main do
   renders a description of what the action is plus it have the options to and
   the button to perform said action.
 
-  Sends messages back to the ``windows` component.
+  Sends messages back to the `windows` component.
   """
 
   use WebInterface, :live_component
@@ -16,7 +16,9 @@ defmodule WebInterface.Live.Window.Main do
   def render(assigns) do
     ~H"""
     <div class={display(@operation_in_progress)}>
-      <%= live_component(Authenticate, [selected_command: @selected_command], id: 3) %>
+      <%= live_component(Authenticate, [
+        selected_command: @selected_command
+      ], id: 3271) %>
       <%= live_component(Activate, [
         selected_command: @selected_command,
         selected_strategy: @selected_strategy,
