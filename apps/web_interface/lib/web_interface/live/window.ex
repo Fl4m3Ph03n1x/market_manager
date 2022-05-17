@@ -50,7 +50,11 @@ defmodule WebInterface.Live.Window do
   def render(assigns) do
     ~H"""
     <div id="commands" class="container row">
-      <%= live_component(Sidebar, [commands: @commands, selected_command: @selected_command, operation_in_progress: @operation_in_progress], id: 1) %>
+      <%= live_component(Sidebar, [
+        commands: @commands,
+        selected_command: @selected_command,
+        operation_in_progress: @operation_in_progress
+      ], id: 7244) %>
       <%= live_component(Main, [
         selected_command: @selected_command,
         selected_strategy: @selected_strategy,
@@ -60,12 +64,12 @@ defmodule WebInterface.Live.Window do
         strategies: @strategies,
         syndicates: @syndicates,
         operation_in_progress: @operation_in_progress
-      ], id: 2) %>
+      ], id: 4278) %>
       <%= live_component(OperationProgress, [
         progress_bar_value: @progress_bar_value,
         operation_in_progress: @operation_in_progress,
         current_syndicate: @current_syndicate
-      ], id: 100) %>
+      ], id: 5919) %>
     </div>
     """
   end

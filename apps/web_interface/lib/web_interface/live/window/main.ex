@@ -26,13 +26,13 @@ defmodule WebInterface.Live.Window.Main do
         syndicates: @syndicates,
         syndicates_to_activate: @syndicates_to_activate,
         active_syndicates: @active_syndicates
-      ], id: 4) %>
+      ], id: 823) %>
       <%= live_component(Deactivate, [
         selected_command: @selected_command,
         syndicates: @syndicates,
         syndicates_to_deactivate: @syndicates_to_deactivate,
         active_syndicates: @active_syndicates
-      ], id: 5) %>
+      ], id: 2671) %>
     </div>
     """
   end
