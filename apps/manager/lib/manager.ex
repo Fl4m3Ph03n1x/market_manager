@@ -5,8 +5,10 @@ defmodule Manager do
   and you need to talk to MarketManager, this is who you call, the public API.
   """
 
-  alias Manager.{Interpreter, PriceAnalyst, Server, Type}
-  alias Store.Type, as: StoreTypes
+  alias Manager.Type
+  alias Manager.Impl.Interpreter
+  alias Manager.Runtime.{Server, Worker}
+  alias Supervisor
 
   ##########
   # Public #
@@ -14,80 +16,70 @@ defmodule Manager do
 
   @doc """
   Activates a syndicate in warframe.market. Activating a syndicate means you
-  put on sell all the mods the syndicate has with that are in the *products.json*
-  file. The price of each mod will be calculated via a PriceAnalyst depending on
-  which strategy you choose.
+  put on sell all the mods the syndicate has. The price of each mod will be calculated via a
+  `PriceAnalyst` depending on which strategy you choose.
+
+  This is an asynchronous operation, which will return `:ok` immediatly.
+  The caller must have implemented a `handle_info` in its Server to handle messages with the
+  following format:
+
+  - `{:activate, syndicate :: String.t(), {index :: pos_integer(), total :: pos_integer(), result :: any}}`:
+    Each time a placement for an item is done. This message contains the current index, the total
+    and the result of the operation. It also has the id of the syndicate this order placement
+    belongs to.
+    The `result` of an operation, will be a tagged tuple. Some common formats are:
+
+     - `{:ok, order_id :: String.t()}`, when the placement was successfull
+     - `{:error, reason :: any(), item_id :: String.t()}`, when the placement failed
+
+  - `{:activate, syndicate :: String.t(), :done}`: Once all orders have been placed (successfully
+    or not). It is the end of the `:activate` operation. It also has the id of the syndicate for
+    which this operation was completed for.
+  - `{:activate, syndicate :: String.t(), error :: any}`: If a critical error occurred while trying
+    to perform the `:activate` operation and this cannot continue/succeed. It also signals the end
+    of the operation. Contains the id of the syndicate for which the operation failed.
 
   Example:
   ```
-  > MarketManager.activate("simaris", :lowest_minus_one)
-  {:ok, :success}
+  > MarketManager.activate("cephalon_simaris", :lowest_minus_one)
+  :ok
   ```
   """
-  @spec activate(Type.syndicate, Type.strategy) :: Type.activate_response
-  defdelegate activate(syndicate, strategy), to: Interpreter
+  @spec activate(Type.syndicate(), Type.strategy()) :: :ok
+  defdelegate activate(syndicate, strategy), to: Worker
 
   @doc """
   Deactivates a syndicate in warframe.market. Deactivating a syndicate means you
   delete all orders you have placed before that belong to the given syndicate.
 
-  Example:
-  ```
-  > MarketManager.deactivate("simaris")
-  {:ok, :success}
-  ```
-  """
-  @spec deactivate(Type.syndicate) :: Type.deactivate_response
-  defdelegate deactivate(syndicate), to: Interpreter
+  This is an asynchronous operation, which will return `:ok` immediatly.
+  The caller must have implemented a `handle_info` in its Server to handle messages with the
+  following format:
 
-  @doc """
-  Returns true if the given strategy is valid, false otherwise.
+  - `{:deactivate, syndicate :: String.t(), {index :: pos_integer(), total :: pos_integer(), result :: any}}`:
+    Each time a placement for an item is done. This message contains the current index, the total
+    and the result of the operation. It also has the id of the syndicate this order placement
+    belongs to.
+    The `result` of an operation, will be a tagged tuple. Some common formats are:
 
-  Example:
-  ```
-  > MarketManager.valid_strategy?("bananas")
-  false
-  > MarketManager.valid_strategy?("equal_to_lowest")
-  true
-  ```
-  """
-  @spec valid_strategy?(String.t) :: boolean
-  defdelegate valid_strategy?(strategy), to: PriceAnalyst
+     - `{:ok, order_id :: String.t()}`, when the deletion was successfull
+     - `{:error, reason :: any(), order_id :: String.t()}`, when the deletion failed
 
-  @doc """
-  Returns true if the given action is valid, false otherwise.
+  - `{:deactivate, syndicate :: String.t(), :done}`: Once all orders have been deleted (successfully
+    or not). It is the end of the `:deactivate` operation. It also has the id of the syndicate for
+    which this operation was completed for.
+  - `{:deactivate, syndicate :: String.t(), error :: any}`: If a critical error occurred while trying
+    to perform the `:deactivate` operation and this cannot continue/succeed. It also signals the end
+    of the operation. Contains the id of the syndicate for which the operation failed.
 
   Example:
   ```
-  > MarketManager.valid_action?("bananas")
-  false
-  > MarketManager.valid_action?("activate")
-  true
+  > MarketManager.deactivate("cephalon_simaris")
+  :ok
   ```
   """
-  @spec valid_action?(String.t) :: boolean
-  defdelegate valid_action?(action), to: Interpreter
-
-  @doc """
-  Returns true if the given syndicate is valid, false otherwise.
-  A syndicate is considered to be valid if it has an entry in the products.json
-  file, even if that entry is empty. Returns error if an error occurs, like for
-  example the products.json file not existing.
-
-  Example:
-  ```
-  > MarketManager.valid_syndicate?("bananas")
-  {:ok, false}
-
-  > MarketManager.valid_syndicate?("red_veil")
-  {:ok, true}
-
-  > MarketManager.valid_syndicate?("red_veil") # products.json not found
-  {:error, :enoent}
-  ```
-  """
-  @spec valid_syndicate?(Type.syndicate) :: StoreTypes.syndicate_exists_response
-  defdelegate valid_syndicate?(syndicate), to: Store, as: :syndicate_exists?
+  @spec deactivate(Type.syndicate()) :: :ok
+  defdelegate deactivate(syndicate), to: Worker
 
   @doc """
   Saves the login information used in all requests.
@@ -110,18 +102,10 @@ defmodule Manager do
   {:error, :unable_to_save_authentication, {:enoent, %{"token" => "abc", "cookie" => "123"}}}
   ```
   """
-  @spec authenticate(Type.credentials) :: Type.authenticate_response
+  @spec authenticate(Type.credentials()) :: Type.authenticate_response()
   defdelegate authenticate(credentials), to: Interpreter
 
   @doc false
-  @spec child_spec(any) :: %{
-    :id => any,
-    :start => {atom, atom, [any]},
-    optional(:modules) => :dynamic | [atom],
-    optional(:restart) => :permanent | :temporary | :transient,
-    optional(:shutdown) => :brutal_kill | :infinity | non_neg_integer,
-    optional(:type) => :supervisor | :worker
-  }
+  @spec child_spec(any) :: Supervisor.child_spec()
   defdelegate child_spec(args), to: Server
-
 end

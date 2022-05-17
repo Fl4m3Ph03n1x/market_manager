@@ -1,7 +1,7 @@
 defmodule Manager.PriceAnalystTest do
   use ExUnit.Case
 
-  alias Manager.PriceAnalyst
+  alias Manager.Impl.PriceAnalyst
 
   #########
   # Tests #
@@ -13,6 +13,7 @@ defmodule Manager.PriceAnalystTest do
       order_info = [
         new_order_info(50)
       ]
+
       product = new_product(0, 0)
 
       # Act
@@ -42,6 +43,7 @@ defmodule Manager.PriceAnalystTest do
         new_order_info(10),
         new_order_info(11)
       ]
+
       product = new_product(14, 16)
 
       # Act
@@ -65,6 +67,7 @@ defmodule Manager.PriceAnalystTest do
         new_order_info(45),
         new_order_info(50_000)
       ]
+
       product = new_product(0, 0)
 
       # Act
@@ -83,6 +86,7 @@ defmodule Manager.PriceAnalystTest do
         new_order_info(50),
         new_order_info(60)
       ]
+
       product = new_product(0, 0)
 
       # Act
@@ -106,6 +110,7 @@ defmodule Manager.PriceAnalystTest do
         new_order_info(45),
         new_order_info(50_000)
       ]
+
       product = new_product(0, 0)
 
       # Act
@@ -122,6 +127,7 @@ defmodule Manager.PriceAnalystTest do
         new_order_info(50),
         new_order_info(55)
       ]
+
       product = new_product(0, 0)
 
       # Act
@@ -145,6 +151,7 @@ defmodule Manager.PriceAnalystTest do
         new_order_info(45),
         new_order_info(50_000)
       ]
+
       product = new_product(0, 0)
 
       # Act
@@ -168,6 +175,7 @@ defmodule Manager.PriceAnalystTest do
         new_order_info(45),
         new_order_info(50_000)
       ]
+
       product = new_product(0, 0)
 
       # Act
@@ -179,30 +187,22 @@ defmodule Manager.PriceAnalystTest do
     end
   end
 
-  describe "valid strategy" do
-    test "returns wether a strategy is valid or not" do
-      assert PriceAnalyst.valid_strategy?("equal_to_lowest") == true
-      assert PriceAnalyst.valid_strategy?("bananas") == false
-    end
-  end
-
   ###########
   # Private #
   ###########
 
-  defp new_order_info(price), do:
-    %{
+  defp new_order_info(price),
+    do: %{
       "visible" => true,
       "user" => %{"status" => "ingame"},
       "platform" => "pc",
-      "order_type"=> "sell",
+      "order_type" => "sell",
       "platinum" => price
     }
 
-  defp new_product(min_price, default_price), do:
-    %{
+  defp new_product(min_price, default_price),
+    do: %{
       "min_price" => min_price,
       "default_price" => default_price
     }
-
 end

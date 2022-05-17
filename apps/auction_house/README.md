@@ -49,7 +49,9 @@ Integration tests do actually create and delete files and write in disk.
 You can execute them by running:
 
  - `mix deps.get`
- - `mix test`
+ - `mix test` # runs all tests
+ - `mix test.unit` runs unit tests only
+ - `mix test.integration` runs integration tests only
 
 
 ### Usage

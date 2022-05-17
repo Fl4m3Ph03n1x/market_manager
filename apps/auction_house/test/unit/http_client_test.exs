@@ -1,7 +1,7 @@
 defmodule AuctionHouse.HTTPClientTest do
   use ExUnit.Case
 
-  alias AuctionHouse.HTTPClient
+  alias AuctionHouse.Impl.HTTPClient
 
   describe "place_oder/2" do
     test "returns {:ok, order_id} if order was placed correctly" do
@@ -279,7 +279,8 @@ defmodule AuctionHouse.HTTPClientTest do
           {:ok,
            %HTTPoison.Response{
              status_code: 200,
-             body: "{\"payload\":{\"orders\":[{\"order_type\":\"sell\",\"platform\":\"pc\",\"platinum\":45,\"region\":\"en\",\"user\":{\"status\":\"ingame\"},\"visible\":true},{\"order_type\":\"sell\",\"platform\":\"pc\",\"platinum\":30.0,\"region\":\"en\",\"user\":{\"status\":\"ingame\"},\"visible\":true}]}}"
+             body:
+               "{\"payload\":{\"orders\":[{\"order_type\":\"sell\",\"platform\":\"pc\",\"platinum\":45,\"region\":\"en\",\"user\":{\"status\":\"ingame\"},\"visible\":true},{\"order_type\":\"sell\",\"platform\":\"pc\",\"platinum\":30.0,\"region\":\"en\",\"user\":{\"status\":\"ingame\"},\"visible\":true}]}}"
            }}
         end,
         run_fn: fn _queue_name, func -> func.() end,
@@ -290,24 +291,27 @@ defmodule AuctionHouse.HTTPClientTest do
 
       # Act
       actual = HTTPClient.get_all_orders(item_name, deps)
-      expected = {:ok, [
-        %{
-          "order_type" => "sell",
-          "platform" => "pc",
-          "platinum" => 45,
-          "region" => "en",
-          "user" => %{"status" => "ingame"},
-          "visible" => true
-        },
-        %{
-          "order_type" => "sell",
-          "platform" => "pc",
-          "platinum" => 30.0,
-          "region" => "en",
-          "user" => %{"status" => "ingame"},
-          "visible" => true
-        }
-      ]}
+
+      expected =
+        {:ok,
+         [
+           %{
+             "order_type" => "sell",
+             "platform" => "pc",
+             "platinum" => 45,
+             "region" => "en",
+             "user" => %{"status" => "ingame"},
+             "visible" => true
+           },
+           %{
+             "order_type" => "sell",
+             "platform" => "pc",
+             "platinum" => 30.0,
+             "region" => "en",
+             "user" => %{"status" => "ingame"},
+             "visible" => true
+           }
+         ]}
 
       # Assert
       assert actual == expected
