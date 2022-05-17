@@ -4,12 +4,12 @@ defmodule WebInterface.MixProject do
   def project do
     [
       app: :web_interface,
-      version: "1.1.0",
+      version: "2.0.0",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
-      elixir: "~> 1.12",
+      elixir: "~> 1.13",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: Mix.compilers(),
       start_permanent: Mix.env() == :prod,
@@ -32,7 +32,6 @@ defmodule WebInterface.MixProject do
   defp elixirc_paths(:test), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
 
-
   defp deps do
     [
       # Phoenix deps
@@ -50,8 +49,8 @@ defmodule WebInterface.MixProject do
       # Project deps
       {:desktop, "~> 1.4"},
 
-       # Umbrella deps
-       {:manager, in_umbrella: true},
+      # Umbrella deps
+      {:manager, in_umbrella: true}
     ]
   end
 
