@@ -5,12 +5,12 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.28.0">
-    <meta name="project" content="Market Manager v2.1.3">
+    <meta name="project" content="Market Manager v2.1.5">
 
-    <title>AuctionHouse.HTTPClient — Market Manager v2.1.3</title>
+    <title>Manager.Runtime.Server — Market Manager v2.1.5</title>
     <link rel="stylesheet" href="dist/elixir-a816d167216329cc463d.css" />
 
-    <script src="dist/sidebar_items-9b8cde9e23.js"></script>
+    <script src="dist/sidebar_items-a204c62895.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -64,7 +64,7 @@
 Market Manager
       </a>
       <strong class="sidebar-projectVersion" translate="no">
-        v2.1.3
+        v2.1.5
       </strong>
     </div>
     <ul class="sidebar-listNav">
@@ -91,19 +91,21 @@ Market Manager
 </button>
 
 
-    <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/aution_house/http_client.ex#L1" title="View Source" class="view-source" rel="help">
+    <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/manager/lib/runtime/server.ex#L1" title="View Source" class="view-source" rel="help">
       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
       <span class="sr-only">View Source</span>
     </a>
 
-  <span translate="no">AuctionHouse.HTTPClient</span> 
-  <small class="app-vsn" translate="no">(Market Manager v2.1.3)</small>
+  <span translate="no">Manager.Runtime.Server</span> 
+  <small class="app-vsn" translate="no">(Market Manager v2.1.5)</small>
 
 </h1>
 
 
   <section id="moduledoc">
-<p>Adapter for the interface AuctionHouse</p>
+<p>Process responsible for taking requests from the interface and directing them
+to the appropriate layers. Supervises dependencies to make sure they are
+regenerated should something fail.</p>
   </section>
 
 
@@ -123,23 +125,17 @@ Market Manager
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#delete_order/2" translate="no">delete_order(order_id, deps)</a>
+          <a href="#child_spec/1" translate="no">child_spec(init_arg)</a>
 
         </div>
+
+          <div class="summary-synopsis"><p>Returns a specification to start this module under a supervisor.</p></div>
 
       </div>
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#get_all_orders/2" translate="no">get_all_orders(item_name, deps)</a>
-
-        </div>
-
-      </div>
-
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#place_order/2" translate="no">place_order(order, deps)</a>
+          <a href="#start_link/1" translate="no">start_link(args)</a>
 
         </div>
 
@@ -159,16 +155,16 @@ Market Manager
 Functions
     </h1>
     <div class="functions-list">
-<section class="detail" id="delete_order/2">
+<section class="detail" id="child_spec/1">
 
   <div class="detail-header">
-    <a href="#delete_order/2" class="detail-link" title="Link to this function">
+    <a href="#child_spec/1" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">delete_order(order_id, deps)</h1>
+    <h1 class="signature" translate="no">child_spec(init_arg)</h1>
 
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/aution_house/http_client.ex#L28" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/manager/lib/runtime/server.ex#L8" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -178,19 +174,19 @@ Functions
 
   <section class="docstring">
 
-
+<p>Returns a specification to start this module under a supervisor.</p><p>See <a href="https://hexdocs.pm/elixir/Supervisor.html"><code class="inline">Supervisor</code></a>.</p>
   </section>
 </section>
-<section class="detail" id="get_all_orders/2">
+<section class="detail" id="start_link/1">
 
   <div class="detail-header">
-    <a href="#get_all_orders/2" class="detail-link" title="Link to this function">
+    <a href="#start_link/1" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">get_all_orders(item_name, deps)</h1>
+    <h1 class="signature" translate="no">start_link(args)</h1>
 
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/aution_house/http_client.ex#L34" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/manager/lib/runtime/server.ex#L20" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -200,27 +196,12 @@ Functions
 
   <section class="docstring">
 
+      <h2>Specs</h2>
+      <div class="specs">
 
-  </section>
-</section>
-<section class="detail" id="place_order/2">
+          <pre translate="no">start_link(<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()) :: :ignore | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()} | {:ok, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pid</a>()}</pre>
 
-  <div class="detail-header">
-    <a href="#place_order/2" class="detail-link" title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">place_order(order, deps)</h1>
-
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/aution_house/http_client.ex#L22" class="view-source" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
+      </div>
 
 
   </section>

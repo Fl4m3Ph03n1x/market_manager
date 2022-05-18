@@ -5,12 +5,12 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.28.0">
-    <meta name="project" content="Market Manager v2.1.3">
+    <meta name="project" content="Market Manager v2.1.5">
 
-    <title>WebInterface.Commands — Market Manager v2.1.3</title>
+    <title>WebInterface.Commands — Market Manager v2.1.5</title>
     <link rel="stylesheet" href="dist/elixir-a816d167216329cc463d.css" />
 
-    <script src="dist/sidebar_items-9b8cde9e23.js"></script>
+    <script src="dist/sidebar_items-a204c62895.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -64,7 +64,7 @@
 Market Manager
       </a>
       <strong class="sidebar-projectVersion" translate="no">
-        v2.1.3
+        v2.1.5
       </strong>
     </div>
     <ul class="sidebar-listNav">
@@ -97,7 +97,7 @@ Market Manager
     </a>
 
   <span translate="no">WebInterface.Commands</span> 
-  <small class="app-vsn" translate="no">(Market Manager v2.1.3)</small>
+  <small class="app-vsn" translate="no">(Market Manager v2.1.5)</small>
 
 </h1>
 
@@ -124,6 +124,22 @@ Works as a bridge between the web interface and the Manager application, which d
 
       <div class="summary-row">
         <div class="summary-signature">
+          <a href="#t:activate_request/0" translate="no">activate_request()</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#t:authenticate_request/0" translate="no">authenticate_request()</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
           <a href="#t:command/0" translate="no">command()</a>
 
         </div>
@@ -133,6 +149,14 @@ Works as a bridge between the web interface and the Manager application, which d
       <div class="summary-row">
         <div class="summary-signature">
           <a href="#t:command_id/0" translate="no">command_id()</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#t:deactivate_request/0" translate="no">deactivate_request()</a>
 
         </div>
 
@@ -199,6 +223,72 @@ Works as a bridge between the web interface and the Manager application, which d
 Types
     </h1>
     <div class="types-list">
+<section class="detail" id="t:activate_request/0">
+
+  <div class="detail-header">
+    <a href="#t:activate_request/0" class="detail-link" title="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature" translate="no">activate_request()</h1>
+
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/commands.ex#L25" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre translate="no">activate_request() :: %{
+  command: :activate,
+  strategy: <a href="Manager.Type.html#t:strategy/0">Manager.Type.strategy</a>(),
+  syndicates: [<a href="Manager.Type.html#t:syndicate/0">Manager.Type.syndicate</a>()]
+}</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="t:authenticate_request/0">
+
+  <div class="detail-header">
+    <a href="#t:authenticate_request/0" class="detail-link" title="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature" translate="no">authenticate_request()</h1>
+
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/commands.ex#L36" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre translate="no">authenticate_request() :: %{
+  command: :authenticate,
+  cookie: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  token: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()
+}</pre>
+
+      </div>
+
+
+  </section>
+</section>
 <section class="detail" id="t:command/0">
 
   <div class="detail-header">
@@ -208,7 +298,7 @@ Types
     </a>
     <h1 class="signature" translate="no">command()</h1>
 
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/commands.ex#L16" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/commands.ex#L17" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -257,6 +347,38 @@ Types
 
   </section>
 </section>
+<section class="detail" id="t:deactivate_request/0">
+
+  <div class="detail-header">
+    <a href="#t:deactivate_request/0" class="detail-link" title="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature" translate="no">deactivate_request()</h1>
+
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/commands.ex#L31" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre translate="no">deactivate_request() :: %{
+  command: :deactivate,
+  syndicates: [<a href="Manager.Type.html#t:syndicate/0">Manager.Type.syndicate</a>()]
+}</pre>
+
+      </div>
+
+
+  </section>
+</section>
 <section class="detail" id="t:dependencies/0">
 
   <div class="detail-header">
@@ -266,7 +388,7 @@ Types
     </a>
     <h1 class="signature" translate="no">dependencies()</h1>
 
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/commands.ex#L21" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/commands.ex#L23" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -295,7 +417,7 @@ Types
     </a>
     <h1 class="signature" translate="no">request()</h1>
 
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/commands.ex#L22" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/commands.ex#L42" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -308,13 +430,7 @@ Types
       <h2>Specs</h2>
       <div class="specs">
 
-          <pre translate="no">request() ::
-  %{
-    command: <a href="#t:command_id/0">command_id</a>(),
-    strategy: <a href="Manager.Type.html#t:strategy/0">Manager.Type.strategy</a>(),
-    syndicates: [<a href="Manager.Type.html#t:syndicate/0">Manager.Type.syndicate</a>()]
-  }
-  | %{command: <a href="#t:command_id/0">command_id</a>(), cookie: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(), token: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()}</pre>
+          <pre translate="no">request() :: <a href="#t:activate_request/0">activate_request</a>() | <a href="#t:deactivate_request/0">deactivate_request</a>() | <a href="#t:authenticate_request/0">authenticate_request</a>()</pre>
 
       </div>
 
@@ -345,7 +461,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">execute(command, deps \\ %{manager: Manager})</h1>
 
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/commands.ex#L61" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/commands.ex#L73" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -374,7 +490,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">get_command(id)</h1>
 
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/commands.ex#L83" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/commands.ex#L94" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -403,7 +519,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">list_commands()</h1>
 
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/commands.ex#L33" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/commands.ex#L45" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>

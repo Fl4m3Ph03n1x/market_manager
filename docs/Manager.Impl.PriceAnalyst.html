@@ -7,7 +7,7 @@
     <meta name="generator" content="ExDoc v0.28.0">
     <meta name="project" content="Market Manager v2.1.5">
 
-    <title>WebInterface.Live.Window.Sidebar — Market Manager v2.1.5</title>
+    <title>Manager.Impl.PriceAnalyst — Market Manager v2.1.5</title>
     <link rel="stylesheet" href="dist/elixir-a816d167216329cc463d.css" />
 
     <script src="dist/sidebar_items-a204c62895.js"></script>
@@ -91,21 +91,22 @@ Market Manager
 </button>
 
 
-    <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/live/window/sidebar.ex#L1" title="View Source" class="view-source" rel="help">
+    <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/manager/lib/impl/price_analyst.ex#L1" title="View Source" class="view-source" rel="help">
       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
       <span class="sr-only">View Source</span>
     </a>
 
-  <span translate="no">WebInterface.Live.Window.Sidebar</span> 
+  <span translate="no">Manager.Impl.PriceAnalyst</span> 
   <small class="app-vsn" translate="no">(Market Manager v2.1.5)</small>
 
 </h1>
 
 
   <section id="moduledoc">
-<p>LiveView subcomponent for the sidebar of the UI. The sidebar is basically a
-menu that has all the actions the user is able to perform.</p><p>Upon picking an action, the page on <code class="inline">main</code> subcomponent is then rendered
-accordingly.</p>
+<p>Contains the formulas and calculations for all the strategies.
+Strategies calculate the optimum price for you to sell an item.
+There are several stretagies, some focus more on selling fast, while others
+on getting more profit.</p>
   </section>
 
 
@@ -125,11 +126,9 @@ accordingly.</p>
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#render/1" translate="no">render(assigns)</a>
+          <a href="#calculate_price/3" translate="no">calculate_price(product, all_orders, strategy)</a>
 
         </div>
-
-          <div class="summary-synopsis"><p>Callback implementation for <a href="https://hexdocs.pm/phoenix_live_view/0.17.6/Phoenix.LiveComponent.html#c:render/1"><code class="inline">Phoenix.LiveComponent.render/1</code></a>.</p></div>
 
       </div>
 
@@ -147,16 +146,16 @@ accordingly.</p>
 Functions
     </h1>
     <div class="functions-list">
-<section class="detail" id="render/1">
+<section class="detail" id="calculate_price/3">
 
   <div class="detail-header">
-    <a href="#render/1" class="detail-link" title="Link to this function">
+    <a href="#calculate_price/3" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">render(assigns)</h1>
+    <h1 class="signature" translate="no">calculate_price(product, all_orders, strategy)</h1>
 
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/live/window/sidebar.ex#L16" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/manager/lib/impl/price_analyst.ex#L19" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -169,11 +168,16 @@ Functions
       <h2>Specs</h2>
       <div class="specs">
 
-          <pre translate="no">render(<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()) :: <a href="https://hexdocs.pm/phoenix_live_view/0.17.6/Phoenix.LiveView.Rendered.html#t:t/0">Phoenix.LiveView.Rendered.t</a>()</pre>
+          <pre translate="no">calculate_price(
+  <a href="Store.Type.html#t:product/0">Store.Type.product</a>(),
+  [<a href="AuctionHouse.Type.html#t:order_info/0">AuctionHouse.Type.order_info</a>()],
+  <a href="Manager.Type.html#t:strategy/0">Manager.Type.strategy</a>()
+) ::
+  <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>()</pre>
 
       </div>
 
-<p>Callback implementation for <a href="https://hexdocs.pm/phoenix_live_view/0.17.6/Phoenix.LiveComponent.html#c:render/1"><code class="inline">Phoenix.LiveComponent.render/1</code></a>.</p>
+
   </section>
 </section>
 

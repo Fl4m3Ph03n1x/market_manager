@@ -5,12 +5,12 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.28.0">
-    <meta name="project" content="Market Manager v2.1.3">
+    <meta name="project" content="Market Manager v2.1.5">
 
-    <title>API Reference — Market Manager v2.1.3</title>
+    <title>API Reference — Market Manager v2.1.5</title>
     <link rel="stylesheet" href="dist/elixir-a816d167216329cc463d.css" />
 
-    <script src="dist/sidebar_items-9b8cde9e23.js"></script>
+    <script src="dist/sidebar_items-a204c62895.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -64,7 +64,7 @@
 Market Manager
       </a>
       <strong class="sidebar-projectVersion" translate="no">
-        v2.1.3
+        v2.1.5
       </strong>
     </div>
     <ul class="sidebar-listNav">
@@ -91,7 +91,7 @@ Market Manager
 </button>
 
 
-  <span>API Reference <small class="app-vsn">Market Manager v2.1.3</small></span>
+  <span>API Reference <small class="app-vsn">Market Manager v2.1.5</small></span>
 </h1>
 
 
@@ -115,7 +115,7 @@ into a format the manager understands.</p></div>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="AuctionHouse.HTTPClient.html" translate="no">AuctionHouse.HTTPClient</a>
+    <a href="AuctionHouse.Impl.HTTPClient.html" translate="no">AuctionHouse.Impl.HTTPClient</a>
 
   </div>
 
@@ -124,23 +124,23 @@ into a format the manager understands.</p></div>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="AuctionHouse.Server.html" translate="no">AuctionHouse.Server</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Process responsible for managing requests to the auction house.
-Talks to the logic layer and terminates gracefully.</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="AuctionHouse.Settings.html" translate="no">AuctionHouse.Settings</a>
+    <a href="AuctionHouse.Impl.Settings.html" translate="no">AuctionHouse.Impl.Settings</a>
 
   </div>
 
     <div class="summary-synopsis"><p>Holds configurations that do not depend on the environment. 12 factor app
 standard states that only configurations that depend on the environment should
 be configurable in config files (config folder).</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="AuctionHouse.Runtime.Server.html" translate="no">AuctionHouse.Runtime.Server</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Process responsible for managing requests to the auction house.
+Talks to the logic layer and terminates gracefully.</p></div>
 
 </div>
 <div class="summary-row">
@@ -165,7 +165,7 @@ and you need to talk to MarketManager, this is who you call, the public API.</p>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="Manager.Interpreter.html" translate="no">Manager.Interpreter</a>
+    <a href="Manager.Impl.Interpreter.html" translate="no">Manager.Impl.Interpreter</a>
 
   </div>
 
@@ -176,7 +176,7 @@ of the application and manages data between them.</p></div>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="Manager.PriceAnalyst.html" translate="no">Manager.PriceAnalyst</a>
+    <a href="Manager.Impl.PriceAnalyst.html" translate="no">Manager.Impl.PriceAnalyst</a>
 
   </div>
 
@@ -188,13 +188,25 @@ on getting more profit.</p></div>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="Manager.Server.html" translate="no">Manager.Server</a>
+    <a href="Manager.Runtime.Server.html" translate="no">Manager.Runtime.Server</a>
 
   </div>
 
     <div class="summary-synopsis"><p>Process responsible for taking requests from the interface and directing them
 to the appropriate layers. Supervises dependencies to make sure they are
 regenerated should something fail.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Manager.Runtime.Worker.html" translate="no">Manager.Runtime.Worker</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Process responsible for doing asynchrnous tasks. The Worker is supervised by the <code class="inline">Server</code> and is
+restarted should something fail. It communicates with the calling client via <a href="https://hexdocs.pm/elixir/Kernel.html#send/2"><code class="inline">send/2</code></a>, since we
+don't know if the client is a <a href="https://hexdocs.pm/elixir/GenServer.html"><code class="inline">GenServer</code></a> or not. Should this change (and we are sure the client
+is a <a href="https://hexdocs.pm/elixir/GenServer.html"><code class="inline">GenServer</code></a>) then <code class="inline">GenServer.cast</code> should be used instead.</p></div>
 
 </div>
 <div class="summary-row">
@@ -346,6 +358,16 @@ This subcomponent has the forms for the user's authentication.</p></div>
 
     <div class="summary-synopsis"><p>LiveView subcomponent for the Deactivate page as part of the Main subcomponent.
 This subcomponent has the options to deactivate a previously activated syndicate.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="WebInterface.Live.Window.OperationProgress.html" translate="no">WebInterface.Live.Window.OperationProgress</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>LiveView subcomponent for the Operation Progress Page. It hides both sidebar and main
+subcomponents and displays information about operations taking place.</p></div>
 
 </div>
 <div class="summary-row">
