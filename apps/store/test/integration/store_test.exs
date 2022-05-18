@@ -40,7 +40,7 @@ defmodule StoreTest do
         "new_loka" => [],
         "perrin_sequence" => [],
         "red_veil" => [],
-        "simaris" => ["5ee71a2604d55c0a5cbdc3c2", "5ee71a2604d55c0a5cbdc3e3"]
+        "cephalon_simaris" => ["5ee71a2604d55c0a5cbdc3c2", "5ee71a2604d55c0a5cbdc3e3"]
       })
 
     File.write(@current_orders_file, content)
