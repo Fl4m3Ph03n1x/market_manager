@@ -29,7 +29,7 @@ defmodule Store do
   {:error, :syndicate_not_found}
   ```
   """
-  @spec list_products(Type.syndicate) :: Type.list_products_response
+  @spec list_products(Type.syndicate()) :: Type.list_products_response()
   defdelegate list_products(syndicate), to: FileSystem
 
   @doc """
@@ -44,7 +44,7 @@ defmodule Store do
   {:error, :syndicate_not_found}
   ```
   """
-  @spec list_orders(Type.syndicate) :: Type.list_orders_response
+  @spec list_orders(Type.syndicate()) :: Type.list_orders_response()
   defdelegate list_orders(syndicate), to: FileSystem
 
   @doc """
@@ -59,7 +59,7 @@ defmodule Store do
   {:error, :enoent}
   ```
   """
-  @spec save_order(Type.order_id, Type.syndicate) :: Type.save_order_response
+  @spec save_order(Type.order_id(), Type.syndicate()) :: Type.save_order_response()
   defdelegate save_order(order_id, syndicate), to: FileSystem
 
   @doc """
@@ -74,27 +74,8 @@ defmodule Store do
   {:error, :enoent}
   ```
   """
-  @spec delete_order(Type.order_id, Type.syndicate) :: Type.delete_order_response
+  @spec delete_order(Type.order_id(), Type.syndicate()) :: Type.delete_order_response()
   defdelegate delete_order(order_id, syndicate), to: FileSystem
-
-  @doc """
-  Returns true if the given syndicate exists, false otherwise. Returns an
-  error if an error occurs.
-
-  Example:
-  ```
-  > Store.syndicate_exists?(red_veil")
-  {:ok, true}
-
-  > Store.syndicate_exists?("nonexistent_syndicate")
-  {:ok, false}
-
-  > Store.syndicate_exists?("syndicate") # world explodes meanwhile
-  {:error, :enoent}
-  ```
-  """
-  @spec syndicate_exists?(Type.syndicate) :: {:ok, boolean} | Type.error
-  defdelegate syndicate_exists?(syndicate), to: FileSystem
 
   @doc """
   Saves the authentication information from the user into the storage system.
@@ -109,7 +90,7 @@ defmodule Store do
   {:error, :no_permissions}
   ```
   """
-  @spec save_credentials(Type.login_info) :: Type.save_credentials_response
+  @spec save_credentials(Type.login_info()) :: Type.save_credentials_response()
   defdelegate save_credentials(login_info), to: FileSystem
 
   @doc """
@@ -124,6 +105,6 @@ defmodule Store do
   {:error, :enonent}
   ```
   """
-  @spec get_credentials :: Type.get_credentials_response
+  @spec get_credentials :: Type.get_credentials_response()
   defdelegate get_credentials, to: FileSystem
 end
