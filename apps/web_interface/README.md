@@ -37,7 +37,9 @@ To start your Phoenix server:
 
   * Install dependencies with `mix deps.get`
   * Generate assets with `mix assets.deploy`
+  * Copy the files inside of `market_manager/assets` to `market_manager/apps/web_interface`
+  * Change the `setup` file to have valid credentials
+  * Change the `market_manager/config/dev.exs` auction_house configuration to point to the real website if you want to test against it
   * Start Phoenix endpoint with `mix phx.server`
 
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
-
