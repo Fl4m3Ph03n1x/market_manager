@@ -190,7 +190,9 @@ defmodule Manager.WorkerTest do
           ]
         }
       ]) do
-        {:ok, _pid} = start_supervised(Worker)
+        # If the process is not started, start it now
+        start_supervised(Worker)
+
         Worker.activate(syndicate, strategy)
 
         assert_receive {:activate, ^syndicate, {1, 2, {:ok, "54a74454e779892d5e5155d5"}}}
@@ -244,7 +246,9 @@ defmodule Manager.WorkerTest do
           ]
         }
       ]) do
-        {:ok, _pid} = start_supervised(Worker)
+        # If the process is not started, start it now
+        start_supervised(Worker)
+
         Worker.deactivate(syndicate)
 
         assert_receive {:deactivate, ^syndicate, {1, 2, {:ok, "54a74454e779892d5e5155d5"}}}
