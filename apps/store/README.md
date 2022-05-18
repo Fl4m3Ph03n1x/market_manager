@@ -1,6 +1,6 @@
 # Store
 
-Library responible for persisting data. It is functional (barring some configurations).
+Library responsible for persisting data. It is functional (barring some configurations).
 This library simply persist the data. No validations are done here. If incorrect data is given
 to this library, then incorrect data will be persisted. 
 
