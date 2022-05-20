@@ -13,21 +13,33 @@ defmodule WebInterface.Commands do
   }
 
   @type command_id :: :activate | :deactivate | :authenticate
+
   @type command :: %{
-          name: String.t,
-          description: String.t,
+          name: String.t(),
+          description: String.t(),
           id: command_id
         }
+
   @type dependencies :: %{manager: module}
-  @type request :: %{
-          command: command_id,
-          strategy: ManagerTypes.strategy,
-          syndicates: [ManagerTypes.syndicate]
-        } | %{
-          command: command_id,
-          cookie: String.t,
-          token: String.t
+
+  @type activate_request :: %{
+          command: :activate,
+          strategy: ManagerTypes.strategy(),
+          syndicates: [ManagerTypes.syndicate()]
         }
+
+  @type deactivate_request :: %{
+          command: :deactivate,
+          syndicates: [ManagerTypes.syndicate()]
+        }
+
+  @type authenticate_request :: %{
+          command: :authenticate,
+          cookie: String.t(),
+          token: String.t()
+        }
+
+  @type request :: activate_request | deactivate_request | authenticate_request
 
   @spec list_commands :: [command]
   def list_commands,
@@ -76,8 +88,7 @@ defmodule WebInterface.Commands do
       |> Enum.map(&manager.deactivate/1)
 
   def execute(%{command: :authenticate, cookie: cookie, token: token}, %{manager: manager}),
-    do:
-      manager.authenticate(%{"cookie" => cookie, "token" => token})
+    do: manager.authenticate(%{"cookie" => cookie, "token" => token})
 
   @spec get_command(atom) :: command | nil
   def get_command(id),

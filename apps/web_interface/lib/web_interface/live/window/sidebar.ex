@@ -12,10 +12,10 @@ defmodule WebInterface.Live.Window.Sidebar do
   alias Elixir.Phoenix.LiveView.Rendered
   alias WebInterface.Commands
 
-  @spec render(map) :: Rendered.t
+  @spec render(map) :: Rendered.t()
   def render(assigns) do
     ~H"""
-    <div class="sidebar column">
+    <div class={display(@operation_in_progress)}>
       <nav class="nav">
         <%= for command <- @commands do %>
 
@@ -32,11 +32,14 @@ defmodule WebInterface.Live.Window.Sidebar do
     """
   end
 
-  @spec command_class(Commands.command, Commands.command) :: String.t
+  @spec command_class(Commands.command(), Commands.command()) :: String.t()
   defp command_class(command, selected), do: active?(command == selected)
 
-  @spec active?(bool) :: String.t
+  @spec active?(bool) :: String.t()
   defp active?(true = _active?), do: "active"
   defp active?(_active?), do: ""
 
+  @spec display(boolean()) :: String.t()
+  defp display(true), do: "hidden"
+  defp display(_), do: "sidebar column show"
 end

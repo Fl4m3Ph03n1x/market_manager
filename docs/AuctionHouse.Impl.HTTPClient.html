@@ -5,12 +5,12 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.28.0">
-    <meta name="project" content="Market Manager v2.1.3">
+    <meta name="project" content="Market Manager v2.1.5">
 
-    <title>Manager.PriceAnalyst — Market Manager v2.1.3</title>
+    <title>AuctionHouse.Impl.HTTPClient — Market Manager v2.1.5</title>
     <link rel="stylesheet" href="dist/elixir-a816d167216329cc463d.css" />
 
-    <script src="dist/sidebar_items-9b8cde9e23.js"></script>
+    <script src="dist/sidebar_items-a204c62895.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -64,7 +64,7 @@
 Market Manager
       </a>
       <strong class="sidebar-projectVersion" translate="no">
-        v2.1.3
+        v2.1.5
       </strong>
     </div>
     <ul class="sidebar-listNav">
@@ -91,22 +91,19 @@ Market Manager
 </button>
 
 
-    <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/manager/lib/manager/price_analyst.ex#L1" title="View Source" class="view-source" rel="help">
+    <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/impl/http_client.ex#L1" title="View Source" class="view-source" rel="help">
       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
       <span class="sr-only">View Source</span>
     </a>
 
-  <span translate="no">Manager.PriceAnalyst</span> 
-  <small class="app-vsn" translate="no">(Market Manager v2.1.3)</small>
+  <span translate="no">AuctionHouse.Impl.HTTPClient</span> 
+  <small class="app-vsn" translate="no">(Market Manager v2.1.5)</small>
 
 </h1>
 
 
   <section id="moduledoc">
-<p>Contains the formulas and calculations for all the strategies.
-Strategies calculate the optimum price for you to sell an item.
-There are several stretagies, some focus more on selling fast, while others
-on getting more profit.</p>
+<p>Adapter for the interface AuctionHouse</p>
   </section>
 
 
@@ -126,7 +123,7 @@ on getting more profit.</p>
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#calculate_price/3" translate="no">calculate_price(product, all_orders, strategy)</a>
+          <a href="#delete_order/2" translate="no">delete_order(order_id, deps)</a>
 
         </div>
 
@@ -134,7 +131,15 @@ on getting more profit.</p>
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#valid_strategy?/1" translate="no">valid_strategy?(strategy)</a>
+          <a href="#get_all_orders/2" translate="no">get_all_orders(item_name, deps)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#place_order/2" translate="no">place_order(order, deps)</a>
 
         </div>
 
@@ -154,16 +159,16 @@ on getting more profit.</p>
 Functions
     </h1>
     <div class="functions-list">
-<section class="detail" id="calculate_price/3">
+<section class="detail" id="delete_order/2">
 
   <div class="detail-header">
-    <a href="#calculate_price/3" class="detail-link" title="Link to this function">
+    <a href="#delete_order/2" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">calculate_price(product, all_orders, strategy)</h1>
+    <h1 class="signature" translate="no">delete_order(order_id, deps)</h1>
 
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/manager/lib/manager/price_analyst.ex#L28" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/impl/http_client.ex#L29" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -176,28 +181,24 @@ Functions
       <h2>Specs</h2>
       <div class="specs">
 
-          <pre translate="no">calculate_price(
-  <a href="Store.Type.html#t:product/0">Store.Type.product</a>(),
-  [<a href="AuctionHouse.Type.html#t:order_info/0">AuctionHouse.Type.order_info</a>()],
-  <a href="Manager.Type.html#t:strategy/0">Manager.Type.strategy</a>()
-) ::
-  <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>()</pre>
+          <pre translate="no">delete_order(<a href="AuctionHouse.Type.html#t:order_id/0">AuctionHouse.Type.order_id</a>(), deps :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()) ::
+  <a href="AuctionHouse.Type.html#t:delete_order_response/0">AuctionHouse.Type.delete_order_response</a>()</pre>
 
       </div>
 
 
   </section>
 </section>
-<section class="detail" id="valid_strategy?/1">
+<section class="detail" id="get_all_orders/2">
 
   <div class="detail-header">
-    <a href="#valid_strategy?/1" class="detail-link" title="Link to this function">
+    <a href="#get_all_orders/2" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">valid_strategy?(strategy)</h1>
+    <h1 class="signature" translate="no">get_all_orders(item_name, deps)</h1>
 
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/manager/lib/manager/price_analyst.ex#L25" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/impl/http_client.ex#L37" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -210,7 +211,38 @@ Functions
       <h2>Specs</h2>
       <div class="specs">
 
-          <pre translate="no">valid_strategy?(<a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()</pre>
+          <pre translate="no">get_all_orders(<a href="AuctionHouse.Type.html#t:item_name/0">AuctionHouse.Type.item_name</a>(), deps :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()) ::
+  <a href="AuctionHouse.Type.html#t:get_all_orders_response/0">AuctionHouse.Type.get_all_orders_response</a>()</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="place_order/2">
+
+  <div class="detail-header">
+    <a href="#place_order/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">place_order(order, deps)</h1>
+
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/impl/http_client.ex#L21" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre translate="no">place_order(<a href="AuctionHouse.Type.html#t:order/0">AuctionHouse.Type.order</a>(), deps :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()) ::
+  <a href="AuctionHouse.Type.html#t:place_order_response/0">AuctionHouse.Type.place_order_response</a>()</pre>
 
       </div>
 
