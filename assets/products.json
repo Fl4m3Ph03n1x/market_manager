@@ -1072,5 +1072,61 @@
 			"default_price": 60,
 			"rank": "n/a"
 		}
+	],
+	"arbitrations": [
+		{
+			"name": "Sharpshooter",
+			"id": "5bc1ab93b919f200c18c10f0",
+			"min_price": 9,
+			"default_price": 11
+		},
+		{
+			"name": "Cautious Shot",
+			"id": "5bc1ab94b919f200c18c10f2",
+			"min_price": 14,
+			"default_price": 16
+		},
+		{
+			"name": "Power Donation",
+			"id": "5bc1ab93b919f200c18c10f1",
+			"min_price": 14,
+			"default_price": 16
+		},
+		{
+			"name": "Vigorous Swap",
+			"id": "5bc1ab92b919f200c18c10ed",
+			"min_price": 15,
+			"default_price": 16
+		},
+		{
+			"name": "Rolling Guard",
+			"id": "5bc1ab92b919f200c18c10ee",
+			"min_price": 15,
+			"default_price": 16
+		},
+		{
+			"name": "Preparation",
+			"id": "5e7caa01267539063de48c3e",
+			"min_price": 17,
+			"default_price": 19
+		},
+		{
+			"name": "Aerial Ace",
+			"id": "5e7caa01267539063de48c3f",
+			"min_price": 16,
+			"default_price": 20
+		},
+		{
+			"name": "Mending Shot",
+			"id": "5e7caa01267539063de48c3c",
+			"min_price": 18,
+			"default_price": 20
+		},
+		{
+			"name": "Energizing Shot",
+			"id": "5e7caa02267539063de48c40",
+			"min_price": 19,
+			"default_price": 21
+		}
 	]
 }
