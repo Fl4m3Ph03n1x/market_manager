@@ -41,6 +41,10 @@ defmodule WebInterface.Syndicates do
       %{
         name: "Cephalon Simaris",
         id: "cephalon_simaris"
+      },
+      %{
+        name: "Arbitrations",
+        id: "arbitrations"
       }
     ]
 
