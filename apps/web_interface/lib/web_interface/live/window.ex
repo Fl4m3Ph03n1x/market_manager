@@ -299,8 +299,8 @@ defmodule WebInterface.Live.Window do
   defp by_not_empty_string(string), do: string !== ""
 
   @spec handle_authenticate_response(any, Socket.t()) :: {:noreply, Socket.t()}
-  defp handle_authenticate_response({:ok, :success}, socket),
-    do: {:noreply, put_flash(socket, :info, "Authentication saved successfully!}")}
+  defp handle_authenticate_response({:ok, _data}, socket),
+    do: {:noreply, put_flash(socket, :info, "Authentication saved successfully!")}
 
   defp handle_authenticate_response(results, socket) do
     Logger.error("#{inspect(results)}")

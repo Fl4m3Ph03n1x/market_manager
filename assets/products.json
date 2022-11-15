@@ -1127,6 +1127,42 @@
 			"id": "5e7caa02267539063de48c40",
 			"min_price": 19,
 			"default_price": 21
+		},
+		{
+			"name": "Galvanized Acceleration",
+			"id": "60e5b8fd4794450053e99948",
+			"min_price": 14,
+			"default_price": 16
+		},
+		{
+			"name": "Galvanized Aptitude",
+			"id": "60e5b8fd4794450053e99944",
+			"min_price": 14,
+			"default_price": 16
+		},
+		{
+			"name": "Galvanized Chamber",
+			"id": "60e5b9014794450053e99961",
+			"min_price": 14,
+			"default_price": 16
+		},
+		{
+			"name": "Galvanized Crosshairs",
+			"id": "60e5b8fe4794450053e9994d",
+			"min_price": 14,
+			"default_price": 16
+		},
+		{
+			"name": "Galvanized Diffusion",
+			"id": "60e5b8fc4794450053e99941",
+			"min_price": 15,
+			"default_price": 17
+		},
+		{
+			"name": "Galvanized Hell",
+			"id": "60e5b8fb4794450053e9993d",
+			"min_price": 14,
+			"default_price": 16
 		}
 	]
 }
