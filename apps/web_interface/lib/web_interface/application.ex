@@ -21,12 +21,14 @@ defmodule WebInterface.Application do
        [
          app: :web_interface,
          id: WebInterface,
-         title: "Web Interface",
-         size: {920, 980},
+         title: "Market Manager",
+         size: {940, 980},
          menubar: MenuBar,
+         icon: "static/images/resized_logo_5_32x32.png",
          url: &WebInterface.Endpoint.url/0
        ]}
     ]
+
 
     opts = [strategy: :one_for_one, name: WebInterface.Supervisor]
     Supervisor.start_link(children, opts)
