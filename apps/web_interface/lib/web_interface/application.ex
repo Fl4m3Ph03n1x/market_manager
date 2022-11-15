@@ -29,7 +29,6 @@ defmodule WebInterface.Application do
        ]}
     ]
 
-
     opts = [strategy: :one_for_one, name: WebInterface.Supervisor]
     Supervisor.start_link(children, opts)
   end
