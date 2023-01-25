@@ -27,7 +27,7 @@ defmodule AuctionHouse.Data.Order do
     field(:quantity, pos_integer())
   end
 
-  @spec new(order) :: {:ok, __MODULE__.t()} | {:error, any}
+  @spec new(order) :: __MODULE__.t()
   def new(
         %{
           "order_type" => order_type,

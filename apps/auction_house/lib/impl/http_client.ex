@@ -6,7 +6,6 @@ defmodule AuctionHouse.Impl.HTTPClient do
   require Logger
 
   alias AuctionHouse.Data.{Credentials, LoginInfo, Order, OrderInfo}
-  alias AuctionHouse.Shared.Utils
   alias AuctionHouse.Type
 
   @url Application.compile_env!(:auction_house, :api_base_url)
@@ -35,7 +34,7 @@ defmodule AuctionHouse.Impl.HTTPClient do
     end
   end
 
-  @spec delete_order(Type.order_id, deps :: map) :: Type.delete_order_response
+  @spec delete_order(Type.order_id(), deps :: map) :: Type.delete_order_response()
   def delete_order(order_id, deps) do
     with url <- build_delete_url(order_id),
          {:ok, %HTTPoison.Response{status_code: 200, body: body}} <- http_delete(url, deps),
@@ -47,29 +46,18 @@ defmodule AuctionHouse.Impl.HTTPClient do
     end
   end
 
-  @spec get_all_orders(Type.item_name(), deps :: map) ::Type.get_all_orders_response
+  @spec get_all_orders(Type.item_name(), deps :: map) :: Type.get_all_orders_response()
   def get_all_orders(item_name, deps) do
     with urls <- item_name |> Recase.to_snake() |> build_get_orders_url(),
          {:ok, %HTTPoison.Response{status_code: 200, body: body}} <- http_get(urls, deps),
          {:ok, content} <- Jason.decode(body) do
-      {parsed_orders, failed_orders} =
-        content
-        |> get_orders()
-        |> Enum.map(&OrderInfo.new/1)
-        |> Enum.split_with(fn {tag, _data} -> tag == :ok end)
-
-      unless Enum.empty?(failed_orders) do
-        Logger.error("Failed to parse OrderInfo: #{inspect(failed_orders)}")
-      end
-
-      {:ok, Enum.map(parsed_orders, &Utils.from_tagged_tuple/1)}
+      {:ok, parse_order_info(content)}
     else
       error -> to_auction_house_error(error, item_name)
     end
   end
 
-  @spec login(Credentials.t(), deps :: map) ::
-          {:error, any} | {:ok, LoginInfo.t()}
+  @spec login(Credentials.t(), deps :: map) :: {:ok, LoginInfo.t()} | {:error, any}
   def login(
         credentials,
         %{post_fn: post} = deps
@@ -80,10 +68,7 @@ defmodule AuctionHouse.Impl.HTTPClient do
            post.(@api_signin_url, json_creds, build_hearders(cookie, token)),
          {:ok, decoded_body} <- validate_body(body),
          {:ok, updated_cookie} <- parse_cookie(headers) do
-      patreon? =
-        get_in(decoded_body, ["payload", "user", "linked_accounts", "patreon_profile"]) || false
-
-      {:ok, LoginInfo.new(updated_cookie, token, patreon?)}
+      {:ok, LoginInfo.new(updated_cookie, token, get_patreon(decoded_body))}
     else
       error -> to_auction_house_error(error, credentials)
     end
@@ -93,6 +78,8 @@ defmodule AuctionHouse.Impl.HTTPClient do
   # Private #
   ###########
 
+  @spec fetch_authentication_data(deps :: map) ::
+          {:ok, [token: String.t(), cookie: String.t()]} | {:error, any}
   defp fetch_authentication_data(
          %{
            parse_document_fn: parse_document,
@@ -108,6 +95,9 @@ defmodule AuctionHouse.Impl.HTTPClient do
     end
   end
 
+  @spec validate_body(body :: String.t()) ::
+          {:ok, map}
+          | {:error, {:payload_not_found, map} | {:unable_to_decode_body, Jason.DecodeError.t()}}
   defp validate_body(body) do
     case Jason.decode(body) do
       {:ok, decoded_body} ->
@@ -122,6 +112,8 @@ defmodule AuctionHouse.Impl.HTTPClient do
     end
   end
 
+  @spec find_xrfc_token(parsed_body :: [any], deps :: map) ::
+          {:ok, String.t()} | {:erorr, {:xrfc_token_not_found, parsed_body :: [any]}}
   defp find_xrfc_token(doc, %{find_in_document_fn: find_in_document}) do
     case find_in_document.(doc, "meta[name=\"csrf-token\"]") do
       [{"meta", [{"name", "csrf-token"}, {"content", token}], []}] -> {:ok, token}
@@ -129,6 +121,9 @@ defmodule AuctionHouse.Impl.HTTPClient do
     end
   end
 
+  @spec parse_cookie(headers :: [{String.t(), any}]) ::
+          {:ok, String.t()}
+          | {:error, {:no_cookie_found | :missing_jwt, headers :: [{String.t(), any}]}}
   defp parse_cookie(headers) do
     with {_key, val} <- List.keyfind(headers, "set-cookie", 0),
          [cookie | _tail] <- String.split(val, ";"),
@@ -139,6 +134,11 @@ defmodule AuctionHouse.Impl.HTTPClient do
       false -> {:error, {:missing_jwt, headers}}
       [] -> {:error, {:missing_jwt, headers}}
     end
+  end
+
+  @spec get_patreon(body :: map) :: boolean
+  defp get_patreon(body) do
+    get_in(body, ["payload", "user", "linked_accounts", "patreon_profile"]) || false
   end
 
   @spec http_post(order_json :: String.t(), deps :: map) ::
@@ -178,10 +178,9 @@ defmodule AuctionHouse.Impl.HTTPClient do
          {:ok, %HTTPoison.Response{status_code: 400, body: error_body}},
          data
        ) do
-    with {:ok, content} <- Jason.decode(error_body),
-         err <- map_error(content) do
-      build_error_response(err, data)
-    end
+    error_body
+    |> map_error()
+    |> build_error_response(data)
   end
 
   defp to_auction_house_error(
@@ -209,25 +208,33 @@ defmodule AuctionHouse.Impl.HTTPClient do
   defp to_auction_house_error({:error, reason}, data),
     do: {:error, reason, data}
 
-  @spec get_orders(response :: map) :: [Type.order_info()]
-  defp get_orders(%{"payload" => %{"orders" => orders}}), do: orders
+  @spec parse_order_info(orders_json :: [map()]) :: [OrderInfo.t()]
+  defp parse_order_info(orders_json) do
+      orders_json
+      |> get_in(["payload", "orders"])
+      |> Enum.map(&OrderInfo.new/1)
+  end
 
-  @spec map_error(error_response :: map | String.t()) ::
+  @spec map_error(error_response :: String.t()) ::
           {:error,
            :invalid_item_id
            | :order_already_placed
            | :order_non_existent
            | :rank_level_non_applicable
            | :server_unavailable}
-  defp map_error(%{"error" => %{"item_id" => _error}}), do: {:error, :invalid_item_id}
+  defp map_error(~s({"error":{"item_id":["app.form.invalid"]}})),
+    do: {:error, :invalid_item_id}
 
-  defp map_error(%{"error" => %{"_form" => _error}}), do: {:error, :order_already_placed}
+  defp map_error(~s({"error":{"_form":["app.post_order.already_created_no_duplicates"]}})),
+    do: {:error, :order_already_placed}
 
-  defp map_error(%{"error" => %{"order_id" => _error}}), do: {:error, :order_non_existent}
+  defp map_error(~s({"error": {"order_id": ["app.form.invalid"]}})),
+    do: {:error, :order_non_existent}
 
-  defp map_error(%{"error" => %{"mod_rank" => _error}}), do: {:error, :rank_level_non_applicable}
+  defp map_error(~s({"error":{"mod_rank":["app.form.invalid"]}})),
+    do: {:error, :rank_level_non_applicable}
 
-  defp map_error(%{"error" => %{"password" => ["app.account.password_invalid"]}}),
+  defp map_error(~s({"error": {"password": ["app.account.password_invalid"]}})),
     do: {:error, :wrong_password}
 
   defp map_error(html) when is_binary(html), do: {:error, :server_unavailable}
@@ -236,14 +243,14 @@ defmodule AuctionHouse.Impl.HTTPClient do
           {:ok, Type.order_id() | Type.item_id()} | {:error, {:missing_id, map()}}
   defp get_id(%{"payload" => %{"order" => %{"id" => id}}}), do: {:ok, id}
   defp get_id(%{"payload" => %{"order_id" => id}}), do: {:ok, id}
-  defp get_id(data), do: {:error, {:missing_id, data}}
+  defp get_id(data), do: {:error, :missing_id, data}
 
   @spec build_error_response({:error, reason :: atom}, any) ::
           {:error, reason :: atom, any}
   defp build_error_response({:error, reason}, data),
     do: {:error, reason, data}
 
-  @spec build_delete_url(Type.order_id()) :: url :: String.t()
+  @spec build_delete_url(Type.order_id()) :: uri :: String.t()
   defp build_delete_url(id), do: URI.encode(@url <> "/" <> id)
 
   @spec build_hearders(String.t(), String.t()) :: [{String.t(), String.t()}]
