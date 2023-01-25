@@ -3,12 +3,13 @@ defmodule WebInterface.Strategies do
   Contains information about the strategies for price setting available to the user.
   """
 
-  @type strategy_id :: :equal_to_lowest | :lowest_minus_one | :top_five_average | :top_three_average
+  @type strategy_id ::
+          :equal_to_lowest | :lowest_minus_one | :top_five_average | :top_three_average
   @type strategy :: %{
-    description: String.t,
-    id: strategy_id,
-    name: String.t
-  }
+          description: String.t(),
+          id: strategy_id,
+          name: String.t()
+        }
 
   @spec list_strategies :: [strategy]
   def list_strategies,

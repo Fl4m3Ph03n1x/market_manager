@@ -24,4 +24,6 @@ config :store,
 
 config :auction_house,
   api_search_url: "https://api.warframe.market/v1/items",
-  api_base_url: "https://api.warframe.market/v1/profile/orders"
+  api_base_url: "https://api.warframe.market/v1/profile/orders",
+  market_signin_url: "https://warframe.market/auth/signin",
+  api_signin_url: "https://api.warframe.market/v1/auth/signin"

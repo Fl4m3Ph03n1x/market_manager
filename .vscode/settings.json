@@ -20,5 +20,6 @@
         "warframe",
         "whipclaw",
         "zstandard"
-    ]
+    ],
+    "editor.formatOnSave": true
 }

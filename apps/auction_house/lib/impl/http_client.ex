@@ -3,10 +3,16 @@ defmodule AuctionHouse.Impl.HTTPClient do
   Adapter for the interface AuctionHouse
   """
 
+  require Logger
+
+  alias AuctionHouse.Data.{Credentials, LoginInfo, Order, OrderInfo}
+  alias AuctionHouse.Shared.Utils
   alias AuctionHouse.Type
 
   @url Application.compile_env!(:auction_house, :api_base_url)
   @search_url Application.compile_env!(:auction_house, :api_search_url)
+  @market_signin_url Application.compile_env!(:auction_house, :market_signin_url)
+  @api_signin_url Application.compile_env!(:auction_house, :api_signin_url)
 
   @static_headers [
     {"Accept", "application/json"},
@@ -17,11 +23,16 @@ defmodule AuctionHouse.Impl.HTTPClient do
   # Public #
   ##########
 
-  @spec place_order(Type.order(), deps :: map) :: Type.place_order_response()
+  @spec place_order(Order.t(), deps :: map) :: Type.place_order_response()
   def place_order(order, deps) do
     with {:ok, order_json} <- Jason.encode(order),
-         result <- http_post(order_json, deps) do
-      to_auction_house_response(result, order, &get_id/1)
+         {:ok, %HTTPoison.Response{status_code: 200, body: body}} <- http_post(order_json, deps),
+         {:ok, content} <- Jason.decode(body),
+         {:ok, id} <- get_id(content) do
+      {:ok, id}
+    else
+      {:ok, %HTTPoison.Response{}} = resp -> to_auction_house_response(resp, order, nil)
+      {:error, %HTTPoison.Error{}} = resp -> to_auction_house_response(resp, order, nil)
     end
   end
 
@@ -33,18 +44,111 @@ defmodule AuctionHouse.Impl.HTTPClient do
       |> http_delete(deps)
       |> to_auction_house_response(order_id, &get_id/1)
 
-  @spec get_all_orders(Type.item_name(), deps :: map) :: Type.get_all_orders_response()
-  def get_all_orders(item_name, deps),
-    do:
-      item_name
-      |> Recase.to_snake()
-      |> build_get_orders_url()
-      |> http_get(deps)
-      |> to_auction_house_response(item_name, &get_orders/1)
+  @spec get_all_orders(Type.item_name(), deps :: map) :: {:ok, [OrderInfo.t()]} | {:error, any}
+  def get_all_orders(item_name, deps) do
+    with urls <- item_name |> Recase.to_snake() |> build_get_orders_url(),
+         {:ok, %HTTPoison.Response{status_code: 200, body: body}} <- http_get(urls, deps),
+         {:ok, content} <- Jason.decode(body) do
+      {parsed_orders, failed_orders} =
+        content
+        |> get_orders()
+        |> Enum.map(&OrderInfo.new/1)
+        |> Enum.split_with(fn {tag, _data} -> tag == :ok end)
+
+      unless Enum.empty?(failed_orders) do
+        Logger.error("Failed to parse OrderInfo: #{inspect(failed_orders)}")
+      end
+
+      {:ok, Enum.map(parsed_orders, &Utils.from_tagged_tuple/1)}
+    else
+      {:ok, %HTTPoison.Response{}} = resp -> to_auction_house_response(resp, item_name, nil)
+      {:error, %HTTPoison.Error{}} = resp -> to_auction_house_response(resp, item_name, nil)
+    end
+  end
+
+  @spec login(Credentials.t(), deps :: map) ::
+          {:error, any} | {:ok, LoginInfo.t()}
+  def login(
+        credentials,
+        %{post_fn: post} = deps
+      ) do
+    with {:ok, json_creds} <- Jason.encode(credentials),
+         {:ok, token: token, cookie: cookie} <- fetch_authentication_data(deps),
+         {:ok, %HTTPoison.Response{status_code: 200, body: body, headers: headers}} <-
+           post.(@api_signin_url, json_creds, build_hearders(cookie, token)),
+         {:ok, decoded_body} <- validate_body(body),
+         {:ok, updated_cookie} <- parse_cookie(headers) do
+      patreon? =
+        get_in(decoded_body, ["payload", "user", "linked_accounts", "patreon_profile"]) || false
+
+      {:ok, LoginInfo.new(updated_cookie, token, patreon?)}
+    else
+      {:ok,
+       %HTTPoison.Response{
+         status_code: 400,
+         body: "{\"error\": {\"password\": [\"app.account.password_invalid\"]}}"
+       } = response} ->
+        {:error, {:wrong_password, response}}
+
+      {_status, err} ->
+        {:error, err}
+
+      err ->
+        {:error, err}
+    end
+  end
 
   ###########
   # Private #
   ###########
+
+  defp fetch_authentication_data(
+         %{
+           parse_document_fn: parse_document,
+           get_fn: get
+         } = deps
+       ) do
+    with {:ok, %HTTPoison.Response{status_code: 200, body: body, headers: headers}} <-
+           get.(@market_signin_url, @static_headers),
+         {:ok, doc} <- parse_document.(body),
+         {:ok, token} <- find_xrfc_token(doc, deps),
+         {:ok, cookie} <- parse_cookie(headers) do
+      {:ok, token: token, cookie: cookie}
+    end
+  end
+
+  defp validate_body(body) do
+    case Jason.decode(body) do
+      {:ok, decoded_body} ->
+        if is_nil(Map.get(decoded_body, "payload")) do
+          {:error, {:payload_not_found, decoded_body}}
+        else
+          {:ok, decoded_body}
+        end
+
+      {:error, %Jason.DecodeError{} = err} ->
+        {:error, {:unable_to_decode_body, err}}
+    end
+  end
+
+  defp find_xrfc_token(doc, %{find_in_document_fn: find_in_document}) do
+    case find_in_document.(doc, "meta[name=\"csrf-token\"]") do
+      [{"meta", [{"name", "csrf-token"}, {"content", token}], []}] -> {:ok, token}
+      _ -> {:error, {:xrfc_token_not_found, doc}}
+    end
+  end
+
+  defp parse_cookie(headers) do
+    with {_key, val} <- List.keyfind(headers, "set-cookie", 0),
+         [cookie | _tail] <- String.split(val, ";"),
+         true <- String.contains?(cookie, "JWT=") do
+      {:ok, cookie}
+    else
+      nil -> {:error, {:no_cookie_found, headers}}
+      false -> {:error, {:missing_jwt, headers}}
+      [] -> {:error, {:missing_jwt, headers}}
+    end
+  end
 
   @spec http_post(order_json :: String.t(), deps :: map) ::
           {:ok, HTTPoison.Response.t()} | {:error, HTTPoison.Error.t()}
@@ -108,17 +212,6 @@ defmodule AuctionHouse.Impl.HTTPClient do
          |> build_error_response(data)
 
   defp to_auction_house_response(
-         {:ok, %HTTPoison.Response{status_code: 200, body: body}},
-         _data,
-         handler
-       ) do
-    with {:ok, content} <- Jason.decode(body),
-         processed_content <- handler.(content) do
-      build_success_response(processed_content)
-    end
-  end
-
-  defp to_auction_house_response(
          {:error, %HTTPoison.Error{id: _id, reason: reason}},
          data,
          _handler
@@ -145,18 +238,20 @@ defmodule AuctionHouse.Impl.HTTPClient do
 
   defp map_error(html) when is_binary(html), do: {:error, :server_unavailable}
 
-  @spec get_id(response :: map) :: Type.order_id() | Type.item_id()
-  defp get_id(%{"payload" => %{"order" => %{"id" => id}}}), do: id
-  defp get_id(%{"payload" => %{"order_id" => id}}), do: id
+  @spec get_id(response :: map) ::
+          {:ok, Type.order_id() | Type.item_id()} | {:error, {:missing_id, map()}}
+  defp get_id(%{"payload" => %{"order" => %{"id" => id}}}), do: {:ok, id}
+  defp get_id(%{"payload" => %{"order_id" => id}}), do: {:ok, id}
+  defp get_id(data), do: {:error, {:missing_id, data}}
 
   @spec build_success_response(Type.order_id() | [Type.order_info()]) ::
           {:ok, Type.order_id() | [Type.order_info()]}
   defp build_success_response(data), do: {:ok, data}
 
-  @spec build_error_response({:error, reason :: atom}, Type.order_id() | Type.order()) ::
+  @spec build_error_response({:error, reason :: atom}, Order.t()) ::
           {:error, reason :: atom, Type.order_id() | Type.item_id()}
   defp build_error_response({:error, reason}, order) when is_map(order),
-    do: {:error, reason, Map.get(order, "item_id")}
+    do: {:error, reason, order.item_id}
 
   defp build_error_response({:error, reason}, order_id) when is_binary(order_id),
     do: {:error, reason, order_id}

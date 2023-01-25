@@ -8,13 +8,15 @@ defmodule AuctionHouse.Runtime.Server do
 
   alias AuctionHouse.Impl.{HTTPClient, Settings}
   alias AuctionHouse.Type
+  alias Floki
+  alias HTTPoison
 
   ##############
   # Public API #
   ##############
 
-  @spec start_link(map) :: :ignore | {:error, any} | {:ok, pid}
-  def start_link(credentials), do: GenServer.start_link(__MODULE__, credentials, name: __MODULE__)
+  @spec start_link :: :ignore | {:error, any} | {:ok, pid}
+  def start_link, do: GenServer.start_link(__MODULE__, nil, name: __MODULE__)
 
   @spec get_all_orders(Type.item_name()) :: Type.get_all_orders_response()
   def get_all_orders(item_name), do: GenServer.call(__MODULE__, {:get_all_orders, item_name})
@@ -25,22 +27,23 @@ defmodule AuctionHouse.Runtime.Server do
   @spec delete_order(Type.order_id()) :: Type.delete_order_response()
   def delete_order(order_id), do: GenServer.call(__MODULE__, {:delete_order, order_id})
 
-  @spec update_credentials(Type.credentials()) :: Type.update_credentials_response()
-  def update_credentials(credentials),
-    do: GenServer.call(__MODULE__, {:update_credentials, credentials})
+  @spec login(Type.credentials()) :: Type.login_response()
+  def login(credentials), do: GenServer.call(__MODULE__, {:login, credentials})
 
   #############
   # Callbacks #
   #############
 
   @impl GenServer
-  @spec init({:ok, map}) :: {:ok, map, {:continue, :setup_queue}}
-  def init({:ok, %{"cookie" => cookie, "token" => token}}) do
+  @spec init(nil) :: {:ok, map, {:continue, :setup_queue}}
+  def init(nil) do
     Process.flag(:trap_exit, true)
 
     {
       :ok,
       %{
+        parse_document_fn: &Floki.parse_document/1,
+        find_in_document_fn: &Floki.find/2,
         get_fn: &HTTPoison.get/2,
         post_fn: &HTTPoison.post/3,
         delete_fn: &HTTPoison.delete/2,
@@ -48,9 +51,7 @@ defmodule AuctionHouse.Runtime.Server do
         create_queue_fn: &:jobs.add_queue/2,
         delete_queue_fn: &:jobs.delete_queue/1,
         requests_queue: Settings.requests_queue(),
-        requests_per_second: Settings.requests_per_second(),
-        cookie: cookie,
-        token: token
+        requests_per_second: Settings.requests_per_second()
       },
       {:continue, :setup_queue}
     }
@@ -86,11 +87,20 @@ defmodule AuctionHouse.Runtime.Server do
 
   @impl GenServer
   def handle_call(
-        {:update_credentials, credentials = %{"cookie" => cookie, "token" => token}},
+        {:login, credentials = %{"username" => _username, "password" => _password}},
         _from,
         deps
-      ),
-      do: {:reply, {:ok, credentials}, deps |> Map.put(:cookie, cookie) |> Map.put(:token, token)}
+      ) do
+    authentication_result = HTTPClient.login(credentials, deps)
+
+    updated_state =
+      case authentication_result do
+        {:ok, authorization} -> Map.put(deps, :authorization, authorization)
+        _ -> Map.put(deps, :authorization, nil)
+      end
+
+    {:reply, authentication_result, updated_state}
+  end
 
   @impl GenServer
   @spec terminate(atom, any) :: any
