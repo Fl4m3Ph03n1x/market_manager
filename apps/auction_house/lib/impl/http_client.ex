@@ -31,20 +31,23 @@ defmodule AuctionHouse.Impl.HTTPClient do
          {:ok, id} <- get_id(content) do
       {:ok, id}
     else
-      {:ok, %HTTPoison.Response{}} = resp -> to_auction_house_response(resp, order, nil)
-      {:error, %HTTPoison.Error{}} = resp -> to_auction_house_response(resp, order, nil)
+      error -> to_auction_house_error(error, order)
     end
   end
 
-  @spec delete_order(Type.order_id(), deps :: map) :: Type.delete_order_response()
-  def delete_order(order_id, deps),
-    do:
-      order_id
-      |> build_delete_url()
-      |> http_delete(deps)
-      |> to_auction_house_response(order_id, &get_id/1)
+  @spec delete_order(Type.order_id, deps :: map) :: Type.delete_order_response
+  def delete_order(order_id, deps) do
+    with url <- build_delete_url(order_id),
+         {:ok, %HTTPoison.Response{status_code: 200, body: body}} <- http_delete(url, deps),
+         {:ok, content} <- Jason.decode(body),
+         {:ok, id} <- get_id(content) do
+      {:ok, id}
+    else
+      error -> to_auction_house_error(error, order_id)
+    end
+  end
 
-  @spec get_all_orders(Type.item_name(), deps :: map) :: {:ok, [OrderInfo.t()]} | {:error, any}
+  @spec get_all_orders(Type.item_name(), deps :: map) ::Type.get_all_orders_response
   def get_all_orders(item_name, deps) do
     with urls <- item_name |> Recase.to_snake() |> build_get_orders_url(),
          {:ok, %HTTPoison.Response{status_code: 200, body: body}} <- http_get(urls, deps),
@@ -61,8 +64,7 @@ defmodule AuctionHouse.Impl.HTTPClient do
 
       {:ok, Enum.map(parsed_orders, &Utils.from_tagged_tuple/1)}
     else
-      {:ok, %HTTPoison.Response{}} = resp -> to_auction_house_response(resp, item_name, nil)
-      {:error, %HTTPoison.Error{}} = resp -> to_auction_house_response(resp, item_name, nil)
+      error -> to_auction_house_error(error, item_name)
     end
   end
 
@@ -83,18 +85,7 @@ defmodule AuctionHouse.Impl.HTTPClient do
 
       {:ok, LoginInfo.new(updated_cookie, token, patreon?)}
     else
-      {:ok,
-       %HTTPoison.Response{
-         status_code: 400,
-         body: "{\"error\": {\"password\": [\"app.account.password_invalid\"]}}"
-       } = response} ->
-        {:error, {:wrong_password, response}}
-
-      {_status, err} ->
-        {:error, err}
-
-      err ->
-        {:error, err}
+      error -> to_auction_house_error(error, credentials)
     end
   end
 
@@ -183,17 +174,9 @@ defmodule AuctionHouse.Impl.HTTPClient do
        }),
        do: run.(queue, fn -> get.(url, build_hearders(cookie, token)) end)
 
-  @spec to_auction_house_response(
-          {:ok, HTTPoison.Response.t()} | {:error, HTTPoison.Error.t()},
-          Type.order() | Type.item_id(),
-          success_handler_fn :: function
-        ) ::
-          {:ok, Type.order_id()}
-          | {:error, reason :: atom, Type.order_id() | Type.item_id()}
-  defp to_auction_house_response(
+  defp to_auction_house_error(
          {:ok, %HTTPoison.Response{status_code: 400, body: error_body}},
-         data,
-         _handler
+         data
        ) do
     with {:ok, content} <- Jason.decode(error_body),
          err <- map_error(content) do
@@ -201,22 +184,30 @@ defmodule AuctionHouse.Impl.HTTPClient do
     end
   end
 
-  defp to_auction_house_response(
+  defp to_auction_house_error(
+         {:ok, %HTTPoison.Response{status_code: 500}},
+         data
+       ) do
+    build_error_response({:error, :internal_server_error}, data)
+  end
+
+  defp to_auction_house_error(
          {:ok, %HTTPoison.Response{status_code: 503, body: error_body}},
-         data,
-         _handler
+         data
        ),
        do:
          error_body
          |> map_error()
          |> build_error_response(data)
 
-  defp to_auction_house_response(
+  defp to_auction_house_error(
          {:error, %HTTPoison.Error{id: _id, reason: reason}},
-         data,
-         _handler
+         data
        ),
        do: build_error_response({:error, reason}, data)
+
+  defp to_auction_house_error({:error, reason}, data),
+    do: {:error, reason, data}
 
   @spec get_orders(response :: map) :: [Type.order_info()]
   defp get_orders(%{"payload" => %{"orders" => orders}}), do: orders
@@ -236,6 +227,9 @@ defmodule AuctionHouse.Impl.HTTPClient do
 
   defp map_error(%{"error" => %{"mod_rank" => _error}}), do: {:error, :rank_level_non_applicable}
 
+  defp map_error(%{"error" => %{"password" => ["app.account.password_invalid"]}}),
+    do: {:error, :wrong_password}
+
   defp map_error(html) when is_binary(html), do: {:error, :server_unavailable}
 
   @spec get_id(response :: map) ::
@@ -244,17 +238,10 @@ defmodule AuctionHouse.Impl.HTTPClient do
   defp get_id(%{"payload" => %{"order_id" => id}}), do: {:ok, id}
   defp get_id(data), do: {:error, {:missing_id, data}}
 
-  @spec build_success_response(Type.order_id() | [Type.order_info()]) ::
-          {:ok, Type.order_id() | [Type.order_info()]}
-  defp build_success_response(data), do: {:ok, data}
-
-  @spec build_error_response({:error, reason :: atom}, Order.t()) ::
-          {:error, reason :: atom, Type.order_id() | Type.item_id()}
-  defp build_error_response({:error, reason}, order) when is_map(order),
-    do: {:error, reason, order.item_id}
-
-  defp build_error_response({:error, reason}, order_id) when is_binary(order_id),
-    do: {:error, reason, order_id}
+  @spec build_error_response({:error, reason :: atom}, any) ::
+          {:error, reason :: atom, any}
+  defp build_error_response({:error, reason}, data),
+    do: {:error, reason, data}
 
   @spec build_delete_url(Type.order_id()) :: url :: String.t()
   defp build_delete_url(id), do: URI.encode(@url <> "/" <> id)

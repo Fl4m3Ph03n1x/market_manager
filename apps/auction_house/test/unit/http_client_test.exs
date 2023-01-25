@@ -7,16 +7,15 @@ defmodule AuctionHouse.HTTPClientTest do
   alias AuctionHouse.Impl.HTTPClient
 
   describe "place_oder/2" do
-    test "returns {:ok, order_id} if order was placed correctly" do
+    test "returns order_id if order was placed correctly" do
       # Arrange
-      {:ok, order} =
-        Order.new(%{
-          "order_type" => "sell",
-          "item_id" => "54a74454e779892d5e5155d5",
-          "platinum" => 15,
-          "quantity" => 1,
-          "mod_rank" => 0
-        })
+      order = %Order{
+        order_type: "sell",
+        item_id: "54a74454e779892d5e5155d5",
+        platinum: 15,
+        quantity: 1,
+        mod_rank: 0
+      }
 
       deps = %{
         post_fn: fn _url, _body, _headers ->
@@ -42,14 +41,13 @@ defmodule AuctionHouse.HTTPClientTest do
 
     test "returns error if order was already placed" do
       # Arrange
-      {:ok, order} =
-        Order.new(%{
-          "order_type" => "sell",
-          "item_id" => "54a74454e779892d5e5155d5",
-          "platinum" => 15,
-          "quantity" => 1,
-          "mod_rank" => 0
-        })
+      order = %Order{
+        order_type: "sell",
+        item_id: "54a74454e779892d5e5155d5",
+        platinum: 15,
+        quantity: 1,
+        mod_rank: 0
+      }
 
       deps = %{
         post_fn: fn _url, _body, _headers ->
@@ -67,7 +65,7 @@ defmodule AuctionHouse.HTTPClientTest do
 
       # Act
       actual = HTTPClient.place_order(order, deps)
-      expected = {:error, :order_already_placed, "54a74454e779892d5e5155d5"}
+      expected = {:error, :order_already_placed, order}
 
       # Assert
       assert actual == expected
@@ -75,14 +73,13 @@ defmodule AuctionHouse.HTTPClientTest do
 
     test "returns error if item_id of order was invalid" do
       # Arrange
-      {:ok, order} =
-        Order.new(%{
-          "order_type" => "sell",
-          "item_id" => "54a74454e779892d5e5155d5",
-          "platinum" => 15,
-          "quantity" => 1,
-          "mod_rank" => 0
-        })
+      order = %Order{
+        order_type: "sell",
+        item_id: "54a74454e779892d5e5155d5",
+        platinum: 15,
+        quantity: 1,
+        mod_rank: 0
+      }
 
       deps = %{
         post_fn: fn _url, _body, _headers ->
@@ -100,7 +97,7 @@ defmodule AuctionHouse.HTTPClientTest do
 
       # Act
       actual = HTTPClient.place_order(order, deps)
-      expected = {:error, :invalid_item_id, "54a74454e779892d5e5155d5"}
+      expected = {:error, :invalid_item_id, order}
 
       # Assert
       assert actual == expected
@@ -108,14 +105,13 @@ defmodule AuctionHouse.HTTPClientTest do
 
     test "returns error if mod has no level and yet a level was passed" do
       # Arrange
-      {:ok, order} =
-        Order.new(%{
-          "order_type" => "sell",
-          "item_id" => "54a74454e779892d5e5155d5",
-          "platinum" => 15,
-          "quantity" => 1,
-          "mod_rank" => 0
-        })
+      order = %Order{
+        order_type: "sell",
+        item_id: "54a74454e779892d5e5155d5",
+        platinum: 15,
+        quantity: 1,
+        mod_rank: 0
+      }
 
       deps = %{
         post_fn: fn _url, _body, _headers ->
@@ -133,7 +129,7 @@ defmodule AuctionHouse.HTTPClientTest do
 
       # Act
       actual = HTTPClient.place_order(order, deps)
-      expected = {:error, :rank_level_non_applicable, "54a74454e779892d5e5155d5"}
+      expected = {:error, :rank_level_non_applicable, order}
 
       # Assert
       assert actual == expected
@@ -141,14 +137,13 @@ defmodule AuctionHouse.HTTPClientTest do
 
     test "returns error if server is unavailable" do
       # Arrange
-      {:ok, order} =
-        Order.new(%{
-          "order_type" => "sell",
-          "item_id" => "54a74454e779892d5e5155d5",
-          "platinum" => 15,
-          "quantity" => 1,
-          "mod_rank" => 0
-        })
+      order = %Order{
+        order_type: "sell",
+        item_id: "54a74454e779892d5e5155d5",
+        platinum: 15,
+        quantity: 1,
+        mod_rank: 0
+      }
 
       deps = %{
         post_fn: fn _url, _body, _headers ->
@@ -166,7 +161,7 @@ defmodule AuctionHouse.HTTPClientTest do
 
       # Act
       actual = HTTPClient.place_order(order, deps)
-      expected = {:error, :server_unavailable, "54a74454e779892d5e5155d5"}
+      expected = {:error, :server_unavailable, order}
 
       # Assert
       assert actual == expected
@@ -174,14 +169,13 @@ defmodule AuctionHouse.HTTPClientTest do
 
     test "returns error if a generic network error occurred while placing a request" do
       # Arrange
-      {:ok, order} =
-        Order.new(%{
-          "order_type" => "sell",
-          "item_id" => "54a74454e779892d5e5155d5",
-          "platinum" => 15,
-          "quantity" => 1,
-          "mod_rank" => 0
-        })
+      order = %Order{
+        order_type: "sell",
+        item_id: "54a74454e779892d5e5155d5",
+        platinum: 15,
+        quantity: 1,
+        mod_rank: 0
+      }
 
       deps = %{
         post_fn: fn _url, _body, _headers ->
@@ -195,7 +189,7 @@ defmodule AuctionHouse.HTTPClientTest do
 
       # Act
       actual = HTTPClient.place_order(order, deps)
-      expected = {:error, :timeout, "54a74454e779892d5e5155d5"}
+      expected = {:error, :timeout, order}
 
       # Assert
       assert actual == expected
@@ -326,7 +320,7 @@ defmodule AuctionHouse.HTTPClientTest do
   end
 
   describe "login/2" do
-    test "returns {:ok, info} if login happens correctly" do
+    test "returns LoginInfo if login happens correctly" do
       # Arrange
       credentials = Credentials.new("my_email", "my_password")
 
@@ -389,7 +383,7 @@ defmodule AuctionHouse.HTTPClientTest do
       assert actual == expected
     end
 
-    test "returns {:error, info} if request to market signin fails" do
+    test "returns error if request to market signin fails" do
       # Arrange
       credentials = Credentials.new("my_email", "my_password")
 
@@ -412,9 +406,9 @@ defmodule AuctionHouse.HTTPClientTest do
         get_fn: fn _url, _headers ->
           {:ok,
            %HTTPoison.Response{
-             status_code: 400,
+             status_code: 500,
              headers: [],
-             body: ""
+             body: "\"Error\""
            }}
         end
       }
@@ -422,13 +416,13 @@ defmodule AuctionHouse.HTTPClientTest do
       # Act
       actual = HTTPClient.login(credentials, deps)
 
-      expected = {:error, %HTTPoison.Response{status_code: 400, body: ""}}
+      expected = {:error, :internal_server_error, credentials}
 
       # Assert
       assert actual == expected
     end
 
-    test "returns {:error, info} if parsing html document fails" do
+    test "returns error if parsing html document fails" do
       # Arrange
       credentials = Credentials.new("my_email", "my_password")
 
@@ -447,13 +441,13 @@ defmodule AuctionHouse.HTTPClientTest do
       # Act
       actual = HTTPClient.login(credentials, deps)
 
-      expected = {:error, :failed_to_parse_document}
+      expected = {:error, :failed_to_parse_document, credentials}
 
       # Assert
       assert actual == expected
     end
 
-    test "returns {:error, info} if it cannot find the XRFC token" do
+    test "returns error if it cannot find the XRFC token" do
       # Arrange
       credentials = Credentials.new("my_email", "my_password")
 
@@ -470,13 +464,13 @@ defmodule AuctionHouse.HTTPClientTest do
       # Act
       actual = HTTPClient.login(credentials, deps)
 
-      expected = {:error, {:xrfc_token_not_found, nil}}
+      expected = {:error, {:xrfc_token_not_found, nil}, credentials}
 
       # Assert
       assert actual == expected
     end
 
-    test "returns {:error, info} if it cannot find the cookie" do
+    test "returns error if it cannot find the cookie" do
       # Arrange
       credentials = Credentials.new("my_email", "my_password")
 
@@ -495,13 +489,13 @@ defmodule AuctionHouse.HTTPClientTest do
       # Act
       actual = HTTPClient.login(credentials, deps)
 
-      expected = {:error, {:no_cookie_found, []}}
+      expected = {:error, {:no_cookie_found, []}, credentials}
 
       # Assert
       assert actual == expected
     end
 
-    test "returns {:error, info} if it cannot find the JWT inside cookie" do
+    test "returns error if it cannot find the JWT inside cookie" do
       # Arrange
       credentials = Credentials.new("my_email", "my_password")
 
@@ -525,13 +519,13 @@ defmodule AuctionHouse.HTTPClientTest do
       # Act
       actual = HTTPClient.login(credentials, deps)
 
-      expected = {:error, {:missing_jwt, headers}}
+      expected = {:error, {:missing_jwt, headers}, credentials}
 
       # Assert
       assert actual == expected
     end
 
-    test "returns {:error, info} if it fails to authenticate credentials" do
+    test "returns error if it fails to authenticate credentials" do
       # Arrange
       credentials = Credentials.new("my_email", "my_password")
 
@@ -588,13 +582,13 @@ defmodule AuctionHouse.HTTPClientTest do
       # Act
       actual = HTTPClient.login(credentials, deps)
 
-      expected = {:error, {:wrong_password, post_response}}
+      expected = {:error, :wrong_password, credentials}
 
       # Assert
       assert actual == expected
     end
 
-    test "returns {:error, info} if it fails to decode body from post auth response" do
+    test "returns error if it fails to decode body from post auth response" do
       # Arrange
       credentials = Credentials.new("my_email", "my_password")
 
@@ -653,13 +647,13 @@ defmodule AuctionHouse.HTTPClientTest do
       expected =
         {:error,
          {:unable_to_decode_body,
-          %Jason.DecodeError{position: 12, token: nil, data: "{\"payload\": }"}}}
+          %Jason.DecodeError{position: 12, token: nil, data: "{\"payload\": }"}}, credentials}
 
       # Assert
       assert actual == expected
     end
 
-    test "returns {:error, info} if body does not have payload" do
+    test "returns error if body does not have payload" do
       # Arrange
       credentials = Credentials.new("my_email", "my_password")
 
@@ -715,7 +709,7 @@ defmodule AuctionHouse.HTTPClientTest do
       # Act
       actual = HTTPClient.login(credentials, deps)
 
-      expected = {:error, {:payload_not_found, %{"data" => 1}}}
+      expected = {:error, {:payload_not_found, %{"data" => 1}}, credentials}
 
       # Assert
       assert actual == expected
