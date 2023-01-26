@@ -1,6 +1,6 @@
 defmodule AuctionHouse do
   @moduledoc """
-  Librabry representing the interface for the auction house.
+  Library representing the interface for the auction house.
   Responsible for making calls and decoding the answers from the auction house
   into a format the manager understands.
   """
@@ -56,7 +56,7 @@ defmodule AuctionHouse do
 
   @doc """
   Gets all warframe market orders for the item with the given name.
-  The itema name is in human readable format. This function also converts the
+  The item's name is in human readable format. This function also converts the
   name into a format that the external party can understand.
 
   Example:

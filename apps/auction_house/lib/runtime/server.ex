@@ -111,4 +111,8 @@ defmodule AuctionHouse.Runtime.Server do
   # If a process leaves normally, we ignore it.
   @impl GenServer
   def handle_info({:EXIT, _pid, :normal}, state), do: {:noreply, state}
+
+  def child_spec(_) do
+    %{id: __MODULE__, start: {__MODULE__, :start_link, []}}
+  end
 end

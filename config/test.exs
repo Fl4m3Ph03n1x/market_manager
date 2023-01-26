@@ -15,6 +15,5 @@ config :store,
 config :auction_house,
   api_base_url: "http://localhost:8082/v1/profile/orders",
   api_search_url: "http://localhost:8082/v1/items",
-  # market_signin_url: "http://localhost:8082/auth/signin"
-  market_signin_url: "https://warframe.market/auth/signin",
-  api_signin_url: "https://api.warframe.market/v1/auth/signin"
+  market_signin_url: "http://localhost:8082/auth/signin",
+  api_signin_url: "http://localhost:8082/v1/auth/signin"
