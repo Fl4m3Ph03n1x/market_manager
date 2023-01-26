@@ -37,7 +37,7 @@ defmodule AuctionHouse.Data.OrderInfo do
         } = order_info
       )
       when is_boolean(visible) and is_binary(order_type) and is_binary(platform) and
-             is_non_neg_number(platinum) and is_map(user) do
+             is_non_neg_integer(platinum) and is_map(user) do
     order_info = Utils.string_map_to_struct(order_info, __MODULE__)
     user = Utils.string_map_to_struct(order_info.user, __MODULE__.User)
     Map.put(order_info, :user, user)
