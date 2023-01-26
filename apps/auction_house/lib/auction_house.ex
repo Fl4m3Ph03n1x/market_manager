@@ -70,7 +70,7 @@ defmodule AuctionHouse do
           "platform" => "pc",
           "platinum" => 20,
           "user" => %{
-            "ingame_name" => "usern_name_1",
+            "ingame_name" => "user_name_1",
             "status" => "ingame"
           }
         }]
