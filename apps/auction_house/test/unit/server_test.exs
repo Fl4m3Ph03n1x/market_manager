@@ -1,4 +1,6 @@
 defmodule AuctionHouse.ServerTest do
+  @moduledoc false
+
   use ExUnit.Case
 
   alias AuctionHouse
@@ -6,10 +8,11 @@ defmodule AuctionHouse.ServerTest do
 
   test "init/1 returns the correct state" do
     # Act
-    {:ok, deps, {:continue, :setup_queue}} =
-      Server.init({:ok, %{"cookie" => "a_cookie", "token" => "a_token"}})
+    {:ok, deps, {:continue, :setup_queue}} = Server.init(nil)
 
     # Assert
+    assert is_function(Map.get(deps, :parse_document_fn))
+    assert is_function(Map.get(deps, :find_in_document_fn))
     assert is_function(Map.get(deps, :get_fn))
     assert is_function(Map.get(deps, :post_fn))
     assert is_function(Map.get(deps, :delete_fn))
@@ -18,8 +21,6 @@ defmodule AuctionHouse.ServerTest do
     assert is_function(Map.get(deps, :run_fn))
     assert is_integer(Map.get(deps, :requests_per_second))
     assert is_atom(Map.get(deps, :requests_queue))
-    assert is_binary(Map.get(deps, :cookie))
-    assert is_binary(Map.get(deps, :token))
   end
 
   test "handle_continue/2 creates queue" do
