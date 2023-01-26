@@ -48,7 +48,7 @@ defmodule AuctionHouse.Impl.HTTPClient do
 
   @spec get_all_orders(Type.item_name(), deps :: map) :: Type.get_all_orders_response()
   def get_all_orders(item_name, deps) do
-    with urls <- item_name |> Recase.to_snake() |> build_get_orders_url(),
+    with urls <- build_get_orders_url(item_name),
          {:ok, %HTTPoison.Response{status_code: 200, body: body}} <- http_get(urls, deps),
          {:ok, content} <- Jason.decode(body) do
       {:ok, parse_order_info(content)}
@@ -174,6 +174,13 @@ defmodule AuctionHouse.Impl.HTTPClient do
        }),
        do: run.(queue, fn -> get.(url, build_headers(cookie, token)) end)
 
+  defp http_get(url, %{
+         get_fn: get,
+         run_fn: run,
+         requests_queue: queue
+       }),
+       do: run.(queue, fn -> get.(url, @static_headers) end)
+
   defp to_auction_house_error(
          {:ok, %HTTPoison.Response{status_code: 400, body: error_body}},
          data
@@ -258,6 +265,6 @@ defmodule AuctionHouse.Impl.HTTPClient do
     do: [{"x-csrftoken", token}, {"Cookie", cookie}] ++ @static_headers
 
   @spec build_get_orders_url(item_name :: String.t()) :: uri :: String.t()
-  defp build_get_orders_url(item_search_name),
-    do: URI.encode(@search_url <> "/" <> item_search_name <> "/orders")
+  defp build_get_orders_url(item_name),
+    do: URI.encode(@search_url <> "/" <> Recase.to_snake(item_name) <> "/orders")
 end

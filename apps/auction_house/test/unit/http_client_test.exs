@@ -283,7 +283,7 @@ defmodule AuctionHouse.HTTPClientTest do
            %HTTPoison.Response{
              status_code: 200,
              body:
-               "{\"payload\":{\"orders\":[{\"order_type\":\"sell\",\"platform\":\"pc\",\"platinum\":45,\"region\":\"en\",\"user\":{\"status\":\"ingame\",\"ingame_name\":\"Fl4m3Ph03n1x\"},\"visible\":true},{\"order_type\":\"sell\",\"platform\":\"pc\",\"platinum\":30.0,\"region\":\"en\",\"user\":{\"status\":\"ingame\",\"ingame_name\":\"Fl4m3Ph03n1x\"},\"visible\":true}]}}"
+               "{\"payload\":{\"orders\":[{\"order_type\":\"sell\",\"platform\":\"pc\",\"platinum\":45,\"region\":\"en\",\"user\":{\"status\":\"ingame\",\"ingame_name\":\"Fl4m3Ph03n1x\"},\"visible\":true},{\"order_type\":\"sell\",\"platform\":\"pc\",\"platinum\":30,\"region\":\"en\",\"user\":{\"status\":\"ingame\",\"ingame_name\":\"Fl4m3Ph03n1x\"},\"visible\":true}]}}"
            }}
         end,
         run_fn: fn _queue_name, func -> func.() end,
@@ -308,7 +308,7 @@ defmodule AuctionHouse.HTTPClientTest do
            %OrderInfo{
              order_type: "sell",
              platform: "pc",
-             platinum: 30.0,
+             platinum: 30,
              user: %OrderInfo.User{status: "ingame", ingame_name: "Fl4m3Ph03n1x"},
              visible: true
            }
