@@ -1,7 +1,7 @@
 defmodule AuctionHouse.Data.LoginInfo do
   @moduledoc """
   Represents the login information of a user. This information contains both
-  the authorization for performation actions as the user as well as other user
+  the authorization for performing actions as the user as well as other user
   information that determines the range of actions available by the
   application's that use AuctionHouse.
   """

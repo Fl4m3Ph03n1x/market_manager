@@ -1,6 +1,6 @@
 defmodule AuctionHouse.Shared.Utils do
   @moduledoc """
-  Set of functions used accross the app, for utility purposes, like dealing with
+  Set of functions used across the app, for utility purposes, like dealing with
   tuples, maps and other data structures.
   """
 
