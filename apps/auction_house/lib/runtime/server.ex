@@ -6,6 +6,7 @@ defmodule AuctionHouse.Runtime.Server do
 
   use GenServer
 
+  alias AuctionHouse.Data.{Credentials, Order}
   alias AuctionHouse.Impl.{HTTPClient, Settings}
   alias AuctionHouse.Type
   alias Floki
@@ -21,13 +22,13 @@ defmodule AuctionHouse.Runtime.Server do
   @spec get_all_orders(Type.item_name()) :: Type.get_all_orders_response()
   def get_all_orders(item_name), do: GenServer.call(__MODULE__, {:get_all_orders, item_name})
 
-  @spec place_order(Type.order()) :: Type.place_order_response()
+  @spec place_order(Order.t()) :: Type.place_order_response()
   def place_order(order), do: GenServer.call(__MODULE__, {:place_order, order})
 
   @spec delete_order(Type.order_id()) :: Type.delete_order_response()
   def delete_order(order_id), do: GenServer.call(__MODULE__, {:delete_order, order_id})
 
-  @spec login(Type.credentials()) :: Type.login_response()
+  @spec login(Credentials.t()) :: Type.login_response()
   def login(credentials), do: GenServer.call(__MODULE__, {:login, credentials})
 
   #############
@@ -87,7 +88,7 @@ defmodule AuctionHouse.Runtime.Server do
 
   @impl GenServer
   def handle_call(
-        {:login, credentials = %{"username" => _username, "password" => _password}},
+        {:login, credentials},
         _from,
         deps
       ) do

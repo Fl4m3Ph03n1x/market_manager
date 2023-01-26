@@ -27,8 +27,7 @@ defmodule AuctionHouse.HTTPClientTest do
         end,
         run_fn: fn _queue_name, func -> func.() end,
         requests_queue: nil,
-        cookie: nil,
-        token: nil
+        authorization: %LoginInfo{cookie: "cookie", token: "token"}
       }
 
       # Act
@@ -59,8 +58,7 @@ defmodule AuctionHouse.HTTPClientTest do
         end,
         run_fn: fn _queue_name, func -> func.() end,
         requests_queue: nil,
-        cookie: nil,
-        token: nil
+        authorization: %LoginInfo{cookie: "cookie", token: "token"}
       }
 
       # Act
@@ -91,8 +89,7 @@ defmodule AuctionHouse.HTTPClientTest do
         end,
         run_fn: fn _queue_name, func -> func.() end,
         requests_queue: nil,
-        cookie: nil,
-        token: nil
+        authorization: %LoginInfo{cookie: "cookie", token: "token"}
       }
 
       # Act
@@ -123,8 +120,7 @@ defmodule AuctionHouse.HTTPClientTest do
         end,
         run_fn: fn _queue_name, func -> func.() end,
         requests_queue: nil,
-        cookie: nil,
-        token: nil
+        authorization: %LoginInfo{cookie: "cookie", token: "token"}
       }
 
       # Act
@@ -155,13 +151,43 @@ defmodule AuctionHouse.HTTPClientTest do
         end,
         run_fn: fn _queue_name, func -> func.() end,
         requests_queue: nil,
-        cookie: nil,
-        token: nil
+        authorization: %LoginInfo{cookie: "cookie", token: "token"}
       }
 
       # Act
       actual = HTTPClient.place_order(order, deps)
       expected = {:error, :server_unavailable, order}
+
+      # Assert
+      assert actual == expected
+    end
+
+    test "returns error if server experiences an internal error" do
+      # Arrange
+      order = %Order{
+        order_type: "sell",
+        item_id: "54a74454e779892d5e5155d5",
+        platinum: 15,
+        quantity: 1,
+        mod_rank: 0
+      }
+
+      deps = %{
+        post_fn: fn _url, _body, _headers ->
+          {:ok,
+           %HTTPoison.Response{
+             status_code: 500,
+             body: ""
+           }}
+        end,
+        run_fn: fn _queue_name, func -> func.() end,
+        requests_queue: nil,
+        authorization: %LoginInfo{cookie: "cookie", token: "token"}
+      }
+
+      # Act
+      actual = HTTPClient.place_order(order, deps)
+      expected = {:error, :internal_server_error, order}
 
       # Assert
       assert actual == expected
@@ -183,13 +209,42 @@ defmodule AuctionHouse.HTTPClientTest do
         end,
         run_fn: fn _queue_name, func -> func.() end,
         requests_queue: nil,
-        cookie: nil,
-        token: nil
+        authorization: %LoginInfo{cookie: "cookie", token: "token"}
       }
 
       # Act
       actual = HTTPClient.place_order(order, deps)
       expected = {:error, :timeout, order}
+
+      # Assert
+      assert actual == expected
+    end
+
+    test "returns error if user tries to place order without having logged in first" do
+      # Arrange
+      order = %Order{
+        order_type: "sell",
+        item_id: "54a74454e779892d5e5155d5",
+        platinum: 15,
+        quantity: 1,
+        mod_rank: 0
+      }
+
+      deps = %{
+        post_fn: fn _url, _body, _headers ->
+          {:ok,
+           %HTTPoison.Response{
+             status_code: 200,
+             body: "{\"payload\":{\"order\":{\"id\":\"5ee71a2604d55c0a5cbdc3c2\"}}}"
+           }}
+        end,
+        run_fn: fn _queue_name, func -> func.() end,
+        requests_queue: nil
+      }
+
+      # Act
+      actual = HTTPClient.place_order(order, deps)
+      expected = {:error, :missing_authorization_credentials, order}
 
       # Assert
       assert actual == expected
@@ -211,8 +266,7 @@ defmodule AuctionHouse.HTTPClientTest do
         end,
         run_fn: fn _queue_name, func -> func.() end,
         requests_queue: nil,
-        cookie: nil,
-        token: nil
+        authorization: %LoginInfo{cookie: "cookie", token: "token"}
       }
 
       # Act
@@ -237,8 +291,7 @@ defmodule AuctionHouse.HTTPClientTest do
         end,
         run_fn: fn _queue_name, func -> func.() end,
         requests_queue: nil,
-        cookie: nil,
-        token: nil
+        authorization: %LoginInfo{cookie: "cookie", token: "token"}
       }
 
       # Act
@@ -259,13 +312,51 @@ defmodule AuctionHouse.HTTPClientTest do
         end,
         run_fn: fn _queue_name, func -> func.() end,
         requests_queue: nil,
-        cookie: nil,
-        token: nil
+        authorization: %LoginInfo{cookie: "cookie", token: "token"}
       }
 
       # Act
       actual = HTTPClient.delete_order(order_id, deps)
       expected = {:error, :timeout, "5ee71a2604d55c0a5cbdc3c2"}
+
+      # Assert
+      assert actual == expected
+    end
+
+    test "returns error if server experiences an internal error" do
+      # Arrange
+      order_id = "5ee71a2604d55c0a5cbdc3c2"
+
+      deps = %{
+        delete_fn: fn _url, _headers ->
+          {:ok,
+           %HTTPoison.Response{
+             status_code: 500,
+             body: ""
+           }}
+        end,
+        run_fn: fn _queue_name, func -> func.() end,
+        requests_queue: nil,
+        authorization: %LoginInfo{cookie: "cookie", token: "token"}
+      }
+
+      # Act
+      actual = HTTPClient.delete_order(order_id, deps)
+      expected = {:error, :internal_server_error, order_id}
+
+      # Assert
+      assert actual == expected
+    end
+
+    test "returns error if user tries to delete order without having logged in first" do
+      # Arrange
+      order_id = "5ee71a2604d55c0a5cbdc3c2"
+
+      deps = %{}
+
+      # Act
+      actual = HTTPClient.delete_order(order_id, deps)
+      expected = {:error, :missing_authorization_credentials, order_id}
 
       # Assert
       assert actual == expected
@@ -313,6 +404,32 @@ defmodule AuctionHouse.HTTPClientTest do
              visible: true
            }
          ]}
+
+      # Assert
+      assert actual == expected
+    end
+
+    test "returns error if request for orders about item fails" do
+      # Arrange
+      item_name = "Gleaming Blight"
+
+      deps = %{
+        get_fn: fn _url, _headers ->
+          {:ok,
+           %HTTPoison.Response{
+             status_code: 500,
+             body: ""
+           }}
+        end,
+        run_fn: fn _queue_name, func -> func.() end,
+        requests_queue: nil,
+        cookie: nil,
+        token: nil
+      }
+
+      # Act
+      actual = HTTPClient.get_all_orders(item_name, deps)
+      expected = {:error, :internal_server_error, "Gleaming Blight"}
 
       # Assert
       assert actual == expected

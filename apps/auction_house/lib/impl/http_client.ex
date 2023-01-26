@@ -24,7 +24,8 @@ defmodule AuctionHouse.Impl.HTTPClient do
 
   @spec place_order(Order.t(), deps :: map) :: Type.place_order_response()
   def place_order(order, deps) do
-    with {:ok, order_json} <- Jason.encode(order),
+    with :ok <- check_authorization(deps),
+         {:ok, order_json} <- Jason.encode(order),
          {:ok, %HTTPoison.Response{status_code: 200, body: body}} <- http_post(order_json, deps),
          {:ok, content} <- Jason.decode(body),
          {:ok, id} <- get_id(content) do
@@ -36,7 +37,8 @@ defmodule AuctionHouse.Impl.HTTPClient do
 
   @spec delete_order(Type.order_id(), deps :: map) :: Type.delete_order_response()
   def delete_order(order_id, deps) do
-    with url <- build_delete_url(order_id),
+    with :ok <- check_authorization(deps),
+         url <- build_delete_url(order_id),
          {:ok, %HTTPoison.Response{status_code: 200, body: body}} <- http_delete(url, deps),
          {:ok, content} <- Jason.decode(body),
          {:ok, id} <- get_id(content) do
@@ -62,10 +64,10 @@ defmodule AuctionHouse.Impl.HTTPClient do
         credentials,
         %{post_fn: post} = deps
       ) do
-    with {:ok, json_creds} <- Jason.encode(credentials),
+    with {:ok, json_credentials} <- Jason.encode(credentials),
          {:ok, token: token, cookie: cookie} <- fetch_authentication_data(deps),
          {:ok, %HTTPoison.Response{status_code: 200, body: body, headers: headers}} <-
-           post.(@api_signin_url, json_creds, build_headers(cookie, token)),
+           post.(@api_signin_url, json_credentials, build_headers(cookie, token)),
          {:ok, decoded_body} <- validate_body(body),
          {:ok, updated_cookie} <- parse_cookie(headers) do
       {:ok, LoginInfo.new(updated_cookie, token, get_patreon(decoded_body))}
@@ -77,6 +79,10 @@ defmodule AuctionHouse.Impl.HTTPClient do
   ###########
   # Private #
   ###########
+
+  @spec check_authorization(deps :: map) :: boolean
+  defp check_authorization(%{authorization: %LoginInfo{}}), do: :ok
+  defp check_authorization(_deps), do: {:error, :missing_authorization_credentials}
 
   @spec fetch_authentication_data(deps :: map) ::
           {:ok, [token: String.t(), cookie: String.t()]} | {:error, any}
@@ -147,8 +153,7 @@ defmodule AuctionHouse.Impl.HTTPClient do
          post_fn: post,
          run_fn: run,
          requests_queue: queue,
-         cookie: cookie,
-         token: token
+         authorization: %LoginInfo{cookie: cookie, token: token}
        }),
        do: run.(queue, fn -> post.(@url, order, build_headers(cookie, token)) end)
 
@@ -158,8 +163,7 @@ defmodule AuctionHouse.Impl.HTTPClient do
          delete_fn: delete,
          run_fn: run,
          requests_queue: queue,
-         cookie: cookie,
-         token: token
+         authorization: %LoginInfo{cookie: cookie, token: token}
        }),
        do: run.(queue, fn -> delete.(url, build_headers(cookie, token)) end)
 
@@ -169,8 +173,7 @@ defmodule AuctionHouse.Impl.HTTPClient do
          get_fn: get,
          run_fn: run,
          requests_queue: queue,
-         cookie: cookie,
-         token: token
+         authorization: %LoginInfo{cookie: cookie, token: token}
        }),
        do: run.(queue, fn -> get.(url, build_headers(cookie, token)) end)
 
