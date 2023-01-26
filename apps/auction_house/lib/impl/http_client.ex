@@ -65,7 +65,7 @@ defmodule AuctionHouse.Impl.HTTPClient do
     with {:ok, json_creds} <- Jason.encode(credentials),
          {:ok, token: token, cookie: cookie} <- fetch_authentication_data(deps),
          {:ok, %HTTPoison.Response{status_code: 200, body: body, headers: headers}} <-
-           post.(@api_signin_url, json_creds, build_hearders(cookie, token)),
+           post.(@api_signin_url, json_creds, build_headers(cookie, token)),
          {:ok, decoded_body} <- validate_body(body),
          {:ok, updated_cookie} <- parse_cookie(headers) do
       {:ok, LoginInfo.new(updated_cookie, token, get_patreon(decoded_body))}
@@ -150,7 +150,7 @@ defmodule AuctionHouse.Impl.HTTPClient do
          cookie: cookie,
          token: token
        }),
-       do: run.(queue, fn -> post.(@url, order, build_hearders(cookie, token)) end)
+       do: run.(queue, fn -> post.(@url, order, build_headers(cookie, token)) end)
 
   @spec http_delete(url :: String.t(), deps :: map) ::
           {:ok, HTTPoison.Response.t()} | {:error, HTTPoison.Error.t()}
@@ -161,7 +161,7 @@ defmodule AuctionHouse.Impl.HTTPClient do
          cookie: cookie,
          token: token
        }),
-       do: run.(queue, fn -> delete.(url, build_hearders(cookie, token)) end)
+       do: run.(queue, fn -> delete.(url, build_headers(cookie, token)) end)
 
   @spec http_get(url :: String.t(), deps :: map) ::
           {:ok, HTTPoison.Response.t()} | {:error, HTTPoison.Error.t()}
@@ -172,7 +172,7 @@ defmodule AuctionHouse.Impl.HTTPClient do
          cookie: cookie,
          token: token
        }),
-       do: run.(queue, fn -> get.(url, build_hearders(cookie, token)) end)
+       do: run.(queue, fn -> get.(url, build_headers(cookie, token)) end)
 
   defp to_auction_house_error(
          {:ok, %HTTPoison.Response{status_code: 400, body: error_body}},
@@ -210,9 +210,9 @@ defmodule AuctionHouse.Impl.HTTPClient do
 
   @spec parse_order_info(orders_json :: [map()]) :: [OrderInfo.t()]
   defp parse_order_info(orders_json) do
-      orders_json
-      |> get_in(["payload", "orders"])
-      |> Enum.map(&OrderInfo.new/1)
+    orders_json
+    |> get_in(["payload", "orders"])
+    |> Enum.map(&OrderInfo.new/1)
   end
 
   @spec map_error(error_response :: String.t()) ::
@@ -253,8 +253,8 @@ defmodule AuctionHouse.Impl.HTTPClient do
   @spec build_delete_url(Type.order_id()) :: uri :: String.t()
   defp build_delete_url(id), do: URI.encode(@url <> "/" <> id)
 
-  @spec build_hearders(String.t(), String.t()) :: [{String.t(), String.t()}]
-  defp build_hearders(cookie, token),
+  @spec build_headers(String.t(), String.t()) :: [{String.t(), String.t()}]
+  defp build_headers(cookie, token),
     do: [{"x-csrftoken", token}, {"Cookie", cookie}] ++ @static_headers
 
   @spec build_get_orders_url(item_name :: String.t()) :: uri :: String.t()
