@@ -9,6 +9,8 @@ defmodule AuctionHouse.Runtime.Server do
   alias AuctionHouse.Impl.{HTTPClient, Settings}
   alias AuctionHouse.Type
 
+  @default_timeout 20_000
+
   ##############
   # Public API #
   ##############
@@ -17,17 +19,19 @@ defmodule AuctionHouse.Runtime.Server do
   def start_link(credentials), do: GenServer.start_link(__MODULE__, credentials, name: __MODULE__)
 
   @spec get_all_orders(Type.item_name()) :: Type.get_all_orders_response()
-  def get_all_orders(item_name), do: GenServer.call(__MODULE__, {:get_all_orders, item_name})
+  def get_all_orders(item_name),
+    do: GenServer.call(__MODULE__, {:get_all_orders, item_name}, @default_timeout)
 
   @spec place_order(Type.order()) :: Type.place_order_response()
-  def place_order(order), do: GenServer.call(__MODULE__, {:place_order, order})
+  def place_order(order), do: GenServer.call(__MODULE__, {:place_order, order}, @default_timeout)
 
   @spec delete_order(Type.order_id()) :: Type.delete_order_response()
-  def delete_order(order_id), do: GenServer.call(__MODULE__, {:delete_order, order_id})
+  def delete_order(order_id),
+    do: GenServer.call(__MODULE__, {:delete_order, order_id}, @default_timeout)
 
   @spec update_credentials(Type.credentials()) :: Type.update_credentials_response()
   def update_credentials(credentials),
-    do: GenServer.call(__MODULE__, {:update_credentials, credentials})
+    do: GenServer.call(__MODULE__, {:update_credentials, credentials}, @default_timeout)
 
   #############
   # Callbacks #
