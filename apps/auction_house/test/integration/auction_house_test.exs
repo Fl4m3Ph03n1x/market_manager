@@ -4,7 +4,7 @@ defmodule AuctionHouseTest do
   use ExUnit.Case
 
   alias AuctionHouse
-  alias AuctionHouse.Data.{Order, OrderInfo, LoginInfo}
+  alias AuctionHouse.Data.{Credentials, Order, OrderInfo, LoginInfo}
   alias AuctionHouse.Data.OrderInfo.User
   alias AuctionHouse.Runtime.Server
   alias Bypass
@@ -202,20 +202,55 @@ defmodule AuctionHouseTest do
     end
   end
 
-  # describe "update_credentials/1" do
-  #   test "returns {:ok, credentials} when the update is successfull" do
-  #     # Arrange
-  #     credentials = %{
-  #       "cookie" => "a_cookie",
-  #       "token" => "a_token"
-  #     }
+  describe "login/1" do
+    test "returns {:ok, LoginInfo} when the login is successful", %{
+      bypass: bypass,
+      server: server
+    } do
+      # Arrange
+      Bypass.expect(bypass, "GET", "/auth/signin", fn conn ->
+        body = """
+        <!DOCTYPE html>
+        <html lang=en>
+        <head>
+            <meta name="csrf-token" content="a_token">
+        </head>
+        <body>
+        </body>
+        </html>
+        """
 
-  #     # Act
-  #     actual = AuctionHouse.update_credentials(credentials)
-  #     expected = {:ok, credentials}
+        conn
+        |> Plug.Conn.put_resp_header(
+          "set-cookie",
+          "JWT=old_cookie; Domain=.warframe.market; Expires=Tue, 21-Mar-2023 15:16:03 GMT; Secure; HttpOnly; Path=/; SameSite=Lax"
+        )
+        |> Plug.Conn.resp(200, body)
+      end)
 
-  #     # Assert
-  #     assert actual == expected
-  #   end
-  # end
+      Bypass.expect(bypass, "POST", "/v1/auth/signin", fn conn ->
+        body =
+          "{\"payload\": {\"user\": {\"has_mail\": true, \"written_reviews\": 0, \"region\": \"en\", \"banned\": false, \"anonymous\": false, \"role\": \"user\", \"reputation\": 84, \"ingame_name\": \"Fl4m3Ph03n1x\", \"platform\": \"pc\", \"unread_messages\": 0, \"background\": null, \"check_code\": \"66BAPR88DLLZ\", \"avatar\": \"user/avatar/584d425cd3ffb630c3f9df42.png?0a8ad917dc66b85aa69520d70a31dafb\", \"verification\": true, \"linked_accounts\": {\"steam_profile\": true, \"patreon_profile\": false, \"xbox_profile\": false, \"discord_profile\": false, \"github_profile\": false}, \"id\": \"584d425cd3ffb630c3f9df42\", \"locale\": \"en\"}}}"
+
+        conn
+        |> Plug.Conn.put_resp_header(
+          "set-cookie",
+          "JWT=new_cookie; Domain=.warframe.market; Expires=Tue, 21-Mar-2023 14:41:06 GMT; Secure; HttpOnly; Path=/; SameSite=Lax"
+        )
+        |> Plug.Conn.resp(200, body)
+      end)
+
+      credentials = %Credentials{
+        email: "an_email",
+        password: "password"
+      }
+
+      # Act
+      actual = AuctionHouse.login(credentials)
+      expected = {:ok, credentials}
+
+      # Assert
+      assert actual == expected
+    end
+  end
 end
