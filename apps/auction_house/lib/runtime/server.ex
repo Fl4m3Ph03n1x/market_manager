@@ -45,9 +45,9 @@ defmodule AuctionHouse.Runtime.Server do
     {
       :ok,
       %{
-        get_fn: &HTTPoison.get/2,
-        post_fn: &HTTPoison.post/3,
-        delete_fn: &HTTPoison.delete/2,
+        get_fn: &HTTPoison.get/3,
+        post_fn: &HTTPoison.post/4,
+        delete_fn: &HTTPoison.delete/3,
         run_fn: &:jobs.run/2,
         create_queue_fn: &:jobs.add_queue/2,
         delete_queue_fn: &:jobs.delete_queue/1,
