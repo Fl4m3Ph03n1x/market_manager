@@ -1054,6 +1054,12 @@
 			"default_price": 60
 		},
 		{
+			"name": "Botanist",
+			"id": "5f533a19d5c36d0157f4b9ff",
+			"min_price": 50,
+			"default_price": 60
+		},
+		{
 			"name": "Energy Conversion",
 			"id": "56dac8cc5cc639de0a45c52c",
 			"min_price": 50,
@@ -1129,8 +1135,20 @@
 			"default_price": 21
 		},
 		{
+			"name": "Galvanized Savvy",
+			"id": "60e5b9004794450053e9995b",
+			"min_price": 14,
+			"default_price": 16
+		},
+		{
 			"name": "Galvanized Acceleration",
 			"id": "60e5b8fd4794450053e99948",
+			"min_price": 15,
+			"default_price": 16
+		},
+		{
+			"name": "Galvanized Hell",
+			"id": "60e5b8fb4794450053e9993d",
 			"min_price": 14,
 			"default_price": 16
 		},
@@ -1153,16 +1171,22 @@
 			"default_price": 16
 		},
 		{
+			"name": "Galvanized Shot",
+			"id": "60e5b8ff4794450053e99953",
+			"min_price": 14,
+			"default_price": 16
+		},
+		{
 			"name": "Galvanized Diffusion",
 			"id": "60e5b8fc4794450053e99941",
 			"min_price": 15,
 			"default_price": 17
 		},
 		{
-			"name": "Galvanized Hell",
-			"id": "60e5b8fb4794450053e9993d",
-			"min_price": 14,
-			"default_price": 16
+			"name": "Galvanized Scope",
+			"id": "60e5b8fd4794450053e99947",
+			"min_price": 15,
+			"default_price": 17
 		}
 	]
 }
