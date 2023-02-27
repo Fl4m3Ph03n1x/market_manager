@@ -13,6 +13,8 @@ defmodule AuctionHouse.Impl.HTTPClient do
     {"Content-Type", "application/json"}
   ]
 
+  @response_timeout 9_000
+
   ##########
   # Public #
   ##########
@@ -55,7 +57,10 @@ defmodule AuctionHouse.Impl.HTTPClient do
          cookie: cookie,
          token: token
        }),
-       do: run.(queue, fn -> post.(@url, order, build_hearders(cookie, token)) end)
+       do:
+         run.(queue, fn ->
+           post.(@url, order, build_hearders(cookie, token), recv_timeout: @response_timeout)
+         end)
 
   @spec http_delete(url :: String.t(), deps :: map) ::
           {:ok, HTTPoison.Response.t()} | {:error, HTTPoison.Error.t()}
@@ -66,7 +71,10 @@ defmodule AuctionHouse.Impl.HTTPClient do
          cookie: cookie,
          token: token
        }),
-       do: run.(queue, fn -> delete.(url, build_hearders(cookie, token)) end)
+       do:
+         run.(queue, fn ->
+           delete.(url, build_hearders(cookie, token), recv_timeout: @response_timeout)
+         end)
 
   @spec http_get(url :: String.t(), deps :: map) ::
           {:ok, HTTPoison.Response.t()} | {:error, HTTPoison.Error.t()}
@@ -77,7 +85,10 @@ defmodule AuctionHouse.Impl.HTTPClient do
          cookie: cookie,
          token: token
        }),
-       do: run.(queue, fn -> get.(url, build_hearders(cookie, token)) end)
+       do:
+         run.(queue, fn ->
+           get.(url, build_hearders(cookie, token), recv_timeout: @response_timeout)
+         end)
 
   @spec to_auction_house_response(
           {:ok, HTTPoison.Response.t()} | {:error, HTTPoison.Error.t()},
