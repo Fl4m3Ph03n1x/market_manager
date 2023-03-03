@@ -18,7 +18,7 @@ defmodule AuctionHouse.HTTPClientTest do
       }
 
       deps = %{
-        post_fn: fn _url, _body, _headers ->
+        post_fn: fn _url, _body, _headers, _options ->
           {:ok,
            %HTTPoison.Response{
              status_code: 200,
@@ -49,7 +49,7 @@ defmodule AuctionHouse.HTTPClientTest do
       }
 
       deps = %{
-        post_fn: fn _url, _body, _headers ->
+        post_fn: fn _url, _body, _headers, _options ->
           {:ok,
            %HTTPoison.Response{
              status_code: 400,
@@ -80,7 +80,7 @@ defmodule AuctionHouse.HTTPClientTest do
       }
 
       deps = %{
-        post_fn: fn _url, _body, _headers ->
+        post_fn: fn _url, _body, _headers, _options ->
           {:ok,
            %HTTPoison.Response{
              status_code: 400,
@@ -111,7 +111,7 @@ defmodule AuctionHouse.HTTPClientTest do
       }
 
       deps = %{
-        post_fn: fn _url, _body, _headers ->
+        post_fn: fn _url, _body, _headers, _options ->
           {:ok,
            %HTTPoison.Response{
              status_code: 400,
@@ -142,7 +142,7 @@ defmodule AuctionHouse.HTTPClientTest do
       }
 
       deps = %{
-        post_fn: fn _url, _body, _headers ->
+        post_fn: fn _url, _body, _headers, _options ->
           {:ok,
            %HTTPoison.Response{
              status_code: 503,
@@ -204,7 +204,7 @@ defmodule AuctionHouse.HTTPClientTest do
       }
 
       deps = %{
-        post_fn: fn _url, _body, _headers ->
+        post_fn: fn _url, _body, _headers, _options ->
           {:error, %HTTPoison.Error{id: nil, reason: :timeout}}
         end,
         run_fn: fn _queue_name, func -> func.() end,
@@ -257,7 +257,7 @@ defmodule AuctionHouse.HTTPClientTest do
       order_id = "5ee71a2604d55c0a5cbdc3c2"
 
       deps = %{
-        delete_fn: fn _url, _headers ->
+        delete_fn: fn _url, _headers, _options ->
           {:ok,
            %HTTPoison.Response{
              status_code: 200,
@@ -282,7 +282,7 @@ defmodule AuctionHouse.HTTPClientTest do
       order_id = "5ee71a2604d55c0a5cbdc3c2"
 
       deps = %{
-        delete_fn: fn _url, _headers ->
+        delete_fn: fn _url, _headers, _options ->
           {:ok,
            %HTTPoison.Response{
              status_code: 400,
@@ -307,7 +307,7 @@ defmodule AuctionHouse.HTTPClientTest do
       order_id = "5ee71a2604d55c0a5cbdc3c2"
 
       deps = %{
-        delete_fn: fn _url, _headers ->
+        delete_fn: fn _url, _headers, _options ->
           {:error, %HTTPoison.Error{id: nil, reason: :timeout}}
         end,
         run_fn: fn _queue_name, func -> func.() end,
@@ -369,7 +369,7 @@ defmodule AuctionHouse.HTTPClientTest do
       item_name = "Gleaming Blight"
 
       deps = %{
-        get_fn: fn _url, _headers ->
+        get_fn: fn _url, _headers, _options ->
           {:ok,
            %HTTPoison.Response{
              status_code: 200,

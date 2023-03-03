@@ -12,6 +12,8 @@ defmodule AuctionHouse.Runtime.Server do
   alias Floki
   alias HTTPoison
 
+  @default_timeout 20_000
+
   ##############
   # Public API #
   ##############
@@ -20,13 +22,15 @@ defmodule AuctionHouse.Runtime.Server do
   def start_link, do: GenServer.start_link(__MODULE__, nil, name: __MODULE__)
 
   @spec get_all_orders(Type.item_name()) :: Type.get_all_orders_response()
-  def get_all_orders(item_name), do: GenServer.call(__MODULE__, {:get_all_orders, item_name})
+  def get_all_orders(item_name),
+    do: GenServer.call(__MODULE__, {:get_all_orders, item_name}, @default_timeout)
 
   @spec place_order(Order.t()) :: Type.place_order_response()
   def place_order(order), do: GenServer.call(__MODULE__, {:place_order, order})
 
   @spec delete_order(Type.order_id()) :: Type.delete_order_response()
-  def delete_order(order_id), do: GenServer.call(__MODULE__, {:delete_order, order_id})
+  def delete_order(order_id),
+    do: GenServer.call(__MODULE__, {:delete_order, order_id}, @default_timeout)
 
   @spec login(Credentials.t()) :: Type.login_response()
   def login(credentials), do: GenServer.call(__MODULE__, {:login, credentials})
@@ -45,9 +49,9 @@ defmodule AuctionHouse.Runtime.Server do
       %{
         parse_document_fn: &Floki.parse_document/1,
         find_in_document_fn: &Floki.find/2,
-        get_fn: &HTTPoison.get/2,
-        post_fn: &HTTPoison.post/3,
-        delete_fn: &HTTPoison.delete/2,
+        get_fn: &HTTPoison.get/3,
+        post_fn: &HTTPoison.post/4,
+        delete_fn: &HTTPoison.delete/3,
         run_fn: &:jobs.run/2,
         create_queue_fn: &:jobs.add_queue/2,
         delete_queue_fn: &:jobs.delete_queue/1,

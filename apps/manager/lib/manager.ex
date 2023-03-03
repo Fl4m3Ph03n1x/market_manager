@@ -52,7 +52,7 @@ defmodule Manager do
   Deactivates a syndicate in warframe.market. Deactivating a syndicate means you
   delete all orders you have placed before that belong to the given syndicate.
 
-  This is an asynchronous operation, which will return `:ok` immediatly.
+  This is an asynchronous operation, which will return `:ok` immediately.
   The caller must have implemented a `handle_info` in its Server to handle messages with the
   following format:
 
@@ -62,7 +62,7 @@ defmodule Manager do
     belongs to.
     The `result` of an operation, will be a tagged tuple. Some common formats are:
 
-     - `{:ok, order_id :: String.t()}`, when the deletion was successfull
+     - `{:ok, order_id :: String.t()}`, when the deletion was successful
      - `{:error, reason :: any(), order_id :: String.t()}`, when the deletion failed
 
   - `{:deactivate, syndicate :: String.t(), :done}`: Once all orders have been deleted (successfully

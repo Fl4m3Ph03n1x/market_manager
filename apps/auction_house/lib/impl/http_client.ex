@@ -18,6 +18,8 @@ defmodule AuctionHouse.Impl.HTTPClient do
     {"Content-Type", "application/json"}
   ]
 
+  @response_timeout 9_000
+
   ##########
   # Public #
   ##########
@@ -155,7 +157,10 @@ defmodule AuctionHouse.Impl.HTTPClient do
          requests_queue: queue,
          authorization: %LoginInfo{cookie: cookie, token: token}
        }),
-       do: run.(queue, fn -> post.(@url, order, build_headers(cookie, token)) end)
+       do:
+         run.(queue, fn ->
+           post.(@url, order, build_hearders(cookie, token), recv_timeout: @response_timeout)
+         end)
 
   @spec http_delete(url :: String.t(), deps :: map) ::
           {:ok, HTTPoison.Response.t()} | {:error, HTTPoison.Error.t()}
@@ -165,7 +170,10 @@ defmodule AuctionHouse.Impl.HTTPClient do
          requests_queue: queue,
          authorization: %LoginInfo{cookie: cookie, token: token}
        }),
-       do: run.(queue, fn -> delete.(url, build_headers(cookie, token)) end)
+       do:
+         run.(queue, fn ->
+           delete.(url, build_hearders(cookie, token), recv_timeout: @response_timeout)
+         end)
 
   @spec http_get(url :: String.t(), deps :: map) ::
           {:ok, HTTPoison.Response.t()} | {:error, HTTPoison.Error.t()}
@@ -182,7 +190,10 @@ defmodule AuctionHouse.Impl.HTTPClient do
          run_fn: run,
          requests_queue: queue
        }),
-       do: run.(queue, fn -> get.(url, @static_headers) end)
+       do:
+         run.(queue, fn ->
+           get.(url, build_hearders(cookie, token), recv_timeout: @response_timeout)
+         end)
 
   defp to_auction_house_error(
          {:ok, %HTTPoison.Response{status_code: 400, body: error_body}},
