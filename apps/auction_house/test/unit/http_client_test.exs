@@ -18,7 +18,7 @@ defmodule AuctionHouse.HTTPClientTest do
       }
 
       deps = %{
-        post_fn: fn _url, _body, _headers, _options ->
+        post_fn: fn _url, _body, _headers, _opts ->
           {:ok,
            %HTTPoison.Response{
              status_code: 200,
@@ -49,7 +49,7 @@ defmodule AuctionHouse.HTTPClientTest do
       }
 
       deps = %{
-        post_fn: fn _url, _body, _headers, _options ->
+        post_fn: fn _url, _body, _headers, _opts ->
           {:ok,
            %HTTPoison.Response{
              status_code: 400,
@@ -80,7 +80,7 @@ defmodule AuctionHouse.HTTPClientTest do
       }
 
       deps = %{
-        post_fn: fn _url, _body, _headers, _options ->
+        post_fn: fn _url, _body, _headers, _opts ->
           {:ok,
            %HTTPoison.Response{
              status_code: 400,
@@ -111,7 +111,7 @@ defmodule AuctionHouse.HTTPClientTest do
       }
 
       deps = %{
-        post_fn: fn _url, _body, _headers, _options ->
+        post_fn: fn _url, _body, _headers, _opts ->
           {:ok,
            %HTTPoison.Response{
              status_code: 400,
@@ -142,7 +142,7 @@ defmodule AuctionHouse.HTTPClientTest do
       }
 
       deps = %{
-        post_fn: fn _url, _body, _headers, _options ->
+        post_fn: fn _url, _body, _headers, _opts ->
           {:ok,
            %HTTPoison.Response{
              status_code: 503,
@@ -173,7 +173,7 @@ defmodule AuctionHouse.HTTPClientTest do
       }
 
       deps = %{
-        post_fn: fn _url, _body, _headers ->
+        post_fn: fn _url, _body, _headers, _opts ->
           {:ok,
            %HTTPoison.Response{
              status_code: 500,
@@ -204,7 +204,7 @@ defmodule AuctionHouse.HTTPClientTest do
       }
 
       deps = %{
-        post_fn: fn _url, _body, _headers, _options ->
+        post_fn: fn _url, _body, _headers, _opts ->
           {:error, %HTTPoison.Error{id: nil, reason: :timeout}}
         end,
         run_fn: fn _queue_name, func -> func.() end,
@@ -231,7 +231,7 @@ defmodule AuctionHouse.HTTPClientTest do
       }
 
       deps = %{
-        post_fn: fn _url, _body, _headers ->
+        post_fn: fn _url, _body, _headers, _opts ->
           {:ok,
            %HTTPoison.Response{
              status_code: 200,
@@ -328,7 +328,7 @@ defmodule AuctionHouse.HTTPClientTest do
       order_id = "5ee71a2604d55c0a5cbdc3c2"
 
       deps = %{
-        delete_fn: fn _url, _headers ->
+        delete_fn: fn _url, _headers, _opts ->
           {:ok,
            %HTTPoison.Response{
              status_code: 500,
@@ -369,7 +369,7 @@ defmodule AuctionHouse.HTTPClientTest do
       item_name = "Gleaming Blight"
 
       deps = %{
-        get_fn: fn _url, _headers, _options ->
+        get_fn: fn _url, _headers, _opts ->
           {:ok,
            %HTTPoison.Response{
              status_code: 200,
@@ -414,7 +414,7 @@ defmodule AuctionHouse.HTTPClientTest do
       item_name = "Gleaming Blight"
 
       deps = %{
-        get_fn: fn _url, _headers ->
+        get_fn: fn _url, _headers, _opts ->
           {:ok,
            %HTTPoison.Response{
              status_code: 500,
@@ -442,7 +442,7 @@ defmodule AuctionHouse.HTTPClientTest do
       credentials = Credentials.new("my_email", "my_password")
 
       deps = %{
-        post_fn: fn _url, _body, _headers ->
+        post_fn: fn _url, _body, _headers, _opts ->
           {:ok,
            %HTTPoison.Response{
              headers: [
@@ -469,7 +469,7 @@ defmodule AuctionHouse.HTTPClientTest do
         find_in_document_fn: fn _document, _search ->
           [{"meta", [{"name", "csrf-token"}, {"content", "a_token"}], []}]
         end,
-        get_fn: fn _url, _headers ->
+        get_fn: fn _url, _headers, _opts ->
           {:ok,
            %HTTPoison.Response{
              status_code: 200,
@@ -520,7 +520,7 @@ defmodule AuctionHouse.HTTPClientTest do
         find_in_document_fn: fn _document, _search ->
           [{"meta", [{"name", "csrf-token"}, {"content", "a_token"}], []}]
         end,
-        get_fn: fn _url, _headers ->
+        get_fn: fn _url, _headers, _opts ->
           {:ok,
            %HTTPoison.Response{
              status_code: 500,
@@ -550,7 +550,7 @@ defmodule AuctionHouse.HTTPClientTest do
           {:error, :failed_to_parse_document}
         end,
         find_in_document_fn: nil,
-        get_fn: fn _url, _headers ->
+        get_fn: fn _url, _headers, _opts ->
           {:ok, %HTTPoison.Response{status_code: 200, body: "", headers: []}}
         end
       }
@@ -573,7 +573,7 @@ defmodule AuctionHouse.HTTPClientTest do
         encode_fn: &Jason.encode/1,
         parse_document_fn: fn _document -> {:ok, nil} end,
         find_in_document_fn: fn _document, _search -> [] end,
-        get_fn: fn _url, _headers ->
+        get_fn: fn _url, _headers, _opts ->
           {:ok, %HTTPoison.Response{status_code: 200, body: "", headers: []}}
         end
       }
@@ -598,7 +598,7 @@ defmodule AuctionHouse.HTTPClientTest do
         find_in_document_fn: fn _document, _search ->
           [{"meta", [{"name", "csrf-token"}, {"content", nil}], []}]
         end,
-        get_fn: fn _url, _headers ->
+        get_fn: fn _url, _headers, _opts ->
           {:ok, %HTTPoison.Response{status_code: 200, body: "", headers: []}}
         end
       }
@@ -628,7 +628,7 @@ defmodule AuctionHouse.HTTPClientTest do
         find_in_document_fn: fn _document, _search ->
           [{"meta", [{"name", "csrf-token"}, {"content", nil}], []}]
         end,
-        get_fn: fn _url, _headers ->
+        get_fn: fn _url, _headers, _opts ->
           {:ok, %HTTPoison.Response{status_code: 200, body: "", headers: headers}}
         end
       }
@@ -656,7 +656,7 @@ defmodule AuctionHouse.HTTPClientTest do
       }
 
       deps = %{
-        post_fn: fn _url, _body, _headers ->
+        post_fn: fn _url, _body, _headers, _opts ->
           {:ok, post_response}
         end,
         encode_fn: &Jason.encode/1,
@@ -674,7 +674,7 @@ defmodule AuctionHouse.HTTPClientTest do
         find_in_document_fn: fn _document, _search ->
           [{"meta", [{"name", "csrf-token"}, {"content", "a_token"}], []}]
         end,
-        get_fn: fn _url, _headers ->
+        get_fn: fn _url, _headers, _opts ->
           {:ok,
            %HTTPoison.Response{
              status_code: 200,
@@ -710,7 +710,7 @@ defmodule AuctionHouse.HTTPClientTest do
       credentials = Credentials.new("my_email", "my_password")
 
       deps = %{
-        post_fn: fn _url, _body, _headers ->
+        post_fn: fn _url, _body, _headers, _opts ->
           {:ok,
            %HTTPoison.Response{
              headers: [
@@ -736,7 +736,7 @@ defmodule AuctionHouse.HTTPClientTest do
         find_in_document_fn: fn _document, _search ->
           [{"meta", [{"name", "csrf-token"}, {"content", "a_token"}], []}]
         end,
-        get_fn: fn _url, _headers ->
+        get_fn: fn _url, _headers, _opts ->
           {:ok,
            %HTTPoison.Response{
              status_code: 200,
@@ -775,7 +775,7 @@ defmodule AuctionHouse.HTTPClientTest do
       credentials = Credentials.new("my_email", "my_password")
 
       deps = %{
-        post_fn: fn _url, _body, _headers ->
+        post_fn: fn _url, _body, _headers, _opts ->
           {:ok,
            %HTTPoison.Response{
              headers: [
@@ -801,7 +801,7 @@ defmodule AuctionHouse.HTTPClientTest do
         find_in_document_fn: fn _document, _search ->
           [{"meta", [{"name", "csrf-token"}, {"content", "a_token"}], []}]
         end,
-        get_fn: fn _url, _headers ->
+        get_fn: fn _url, _headers, _opts ->
           {:ok,
            %HTTPoison.Response{
              status_code: 200,

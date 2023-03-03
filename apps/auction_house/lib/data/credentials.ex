@@ -14,7 +14,7 @@ defmodule AuctionHouse.Data.Credentials do
   end
 
   @spec new(email :: String.t(), password :: String.t()) :: __MODULE__.t()
-  def new(email, password),
+  def new(email, password) when is_binary(email) and is_binary(password),
     do: %__MODULE__{
       email: email,
       password: password

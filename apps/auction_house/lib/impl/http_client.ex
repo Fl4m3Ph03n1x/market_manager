@@ -69,7 +69,9 @@ defmodule AuctionHouse.Impl.HTTPClient do
     with {:ok, json_credentials} <- Jason.encode(credentials),
          {:ok, token: token, cookie: cookie} <- fetch_authentication_data(deps),
          {:ok, %HTTPoison.Response{status_code: 200, body: body, headers: headers}} <-
-           post.(@api_signin_url, json_credentials, build_headers(cookie, token)),
+           post.(@api_signin_url, json_credentials, build_headers(cookie, token),
+             recv_timeout: @response_timeout
+           ),
          {:ok, decoded_body} <- validate_body(body),
          {:ok, updated_cookie} <- parse_cookie(headers) do
       {:ok, LoginInfo.new(updated_cookie, token, get_patreon(decoded_body))}
@@ -95,7 +97,7 @@ defmodule AuctionHouse.Impl.HTTPClient do
          } = deps
        ) do
     with {:ok, %HTTPoison.Response{status_code: 200, body: body, headers: headers}} <-
-           get.(@market_signin_url, @static_headers),
+           get.(@market_signin_url, @static_headers, recv_timeout: @response_timeout),
          {:ok, doc} <- parse_document.(body),
          {:ok, token} <- find_xrfc_token(doc, deps),
          {:ok, cookie} <- parse_cookie(headers) do
@@ -121,7 +123,7 @@ defmodule AuctionHouse.Impl.HTTPClient do
   end
 
   @spec find_xrfc_token(parsed_body :: [any], deps :: map) ::
-          {:ok, String.t()} | {:erorr, {:xrfc_token_not_found, parsed_body :: [any]}}
+          {:ok, String.t()} | {:error, {:xrfc_token_not_found, parsed_body :: [any]}}
   defp find_xrfc_token(doc, %{find_in_document_fn: find_in_document}) do
     case find_in_document.(doc, "meta[name=\"csrf-token\"]") do
       [{"meta", [{"name", "csrf-token"}, {"content", token}], []}] -> {:ok, token}
@@ -159,7 +161,7 @@ defmodule AuctionHouse.Impl.HTTPClient do
        }),
        do:
          run.(queue, fn ->
-           post.(@url, order, build_hearders(cookie, token), recv_timeout: @response_timeout)
+           post.(@url, order, build_headers(cookie, token), recv_timeout: @response_timeout)
          end)
 
   @spec http_delete(url :: String.t(), deps :: map) ::
@@ -172,7 +174,7 @@ defmodule AuctionHouse.Impl.HTTPClient do
        }),
        do:
          run.(queue, fn ->
-           delete.(url, build_hearders(cookie, token), recv_timeout: @response_timeout)
+           delete.(url, build_headers(cookie, token), recv_timeout: @response_timeout)
          end)
 
   @spec http_get(url :: String.t(), deps :: map) ::
@@ -183,7 +185,10 @@ defmodule AuctionHouse.Impl.HTTPClient do
          requests_queue: queue,
          authorization: %LoginInfo{cookie: cookie, token: token}
        }),
-       do: run.(queue, fn -> get.(url, build_headers(cookie, token)) end)
+       do:
+         run.(queue, fn ->
+           get.(url, build_headers(cookie, token), recv_timeout: @response_timeout)
+         end)
 
   defp http_get(url, %{
          get_fn: get,
@@ -192,7 +197,7 @@ defmodule AuctionHouse.Impl.HTTPClient do
        }),
        do:
          run.(queue, fn ->
-           get.(url, build_hearders(cookie, token), recv_timeout: @response_timeout)
+           get.(url, @static_headers, recv_timeout: @response_timeout)
          end)
 
   defp to_auction_house_error(

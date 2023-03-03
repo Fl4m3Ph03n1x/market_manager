@@ -85,7 +85,7 @@ defmodule AuctionHouse do
 
   @doc """
   Stores the user's credentials and  authenticates with the auction house to
-  make requests. Must be invoked everytime the applciation is launched.
+  make requests. Must be invoked every time the application is launched.
   It also performs the necessary steps for authorization.
 
   Example:

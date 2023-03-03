@@ -204,8 +204,7 @@ defmodule AuctionHouseTest do
 
   describe "login/1" do
     test "returns {:ok, LoginInfo} when the login is successful", %{
-      bypass: bypass,
-      server: server
+      bypass: bypass
     } do
       # Arrange
       Bypass.expect(bypass, "GET", "/auth/signin", fn conn ->
@@ -247,7 +246,14 @@ defmodule AuctionHouseTest do
 
       # Act
       actual = AuctionHouse.login(credentials)
-      expected = {:ok, credentials}
+
+      expected =
+        {:ok,
+         %AuctionHouse.Data.LoginInfo{
+           patreon?: false,
+           token: "a_token",
+           cookie: "JWT=new_cookie"
+         }}
 
       # Assert
       assert actual == expected

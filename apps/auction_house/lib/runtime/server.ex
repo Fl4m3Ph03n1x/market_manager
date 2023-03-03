@@ -26,14 +26,14 @@ defmodule AuctionHouse.Runtime.Server do
     do: GenServer.call(__MODULE__, {:get_all_orders, item_name}, @default_timeout)
 
   @spec place_order(Order.t()) :: Type.place_order_response()
-  def place_order(order), do: GenServer.call(__MODULE__, {:place_order, order})
+  def place_order(order), do: GenServer.call(__MODULE__, {:place_order, order}, @default_timeout)
 
   @spec delete_order(Type.order_id()) :: Type.delete_order_response()
   def delete_order(order_id),
     do: GenServer.call(__MODULE__, {:delete_order, order_id}, @default_timeout)
 
   @spec login(Credentials.t()) :: Type.login_response()
-  def login(credentials), do: GenServer.call(__MODULE__, {:login, credentials})
+  def login(credentials), do: GenServer.call(__MODULE__, {:login, credentials}, @default_timeout)
 
   #############
   # Callbacks #

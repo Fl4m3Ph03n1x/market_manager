@@ -17,7 +17,8 @@ defmodule AuctionHouse.Data.LoginInfo do
   end
 
   @spec new(String.t(), String.t(), boolean()) :: __MODULE__.t()
-  def new(cookie, token, patreon? \\ false) do
+  def new(cookie, token, patreon? \\ false)
+      when is_binary(cookie) and is_binary(token) and is_boolean(patreon?) do
     %__MODULE__{
       cookie: cookie,
       token: token,
