@@ -1,6 +1,7 @@
 defmodule AuctionHouse.Data.OrderInfo.User do
   @moduledoc """
-  Represents the account information for a warframe.market User.
+  Represents the account information for a warframe.market User who has an order
+  posted.
   """
 
   use TypedStruct

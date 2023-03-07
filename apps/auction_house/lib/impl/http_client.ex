@@ -5,7 +5,7 @@ defmodule AuctionHouse.Impl.HTTPClient do
 
   require Logger
 
-  alias AuctionHouse.Data.{Credentials, LoginInfo, Order, OrderInfo}
+  alias AuctionHouse.Data.{Authorization, Credentials, Order, OrderInfo, User}
   alias AuctionHouse.Type
 
   @url Application.compile_env!(:auction_house, :api_base_url)
@@ -24,11 +24,11 @@ defmodule AuctionHouse.Impl.HTTPClient do
   # Public #
   ##########
 
-  @spec place_order(Order.t(), deps :: map) :: Type.place_order_response()
-  def place_order(order, deps) do
-    with :ok <- check_authorization(deps),
+  @spec place_order(Order.t(), Type.state()) :: Type.place_order_response()
+  def place_order(order, state) do
+    with :ok <- check_authorization(state),
          {:ok, order_json} <- Jason.encode(order),
-         {:ok, %HTTPoison.Response{status_code: 200, body: body}} <- http_post(order_json, deps),
+         {:ok, %HTTPoison.Response{status_code: 200, body: body}} <- http_post(order_json, state),
          {:ok, content} <- Jason.decode(body),
          {:ok, id} <- get_id(content) do
       {:ok, id}
@@ -37,11 +37,11 @@ defmodule AuctionHouse.Impl.HTTPClient do
     end
   end
 
-  @spec delete_order(Type.order_id(), deps :: map) :: Type.delete_order_response()
-  def delete_order(order_id, deps) do
-    with :ok <- check_authorization(deps),
+  @spec delete_order(Type.order_id(), Type.state()) :: Type.delete_order_response()
+  def delete_order(order_id, state) do
+    with :ok <- check_authorization(state),
          url <- build_delete_url(order_id),
-         {:ok, %HTTPoison.Response{status_code: 200, body: body}} <- http_delete(url, deps),
+         {:ok, %HTTPoison.Response{status_code: 200, body: body}} <- http_delete(url, state),
          {:ok, content} <- Jason.decode(body),
          {:ok, id} <- get_id(content) do
       {:ok, id}
@@ -50,10 +50,10 @@ defmodule AuctionHouse.Impl.HTTPClient do
     end
   end
 
-  @spec get_all_orders(Type.item_name(), deps :: map) :: Type.get_all_orders_response()
-  def get_all_orders(item_name, deps) do
+  @spec get_all_orders(Type.item_name(), Type.state()) :: Type.get_all_orders_response()
+  def get_all_orders(item_name, state) do
     with urls <- build_get_orders_url(item_name),
-         {:ok, %HTTPoison.Response{status_code: 200, body: body}} <- http_get(urls, deps),
+         {:ok, %HTTPoison.Response{status_code: 200, body: body}} <- http_get(urls, state),
          {:ok, content} <- Jason.decode(body) do
       {:ok, parse_order_info(content)}
     else
@@ -61,10 +61,12 @@ defmodule AuctionHouse.Impl.HTTPClient do
     end
   end
 
-  @spec login(Credentials.t(), deps :: map) :: {:ok, LoginInfo.t()} | {:error, any}
+  @spec login(Credentials.t(), Type.state()) :: Type.login_response()
   def login(
         credentials,
-        %{post_fn: post} = deps
+        %{
+          dependencies: %{post_fn: post} = deps
+        } = _state
       ) do
     with {:ok, json_credentials} <- Jason.encode(credentials),
          {:ok, token: token, cookie: cookie} <- fetch_authentication_data(deps),
@@ -73,8 +75,10 @@ defmodule AuctionHouse.Impl.HTTPClient do
              recv_timeout: @response_timeout
            ),
          {:ok, decoded_body} <- validate_body(body),
-         {:ok, updated_cookie} <- parse_cookie(headers) do
-      {:ok, LoginInfo.new(updated_cookie, token, get_patreon(decoded_body))}
+         {:ok, updated_cookie} <- parse_cookie(headers),
+         {:ok, ingame_name} <- parse_ingame_name(decoded_body),
+         {:ok, patreon?} <- parse_patreon(decoded_body) do
+      {:ok, {Authorization.new(updated_cookie, token), User.new(ingame_name, patreon?)}}
     else
       error -> to_auction_house_error(error, credentials)
     end
@@ -84,11 +88,11 @@ defmodule AuctionHouse.Impl.HTTPClient do
   # Private #
   ###########
 
-  @spec check_authorization(deps :: map) :: boolean
-  defp check_authorization(%{authorization: %LoginInfo{}}), do: :ok
-  defp check_authorization(_deps), do: {:error, :missing_authorization_credentials}
+  @spec check_authorization(Type.state()) :: :ok | {:error, :missing_authorization_credentials}
+  defp check_authorization(%{authorization: %Authorization{}}), do: :ok
+  defp check_authorization(_state), do: {:error, :missing_authorization_credentials}
 
-  @spec fetch_authentication_data(deps :: map) ::
+  @spec fetch_authentication_data(dependencies :: map()) ::
           {:ok, [token: String.t(), cookie: String.t()]} | {:error, any}
   defp fetch_authentication_data(
          %{
@@ -122,7 +126,7 @@ defmodule AuctionHouse.Impl.HTTPClient do
     end
   end
 
-  @spec find_xrfc_token(parsed_body :: [any], deps :: map) ::
+  @spec find_xrfc_token(parsed_body :: [any], dependencies :: map) ::
           {:ok, String.t()} | {:error, {:xrfc_token_not_found, parsed_body :: [any]}}
   defp find_xrfc_token(doc, %{find_in_document_fn: find_in_document}) do
     case find_in_document.(doc, "meta[name=\"csrf-token\"]") do
@@ -146,44 +150,70 @@ defmodule AuctionHouse.Impl.HTTPClient do
     end
   end
 
-  @spec get_patreon(body :: map) :: boolean
-  defp get_patreon(body) do
-    get_in(body, ["payload", "user", "linked_accounts", "patreon_profile"]) || false
+  @spec parse_patreon(body :: map) :: {:ok, boolean} | {:error, :missing_patreon, map()}
+  defp parse_patreon(body) do
+    case get_in(body, ["payload", "user", "linked_accounts", "patreon_profile"]) do
+      nil ->
+        Logger.error("Missing patreon_profile in response payload: #{inspect(body)}")
+        {:error, :missing_patreon}
+
+      patreon? ->
+        {:ok, patreon?}
+    end
   end
 
-  @spec http_post(order_json :: String.t(), deps :: map) ::
+  @spec parse_ingame_name(body :: map) ::
+          {:ok, String.t()} | {:error, :missing_ingame_name, map()}
+  defp parse_ingame_name(body) do
+    case get_in(body, ["payload", "user", "ingame_name"]) do
+      nil ->
+        Logger.error("Missing ingame_name in response payload: #{inspect(body)}")
+        {:error, :missing_ingame_name}
+
+      name ->
+        {:ok, name}
+    end
+  end
+
+  @spec http_post(order_json :: String.t(), Type.state()) ::
           {:ok, HTTPoison.Response.t()} | {:error, HTTPoison.Error.t()}
   defp http_post(order, %{
-         post_fn: post,
-         run_fn: run,
-         requests_queue: queue,
-         authorization: %LoginInfo{cookie: cookie, token: token}
+         dependencies: %{
+           post_fn: post,
+           run_fn: run,
+           requests_queue: queue
+         },
+         authorization: %Authorization{cookie: cookie, token: token}
        }),
        do:
          run.(queue, fn ->
            post.(@url, order, build_headers(cookie, token), recv_timeout: @response_timeout)
          end)
 
-  @spec http_delete(url :: String.t(), deps :: map) ::
+  @spec http_delete(url :: String.t(), Type.state()) ::
           {:ok, HTTPoison.Response.t()} | {:error, HTTPoison.Error.t()}
   defp http_delete(url, %{
-         delete_fn: delete,
-         run_fn: run,
-         requests_queue: queue,
-         authorization: %LoginInfo{cookie: cookie, token: token}
+         dependencies: %{
+           delete_fn: delete,
+           run_fn: run,
+           requests_queue: queue
+         },
+         authorization: %Authorization{cookie: cookie, token: token}
        }),
        do:
          run.(queue, fn ->
            delete.(url, build_headers(cookie, token), recv_timeout: @response_timeout)
          end)
 
-  @spec http_get(url :: String.t(), deps :: map) ::
+  @spec http_get(url :: String.t(), Type.state()) ::
           {:ok, HTTPoison.Response.t()} | {:error, HTTPoison.Error.t()}
   defp http_get(url, %{
-         get_fn: get,
-         run_fn: run,
-         requests_queue: queue,
-         authorization: %LoginInfo{cookie: cookie, token: token}
+         dependencies: %{
+           get_fn: get,
+           run_fn: run,
+           requests_queue: queue
+         },
+         authorization: %Authorization{cookie: cookie, token: token}
        }),
        do:
          run.(queue, fn ->
@@ -191,9 +221,12 @@ defmodule AuctionHouse.Impl.HTTPClient do
          end)
 
   defp http_get(url, %{
-         get_fn: get,
-         run_fn: run,
-         requests_queue: queue
+         dependencies: %{
+           get_fn: get,
+           run_fn: run,
+           requests_queue: queue
+         },
+         authorization: nil
        }),
        do:
          run.(queue, fn ->

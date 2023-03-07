@@ -3,7 +3,9 @@ defmodule AuctionHouse.HTTPClientTest do
 
   use ExUnit.Case
 
-  alias AuctionHouse.Data.{Credentials, LoginInfo, Order, OrderInfo}
+  import ExUnit.CaptureLog
+
+  alias AuctionHouse.Data.{Authorization, Credentials, Order, OrderInfo, User}
   alias AuctionHouse.Impl.HTTPClient
 
   describe "place_oder/2" do
@@ -17,21 +19,23 @@ defmodule AuctionHouse.HTTPClientTest do
         mod_rank: 0
       }
 
-      deps = %{
-        post_fn: fn _url, _body, _headers, _opts ->
-          {:ok,
-           %HTTPoison.Response{
-             status_code: 200,
-             body: "{\"payload\":{\"order\":{\"id\":\"5ee71a2604d55c0a5cbdc3c2\"}}}"
-           }}
-        end,
-        run_fn: fn _queue_name, func -> func.() end,
-        requests_queue: nil,
-        authorization: %LoginInfo{cookie: "cookie", token: "token"}
+      state = %{
+        dependencies: %{
+          post_fn: fn _url, _body, _headers, _opts ->
+            {:ok,
+             %HTTPoison.Response{
+               status_code: 200,
+               body: "{\"payload\":{\"order\":{\"id\":\"5ee71a2604d55c0a5cbdc3c2\"}}}"
+             }}
+          end,
+          run_fn: fn _queue_name, func -> func.() end,
+          requests_queue: nil
+        },
+        authorization: %Authorization{cookie: "cookie", token: "token"}
       }
 
       # Act
-      actual = HTTPClient.place_order(order, deps)
+      actual = HTTPClient.place_order(order, state)
       expected = {:ok, "5ee71a2604d55c0a5cbdc3c2"}
 
       # Assert
@@ -48,21 +52,23 @@ defmodule AuctionHouse.HTTPClientTest do
         mod_rank: 0
       }
 
-      deps = %{
-        post_fn: fn _url, _body, _headers, _opts ->
-          {:ok,
-           %HTTPoison.Response{
-             status_code: 400,
-             body: "{\"error\":{\"_form\":[\"app.post_order.already_created_no_duplicates\"]}}"
-           }}
-        end,
-        run_fn: fn _queue_name, func -> func.() end,
-        requests_queue: nil,
-        authorization: %LoginInfo{cookie: "cookie", token: "token"}
+      state = %{
+        dependencies: %{
+          post_fn: fn _url, _body, _headers, _opts ->
+            {:ok,
+             %HTTPoison.Response{
+               status_code: 400,
+               body: "{\"error\":{\"_form\":[\"app.post_order.already_created_no_duplicates\"]}}"
+             }}
+          end,
+          run_fn: fn _queue_name, func -> func.() end,
+          requests_queue: nil
+        },
+        authorization: %Authorization{cookie: "cookie", token: "token"}
       }
 
       # Act
-      actual = HTTPClient.place_order(order, deps)
+      actual = HTTPClient.place_order(order, state)
       expected = {:error, :order_already_placed, order}
 
       # Assert
@@ -79,21 +85,23 @@ defmodule AuctionHouse.HTTPClientTest do
         mod_rank: 0
       }
 
-      deps = %{
-        post_fn: fn _url, _body, _headers, _opts ->
-          {:ok,
-           %HTTPoison.Response{
-             status_code: 400,
-             body: "{\"error\":{\"item_id\":[\"app.form.invalid\"]}}"
-           }}
-        end,
-        run_fn: fn _queue_name, func -> func.() end,
-        requests_queue: nil,
-        authorization: %LoginInfo{cookie: "cookie", token: "token"}
+      state = %{
+        dependencies: %{
+          post_fn: fn _url, _body, _headers, _opts ->
+            {:ok,
+             %HTTPoison.Response{
+               status_code: 400,
+               body: "{\"error\":{\"item_id\":[\"app.form.invalid\"]}}"
+             }}
+          end,
+          run_fn: fn _queue_name, func -> func.() end,
+          requests_queue: nil
+        },
+        authorization: %Authorization{cookie: "cookie", token: "token"}
       }
 
       # Act
-      actual = HTTPClient.place_order(order, deps)
+      actual = HTTPClient.place_order(order, state)
       expected = {:error, :invalid_item_id, order}
 
       # Assert
@@ -110,21 +118,23 @@ defmodule AuctionHouse.HTTPClientTest do
         mod_rank: 0
       }
 
-      deps = %{
-        post_fn: fn _url, _body, _headers, _opts ->
-          {:ok,
-           %HTTPoison.Response{
-             status_code: 400,
-             body: "{\"error\":{\"mod_rank\":[\"app.form.invalid\"]}}"
-           }}
-        end,
-        run_fn: fn _queue_name, func -> func.() end,
-        requests_queue: nil,
-        authorization: %LoginInfo{cookie: "cookie", token: "token"}
+      state = %{
+        dependencies: %{
+          post_fn: fn _url, _body, _headers, _opts ->
+            {:ok,
+             %HTTPoison.Response{
+               status_code: 400,
+               body: "{\"error\":{\"mod_rank\":[\"app.form.invalid\"]}}"
+             }}
+          end,
+          run_fn: fn _queue_name, func -> func.() end,
+          requests_queue: nil
+        },
+        authorization: %Authorization{cookie: "cookie", token: "token"}
       }
 
       # Act
-      actual = HTTPClient.place_order(order, deps)
+      actual = HTTPClient.place_order(order, state)
       expected = {:error, :rank_level_non_applicable, order}
 
       # Assert
@@ -141,21 +151,24 @@ defmodule AuctionHouse.HTTPClientTest do
         mod_rank: 0
       }
 
-      deps = %{
-        post_fn: fn _url, _body, _headers, _opts ->
-          {:ok,
-           %HTTPoison.Response{
-             status_code: 503,
-             body: "<html><head><title>503 Service Temporarily Unavailable</title></head></html>"
-           }}
-        end,
-        run_fn: fn _queue_name, func -> func.() end,
-        requests_queue: nil,
-        authorization: %LoginInfo{cookie: "cookie", token: "token"}
+      state = %{
+        dependencies: %{
+          post_fn: fn _url, _body, _headers, _opts ->
+            {:ok,
+             %HTTPoison.Response{
+               status_code: 503,
+               body:
+                 "<html><head><title>503 Service Temporarily Unavailable</title></head></html>"
+             }}
+          end,
+          run_fn: fn _queue_name, func -> func.() end,
+          requests_queue: nil
+        },
+        authorization: %Authorization{cookie: "cookie", token: "token"}
       }
 
       # Act
-      actual = HTTPClient.place_order(order, deps)
+      actual = HTTPClient.place_order(order, state)
       expected = {:error, :server_unavailable, order}
 
       # Assert
@@ -172,21 +185,23 @@ defmodule AuctionHouse.HTTPClientTest do
         mod_rank: 0
       }
 
-      deps = %{
-        post_fn: fn _url, _body, _headers, _opts ->
-          {:ok,
-           %HTTPoison.Response{
-             status_code: 500,
-             body: ""
-           }}
-        end,
-        run_fn: fn _queue_name, func -> func.() end,
-        requests_queue: nil,
-        authorization: %LoginInfo{cookie: "cookie", token: "token"}
+      state = %{
+        dependencies: %{
+          post_fn: fn _url, _body, _headers, _opts ->
+            {:ok,
+             %HTTPoison.Response{
+               status_code: 500,
+               body: ""
+             }}
+          end,
+          run_fn: fn _queue_name, func -> func.() end,
+          requests_queue: nil
+        },
+        authorization: %Authorization{cookie: "cookie", token: "token"}
       }
 
       # Act
-      actual = HTTPClient.place_order(order, deps)
+      actual = HTTPClient.place_order(order, state)
       expected = {:error, :internal_server_error, order}
 
       # Assert
@@ -203,17 +218,19 @@ defmodule AuctionHouse.HTTPClientTest do
         mod_rank: 0
       }
 
-      deps = %{
-        post_fn: fn _url, _body, _headers, _opts ->
-          {:error, %HTTPoison.Error{id: nil, reason: :timeout}}
-        end,
-        run_fn: fn _queue_name, func -> func.() end,
-        requests_queue: nil,
-        authorization: %LoginInfo{cookie: "cookie", token: "token"}
+      state = %{
+        dependencies: %{
+          post_fn: fn _url, _body, _headers, _opts ->
+            {:error, %HTTPoison.Error{id: nil, reason: :timeout}}
+          end,
+          run_fn: fn _queue_name, func -> func.() end,
+          requests_queue: nil
+        },
+        authorization: %Authorization{cookie: "cookie", token: "token"}
       }
 
       # Act
-      actual = HTTPClient.place_order(order, deps)
+      actual = HTTPClient.place_order(order, state)
       expected = {:error, :timeout, order}
 
       # Assert
@@ -230,20 +247,23 @@ defmodule AuctionHouse.HTTPClientTest do
         mod_rank: 0
       }
 
-      deps = %{
-        post_fn: fn _url, _body, _headers, _opts ->
-          {:ok,
-           %HTTPoison.Response{
-             status_code: 200,
-             body: "{\"payload\":{\"order\":{\"id\":\"5ee71a2604d55c0a5cbdc3c2\"}}}"
-           }}
-        end,
-        run_fn: fn _queue_name, func -> func.() end,
-        requests_queue: nil
+      state = %{
+        dependencies: %{
+          post_fn: fn _url, _body, _headers, _opts ->
+            {:ok,
+             %HTTPoison.Response{
+               status_code: 200,
+               body: "{\"payload\":{\"order\":{\"id\":\"5ee71a2604d55c0a5cbdc3c2\"}}}"
+             }}
+          end,
+          run_fn: fn _queue_name, func -> func.() end,
+          requests_queue: nil
+        },
+        authorization: nil
       }
 
       # Act
-      actual = HTTPClient.place_order(order, deps)
+      actual = HTTPClient.place_order(order, state)
       expected = {:error, :missing_authorization_credentials, order}
 
       # Assert
@@ -256,21 +276,23 @@ defmodule AuctionHouse.HTTPClientTest do
       # Arrange
       order_id = "5ee71a2604d55c0a5cbdc3c2"
 
-      deps = %{
-        delete_fn: fn _url, _headers, _options ->
-          {:ok,
-           %HTTPoison.Response{
-             status_code: 200,
-             body: "{\"payload\":{\"order_id\":\"5ee71a2604d55c0a5cbdc3c2\"}}"
-           }}
-        end,
-        run_fn: fn _queue_name, func -> func.() end,
-        requests_queue: nil,
-        authorization: %LoginInfo{cookie: "cookie", token: "token"}
+      state = %{
+        dependencies: %{
+          delete_fn: fn _url, _headers, _options ->
+            {:ok,
+             %HTTPoison.Response{
+               status_code: 200,
+               body: "{\"payload\":{\"order_id\":\"5ee71a2604d55c0a5cbdc3c2\"}}"
+             }}
+          end,
+          run_fn: fn _queue_name, func -> func.() end,
+          requests_queue: nil
+        },
+        authorization: %Authorization{cookie: "cookie", token: "token"}
       }
 
       # Act
-      actual = HTTPClient.delete_order(order_id, deps)
+      actual = HTTPClient.delete_order(order_id, state)
       expected = {:ok, "5ee71a2604d55c0a5cbdc3c2"}
 
       # Assert
@@ -281,21 +303,23 @@ defmodule AuctionHouse.HTTPClientTest do
       # Arrange
       order_id = "5ee71a2604d55c0a5cbdc3c2"
 
-      deps = %{
-        delete_fn: fn _url, _headers, _options ->
-          {:ok,
-           %HTTPoison.Response{
-             status_code: 400,
-             body: "{\"error\": {\"order_id\": [\"app.form.invalid\"]}}"
-           }}
-        end,
-        run_fn: fn _queue_name, func -> func.() end,
-        requests_queue: nil,
-        authorization: %LoginInfo{cookie: "cookie", token: "token"}
+      state = %{
+        dependencies: %{
+          delete_fn: fn _url, _headers, _options ->
+            {:ok,
+             %HTTPoison.Response{
+               status_code: 400,
+               body: "{\"error\": {\"order_id\": [\"app.form.invalid\"]}}"
+             }}
+          end,
+          run_fn: fn _queue_name, func -> func.() end,
+          requests_queue: nil
+        },
+        authorization: %Authorization{cookie: "cookie", token: "token"}
       }
 
       # Act
-      actual = HTTPClient.delete_order(order_id, deps)
+      actual = HTTPClient.delete_order(order_id, state)
       expected = {:error, :order_non_existent, "5ee71a2604d55c0a5cbdc3c2"}
 
       # Assert
@@ -306,17 +330,19 @@ defmodule AuctionHouse.HTTPClientTest do
       # Arrange
       order_id = "5ee71a2604d55c0a5cbdc3c2"
 
-      deps = %{
-        delete_fn: fn _url, _headers, _options ->
-          {:error, %HTTPoison.Error{id: nil, reason: :timeout}}
-        end,
-        run_fn: fn _queue_name, func -> func.() end,
-        requests_queue: nil,
-        authorization: %LoginInfo{cookie: "cookie", token: "token"}
+      state = %{
+        dependencies: %{
+          delete_fn: fn _url, _headers, _options ->
+            {:error, %HTTPoison.Error{id: nil, reason: :timeout}}
+          end,
+          run_fn: fn _queue_name, func -> func.() end,
+          requests_queue: nil
+        },
+        authorization: %Authorization{cookie: "cookie", token: "token"}
       }
 
       # Act
-      actual = HTTPClient.delete_order(order_id, deps)
+      actual = HTTPClient.delete_order(order_id, state)
       expected = {:error, :timeout, "5ee71a2604d55c0a5cbdc3c2"}
 
       # Assert
@@ -327,21 +353,23 @@ defmodule AuctionHouse.HTTPClientTest do
       # Arrange
       order_id = "5ee71a2604d55c0a5cbdc3c2"
 
-      deps = %{
-        delete_fn: fn _url, _headers, _opts ->
-          {:ok,
-           %HTTPoison.Response{
-             status_code: 500,
-             body: ""
-           }}
-        end,
-        run_fn: fn _queue_name, func -> func.() end,
-        requests_queue: nil,
-        authorization: %LoginInfo{cookie: "cookie", token: "token"}
+      state = %{
+        dependencies: %{
+          delete_fn: fn _url, _headers, _opts ->
+            {:ok,
+             %HTTPoison.Response{
+               status_code: 500,
+               body: ""
+             }}
+          end,
+          run_fn: fn _queue_name, func -> func.() end,
+          requests_queue: nil
+        },
+        authorization: %Authorization{cookie: "cookie", token: "token"}
       }
 
       # Act
-      actual = HTTPClient.delete_order(order_id, deps)
+      actual = HTTPClient.delete_order(order_id, state)
       expected = {:error, :internal_server_error, order_id}
 
       # Assert
@@ -352,10 +380,10 @@ defmodule AuctionHouse.HTTPClientTest do
       # Arrange
       order_id = "5ee71a2604d55c0a5cbdc3c2"
 
-      deps = %{}
+      state = %{authorization: nil}
 
       # Act
-      actual = HTTPClient.delete_order(order_id, deps)
+      actual = HTTPClient.delete_order(order_id, state)
       expected = {:error, :missing_authorization_credentials, order_id}
 
       # Assert
@@ -368,23 +396,24 @@ defmodule AuctionHouse.HTTPClientTest do
       # Arrange
       item_name = "Gleaming Blight"
 
-      deps = %{
-        get_fn: fn _url, _headers, _opts ->
-          {:ok,
-           %HTTPoison.Response{
-             status_code: 200,
-             body:
-               "{\"payload\":{\"orders\":[{\"order_type\":\"sell\",\"platform\":\"pc\",\"platinum\":45,\"region\":\"en\",\"user\":{\"status\":\"ingame\",\"ingame_name\":\"Fl4m3Ph03n1x\"},\"visible\":true},{\"order_type\":\"sell\",\"platform\":\"pc\",\"platinum\":30,\"region\":\"en\",\"user\":{\"status\":\"ingame\",\"ingame_name\":\"Fl4m3Ph03n1x\"},\"visible\":true}]}}"
-           }}
-        end,
-        run_fn: fn _queue_name, func -> func.() end,
-        requests_queue: nil,
-        cookie: nil,
-        token: nil
+      state = %{
+        dependencies: %{
+          get_fn: fn _url, _headers, _opts ->
+            {:ok,
+             %HTTPoison.Response{
+               status_code: 200,
+               body:
+                 "{\"payload\":{\"orders\":[{\"order_type\":\"sell\",\"platform\":\"pc\",\"platinum\":45,\"region\":\"en\",\"user\":{\"status\":\"ingame\",\"ingame_name\":\"Fl4m3Ph03n1x\"},\"visible\":true},{\"order_type\":\"sell\",\"platform\":\"pc\",\"platinum\":30,\"region\":\"en\",\"user\":{\"status\":\"ingame\",\"ingame_name\":\"Fl4m3Ph03n1x\"},\"visible\":true}]}}"
+             }}
+          end,
+          run_fn: fn _queue_name, func -> func.() end,
+          requests_queue: nil
+        },
+        authorization: nil
       }
 
       # Act
-      actual = HTTPClient.get_all_orders(item_name, deps)
+      actual = HTTPClient.get_all_orders(item_name, state)
 
       expected =
         {:ok,
@@ -413,22 +442,23 @@ defmodule AuctionHouse.HTTPClientTest do
       # Arrange
       item_name = "Gleaming Blight"
 
-      deps = %{
-        get_fn: fn _url, _headers, _opts ->
-          {:ok,
-           %HTTPoison.Response{
-             status_code: 500,
-             body: ""
-           }}
-        end,
-        run_fn: fn _queue_name, func -> func.() end,
-        requests_queue: nil,
-        cookie: nil,
-        token: nil
+      state = %{
+        dependencies: %{
+          get_fn: fn _url, _headers, _opts ->
+            {:ok,
+             %HTTPoison.Response{
+               status_code: 500,
+               body: ""
+             }}
+          end,
+          run_fn: fn _queue_name, func -> func.() end,
+          requests_queue: nil
+        },
+        authorization: nil
       }
 
       # Act
-      actual = HTTPClient.get_all_orders(item_name, deps)
+      actual = HTTPClient.get_all_orders(item_name, state)
       expected = {:error, :internal_server_error, "Gleaming Blight"}
 
       # Assert
@@ -437,64 +467,68 @@ defmodule AuctionHouse.HTTPClientTest do
   end
 
   describe "login/2" do
-    test "returns LoginInfo if login happens correctly" do
+    test "returns UserInfo if login happens correctly" do
       # Arrange
       credentials = Credentials.new("my_email", "my_password")
 
-      deps = %{
-        post_fn: fn _url, _body, _headers, _opts ->
-          {:ok,
-           %HTTPoison.Response{
-             headers: [
-               {"set-cookie",
-                "JWT=new_cookie; Domain=.warframe.market; Expires=Tue, 21-Mar-2023 14:41:06 GMT; Secure; HttpOnly; Path=/; SameSite=Lax"}
-             ],
-             status_code: 200,
-             body:
-               "{\"payload\": {\"user\": {\"has_mail\": true, \"written_reviews\": 0, \"region\": \"en\", \"banned\": false, \"anonymous\": false, \"role\": \"user\", \"reputation\": 84, \"ingame_name\": \"Fl4m3Ph03n1x\", \"platform\": \"pc\", \"unread_messages\": 0, \"background\": null, \"check_code\": \"66BAPR88DLLZ\", \"avatar\": \"user/avatar/584d425cd3ffb630c3f9df42.png?0a8ad917dc66b85aa69520d70a31dafb\", \"verification\": true, \"linked_accounts\": {\"steam_profile\": true, \"patreon_profile\": false, \"xbox_profile\": false, \"discord_profile\": false, \"github_profile\": false}, \"id\": \"584d425cd3ffb630c3f9df42\", \"locale\": \"en\"}}}"
-           }}
-        end,
-        encode_fn: &Jason.encode/1,
-        decode_fn: &Jason.decode/1,
-        parse_document_fn: fn _document ->
-          {:ok,
-           [
-             {"html", [{"lang", "en"}],
-              [
-                {"head", [], [{"meta", [{"name", "csrf-token"}, {"content", "a_token"}], []}]},
-                {"body", [], []}
-              ]}
-           ]}
-        end,
-        find_in_document_fn: fn _document, _search ->
-          [{"meta", [{"name", "csrf-token"}, {"content", "a_token"}], []}]
-        end,
-        get_fn: fn _url, _headers, _opts ->
-          {:ok,
-           %HTTPoison.Response{
-             status_code: 200,
-             headers: [
-               {"set-cookie",
-                "JWT=old_cookie; Domain=.warframe.market; Expires=Tue, 21-Mar-2023 15:16:03 GMT; Secure; HttpOnly; Path=/; SameSite=Lax"}
-             ],
-             body: """
-             <!DOCTYPE html>
-             <html lang=en>
-             <head>
-                 <meta name="csrf-token" content="a_token">
-             </head>
-             <body>
-             </body>
-             </html>
-             """
-           }}
-        end
+      state = %{
+        dependencies: %{
+          post_fn: fn _url, _body, _headers, _opts ->
+            {:ok,
+             %HTTPoison.Response{
+               headers: [
+                 {"set-cookie",
+                  "JWT=new_cookie; Domain=.warframe.market; Expires=Tue, 21-Mar-2023 14:41:06 GMT; Secure; HttpOnly; Path=/; SameSite=Lax"}
+               ],
+               status_code: 200,
+               body:
+                 "{\"payload\": {\"user\": {\"has_mail\": true, \"written_reviews\": 0, \"region\": \"en\", \"banned\": false, \"anonymous\": false, \"role\": \"user\", \"reputation\": 84, \"ingame_name\": \"Fl4m3Ph03n1x\", \"platform\": \"pc\", \"unread_messages\": 0, \"background\": null, \"check_code\": \"66BAPR88DLLZ\", \"avatar\": \"user/avatar/584d425cd3ffb630c3f9df42.png?0a8ad917dc66b85aa69520d70a31dafb\", \"verification\": true, \"linked_accounts\": {\"steam_profile\": true, \"patreon_profile\": false, \"xbox_profile\": false, \"discord_profile\": false, \"github_profile\": false}, \"id\": \"584d425cd3ffb630c3f9df42\", \"locale\": \"en\"}}}"
+             }}
+          end,
+          encode_fn: &Jason.encode/1,
+          decode_fn: &Jason.decode/1,
+          parse_document_fn: fn _document ->
+            {:ok,
+             [
+               {"html", [{"lang", "en"}],
+                [
+                  {"head", [], [{"meta", [{"name", "csrf-token"}, {"content", "a_token"}], []}]},
+                  {"body", [], []}
+                ]}
+             ]}
+          end,
+          find_in_document_fn: fn _document, _search ->
+            [{"meta", [{"name", "csrf-token"}, {"content", "a_token"}], []}]
+          end,
+          get_fn: fn _url, _headers, _opts ->
+            {:ok,
+             %HTTPoison.Response{
+               status_code: 200,
+               headers: [
+                 {"set-cookie",
+                  "JWT=old_cookie; Domain=.warframe.market; Expires=Tue, 21-Mar-2023 15:16:03 GMT; Secure; HttpOnly; Path=/; SameSite=Lax"}
+               ],
+               body: """
+               <!DOCTYPE html>
+               <html lang=en>
+               <head>
+                   <meta name="csrf-token" content="a_token">
+               </head>
+               <body>
+               </body>
+               </html>
+               """
+             }}
+          end
+        },
+        authorization: nil
       }
 
       # Act
-      actual = HTTPClient.login(credentials, deps)
+      actual = HTTPClient.login(credentials, state)
 
-      expected = {:ok, LoginInfo.new("JWT=new_cookie", "a_token", false)}
+      expected =
+        {:ok, {Authorization.new("JWT=new_cookie", "a_token"), User.new("Fl4m3Ph03n1x", false)}}
 
       # Assert
       assert actual == expected
@@ -504,34 +538,37 @@ defmodule AuctionHouse.HTTPClientTest do
       # Arrange
       credentials = Credentials.new("my_email", "my_password")
 
-      deps = %{
-        post_fn: nil,
-        encode_fn: &Jason.encode/1,
-        parse_document_fn: fn _document ->
-          {:ok,
-           [
-             {"html", [{"lang", "en"}],
-              [
-                {"head", [], [{"meta", [{"name", "csrf-token"}, {"content", "a_token"}], []}]},
-                {"body", [], []}
-              ]}
-           ]}
-        end,
-        find_in_document_fn: fn _document, _search ->
-          [{"meta", [{"name", "csrf-token"}, {"content", "a_token"}], []}]
-        end,
-        get_fn: fn _url, _headers, _opts ->
-          {:ok,
-           %HTTPoison.Response{
-             status_code: 500,
-             headers: [],
-             body: "\"Error\""
-           }}
-        end
+      state = %{
+        dependencies: %{
+          post_fn: nil,
+          encode_fn: &Jason.encode/1,
+          parse_document_fn: fn _document ->
+            {:ok,
+             [
+               {"html", [{"lang", "en"}],
+                [
+                  {"head", [], [{"meta", [{"name", "csrf-token"}, {"content", "a_token"}], []}]},
+                  {"body", [], []}
+                ]}
+             ]}
+          end,
+          find_in_document_fn: fn _document, _search ->
+            [{"meta", [{"name", "csrf-token"}, {"content", "a_token"}], []}]
+          end,
+          get_fn: fn _url, _headers, _opts ->
+            {:ok,
+             %HTTPoison.Response{
+               status_code: 500,
+               headers: [],
+               body: "\"Error\""
+             }}
+          end
+        },
+        authorization: nil
       }
 
       # Act
-      actual = HTTPClient.login(credentials, deps)
+      actual = HTTPClient.login(credentials, state)
 
       expected = {:error, :internal_server_error, credentials}
 
@@ -543,20 +580,23 @@ defmodule AuctionHouse.HTTPClientTest do
       # Arrange
       credentials = Credentials.new("my_email", "my_password")
 
-      deps = %{
-        post_fn: nil,
-        encode_fn: &Jason.encode/1,
-        parse_document_fn: fn _document ->
-          {:error, :failed_to_parse_document}
-        end,
-        find_in_document_fn: nil,
-        get_fn: fn _url, _headers, _opts ->
-          {:ok, %HTTPoison.Response{status_code: 200, body: "", headers: []}}
-        end
+      state = %{
+        dependencies: %{
+          post_fn: nil,
+          encode_fn: &Jason.encode/1,
+          parse_document_fn: fn _document ->
+            {:error, :failed_to_parse_document}
+          end,
+          find_in_document_fn: nil,
+          get_fn: fn _url, _headers, _opts ->
+            {:ok, %HTTPoison.Response{status_code: 200, body: "", headers: []}}
+          end
+        },
+        authorization: nil
       }
 
       # Act
-      actual = HTTPClient.login(credentials, deps)
+      actual = HTTPClient.login(credentials, state)
 
       expected = {:error, :failed_to_parse_document, credentials}
 
@@ -568,18 +608,21 @@ defmodule AuctionHouse.HTTPClientTest do
       # Arrange
       credentials = Credentials.new("my_email", "my_password")
 
-      deps = %{
-        post_fn: nil,
-        encode_fn: &Jason.encode/1,
-        parse_document_fn: fn _document -> {:ok, nil} end,
-        find_in_document_fn: fn _document, _search -> [] end,
-        get_fn: fn _url, _headers, _opts ->
-          {:ok, %HTTPoison.Response{status_code: 200, body: "", headers: []}}
-        end
+      state = %{
+        dependencies: %{
+          post_fn: nil,
+          encode_fn: &Jason.encode/1,
+          parse_document_fn: fn _document -> {:ok, nil} end,
+          find_in_document_fn: fn _document, _search -> [] end,
+          get_fn: fn _url, _headers, _opts ->
+            {:ok, %HTTPoison.Response{status_code: 200, body: "", headers: []}}
+          end
+        },
+        authorization: nil
       }
 
       # Act
-      actual = HTTPClient.login(credentials, deps)
+      actual = HTTPClient.login(credentials, state)
 
       expected = {:error, {:xrfc_token_not_found, nil}, credentials}
 
@@ -591,20 +634,23 @@ defmodule AuctionHouse.HTTPClientTest do
       # Arrange
       credentials = Credentials.new("my_email", "my_password")
 
-      deps = %{
-        post_fn: nil,
-        encode_fn: &Jason.encode/1,
-        parse_document_fn: fn _document -> {:ok, nil} end,
-        find_in_document_fn: fn _document, _search ->
-          [{"meta", [{"name", "csrf-token"}, {"content", nil}], []}]
-        end,
-        get_fn: fn _url, _headers, _opts ->
-          {:ok, %HTTPoison.Response{status_code: 200, body: "", headers: []}}
-        end
+      state = %{
+        dependencies: %{
+          post_fn: nil,
+          encode_fn: &Jason.encode/1,
+          parse_document_fn: fn _document -> {:ok, nil} end,
+          find_in_document_fn: fn _document, _search ->
+            [{"meta", [{"name", "csrf-token"}, {"content", nil}], []}]
+          end,
+          get_fn: fn _url, _headers, _opts ->
+            {:ok, %HTTPoison.Response{status_code: 200, body: "", headers: []}}
+          end
+        },
+        authorization: nil
       }
 
       # Act
-      actual = HTTPClient.login(credentials, deps)
+      actual = HTTPClient.login(credentials, state)
 
       expected = {:error, {:no_cookie_found, []}, credentials}
 
@@ -621,20 +667,23 @@ defmodule AuctionHouse.HTTPClientTest do
          "Domain=.warframe.market; Expires=Tue, 21-Mar-2023 15:16:03 GMT; Secure; HttpOnly; Path=/; SameSite=Lax"}
       ]
 
-      deps = %{
-        post_fn: nil,
-        encode_fn: &Jason.encode/1,
-        parse_document_fn: fn _document -> {:ok, nil} end,
-        find_in_document_fn: fn _document, _search ->
-          [{"meta", [{"name", "csrf-token"}, {"content", nil}], []}]
-        end,
-        get_fn: fn _url, _headers, _opts ->
-          {:ok, %HTTPoison.Response{status_code: 200, body: "", headers: headers}}
-        end
+      state = %{
+        dependencies: %{
+          post_fn: nil,
+          encode_fn: &Jason.encode/1,
+          parse_document_fn: fn _document -> {:ok, nil} end,
+          find_in_document_fn: fn _document, _search ->
+            [{"meta", [{"name", "csrf-token"}, {"content", nil}], []}]
+          end,
+          get_fn: fn _url, _headers, _opts ->
+            {:ok, %HTTPoison.Response{status_code: 200, body: "", headers: headers}}
+          end
+        },
+        authorization: nil
       }
 
       # Act
-      actual = HTTPClient.login(credentials, deps)
+      actual = HTTPClient.login(credentials, state)
 
       expected = {:error, {:missing_jwt, headers}, credentials}
 
@@ -655,49 +704,52 @@ defmodule AuctionHouse.HTTPClientTest do
         body: "{\"error\": {\"password\": [\"app.account.password_invalid\"]}}"
       }
 
-      deps = %{
-        post_fn: fn _url, _body, _headers, _opts ->
-          {:ok, post_response}
-        end,
-        encode_fn: &Jason.encode/1,
-        decode_fn: &Jason.decode/1,
-        parse_document_fn: fn _document ->
-          {:ok,
-           [
-             {"html", [{"lang", "en"}],
-              [
-                {"head", [], [{"meta", [{"name", "csrf-token"}, {"content", "a_token"}], []}]},
-                {"body", [], []}
-              ]}
-           ]}
-        end,
-        find_in_document_fn: fn _document, _search ->
-          [{"meta", [{"name", "csrf-token"}, {"content", "a_token"}], []}]
-        end,
-        get_fn: fn _url, _headers, _opts ->
-          {:ok,
-           %HTTPoison.Response{
-             status_code: 200,
-             headers: [
-               {"set-cookie",
-                "JWT=old_cookie; Domain=.warframe.market; Expires=Tue, 21-Mar-2023 15:16:03 GMT; Secure; HttpOnly; Path=/; SameSite=Lax"}
-             ],
-             body: """
-             <!DOCTYPE html>
-             <html lang=en>
-             <head>
-                 <meta name="csrf-token" content="a_token">
-             </head>
-             <body>
-             </body>
-             </html>
-             """
-           }}
-        end
+      state = %{
+        dependencies: %{
+          post_fn: fn _url, _body, _headers, _opts ->
+            {:ok, post_response}
+          end,
+          encode_fn: &Jason.encode/1,
+          decode_fn: &Jason.decode/1,
+          parse_document_fn: fn _document ->
+            {:ok,
+             [
+               {"html", [{"lang", "en"}],
+                [
+                  {"head", [], [{"meta", [{"name", "csrf-token"}, {"content", "a_token"}], []}]},
+                  {"body", [], []}
+                ]}
+             ]}
+          end,
+          find_in_document_fn: fn _document, _search ->
+            [{"meta", [{"name", "csrf-token"}, {"content", "a_token"}], []}]
+          end,
+          get_fn: fn _url, _headers, _opts ->
+            {:ok,
+             %HTTPoison.Response{
+               status_code: 200,
+               headers: [
+                 {"set-cookie",
+                  "JWT=old_cookie; Domain=.warframe.market; Expires=Tue, 21-Mar-2023 15:16:03 GMT; Secure; HttpOnly; Path=/; SameSite=Lax"}
+               ],
+               body: """
+               <!DOCTYPE html>
+               <html lang=en>
+               <head>
+                   <meta name="csrf-token" content="a_token">
+               </head>
+               <body>
+               </body>
+               </html>
+               """
+             }}
+          end
+        },
+        authorization: nil
       }
 
       # Act
-      actual = HTTPClient.login(credentials, deps)
+      actual = HTTPClient.login(credentials, state)
 
       expected = {:error, :wrong_password, credentials}
 
@@ -709,57 +761,60 @@ defmodule AuctionHouse.HTTPClientTest do
       # Arrange
       credentials = Credentials.new("my_email", "my_password")
 
-      deps = %{
-        post_fn: fn _url, _body, _headers, _opts ->
-          {:ok,
-           %HTTPoison.Response{
-             headers: [
-               {"set-cookie",
-                "JWT=new_cookie; Domain=.warframe.market; Expires=Tue, 21-Mar-2023 14:41:06 GMT; Secure; HttpOnly; Path=/; SameSite=Lax"}
-             ],
-             status_code: 200,
-             body: "{\"payload\": }"
-           }}
-        end,
-        encode_fn: &Jason.encode/1,
-        decode_fn: &Jason.decode/1,
-        parse_document_fn: fn _document ->
-          {:ok,
-           [
-             {"html", [{"lang", "en"}],
-              [
-                {"head", [], [{"meta", [{"name", "csrf-token"}, {"content", "a_token"}], []}]},
-                {"body", [], []}
-              ]}
-           ]}
-        end,
-        find_in_document_fn: fn _document, _search ->
-          [{"meta", [{"name", "csrf-token"}, {"content", "a_token"}], []}]
-        end,
-        get_fn: fn _url, _headers, _opts ->
-          {:ok,
-           %HTTPoison.Response{
-             status_code: 200,
-             headers: [
-               {"set-cookie",
-                "JWT=old_cookie; Domain=.warframe.market; Expires=Tue, 21-Mar-2023 15:16:03 GMT; Secure; HttpOnly; Path=/; SameSite=Lax"}
-             ],
-             body: """
-             <!DOCTYPE html>
-             <html lang=en>
-             <head>
-                 <meta name="csrf-token" content="a_token">
-             </head>
-             <body>
-             </body>
-             </html>
-             """
-           }}
-        end
+      state = %{
+        dependencies: %{
+          post_fn: fn _url, _body, _headers, _opts ->
+            {:ok,
+             %HTTPoison.Response{
+               headers: [
+                 {"set-cookie",
+                  "JWT=new_cookie; Domain=.warframe.market; Expires=Tue, 21-Mar-2023 14:41:06 GMT; Secure; HttpOnly; Path=/; SameSite=Lax"}
+               ],
+               status_code: 200,
+               body: "{\"payload\": }"
+             }}
+          end,
+          encode_fn: &Jason.encode/1,
+          decode_fn: &Jason.decode/1,
+          parse_document_fn: fn _document ->
+            {:ok,
+             [
+               {"html", [{"lang", "en"}],
+                [
+                  {"head", [], [{"meta", [{"name", "csrf-token"}, {"content", "a_token"}], []}]},
+                  {"body", [], []}
+                ]}
+             ]}
+          end,
+          find_in_document_fn: fn _document, _search ->
+            [{"meta", [{"name", "csrf-token"}, {"content", "a_token"}], []}]
+          end,
+          get_fn: fn _url, _headers, _opts ->
+            {:ok,
+             %HTTPoison.Response{
+               status_code: 200,
+               headers: [
+                 {"set-cookie",
+                  "JWT=old_cookie; Domain=.warframe.market; Expires=Tue, 21-Mar-2023 15:16:03 GMT; Secure; HttpOnly; Path=/; SameSite=Lax"}
+               ],
+               body: """
+               <!DOCTYPE html>
+               <html lang=en>
+               <head>
+                   <meta name="csrf-token" content="a_token">
+               </head>
+               <body>
+               </body>
+               </html>
+               """
+             }}
+          end
+        },
+        authorization: nil
       }
 
       # Act
-      actual = HTTPClient.login(credentials, deps)
+      actual = HTTPClient.login(credentials, state)
 
       expected =
         {:error,
@@ -774,62 +829,209 @@ defmodule AuctionHouse.HTTPClientTest do
       # Arrange
       credentials = Credentials.new("my_email", "my_password")
 
-      deps = %{
-        post_fn: fn _url, _body, _headers, _opts ->
-          {:ok,
-           %HTTPoison.Response{
-             headers: [
-               {"set-cookie",
-                "JWT=new_cookie; Domain=.warframe.market; Expires=Tue, 21-Mar-2023 14:41:06 GMT; Secure; HttpOnly; Path=/; SameSite=Lax"}
-             ],
-             status_code: 200,
-             body: "{\"data\": 1}"
-           }}
-        end,
-        encode_fn: &Jason.encode/1,
-        decode_fn: &Jason.decode/1,
-        parse_document_fn: fn _document ->
-          {:ok,
-           [
-             {"html", [{"lang", "en"}],
-              [
-                {"head", [], [{"meta", [{"name", "csrf-token"}, {"content", "a_token"}], []}]},
-                {"body", [], []}
-              ]}
-           ]}
-        end,
-        find_in_document_fn: fn _document, _search ->
-          [{"meta", [{"name", "csrf-token"}, {"content", "a_token"}], []}]
-        end,
-        get_fn: fn _url, _headers, _opts ->
-          {:ok,
-           %HTTPoison.Response{
-             status_code: 200,
-             headers: [
-               {"set-cookie",
-                "JWT=old_cookie; Domain=.warframe.market; Expires=Tue, 21-Mar-2023 15:16:03 GMT; Secure; HttpOnly; Path=/; SameSite=Lax"}
-             ],
-             body: """
-             <!DOCTYPE html>
-             <html lang=en>
-             <head>
-                 <meta name="csrf-token" content="a_token">
-             </head>
-             <body>
-             </body>
-             </html>
-             """
-           }}
-        end
+      state = %{
+        dependencies: %{
+          post_fn: fn _url, _body, _headers, _opts ->
+            {:ok,
+             %HTTPoison.Response{
+               headers: [
+                 {"set-cookie",
+                  "JWT=new_cookie; Domain=.warframe.market; Expires=Tue, 21-Mar-2023 14:41:06 GMT; Secure; HttpOnly; Path=/; SameSite=Lax"}
+               ],
+               status_code: 200,
+               body: "{\"data\": 1}"
+             }}
+          end,
+          encode_fn: &Jason.encode/1,
+          decode_fn: &Jason.decode/1,
+          parse_document_fn: fn _document ->
+            {:ok,
+             [
+               {"html", [{"lang", "en"}],
+                [
+                  {"head", [], [{"meta", [{"name", "csrf-token"}, {"content", "a_token"}], []}]},
+                  {"body", [], []}
+                ]}
+             ]}
+          end,
+          find_in_document_fn: fn _document, _search ->
+            [{"meta", [{"name", "csrf-token"}, {"content", "a_token"}], []}]
+          end,
+          get_fn: fn _url, _headers, _opts ->
+            {:ok,
+             %HTTPoison.Response{
+               status_code: 200,
+               headers: [
+                 {"set-cookie",
+                  "JWT=old_cookie; Domain=.warframe.market; Expires=Tue, 21-Mar-2023 15:16:03 GMT; Secure; HttpOnly; Path=/; SameSite=Lax"}
+               ],
+               body: """
+               <!DOCTYPE html>
+               <html lang=en>
+               <head>
+                   <meta name="csrf-token" content="a_token">
+               </head>
+               <body>
+               </body>
+               </html>
+               """
+             }}
+          end
+        },
+        authorization: nil
       }
 
       # Act
-      actual = HTTPClient.login(credentials, deps)
+      actual = HTTPClient.login(credentials, state)
 
       expected = {:error, {:payload_not_found, %{"data" => 1}}, credentials}
 
       # Assert
       assert actual == expected
+    end
+
+    test "returns error if patreon data is missing from response payload" do
+      # Arrange
+      credentials = Credentials.new("my_email", "my_password")
+
+      state = %{
+        dependencies: %{
+          post_fn: fn _url, _body, _headers, _opts ->
+            {:ok,
+             %HTTPoison.Response{
+               headers: [
+                 {"set-cookie",
+                  "JWT=new_cookie; Domain=.warframe.market; Expires=Tue, 21-Mar-2023 14:41:06 GMT; Secure; HttpOnly; Path=/; SameSite=Lax"}
+               ],
+               status_code: 200,
+               body:
+                 "{\"payload\": {\"user\": {\"has_mail\": true, \"written_reviews\": 0, \"region\": \"en\", \"banned\": false, \"anonymous\": false, \"role\": \"user\", \"reputation\": 84, \"ingame_name\": \"Fl4m3Ph03n1x\", \"platform\": \"pc\", \"unread_messages\": 0, \"background\": null, \"check_code\": \"66BAPR88DLLZ\", \"avatar\": \"user/avatar/584d425cd3ffb630c3f9df42.png?0a8ad917dc66b85aa69520d70a31dafb\", \"verification\": true, \"linked_accounts\": {\"steam_profile\": true, \"xbox_profile\": false, \"discord_profile\": false, \"github_profile\": false}, \"id\": \"584d425cd3ffb630c3f9df42\", \"locale\": \"en\"}}}"
+             }}
+          end,
+          encode_fn: &Jason.encode/1,
+          decode_fn: &Jason.decode/1,
+          parse_document_fn: fn _document ->
+            {:ok,
+             [
+               {"html", [{"lang", "en"}],
+                [
+                  {"head", [], [{"meta", [{"name", "csrf-token"}, {"content", "a_token"}], []}]},
+                  {"body", [], []}
+                ]}
+             ]}
+          end,
+          find_in_document_fn: fn _document, _search ->
+            [{"meta", [{"name", "csrf-token"}, {"content", "a_token"}], []}]
+          end,
+          get_fn: fn _url, _headers, _opts ->
+            {:ok,
+             %HTTPoison.Response{
+               status_code: 200,
+               headers: [
+                 {"set-cookie",
+                  "JWT=old_cookie; Domain=.warframe.market; Expires=Tue, 21-Mar-2023 15:16:03 GMT; Secure; HttpOnly; Path=/; SameSite=Lax"}
+               ],
+               body: """
+               <!DOCTYPE html>
+               <html lang=en>
+               <head>
+                   <meta name="csrf-token" content="a_token">
+               </head>
+               <body>
+               </body>
+               </html>
+               """
+             }}
+          end
+        },
+        authorization: nil
+      }
+
+      # Act & Assert
+      assert capture_log(fn ->
+               actual = HTTPClient.login(credentials, state)
+
+               expected =
+                 {:error, :missing_patreon,
+                  %AuctionHouse.Data.Credentials{
+                    password: "my_password",
+                    email: "my_email"
+                  }}
+
+               assert actual == expected
+             end) =~ "Missing patreon_profile in response payload:"
+    end
+
+    test "returns error if ingame_name is missing from response payload" do
+      # Arrange
+      credentials = Credentials.new("my_email", "my_password")
+
+      state = %{
+        dependencies: %{
+          post_fn: fn _url, _body, _headers, _opts ->
+            {:ok,
+             %HTTPoison.Response{
+               headers: [
+                 {"set-cookie",
+                  "JWT=new_cookie; Domain=.warframe.market; Expires=Tue, 21-Mar-2023 14:41:06 GMT; Secure; HttpOnly; Path=/; SameSite=Lax"}
+               ],
+               status_code: 200,
+               body:
+                 "{\"payload\": {\"user\": {\"has_mail\": true, \"written_reviews\": 0, \"region\": \"en\", \"banned\": false, \"anonymous\": false, \"role\": \"user\", \"reputation\": 84, \"platform\": \"pc\", \"unread_messages\": 0, \"background\": null, \"check_code\": \"66BAPR88DLLZ\", \"avatar\": \"user/avatar/584d425cd3ffb630c3f9df42.png?0a8ad917dc66b85aa69520d70a31dafb\", \"verification\": true, \"linked_accounts\": {\"steam_profile\": true, \"patreon_profile\": false, \"xbox_profile\": false, \"discord_profile\": false, \"github_profile\": false}, \"id\": \"584d425cd3ffb630c3f9df42\", \"locale\": \"en\"}}}"
+             }}
+          end,
+          encode_fn: &Jason.encode/1,
+          decode_fn: &Jason.decode/1,
+          parse_document_fn: fn _document ->
+            {:ok,
+             [
+               {"html", [{"lang", "en"}],
+                [
+                  {"head", [], [{"meta", [{"name", "csrf-token"}, {"content", "a_token"}], []}]},
+                  {"body", [], []}
+                ]}
+             ]}
+          end,
+          find_in_document_fn: fn _document, _search ->
+            [{"meta", [{"name", "csrf-token"}, {"content", "a_token"}], []}]
+          end,
+          get_fn: fn _url, _headers, _opts ->
+            {:ok,
+             %HTTPoison.Response{
+               status_code: 200,
+               headers: [
+                 {"set-cookie",
+                  "JWT=old_cookie; Domain=.warframe.market; Expires=Tue, 21-Mar-2023 15:16:03 GMT; Secure; HttpOnly; Path=/; SameSite=Lax"}
+               ],
+               body: """
+               <!DOCTYPE html>
+               <html lang=en>
+               <head>
+                   <meta name="csrf-token" content="a_token">
+               </head>
+               <body>
+               </body>
+               </html>
+               """
+             }}
+          end
+        },
+        authorization: nil
+      }
+
+      # Act & Assert
+      assert capture_log(fn ->
+               actual = HTTPClient.login(credentials, state)
+
+               expected =
+                 {:error, :missing_ingame_name,
+                  %AuctionHouse.Data.Credentials{
+                    password: "my_password",
+                    email: "my_email"
+                  }}
+
+               assert actual == expected
+             end) =~ "Missing ingame_name in response payload:"
     end
   end
 end

@@ -8,7 +8,8 @@ defmodule AuctionHouse.ServerTest do
 
   test "init/1 returns the correct state" do
     # Act
-    {:ok, deps, {:continue, :setup_queue}} = Server.init(nil)
+    {:ok, %{dependencies: deps, authorization: nil, user: nil}, {:continue, :setup_queue}} =
+      Server.init(nil)
 
     # Assert
     assert is_function(Map.get(deps, :parse_document_fn))
@@ -26,12 +27,16 @@ defmodule AuctionHouse.ServerTest do
   test "handle_continue/2 creates queue" do
     # Arrange
     deps = %{
-      requests_queue: :test_queue,
-      requests_per_second: 2,
-      create_queue_fn: fn _name, _opts ->
-        send(self(), {:add_queue, :ok})
-        :ok
-      end
+      dependencies: %{
+        requests_queue: :test_queue,
+        requests_per_second: 2,
+        create_queue_fn: fn _name, _opts ->
+          send(self(), {:add_queue, :ok})
+          :ok
+        end
+      },
+      authorization: nil,
+      user: nil
     }
 
     # Act
@@ -46,12 +51,16 @@ defmodule AuctionHouse.ServerTest do
   test "terminate/2 deletes queue" do
     # Arrange
     deps = %{
-      requests_queue: :test_queue,
-      requests_per_second: 2,
-      delete_queue_fn: fn _name ->
-        send(self(), {:delete_queue, true})
-        true
-      end
+      dependencies: %{
+        requests_queue: :test_queue,
+        requests_per_second: 2,
+        delete_queue_fn: fn _name ->
+          send(self(), {:delete_queue, true})
+          true
+        end
+      },
+      authorization: nil,
+      user: nil
     }
 
     # Act and Assert

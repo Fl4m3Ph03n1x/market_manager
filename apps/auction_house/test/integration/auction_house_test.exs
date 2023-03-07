@@ -4,7 +4,8 @@ defmodule AuctionHouseTest do
   use ExUnit.Case
 
   alias AuctionHouse
-  alias AuctionHouse.Data.{Credentials, Order, OrderInfo, LoginInfo}
+  alias AuctionHouse.Data.User, as: UserInfo
+  alias AuctionHouse.Data.{Authorization, Credentials, Order, OrderInfo}
   alias AuctionHouse.Data.OrderInfo.User
   alias AuctionHouse.Runtime.Server
   alias Bypass
@@ -72,7 +73,7 @@ defmodule AuctionHouseTest do
         mod_rank: 0
       }
 
-      login_info = %LoginInfo{cookie: "cookie", token: "token", patreon?: false}
+      login_info = %Authorization{cookie: "cookie", token: "token"}
       :sys.replace_state(server, fn state -> Map.put(state, :authorization, login_info) end)
 
       # Act
@@ -96,7 +97,7 @@ defmodule AuctionHouseTest do
       end)
 
       order_id = "5ee71a2604d55c0a5cbdc3c2"
-      login_info = %LoginInfo{cookie: "cookie", token: "token", patreon?: false}
+      login_info = %Authorization{cookie: "cookie", token: "token"}
       :sys.replace_state(server, fn state -> Map.put(state, :authorization, login_info) end)
 
       # Act
@@ -203,7 +204,7 @@ defmodule AuctionHouseTest do
   end
 
   describe "login/1" do
-    test "returns {:ok, LoginInfo} when the login is successful", %{
+    test "returns {:ok, Authorization} when the login is successful", %{
       bypass: bypass
     } do
       # Arrange
@@ -249,10 +250,9 @@ defmodule AuctionHouseTest do
 
       expected =
         {:ok,
-         %AuctionHouse.Data.LoginInfo{
+         %UserInfo{
            patreon?: false,
-           token: "a_token",
-           cookie: "JWT=new_cookie"
+           ingame_name: "Fl4m3Ph03n1x"
          }}
 
       # Assert

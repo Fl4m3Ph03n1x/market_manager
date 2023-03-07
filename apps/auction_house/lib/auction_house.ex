@@ -5,7 +5,7 @@ defmodule AuctionHouse do
   into a format the manager understands.
   """
 
-  alias AuctionHouse.Data
+  alias AuctionHouse.Data.{Credentials, Order}
   alias AuctionHouse.Runtime.Server
   alias AuctionHouse.Type
   alias Supervisor
@@ -19,13 +19,14 @@ defmodule AuctionHouse do
 
   Example:
   ```
-  order = %{
+  alias AuctionHouse.Data.Order
+  order = Order.new(%{
     "item_id" => "54e644ffe779897594fa68cd",
     "mod_rank" => 0,
     "order_type" => "sell",
     "platinum" => 20,
     "quantity" => 1
-  }
+  })
 
   > AuctionHouse.place_order(order)
   {:ok, "626127cbc984ac033cd2bbd2"}
@@ -34,7 +35,7 @@ defmodule AuctionHouse do
   {:error, :reason, order}
   ```
   """
-  @spec place_order(Type.order()) :: Type.place_order_response()
+  @spec place_order(Order.t()) :: Type.place_order_response()
   defdelegate place_order(order), to: Server
 
   @doc """
@@ -64,16 +65,18 @@ defmodule AuctionHouse do
   item_name = "Despoil"
 
   > AuctionHouse.get_all_orders(item_name)
-  {:ok, [%{
+  {:ok, [
+    %AuctionHouse.Data.OrderInfo{
           "visible" => true,
           "order_type" => "sell",
           "platform" => "pc",
           "platinum" => 20,
-          "user" => %{
+          "user" => %AuctionHouse.Data.OrderInfo.User{
             "ingame_name" => "user_name_1",
             "status" => "ingame"
           }
-        }]
+        }
+      ]
   }
 
   > AuctionHouse.get_all_orders(item_name)
@@ -86,20 +89,27 @@ defmodule AuctionHouse do
   @doc """
   Stores the user's credentials and  authenticates with the auction house to
   make requests. Must be invoked every time the application is launched.
-  It also performs the necessary steps for authorization.
+  It also performs the necessary steps for authorization. Returns user
+  information.
 
   Example:
   ```
-  access_info = %{
-    "username" => "username",
-    "password" => "password"
+  alias AuctionHouse.Data.Credentials
+  credentials = Credentials.new("the_username", "the_password")
+
+  > AuctionHouse.login(credentials)
+  {:ok,
+    %AuctionHouse.Data.User{
+      patreon?: false,
+      ingame_name: "fl4m3"
+    }
   }
 
   > AuctionHouse.login(credentials)
-  {:ok, access_info}
+  {:error, :reason, credentials}
   ```
   """
-  @spec login(Data.credentials()) :: Type.login_response()
+  @spec login(Credentials.t()) :: Type.login_response()
   defdelegate login(credentials), to: Server
 
   @doc false
