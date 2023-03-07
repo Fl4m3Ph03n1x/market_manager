@@ -6,13 +6,13 @@ defmodule AuctionHouse.Runtime.Server do
 
   use GenServer
 
-  alias AuctionHouse.Data.{Authorization, Credentials, Order, User}
+  alias AuctionHouse.Data.{Credentials, Order}
   alias AuctionHouse.Impl.{HTTPClient, Settings}
   alias AuctionHouse.Type
   alias Floki
   alias HTTPoison
 
-  @default_timeout 20_000
+  @genserver_timeout Application.compile_env!(:auction_house, :genserver_timeout)
 
   ##############
   # Public API #
@@ -23,17 +23,19 @@ defmodule AuctionHouse.Runtime.Server do
 
   @spec get_all_orders(Type.item_name()) :: Type.get_all_orders_response()
   def get_all_orders(item_name),
-    do: GenServer.call(__MODULE__, {:get_all_orders, item_name}, @default_timeout)
+    do: GenServer.call(__MODULE__, {:get_all_orders, item_name}, @genserver_timeout)
 
   @spec place_order(Order.t()) :: Type.place_order_response()
-  def place_order(order), do: GenServer.call(__MODULE__, {:place_order, order}, @default_timeout)
+  def place_order(order),
+    do: GenServer.call(__MODULE__, {:place_order, order}, @genserver_timeout)
 
   @spec delete_order(Type.order_id()) :: Type.delete_order_response()
   def delete_order(order_id),
-    do: GenServer.call(__MODULE__, {:delete_order, order_id}, @default_timeout)
+    do: GenServer.call(__MODULE__, {:delete_order, order_id}, @genserver_timeout)
 
   @spec login(Credentials.t()) :: Type.login_response()
-  def login(credentials), do: GenServer.call(__MODULE__, {:login, credentials}, @default_timeout)
+  def login(credentials),
+    do: GenServer.call(__MODULE__, {:login, credentials}, @genserver_timeout)
 
   #############
   # Callbacks #

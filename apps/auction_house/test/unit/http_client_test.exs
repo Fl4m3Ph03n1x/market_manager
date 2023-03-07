@@ -519,7 +519,9 @@ defmodule AuctionHouse.HTTPClientTest do
                </html>
                """
              }}
-          end
+          end,
+          run_fn: fn _queue_name, func -> func.() end,
+          requests_queue: nil
         },
         authorization: nil
       }
@@ -743,7 +745,9 @@ defmodule AuctionHouse.HTTPClientTest do
                </html>
                """
              }}
-          end
+          end,
+          run_fn: fn _queue_name, func -> func.() end,
+          requests_queue: nil
         },
         authorization: nil
       }
@@ -808,7 +812,9 @@ defmodule AuctionHouse.HTTPClientTest do
                </html>
                """
              }}
-          end
+          end,
+          run_fn: fn _queue_name, func -> func.() end,
+          requests_queue: nil
         },
         authorization: nil
       }
@@ -876,7 +882,9 @@ defmodule AuctionHouse.HTTPClientTest do
                </html>
                """
              }}
-          end
+          end,
+          run_fn: fn _queue_name, func -> func.() end,
+          requests_queue: nil
         },
         authorization: nil
       }
@@ -942,7 +950,9 @@ defmodule AuctionHouse.HTTPClientTest do
                </html>
                """
              }}
-          end
+          end,
+          run_fn: fn _queue_name, func -> func.() end,
+          requests_queue: nil
         },
         authorization: nil
       }
@@ -1014,7 +1024,9 @@ defmodule AuctionHouse.HTTPClientTest do
                </html>
                """
              }}
-          end
+          end,
+          run_fn: fn _queue_name, func -> func.() end,
+          requests_queue: nil
         },
         authorization: nil
       }

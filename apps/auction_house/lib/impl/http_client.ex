@@ -12,13 +12,12 @@ defmodule AuctionHouse.Impl.HTTPClient do
   @search_url Application.compile_env!(:auction_house, :api_search_url)
   @market_signin_url Application.compile_env!(:auction_house, :market_signin_url)
   @api_signin_url Application.compile_env!(:auction_house, :api_signin_url)
+  @http_response_timeout Application.compile_env!(:auction_house, :http_response_timeout)
 
   @static_headers [
     {"Accept", "application/json"},
     {"Content-Type", "application/json"}
   ]
-
-  @response_timeout 9_000
 
   ##########
   # Public #
@@ -28,7 +27,8 @@ defmodule AuctionHouse.Impl.HTTPClient do
   def place_order(order, state) do
     with :ok <- check_authorization(state),
          {:ok, order_json} <- Jason.encode(order),
-         {:ok, %HTTPoison.Response{status_code: 200, body: body}} <- http_post(order_json, state),
+         {:ok, %HTTPoison.Response{status_code: 200, body: body}} <-
+           http_post(@url, order_json, state),
          {:ok, content} <- Jason.decode(body),
          {:ok, id} <- get_id(content) do
       {:ok, id}
@@ -62,18 +62,11 @@ defmodule AuctionHouse.Impl.HTTPClient do
   end
 
   @spec login(Credentials.t(), Type.state()) :: Type.login_response()
-  def login(
-        credentials,
-        %{
-          dependencies: %{post_fn: post} = deps
-        } = _state
-      ) do
+  def login(credentials, %{dependencies: deps} = state) do
     with {:ok, json_credentials} <- Jason.encode(credentials),
-         {:ok, token: token, cookie: cookie} <- fetch_authentication_data(deps),
+         {:ok, token: token, cookie: _cookie} <- fetch_authentication_data(deps),
          {:ok, %HTTPoison.Response{status_code: 200, body: body, headers: headers}} <-
-           post.(@api_signin_url, json_credentials, build_headers(cookie, token),
-             recv_timeout: @response_timeout
-           ),
+           http_post(@api_signin_url, json_credentials, state),
          {:ok, decoded_body} <- validate_body(body),
          {:ok, updated_cookie} <- parse_cookie(headers),
          {:ok, ingame_name} <- parse_ingame_name(decoded_body),
@@ -101,7 +94,7 @@ defmodule AuctionHouse.Impl.HTTPClient do
          } = deps
        ) do
     with {:ok, %HTTPoison.Response{status_code: 200, body: body, headers: headers}} <-
-           get.(@market_signin_url, @static_headers, recv_timeout: @response_timeout),
+           get.(@market_signin_url, @static_headers, recv_timeout: @http_response_timeout),
          {:ok, doc} <- parse_document.(body),
          {:ok, token} <- find_xrfc_token(doc, deps),
          {:ok, cookie} <- parse_cookie(headers) do
@@ -175,9 +168,9 @@ defmodule AuctionHouse.Impl.HTTPClient do
     end
   end
 
-  @spec http_post(order_json :: String.t(), Type.state()) ::
+  @spec http_post(url :: String.t(), data :: String.t(), Type.state()) ::
           {:ok, HTTPoison.Response.t()} | {:error, HTTPoison.Error.t()}
-  defp http_post(order, %{
+  defp http_post(url, data, %{
          dependencies: %{
            post_fn: post,
            run_fn: run,
@@ -187,7 +180,20 @@ defmodule AuctionHouse.Impl.HTTPClient do
        }),
        do:
          run.(queue, fn ->
-           post.(@url, order, build_headers(cookie, token), recv_timeout: @response_timeout)
+           post.(url, data, build_headers(cookie, token), recv_timeout: @http_response_timeout)
+         end)
+
+  defp http_post(url, data, %{
+         dependencies: %{
+           post_fn: post,
+           run_fn: run,
+           requests_queue: queue
+         },
+         authorization: nil
+       }),
+       do:
+         run.(queue, fn ->
+           post.(url, data, @static_headers, recv_timeout: @http_response_timeout)
          end)
 
   @spec http_delete(url :: String.t(), Type.state()) ::
@@ -202,7 +208,7 @@ defmodule AuctionHouse.Impl.HTTPClient do
        }),
        do:
          run.(queue, fn ->
-           delete.(url, build_headers(cookie, token), recv_timeout: @response_timeout)
+           delete.(url, build_headers(cookie, token), recv_timeout: @http_response_timeout)
          end)
 
   @spec http_get(url :: String.t(), Type.state()) ::
@@ -217,7 +223,7 @@ defmodule AuctionHouse.Impl.HTTPClient do
        }),
        do:
          run.(queue, fn ->
-           get.(url, build_headers(cookie, token), recv_timeout: @response_timeout)
+           get.(url, build_headers(cookie, token), recv_timeout: @http_response_timeout)
          end)
 
   defp http_get(url, %{
@@ -230,7 +236,7 @@ defmodule AuctionHouse.Impl.HTTPClient do
        }),
        do:
          run.(queue, fn ->
-           get.(url, @static_headers, recv_timeout: @response_timeout)
+           get.(url, @static_headers, recv_timeout: @http_response_timeout)
          end)
 
   defp to_auction_house_error(
