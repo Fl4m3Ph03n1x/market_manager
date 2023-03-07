@@ -8,21 +8,11 @@ This project is **not** an OTP application, meaning that to use it you need to i
 
 ```elixir
 children = [
-  {AuctionHouse, %{"cookie" => "a_cookie", "token" => "a_token"}},
+  AuctionHouse,
   # ...
 ]
 Supervisor.init(children, strategy: :one_for_one)
 ```
-
-The library takes a map as a `credentials` parameter (as seen above) with the following format:
-
-```elixir
-  @type credentials :: %{
-    (cookie :: String.t) => String.t,
-    (token :: String.t) => String.t
-  }
-```
-Without this, the `auction_house` library's `GenServer` cannot be started.
 
 Why is this not an OTP application? Well, because it doesn't need to.
 This Library is not supposed to handle the weight of the world. It is only supposed to Manage requests and responses to a website. That's it. 
@@ -70,6 +60,8 @@ And then in your `config/config.exs` (or equivalent):
 
 ```elixir
 config :auction_house,
-  api_base_url: "http://localhost:8081/v1/profile/orders",
-  api_search_url: "http://localhost:8081/v1/items"
+  api_base_url: "http://localhost:8082/v1/profile/orders",
+  api_search_url: "http://localhost:8082/v1/items",
+  market_signin_url: "http://localhost:8082/auth/signin",
+  api_signin_url: "http://localhost:8082/v1/auth/signin"
 ```
