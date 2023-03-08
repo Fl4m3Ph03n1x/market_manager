@@ -62,11 +62,15 @@ defmodule AuctionHouse.Impl.HTTPClient do
   end
 
   @spec login(Credentials.t(), Type.state()) :: Type.login_response()
-  def login(credentials, %{dependencies: deps} = state) do
+  def login(credentials, state) do
     with {:ok, json_credentials} <- Jason.encode(credentials),
-         {:ok, token: token, cookie: _cookie} <- fetch_authentication_data(deps),
+         {:ok, token: token, cookie: cookie} <- fetch_authentication_data(state),
          {:ok, %HTTPoison.Response{status_code: 200, body: body, headers: headers}} <-
-           http_post(@api_signin_url, json_credentials, state),
+           http_post(
+             @api_signin_url,
+             json_credentials,
+             Map.put(state, :authorization, %Authorization{cookie: cookie, token: token})
+           ),
          {:ok, decoded_body} <- validate_body(body),
          {:ok, updated_cookie} <- parse_cookie(headers),
          {:ok, ingame_name} <- parse_ingame_name(decoded_body),
@@ -88,13 +92,10 @@ defmodule AuctionHouse.Impl.HTTPClient do
   @spec fetch_authentication_data(dependencies :: map()) ::
           {:ok, [token: String.t(), cookie: String.t()]} | {:error, any}
   defp fetch_authentication_data(
-         %{
-           parse_document_fn: parse_document,
-           get_fn: get
-         } = deps
+         %{dependencies: %{parse_document_fn: parse_document} = deps} = state
        ) do
     with {:ok, %HTTPoison.Response{status_code: 200, body: body, headers: headers}} <-
-           get.(@market_signin_url, @static_headers, recv_timeout: @http_response_timeout),
+           http_get(@market_signin_url, state),
          {:ok, doc} <- parse_document.(body),
          {:ok, token} <- find_xrfc_token(doc, deps),
          {:ok, cookie} <- parse_cookie(headers) do
@@ -181,19 +182,6 @@ defmodule AuctionHouse.Impl.HTTPClient do
        do:
          run.(queue, fn ->
            post.(url, data, build_headers(cookie, token), recv_timeout: @http_response_timeout)
-         end)
-
-  defp http_post(url, data, %{
-         dependencies: %{
-           post_fn: post,
-           run_fn: run,
-           requests_queue: queue
-         },
-         authorization: nil
-       }),
-       do:
-         run.(queue, fn ->
-           post.(url, data, @static_headers, recv_timeout: @http_response_timeout)
          end)
 
   @spec http_delete(url :: String.t(), Type.state()) ::

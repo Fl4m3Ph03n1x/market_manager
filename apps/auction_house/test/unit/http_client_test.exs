@@ -564,7 +564,9 @@ defmodule AuctionHouse.HTTPClientTest do
                headers: [],
                body: "\"Error\""
              }}
-          end
+          end,
+          run_fn: fn _queue_name, func -> func.() end,
+          requests_queue: nil
         },
         authorization: nil
       }
@@ -592,7 +594,9 @@ defmodule AuctionHouse.HTTPClientTest do
           find_in_document_fn: nil,
           get_fn: fn _url, _headers, _opts ->
             {:ok, %HTTPoison.Response{status_code: 200, body: "", headers: []}}
-          end
+          end,
+          run_fn: fn _queue_name, func -> func.() end,
+          requests_queue: nil
         },
         authorization: nil
       }
@@ -618,7 +622,9 @@ defmodule AuctionHouse.HTTPClientTest do
           find_in_document_fn: fn _document, _search -> [] end,
           get_fn: fn _url, _headers, _opts ->
             {:ok, %HTTPoison.Response{status_code: 200, body: "", headers: []}}
-          end
+          end,
+          run_fn: fn _queue_name, func -> func.() end,
+          requests_queue: nil
         },
         authorization: nil
       }
@@ -646,7 +652,9 @@ defmodule AuctionHouse.HTTPClientTest do
           end,
           get_fn: fn _url, _headers, _opts ->
             {:ok, %HTTPoison.Response{status_code: 200, body: "", headers: []}}
-          end
+          end,
+          run_fn: fn _queue_name, func -> func.() end,
+          requests_queue: nil
         },
         authorization: nil
       }
@@ -679,7 +687,9 @@ defmodule AuctionHouse.HTTPClientTest do
           end,
           get_fn: fn _url, _headers, _opts ->
             {:ok, %HTTPoison.Response{status_code: 200, body: "", headers: headers}}
-          end
+          end,
+          run_fn: fn _queue_name, func -> func.() end,
+          requests_queue: nil
         },
         authorization: nil
       }
