@@ -6,11 +6,11 @@ defmodule AuctionHouse.Runtime.Server do
 
   use GenServer
 
-  alias AuctionHouse.Data.{Credentials, Order}
   alias AuctionHouse.Impl.{HTTPClient, Settings}
   alias AuctionHouse.Type
   alias Floki
   alias HTTPoison
+  alias Shared.Data.{Authorization, Credentials, Order, User}
 
   @genserver_timeout Application.compile_env!(:auction_house, :genserver_timeout)
 
@@ -104,29 +104,24 @@ defmodule AuctionHouse.Runtime.Server do
         _from,
         state
       ) do
-    authentication_result = HTTPClient.login(credentials, state)
-
-    updated_state =
-      case authentication_result do
-        {:ok, {authorization, user}} ->
+    case HTTPClient.login(credentials, state) do
+      {:ok, {%Authorization{} = authorization, %User{} = user}} = response ->
+        updated_state =
           state
           |> Map.put(:authorization, authorization)
           |> Map.put(:user, user)
 
-        _ ->
-          # in case we have successfully logged in the past, but failed now
+        {:reply, response, updated_state}
+
+      error ->
+        # in case we have successfully logged in the past, but failed now
+        updated_state =
           state
           |> Map.put(:authorization, nil)
           |> Map.put(:user, nil)
-      end
 
-    response =
-      case authentication_result do
-        {:ok, {_authorization, user}} -> {:ok, user}
-        error -> error
-      end
-
-    {:reply, response, updated_state}
+        {:reply, error, updated_state}
+    end
   end
 
   @impl GenServer

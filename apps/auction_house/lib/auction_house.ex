@@ -5,9 +5,9 @@ defmodule AuctionHouse do
   into a format the manager understands.
   """
 
-  alias AuctionHouse.Data.{Credentials, Order}
   alias AuctionHouse.Runtime.Server
   alias AuctionHouse.Type
+  alias Shared.Data.{Credentials, Order}
   alias Supervisor
 
   #######
@@ -19,7 +19,7 @@ defmodule AuctionHouse do
 
   Example:
   ```
-  alias AuctionHouse.Data.Order
+  alias Shared.Data.Order
   order = Order.new(%{
     "item_id" => "54e644ffe779897594fa68cd",
     "mod_rank" => 0,
@@ -66,12 +66,12 @@ defmodule AuctionHouse do
 
   > AuctionHouse.get_all_orders(item_name)
   {:ok, [
-    %AuctionHouse.Data.OrderInfo{
+    %Shared.Data.OrderInfo{
           "visible" => true,
           "order_type" => "sell",
           "platform" => "pc",
           "platinum" => 20,
-          "user" => %AuctionHouse.Data.OrderInfo.User{
+          "user" => %Shared.Data.OrderInfo.User{
             "ingame_name" => "user_name_1",
             "status" => "ingame"
           }
@@ -94,14 +94,14 @@ defmodule AuctionHouse do
 
   Example:
   ```
-  alias AuctionHouse.Data.Credentials
+  alias Shared.Data.{Authorization, Credentials, User}
   credentials = Credentials.new("the_username", "the_password")
 
   > AuctionHouse.login(credentials)
   {:ok,
-    %AuctionHouse.Data.User{
-      patreon?: false,
-      ingame_name: "fl4m3"
+    {
+      %Authorization{cookie: "a_cookie", token: "a_token"},
+      %User{patreon?: false, ingame_name: "fl4m3"}
     }
   }
 

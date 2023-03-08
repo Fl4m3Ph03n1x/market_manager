@@ -30,8 +30,7 @@ defmodule AuctionHouse.MixProject do
       {:recase, "~> 0.7"},
       {:jobs, "~> 0.10.0"},
       {:floki, "~> 0.34.0"},
-      {:typed_struct, "~> 0.3.0"},
-      {:morphix, "~> 0.8.1"},
+      {:shared, in_umbrella: true},
 
       # Test and Dev
       {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},

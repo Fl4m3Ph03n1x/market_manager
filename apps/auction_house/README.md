@@ -36,7 +36,7 @@ these steps:
 # export MIX_ENV=prod
 # @set MIX_ENV=prod
 
-alias AuctionHouse.Data.Credentials
+alias Shared.Data.Credentials
 
 {:ok, _pid} = AuctionHouse.Runtime.Server.start_link()
 creds = Credentials.new("username", "password")

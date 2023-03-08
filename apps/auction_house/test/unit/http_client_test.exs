@@ -5,8 +5,8 @@ defmodule AuctionHouse.HTTPClientTest do
 
   import ExUnit.CaptureLog
 
-  alias AuctionHouse.Data.{Authorization, Credentials, Order, OrderInfo, User}
   alias AuctionHouse.Impl.HTTPClient
+  alias Shared.Data.{Authorization, Credentials, Order, OrderInfo, User}
 
   describe "place_oder/2" do
     test "returns order_id if order was placed correctly" do
@@ -973,7 +973,7 @@ defmodule AuctionHouse.HTTPClientTest do
 
                expected =
                  {:error, :missing_patreon,
-                  %AuctionHouse.Data.Credentials{
+                  %Shared.Data.Credentials{
                     password: "my_password",
                     email: "my_email"
                   }}
@@ -1047,7 +1047,7 @@ defmodule AuctionHouse.HTTPClientTest do
 
                expected =
                  {:error, :missing_ingame_name,
-                  %AuctionHouse.Data.Credentials{
+                  %Shared.Data.Credentials{
                     password: "my_password",
                     email: "my_email"
                   }}
