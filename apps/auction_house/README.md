@@ -27,6 +27,24 @@ The dependencies graph can be seen as follows:
 
 ## Developer Guide
 
+### Launching the app 
+
+You can launch the application and test it manually as a standalone by following
+these steps:
+
+```
+# export MIX_ENV=prod
+# @set MIX_ENV=prod
+
+alias AuctionHouse.Data.Credentials
+
+{:ok, _pid} = AuctionHouse.Runtime.Server.start_link()
+creds = Credentials.new("username", "password")
+{:ok, _user} = AuctionHouse.login(creds)
+
+# Place orders and do things here!
+```
+
 ### Testing
 
 The most important thing to mention here is that there are 2 main types of tests:
