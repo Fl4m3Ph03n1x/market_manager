@@ -14,4 +14,8 @@ config :store,
 
 config :auction_house,
   api_base_url: "http://localhost:8082/v1/profile/orders",
-  api_search_url: "http://localhost:8082/v1/items"
+  api_search_url: "http://localhost:8082/v1/items",
+  market_signin_url: "http://localhost:8082/auth/signin",
+  api_signin_url: "http://localhost:8082/v1/auth/signin",
+  http_response_timeout: 2_000,
+  genserver_timeout: 5_000

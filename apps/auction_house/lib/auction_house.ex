@@ -1,10 +1,11 @@
 defmodule AuctionHouse do
   @moduledoc """
-  Librabry representing the interface for the auction house.
+  Library representing the interface for the auction house.
   Responsible for making calls and decoding the answers from the auction house
   into a format the manager understands.
   """
 
+  alias AuctionHouse.Data.{Credentials, Order}
   alias AuctionHouse.Runtime.Server
   alias AuctionHouse.Type
   alias Supervisor
@@ -18,13 +19,14 @@ defmodule AuctionHouse do
 
   Example:
   ```
-  order = %{
+  alias AuctionHouse.Data.Order
+  order = Order.new(%{
     "item_id" => "54e644ffe779897594fa68cd",
     "mod_rank" => 0,
     "order_type" => "sell",
     "platinum" => 20,
     "quantity" => 1
-  }
+  })
 
   > AuctionHouse.place_order(order)
   {:ok, "626127cbc984ac033cd2bbd2"}
@@ -33,7 +35,7 @@ defmodule AuctionHouse do
   {:error, :reason, order}
   ```
   """
-  @spec place_order(Type.order()) :: Type.place_order_response()
+  @spec place_order(Order.t()) :: Type.place_order_response()
   defdelegate place_order(order), to: Server
 
   @doc """
@@ -55,24 +57,26 @@ defmodule AuctionHouse do
 
   @doc """
   Gets all warframe market orders for the item with the given name.
-  The itema name is in human readable format. This function also converts the name into a format
-  that the external party can understand.
+  The item's name is in human readable format. This function also converts the
+  name into a format that the external party can understand.
 
   Example:
   ```
   item_name = "Despoil"
 
   > AuctionHouse.get_all_orders(item_name)
-  {:ok, [%{
+  {:ok, [
+    %AuctionHouse.Data.OrderInfo{
           "visible" => true,
           "order_type" => "sell",
           "platform" => "pc",
           "platinum" => 20,
-          "user" => %{
-            "ingame_name" => "usern_name_1",
+          "user" => %AuctionHouse.Data.OrderInfo.User{
+            "ingame_name" => "user_name_1",
             "status" => "ingame"
           }
-        }]
+        }
+      ]
   }
 
   > AuctionHouse.get_all_orders(item_name)
@@ -83,23 +87,30 @@ defmodule AuctionHouse do
   defdelegate get_all_orders(item_name), to: Server
 
   @doc """
-  Updates the credentials used to make requests to warframe market.
-  Must be used before using any other functions from this API.
-  Credentials are only persisted in memory, and are not persisted anywhere else.
+  Stores the user's credentials and  authenticates with the auction house to
+  make requests. Must be invoked every time the application is launched.
+  It also performs the necessary steps for authorization. Returns user
+  information.
 
   Example:
   ```
-  credentials = %{
-    "cookie" => "a_cookie",
-    "token" => "a_token"
+  alias AuctionHouse.Data.Credentials
+  credentials = Credentials.new("the_username", "the_password")
+
+  > AuctionHouse.login(credentials)
+  {:ok,
+    %AuctionHouse.Data.User{
+      patreon?: false,
+      ingame_name: "fl4m3"
+    }
   }
 
-  > AuctionHouse.update_credentials(credentials)
-  {:ok, credentials}
+  > AuctionHouse.login(credentials)
+  {:error, :reason, credentials}
   ```
   """
-  @spec update_credentials(Type.credentials()) :: Type.update_credentials_response()
-  defdelegate update_credentials(credentials), to: Server
+  @spec login(Credentials.t()) :: Type.login_response()
+  defdelegate login(credentials), to: Server
 
   @doc false
   @spec child_spec(any) :: Supervisor.child_spec()

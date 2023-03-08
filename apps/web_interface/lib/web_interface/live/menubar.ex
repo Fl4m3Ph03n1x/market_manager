@@ -42,5 +42,4 @@ defmodule WebInterface.Live.MenuBar do
 
   @impl Menu
   def handle_info(:changed, menu), do: {:noreply, menu}
-
 end

@@ -1,20 +1,28 @@
 defmodule AuctionHouseTest do
+  @moduledoc false
+
   use ExUnit.Case
 
   alias AuctionHouse
+  alias AuctionHouse.Data.User, as: UserInfo
+  alias AuctionHouse.Data.{Authorization, Credentials, Order, OrderInfo}
+  alias AuctionHouse.Data.OrderInfo.User
   alias AuctionHouse.Runtime.Server
   alias Bypass
 
   @test_port 8082
 
   setup do
-    start_supervised({Server, {:ok, %{"cookie" => nil, "token" => nil}}})
+    {:ok, pid} = start_supervised(Server)
     bypass = Bypass.open(port: @test_port)
-    %{bypass: bypass}
+    %{bypass: bypass, server: pid}
   end
 
   describe "place_oder/1" do
-    test "returns {:ok, order_id} if order was placed correctly", %{bypass: bypass} do
+    test "returns {:ok, order_id} if order was placed correctly", %{
+      bypass: bypass,
+      server: server
+    } do
       # Arrange
       Bypass.expect(bypass, "POST", "/v1/profile/orders", fn conn ->
         response = %{
@@ -57,13 +65,16 @@ defmodule AuctionHouseTest do
         Plug.Conn.resp(conn, 200, Jason.encode!(response))
       end)
 
-      order = %{
-        "order_type" => "sell",
-        "item_id" => "54a74454e779892d5e5155d5",
-        "platinum" => 15,
-        "quantity" => 1,
-        "mod_rank" => 0
+      order = %Order{
+        order_type: "sell",
+        item_id: "54a74454e779892d5e5155d5",
+        platinum: 15,
+        quantity: 1,
+        mod_rank: 0
       }
+
+      login_info = %Authorization{cookie: "cookie", token: "token"}
+      :sys.replace_state(server, fn state -> Map.put(state, :authorization, login_info) end)
 
       # Act
       actual = AuctionHouse.place_order(order)
@@ -75,7 +86,10 @@ defmodule AuctionHouseTest do
   end
 
   describe "delete_oder/1" do
-    test "returns {:ok, order_id} if order was deleted correctly", %{bypass: bypass} do
+    test "returns {:ok, order_id} if order was deleted correctly", %{
+      bypass: bypass,
+      server: server
+    } do
       # Arrange
       Bypass.expect(bypass, "DELETE", "/v1/profile/orders/:id", fn conn ->
         response = %{"payload" => %{"order_id" => "5ee71a2604d55c0a5cbdc3c2"}}
@@ -83,6 +97,8 @@ defmodule AuctionHouseTest do
       end)
 
       order_id = "5ee71a2604d55c0a5cbdc3c2"
+      login_info = %Authorization{cookie: "cookie", token: "token"}
+      :sys.replace_state(server, fn state -> Map.put(state, :authorization, login_info) end)
 
       # Act
       actual = AuctionHouse.delete_order(order_id)
@@ -129,7 +145,7 @@ defmodule AuctionHouseTest do
                 "last_update" => "2020-07-02T14:53:06.000+00:00",
                 "order_type" => "sell",
                 "platform" => "pc",
-                "platinum" => 30.0,
+                "platinum" => 30,
                 "quantity" => 2,
                 "region" => "en",
                 "user" => %{
@@ -160,48 +176,25 @@ defmodule AuctionHouseTest do
       expected =
         {:ok,
          [
-           %{
-             "order_type" => "sell",
-             "platform" => "pc",
-             "platinum" => 45,
-             "region" => "en",
-             "user" => %{
-               "status" => "ingame",
-               "avatar" => nil,
-               "id" => "598c96d60f313948524a2b66",
-               "ingame_name" => "Elect4k",
-               "last_seen" => "2020-07-20T18:20:28.422+00:00",
-               "region" => "en",
-               "reputation" => 2,
-               "reputation_bonus" => 0
+           %OrderInfo{
+             order_type: "sell",
+             platform: "pc",
+             platinum: 45,
+             user: %User{
+               status: "ingame",
+               ingame_name: "Elect4k"
              },
-             "visible" => true,
-             "creation_date" => "2019-01-05T20:52:40.000+00:00",
-             "id" => "5c311918716c98021463eb32",
-             "last_update" => "2019-04-01T09:39:58.000+00:00",
-             "quantity" => 1
+             visible: true
            },
-           %{
-             "order_type" => "sell",
-             "platform" => "pc",
-             "platinum" => 30.0,
-             "region" => "en",
-             "user" => %{
-               "status" => "ingame",
-               "avatar" =>
-                 "user/avatar/55d77904e779893a9827aee2.png?9b0eed7b4885f4ec4275240b3035aa55",
-               "id" => "55d77904e779893a9827aee2",
-               "ingame_name" => "porottaja",
-               "last_seen" => "2020-07-18T13:58:49.665+00:00",
-               "region" => "en",
-               "reputation" => 28,
-               "reputation_bonus" => 0
+           %OrderInfo{
+             order_type: "sell",
+             platform: "pc",
+             platinum: 30,
+             user: %User{
+               status: "ingame",
+               ingame_name: "porottaja"
              },
-             "visible" => true,
-             "creation_date" => "2019-02-08T22:11:22.000+00:00",
-             "id" => "5c5dfe8a83d1620563a75a7d",
-             "last_update" => "2020-07-02T14:53:06.000+00:00",
-             "quantity" => 2
+             visible: true
            }
          ]}
 
@@ -210,17 +203,57 @@ defmodule AuctionHouseTest do
     end
   end
 
-  describe "update_credentials/1" do
-    test "returns {:ok, credentials} when the update is successfull" do
+  describe "login/1" do
+    test "returns {:ok, Authorization} when the login is successful", %{
+      bypass: bypass
+    } do
       # Arrange
-      credentials = %{
-        "cookie" => "a_cookie",
-        "token" => "a_token"
+      Bypass.expect(bypass, "GET", "/auth/signin", fn conn ->
+        body = """
+        <!DOCTYPE html>
+        <html lang=en>
+        <head>
+            <meta name="csrf-token" content="a_token">
+        </head>
+        <body>
+        </body>
+        </html>
+        """
+
+        conn
+        |> Plug.Conn.put_resp_header(
+          "set-cookie",
+          "JWT=old_cookie; Domain=.warframe.market; Expires=Tue, 21-Mar-2023 15:16:03 GMT; Secure; HttpOnly; Path=/; SameSite=Lax"
+        )
+        |> Plug.Conn.resp(200, body)
+      end)
+
+      Bypass.expect(bypass, "POST", "/v1/auth/signin", fn conn ->
+        body =
+          "{\"payload\": {\"user\": {\"has_mail\": true, \"written_reviews\": 0, \"region\": \"en\", \"banned\": false, \"anonymous\": false, \"role\": \"user\", \"reputation\": 84, \"ingame_name\": \"Fl4m3Ph03n1x\", \"platform\": \"pc\", \"unread_messages\": 0, \"background\": null, \"check_code\": \"66BAPR88DLLZ\", \"avatar\": \"user/avatar/584d425cd3ffb630c3f9df42.png?0a8ad917dc66b85aa69520d70a31dafb\", \"verification\": true, \"linked_accounts\": {\"steam_profile\": true, \"patreon_profile\": false, \"xbox_profile\": false, \"discord_profile\": false, \"github_profile\": false}, \"id\": \"584d425cd3ffb630c3f9df42\", \"locale\": \"en\"}}}"
+
+        conn
+        |> Plug.Conn.put_resp_header(
+          "set-cookie",
+          "JWT=new_cookie; Domain=.warframe.market; Expires=Tue, 21-Mar-2023 14:41:06 GMT; Secure; HttpOnly; Path=/; SameSite=Lax"
+        )
+        |> Plug.Conn.resp(200, body)
+      end)
+
+      credentials = %Credentials{
+        email: "an_email",
+        password: "password"
       }
 
       # Act
-      actual = AuctionHouse.update_credentials(credentials)
-      expected = {:ok, credentials}
+      actual = AuctionHouse.login(credentials)
+
+      expected =
+        {:ok,
+         %UserInfo{
+           patreon?: false,
+           ingame_name: "Fl4m3Ph03n1x"
+         }}
 
       # Assert
       assert actual == expected

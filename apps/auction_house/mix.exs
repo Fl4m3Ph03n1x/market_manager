@@ -4,7 +4,7 @@ defmodule AuctionHouse.MixProject do
   def project do
     [
       app: :auction_house,
-      version: "2.0.2",
+      version: "3.0.0",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
@@ -29,6 +29,9 @@ defmodule AuctionHouse.MixProject do
       {:jason, "~> 1.2"},
       {:recase, "~> 0.7"},
       {:jobs, "~> 0.10.0"},
+      {:floki, "~> 0.34.0"},
+      {:typed_struct, "~> 0.3.0"},
+      {:morphix, "~> 0.8.1"},
 
       # Test and Dev
       {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},

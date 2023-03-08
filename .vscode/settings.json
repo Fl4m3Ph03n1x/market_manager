@@ -1,17 +1,25 @@
 {
     "cSpell.words": [
         "Afterburn",
+        "atomorphiform",
         "bakeware",
         "cephalon",
         "choco",
+        "csrftoken",
         "darkpurple",
         "Fira",
+        "Floki",
         "hexis",
+        "ingame",
+        "keyfind",
         "lightpurple",
         "loka",
+        "Morphix",
         "Razorwing",
+        "Recase",
         "rfctoken",
         "shuriken",
+        "signin",
         "simaris",
         "Spectrosiphon",
         "strangledome",
@@ -19,6 +27,8 @@
         "Venari",
         "warframe",
         "whipclaw",
+        "xrfc",
         "zstandard"
-    ]
+    ],
+    "editor.formatOnSave": true
 }
