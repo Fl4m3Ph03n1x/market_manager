@@ -22,6 +22,8 @@ defmodule Shared.MixProject do
   defp deps do
     [
       {:morphix, "~> 0.8.1"},
+      {:typed_struct, "~> 0.3.0"},
+      {:jason, "~> 1.4"},
 
       # Test and Dev
       {:mix_test_watch, "~> 1.0", only: :dev, runtime: false}

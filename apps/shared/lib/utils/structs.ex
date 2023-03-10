@@ -6,7 +6,10 @@ defmodule Shared.Utils.Structs do
 
   alias Morphix
 
-  @spec string_map_to_struct(data :: map, target_struct :: module | struct) ::
+  @spec string_map_to_struct(
+          data :: map,
+          target_struct :: module | struct
+        ) ::
           target_struct :: struct
   def string_map_to_struct(data, target_struct) do
     data
