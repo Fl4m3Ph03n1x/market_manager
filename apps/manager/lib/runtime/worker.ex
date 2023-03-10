@@ -10,6 +10,7 @@ defmodule Manager.Runtime.Worker do
 
   alias Manager.Impl.Interpreter
   alias Manager.Type
+  alias Shared.Data.Credentials
 
   @type from :: pid
   @type state :: keyword(module)
@@ -36,6 +37,10 @@ defmodule Manager.Runtime.Worker do
   @spec deactivate(Type.syndicate()) :: :ok
   def deactivate(syndicate), do: GenServer.cast(__MODULE__, {:deactivate, syndicate, self()})
 
+  @spec login(Credentials.t(), keep_logged_in :: boolean) :: :ok
+  def login(credentials, keep_logged_in),
+    do: GenServer.cast(__MODULE__, {:login, {credentials, keep_logged_in}, self()})
+
   ##############
   # Callbacks  #
   ##############
@@ -46,16 +51,28 @@ defmodule Manager.Runtime.Worker do
 
   @impl GenServer
   @spec handle_cast(request :: any, state) :: {:noreply, state}
-  def handle_cast({:activate, syndicate, strategy, from_pid}, deps) do
-    deps[:interpreter].activate(syndicate, strategy, fn result ->
+  def handle_cast({:activate, syndicate, strategy, from_pid}, [interpreter: interpreter] = deps) do
+    interpreter.activate(syndicate, strategy, fn result ->
+      IO.inspect(result, label: "RESULT")
       send(from_pid, result)
     end)
 
     {:noreply, deps}
   end
 
-  def handle_cast({:deactivate, syndicate, from_pid}, deps) do
-    deps[:interpreter].deactivate(syndicate, fn result ->
+  def handle_cast({:deactivate, syndicate, from_pid}, [interpreter: interpreter] = deps) do
+    interpreter.deactivate(syndicate, fn result ->
+      send(from_pid, result)
+    end)
+
+    {:noreply, deps}
+  end
+
+  def handle_cast(
+        {:login, {credentials, keep_logged_in}, from_pid},
+        [interpreter: interpreter] = deps
+      ) do
+    interpreter.login(credentials, keep_logged_in, fn result ->
       send(from_pid, result)
     end)
 

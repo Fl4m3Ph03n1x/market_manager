@@ -4,12 +4,12 @@ defmodule Manager.MixProject do
   def project do
     [
       app: :manager,
-      version: "3.0.0",
+      version: "4.0.0",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
-      elixir: "~> 1.13",
+      elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -30,6 +30,7 @@ defmodule Manager.MixProject do
     do: [
       {:store, in_umbrella: true},
       {:auction_house, in_umbrella: true},
+      {:shared, in_umbrella: true},
 
       # Testing and Dev
       {:mix_test_watch, "~> 1.0", only: [:dev, :test], runtime: false},
@@ -42,7 +43,8 @@ defmodule Manager.MixProject do
   defp preferred_cli_env,
     do: [
       "test.unit": :test,
-      "test.integration": :test
+      "test.integration": :test,
+      "test.watch": :test
     ]
 
   defp aliases,

@@ -1,12 +1,15 @@
 defmodule Manager.InterpreterTest do
+  @moduledoc false
+
   use ExUnit.Case
 
   import Mock
 
   alias Helpers
   alias Manager.Impl.Interpreter
+  alias Shared.Data.{Authorization, Credentials, Order, OrderInfo, User}
 
-  describe "activate/3" do
+  describe "activate/4" do
     setup do
       syndicate = "red_veil"
       strategy = :top_five_average
@@ -16,31 +19,33 @@ defmodule Manager.InterpreterTest do
       product2_name = "Eroding Blight"
       invalid_id = "some_invalid_id"
 
-      product1 = Helpers.create_product(product1_name, id1)
-      product2 = Helpers.create_product(product2_name, id2, "n/a")
-      invalid_product = Helpers.create_product(product2_name, invalid_id, "n/a")
+      product1 = Helpers.create_product(product1_name, id1, 0)
+      product2 = Helpers.create_product(product2_name, id2)
+      invalid_product = Helpers.create_product(product2_name, invalid_id)
 
       order1 = Helpers.create_order(id1, 52, 0)
       order2 = Helpers.create_order(id2, 50)
       invalid_order = Helpers.create_order(invalid_id, 50)
 
-      order1_without_market_info = %{
-        "item_id" => "54a74454e779892d5e5155d5",
-        "mod_rank" => 0,
-        "order_type" => "sell",
-        "platinum" => 16,
-        "quantity" => 1
-      }
+      order1_without_market_info =
+        Order.new(%{
+          "item_id" => "54a74454e779892d5e5155d5",
+          "mod_rank" => 0,
+          "order_type" => "sell",
+          "platinum" => 16,
+          "quantity" => 1
+        })
 
-      order2_without_market_info = %{
-        "item_id" => "54a74454e779892d5e5155a0",
-        "order_type" => "sell",
-        "platinum" => 16,
-        "quantity" => 1
-      }
+      order2_without_market_info =
+        Order.new(%{
+          "item_id" => "54a74454e779892d5e5155a0",
+          "order_type" => "sell",
+          "platinum" => 16,
+          "quantity" => 1
+        })
 
       product1_market_orders = [
-        %{
+        OrderInfo.new(%{
           "order_type" => "sell",
           "platinum" => 45,
           "platform" => "pc",
@@ -48,8 +53,8 @@ defmodule Manager.InterpreterTest do
             "status" => "ingame"
           },
           "visible" => true
-        },
-        %{
+        }),
+        OrderInfo.new(%{
           "order_type" => "sell",
           "platinum" => 55,
           "platform" => "pc",
@@ -57,8 +62,8 @@ defmodule Manager.InterpreterTest do
             "status" => "ingame"
           },
           "visible" => true
-        },
-        %{
+        }),
+        OrderInfo.new(%{
           "order_type" => "sell",
           "platinum" => 50,
           "platform" => "pc",
@@ -66,8 +71,8 @@ defmodule Manager.InterpreterTest do
             "status" => "ingame"
           },
           "visible" => true
-        },
-        %{
+        }),
+        OrderInfo.new(%{
           "order_type" => "sell",
           "platinum" => 60,
           "platform" => "pc",
@@ -75,8 +80,8 @@ defmodule Manager.InterpreterTest do
             "status" => "ingame"
           },
           "visible" => true
-        },
-        %{
+        }),
+        OrderInfo.new(%{
           "order_type" => "sell",
           "platinum" => 50,
           "platform" => "pc",
@@ -84,11 +89,11 @@ defmodule Manager.InterpreterTest do
             "status" => "ingame"
           },
           "visible" => true
-        }
+        })
       ]
 
       product2_market_orders = [
-        %{
+        OrderInfo.new(%{
           "order_type" => "sell",
           "platinum" => 40,
           "platform" => "pc",
@@ -96,8 +101,8 @@ defmodule Manager.InterpreterTest do
             "status" => "ingame"
           },
           "visible" => true
-        },
-        %{
+        }),
+        OrderInfo.new(%{
           "order_type" => "sell",
           "platinum" => 50,
           "platform" => "pc",
@@ -105,8 +110,8 @@ defmodule Manager.InterpreterTest do
             "status" => "ingame"
           },
           "visible" => true
-        },
-        %{
+        }),
+        OrderInfo.new(%{
           "order_type" => "sell",
           "platinum" => 50,
           "platform" => "pc",
@@ -114,8 +119,8 @@ defmodule Manager.InterpreterTest do
             "status" => "ingame"
           },
           "visible" => true
-        },
-        %{
+        }),
+        OrderInfo.new(%{
           "order_type" => "sell",
           "platinum" => 60,
           "platform" => "pc",
@@ -123,8 +128,8 @@ defmodule Manager.InterpreterTest do
             "status" => "ingame"
           },
           "visible" => true
-        },
-        %{
+        }),
+        OrderInfo.new(%{
           "order_type" => "sell",
           "platinum" => 50,
           "platform" => "pc",
@@ -132,7 +137,7 @@ defmodule Manager.InterpreterTest do
             "status" => "ingame"
           },
           "visible" => true
-        }
+        })
       ]
 
       %{
@@ -175,7 +180,7 @@ defmodule Manager.InterpreterTest do
           [],
           [
             list_products: fn _syndicate -> {:ok, [product1, product2]} end,
-            save_order: fn id, _syndicate -> {:ok, id} end
+            save_order: fn _id, _syndicate -> :ok end
           ]
         },
         {
@@ -183,10 +188,13 @@ defmodule Manager.InterpreterTest do
           [],
           [
             get_all_orders: fn
-              ^product1_name -> {:ok, product1_market_orders}
-              ^product2_name -> {:ok, product2_market_orders}
+              ^product1_name ->
+                {:ok, product1_market_orders}
+
+              ^product2_name ->
+                {:ok, product2_market_orders}
             end,
-            place_order: fn order -> {:ok, Map.get(order, "item_id")} end
+            place_order: fn order -> {:ok, order.item_id} end
           ]
         }
       ]) do
@@ -230,12 +238,12 @@ defmodule Manager.InterpreterTest do
           [],
           [
             list_products: fn _syndicate -> {:ok, []} end,
-            save_order: fn id, _syndicate -> {:ok, id} end
+            save_order: fn _id, _syndicate -> :ok end
           ]
         }
       ]) do
         # Arrange
-        deps = [store: Store]
+        deps = [store: Store, auction_house: nil]
 
         handle = fn content ->
           send(self(), content)
@@ -274,7 +282,7 @@ defmodule Manager.InterpreterTest do
           [],
           [
             list_products: fn _syndicate -> {:ok, [product1, product2]} end,
-            save_order: fn id, _syndicate -> {:ok, id} end
+            save_order: fn _id, _syndicate -> :ok end
           ]
         },
         {
@@ -284,7 +292,7 @@ defmodule Manager.InterpreterTest do
             get_all_orders: fn
               product_name -> {:error, :timeout, product_name}
             end,
-            place_order: fn order -> {:ok, Map.get(order, "item_id")} end
+            place_order: fn order -> {:ok, order.item_id} end
           ]
         }
       ]) do
@@ -337,7 +345,7 @@ defmodule Manager.InterpreterTest do
           [],
           [
             list_products: fn _syndicate -> {:ok, [product1, invalid_product]} end,
-            save_order: fn id, _syndicate -> {:ok, id} end
+            save_order: fn _id, _syndicate -> :ok end
           ]
         },
         {
@@ -442,7 +450,7 @@ defmodule Manager.InterpreterTest do
       end
     end
 
-    test "Finishes immediatly if it cannot read products from Store", %{
+    test "Finishes immediately if it cannot read products from Store", %{
       syndicate: syndicate,
       strategy: strategy
     } do
@@ -461,7 +469,7 @@ defmodule Manager.InterpreterTest do
           :ok
         end
 
-        deps = [store: Store]
+        deps = [store: Store, auction_house: nil]
 
         # Act
         actual = Interpreter.activate(syndicate, strategy, handle, deps)
@@ -479,7 +487,7 @@ defmodule Manager.InterpreterTest do
     end
   end
 
-  describe "deactivate/1" do
+  describe "deactivate/3" do
     setup do
       syndicate = "red_veil"
       order_id1 = "54a74454e779892d5e5155d5"
@@ -505,7 +513,7 @@ defmodule Manager.InterpreterTest do
           [],
           [
             list_orders: fn _syndicate -> {:ok, [order_id1, order_id2]} end,
-            delete_order: fn order_id, _syndicate -> {:ok, order_id} end
+            delete_order: fn _order_id, _syndicate -> :ok end
           ]
         },
         {
@@ -554,7 +562,7 @@ defmodule Manager.InterpreterTest do
           [],
           [
             list_orders: fn _syndicate -> {:ok, [order_id1, bad_order_id]} end,
-            delete_order: fn order_id, _syndicate -> {:ok, order_id} end
+            delete_order: fn _order_id, _syndicate -> :ok end
           ]
         },
         {
@@ -608,7 +616,7 @@ defmodule Manager.InterpreterTest do
           [
             list_orders: fn _syndicate -> {:ok, [order_id1, bad_order_id]} end,
             delete_order: fn
-              ^order_id1, _syndicate -> {:ok, order_id1}
+              ^order_id1, _syndicate -> :ok
               ^bad_order_id, _syndicate -> {:error, :enoent}
             end
           ]
@@ -708,175 +716,131 @@ defmodule Manager.InterpreterTest do
     end
   end
 
-  describe "authenticate/1" do
-    test "Returns ok tuple if login info is correct and it persisted data successfuly" do
+  describe "login/4" do
+    setup do
+      %{
+        authorization: %Authorization{cookie: "a_cookie", token: "a_token"},
+        user: %User{ingame_name: "fl4m3", patreon?: false},
+        credentials: Credentials.new("username", "password"),
+        handle: fn content ->
+          send(self(), content)
+          :ok
+        end
+      }
+    end
+
+    test "Returns ok if user login was successful and it saved data", %{
+      authorization: auth,
+      user: user,
+      credentials: credentials,
+      handle: handle
+    } do
       with_mocks([
         {
           Store,
           [],
           [
-            save_credentials: fn login_info -> {:ok, login_info} end
+            save_login_data: fn _auth, _user -> :ok end
           ]
         },
         {
           AuctionHouse,
           [],
           [
-            update_credentials: fn credentials -> {:ok, credentials} end
+            login: fn _credentials -> {:ok, {auth, user}} end
           ]
         }
       ]) do
         # Arrange
         deps = [store: Store, auction_house: AuctionHouse]
-        login_info = %{"token" => "123", "cookie" => "abc"}
 
         # Act
-        actual = Interpreter.authenticate(login_info, deps)
-        expected = {:ok, login_info}
+        actual = Interpreter.login(credentials, true, handle, deps)
+        expected = :ok
 
         # Assert
         assert actual == expected
 
-        assert_called(AuctionHouse.update_credentials(login_info))
-        assert_called(Store.save_credentials(login_info))
+        assert_called(AuctionHouse.login(credentials))
+        assert_called(Store.save_login_data(auth, user))
+
+        assert_received({:login, ^credentials, :done})
       end
     end
 
-    test "Returns error if login info is missing one parameter" do
+    test "Returns error if user login was successful but failed to save data", %{
+      authorization: auth,
+      user: user,
+      credentials: credentials,
+      handle: handle
+    } do
       with_mocks([
         {
           Store,
           [],
           [
-            save_credentials: fn login_info -> {:ok, login_info} end
+            save_login_data: fn _auth, _user -> {:error, :enoent} end
           ]
         },
         {
           AuctionHouse,
           [],
           [
-            update_credentials: fn credentials -> {:ok, credentials} end
+            login: fn _credentials -> {:ok, {auth, user}} end
           ]
         }
       ]) do
         # Arrange
         deps = [store: Store, auction_house: AuctionHouse]
-        login_info = %{"cookie" => "abc"}
 
         # Act
-        actual = Interpreter.authenticate(login_info, deps)
-
-        expected =
-          {:error, :unable_to_save_authentication,
-           {:missing_mandatory_keys, ["token"], login_info}}
+        actual = Interpreter.login(credentials, true, handle, deps)
+        expected = :ok
 
         # Assert
         assert actual == expected
 
-        assert_not_called(AuctionHouse.update_credentials(login_info))
-        assert_not_called(Store.save_credentials(login_info))
+        assert_called(AuctionHouse.login(credentials))
+        assert_called(Store.save_login_data(auth, user))
+
+        assert_received({:login, ^credentials, {:error, :enoent}})
       end
     end
 
-    test "Returns error if login info is missing multiple parameters" do
+    test "Returns error if user login failed", %{
+      credentials: credentials,
+      handle: handle
+    } do
       with_mocks([
         {
           Store,
           [],
           [
-            save_credentials: fn login_info -> {:ok, login_info} end
+            save_login_data: fn _auth, _user -> {:error, :enoent} end
           ]
         },
         {
           AuctionHouse,
           [],
           [
-            update_credentials: fn credentials -> {:ok, credentials} end
+            login: fn _credentials -> {:error, :timeout, credentials} end
           ]
         }
       ]) do
         # Arrange
         deps = [store: Store, auction_house: AuctionHouse]
-        login_info = %{}
 
         # Act
-        actual = Interpreter.authenticate(login_info, deps)
-
-        expected =
-          {:error, :unable_to_save_authentication,
-           {:missing_mandatory_keys, ["cookie", "token"], login_info}}
+        actual = Interpreter.login(credentials, true, handle, deps)
+        expected = :ok
 
         # Assert
         assert actual == expected
 
-        assert_not_called(AuctionHouse.update_credentials(login_info))
-        assert_not_called(Store.save_credentials(login_info))
-      end
-    end
+        assert_called(AuctionHouse.login(credentials))
+        assert_not_called(Store.save_login_data(:_, :_))
 
-    test "Returns error if login info is correct but fails to persist data" do
-      with_mocks([
-        {
-          Store,
-          [],
-          [
-            save_credentials: fn _login_info -> {:error, :enoent} end
-          ]
-        },
-        {
-          AuctionHouse,
-          [],
-          [
-            update_credentials: fn credentials -> {:ok, credentials} end
-          ]
-        }
-      ]) do
-        # Arrange
-        deps = [store: Store, auction_house: AuctionHouse]
-        login_info = %{"token" => "123", "cookie" => "abc"}
-
-        # Act
-        actual = Interpreter.authenticate(login_info, deps)
-        expected = {:error, :unable_to_save_authentication, {:enoent, login_info}}
-
-        # Assert
-        assert actual == expected
-
-        assert_called(AuctionHouse.update_credentials(login_info))
-        assert_called(Store.save_credentials(login_info))
-      end
-    end
-
-    test "Returns error if it failed to update state in AuctionHouse" do
-      with_mocks([
-        {
-          Store,
-          [],
-          [
-            save_credentials: fn _login_info -> {:error, :enoent} end
-          ]
-        },
-        {
-          AuctionHouse,
-          [],
-          [
-            update_credentials: fn _credentials -> {:error, :timeout} end
-          ]
-        }
-      ]) do
-        # Arrange
-        deps = [store: Store, auction_house: AuctionHouse]
-        login_info = %{"token" => "123", "cookie" => "abc"}
-
-        # Act
-        actual = Interpreter.authenticate(login_info, deps)
-        expected = {:error, :unable_to_save_authentication, {:timeout, login_info}}
-
-        # Assert
-        assert actual == expected
-
-        assert_called(AuctionHouse.update_credentials(login_info))
-        assert_not_called(Store.save_credentials(login_info))
+        assert_received({:login, ^credentials, {:error, :timeout, ^credentials}})
       end
     end
   end

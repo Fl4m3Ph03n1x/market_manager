@@ -2,19 +2,18 @@ defmodule Manager.Impl.PriceAnalyst do
   @moduledoc """
   Contains the formulas and calculations for all the strategies.
   Strategies calculate the optimum price for you to sell an item.
-  There are several stretagies, some focus more on selling fast, while others
+  There are several strategies, some focus more on selling fast, while others
   on getting more profit.
   """
 
-  alias AuctionHouse.Type, as: AuctionHouseTypes
   alias Manager.Type
-  alias Store.Type, as: StoreTypes
+  alias Shared.Data.{OrderInfo, Product}
 
   ##########
   # Public #
   ##########
 
-  @spec calculate_price(StoreTypes.product(), [AuctionHouseTypes.order_info()], Type.strategy()) ::
+  @spec calculate_price(Product.t(), [OrderInfo.t()], Type.strategy()) ::
           non_neg_integer
   def calculate_price(product, all_orders, strategy),
     do:
@@ -34,30 +33,29 @@ defmodule Manager.Impl.PriceAnalyst do
       |> Enum.filter(&valid_order?/1)
       |> Enum.sort(&price_ascending/2)
 
-  @spec valid_order?(AuctionHouseTypes.order_info()) :: boolean
+  @spec valid_order?(OrderInfo.t()) :: boolean
   defp valid_order?(order),
     do: visible?(order) and user_ingame?(order) and platform_pc?(order) and sell_order?(order)
 
-  @spec visible?(AuctionHouseTypes.order_info()) :: boolean
-  defp visible?(order), do: Map.get(order, "visible") == true
+  @spec visible?(OrderInfo.t()) :: boolean
+  defp visible?(order), do: order.visible == true
 
-  @spec user_ingame?(AuctionHouseTypes.order_info()) :: boolean
-  defp user_ingame?(order), do: get_in(order, ["user", "status"]) == "ingame"
+  @spec user_ingame?(OrderInfo.t()) :: boolean
+  defp user_ingame?(order), do: order.user.status == "ingame"
 
-  @spec platform_pc?(AuctionHouseTypes.order_info()) :: boolean
-  defp platform_pc?(order), do: Map.get(order, "platform") == "pc"
+  @spec platform_pc?(OrderInfo.t()) :: boolean
+  defp platform_pc?(order), do: order.platform == "pc"
 
-  @spec sell_order?(AuctionHouseTypes.order_info()) :: boolean
-  defp sell_order?(order), do: Map.get(order, "order_type") == "sell"
+  @spec sell_order?(OrderInfo.t()) :: boolean
+  defp sell_order?(order), do: order.order_type == "sell"
 
-  @spec price_ascending(AuctionHouseTypes.order_info(), AuctionHouseTypes.order_info()) :: boolean
-  defp price_ascending(order1, order2),
-    do: Map.get(order1, "platinum") < Map.get(order2, "platinum")
+  @spec price_ascending(OrderInfo.t(), OrderInfo.t()) :: boolean
+  defp price_ascending(order1, order2), do: order1.platinum < order2.platinum
 
-  @spec apply_strategy([AuctionHouseTypes.order_info()], Type.strategy()) :: number
+  @spec apply_strategy([OrderInfo.t()], Type.strategy()) :: number
   defp apply_strategy([], _strategy), do: 0
 
-  defp apply_strategy([%{"platinum" => price}], _strategy), do: price
+  defp apply_strategy([%OrderInfo{platinum: price}], _strategy), do: price
 
   defp apply_strategy(orders, :top_five_average),
     do:
@@ -87,17 +85,17 @@ defmodule Manager.Impl.PriceAnalyst do
       |> Enum.map(&platinum_minus_one/1)
       |> List.first()
 
-  @spec platinum(AuctionHouseTypes.order_info()) :: non_neg_integer
-  defp platinum(order), do: Map.get(order, "platinum")
+  @spec platinum(OrderInfo.t()) :: non_neg_integer
+  defp platinum(order), do: order.platinum
 
-  @spec platinum_minus_one(AuctionHouseTypes.order_info()) :: integer
-  defp platinum_minus_one(order), do: Map.get(order, "platinum") - 1
+  @spec platinum_minus_one(OrderInfo.t()) :: integer
+  defp platinum_minus_one(order), do: order.platinum - 1
 
   @spec average([number]) :: number
   defp average(prices), do: Enum.sum(prices) / length(prices)
 
-  @spec apply_boundaries(non_neg_integer, StoreTypes.product()) :: non_neg_integer
-  defp apply_boundaries(price, %{"default_price" => default}) when price == 0, do: default
-  defp apply_boundaries(price, %{"min_price" => min}) when price < min, do: min
+  @spec apply_boundaries(non_neg_integer, Product.t()) :: non_neg_integer
+  defp apply_boundaries(price, %Product{default_price: default}) when price == 0, do: default
+  defp apply_boundaries(price, %Product{min_price: min}) when price < min, do: min
   defp apply_boundaries(price, _product), do: price
 end

@@ -1,10 +1,13 @@
 defmodule Manager.WorkerTest do
+  @moduledoc false
+
   use ExUnit.Case
 
   import Mock
 
   alias Helpers
   alias Manager.Runtime.Worker
+  alias Shared.Data.{Order, OrderInfo}
 
   describe "activate" do
     setup do
@@ -24,115 +27,127 @@ defmodule Manager.WorkerTest do
       order2 = Helpers.create_order(id2, 50)
       invalid_order = Helpers.create_order(invalid_id, 50)
 
-      order1_without_market_info = %{
-        "item_id" => "54a74454e779892d5e5155d5",
-        "mod_rank" => 0,
-        "order_type" => "sell",
-        "platinum" => 16,
-        "quantity" => 1
-      }
+      order1_without_market_info =
+        Order.new(%{
+          "item_id" => "54a74454e779892d5e5155d5",
+          "mod_rank" => 0,
+          "order_type" => "sell",
+          "platinum" => 16,
+          "quantity" => 1
+        })
 
-      order2_without_market_info = %{
-        "item_id" => "54a74454e779892d5e5155a0",
-        "order_type" => "sell",
-        "platinum" => 16,
-        "quantity" => 1
-      }
+      order2_without_market_info =
+        Order.new(%{
+          "item_id" => "54a74454e779892d5e5155a0",
+          "order_type" => "sell",
+          "platinum" => 16,
+          "quantity" => 1
+        })
 
       product1_market_orders = [
-        %{
+        OrderInfo.new(%{
           "order_type" => "sell",
           "platinum" => 45,
           "platform" => "pc",
           "user" => %{
-            "status" => "ingame"
+            "status" => "ingame",
+            "ingame_name" => "ingame_name_1"
           },
           "visible" => true
-        },
-        %{
+        }),
+        OrderInfo.new(%{
           "order_type" => "sell",
           "platinum" => 55,
           "platform" => "pc",
           "user" => %{
-            "status" => "ingame"
+            "status" => "ingame",
+            "ingame_name" => "ingame_name_2"
           },
           "visible" => true
-        },
-        %{
+        }),
+        OrderInfo.new(%{
           "order_type" => "sell",
           "platinum" => 50,
           "platform" => "pc",
           "user" => %{
-            "status" => "ingame"
+            "status" => "ingame",
+            "ingame_name" => "ingame_name_3"
           },
           "visible" => true
-        },
-        %{
+        }),
+        OrderInfo.new(%{
           "order_type" => "sell",
           "platinum" => 60,
           "platform" => "pc",
           "user" => %{
-            "status" => "ingame"
+            "status" => "ingame",
+            "ingame_name" => "ingame_name_4"
           },
           "visible" => true
-        },
-        %{
+        }),
+        OrderInfo.new(%{
           "order_type" => "sell",
           "platinum" => 50,
           "platform" => "pc",
           "user" => %{
-            "status" => "ingame"
+            "status" => "ingame",
+            "ingame_name" => "ingame_name_5"
           },
           "visible" => true
-        }
+        })
       ]
 
       product2_market_orders = [
-        %{
+        OrderInfo.new(%{
           "order_type" => "sell",
           "platinum" => 40,
           "platform" => "pc",
           "user" => %{
-            "status" => "ingame"
+            "status" => "ingame",
+            "ingame_name" => "ingame_name_6"
           },
           "visible" => true
-        },
-        %{
+        }),
+        OrderInfo.new(%{
           "order_type" => "sell",
           "platinum" => 50,
           "platform" => "pc",
           "user" => %{
-            "status" => "ingame"
+            "status" => "ingame",
+            "ingame_name" => "ingame_name_7"
           },
           "visible" => true
-        },
-        %{
+        }),
+        OrderInfo.new(%{
           "order_type" => "sell",
           "platinum" => 50,
           "platform" => "pc",
           "user" => %{
-            "status" => "ingame"
+            "status" => "ingame",
+            "ingame_name" => "ingame_name_8"
           },
           "visible" => true
-        },
-        %{
+        }),
+        OrderInfo.new(%{
           "order_type" => "sell",
           "platinum" => 60,
           "platform" => "pc",
           "user" => %{
-            "status" => "ingame"
+            "status" => "ingame",
+            "ingame_name" => "ingame_name_9"
           },
           "visible" => true
-        },
-        %{
+        }),
+        OrderInfo.new(%{
           "order_type" => "sell",
           "platinum" => 50,
           "platform" => "pc",
           "user" => %{
-            "status" => "ingame"
+            "status" => "ingame",
+            "ingame_name" => "ingame_name_10"
           },
           "visible" => true
-        }
+        })
       ]
 
       %{
@@ -175,7 +190,7 @@ defmodule Manager.WorkerTest do
           [],
           [
             list_products: fn _syndicate -> {:ok, [product1, product2]} end,
-            save_order: fn id, _syndicate -> {:ok, id} end
+            save_order: fn _id, _syndicate -> :ok end
           ]
         },
         {
@@ -186,7 +201,7 @@ defmodule Manager.WorkerTest do
               ^product1_name -> {:ok, product1_market_orders}
               ^product2_name -> {:ok, product2_market_orders}
             end,
-            place_order: fn order -> {:ok, Map.get(order, "item_id")} end
+            place_order: fn order -> {:ok, order.item_id} end
           ]
         }
       ]) do

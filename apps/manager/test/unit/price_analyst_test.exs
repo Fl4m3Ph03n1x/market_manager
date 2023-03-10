@@ -1,7 +1,10 @@
 defmodule Manager.PriceAnalystTest do
+  @moduledoc false
+
   use ExUnit.Case
 
   alias Manager.Impl.PriceAnalyst
+  alias Shared.Data.{OrderInfo, Product}
 
   #########
   # Tests #
@@ -14,7 +17,7 @@ defmodule Manager.PriceAnalystTest do
         new_order_info(50)
       ]
 
-      product = new_product(0, 0)
+      product = new_product(1, 1)
 
       # Act
       actual = PriceAnalyst.calculate_price(product, order_info, :top_three_average)
@@ -68,7 +71,7 @@ defmodule Manager.PriceAnalystTest do
         new_order_info(50_000)
       ]
 
-      product = new_product(0, 0)
+      product = new_product(1, 1)
 
       # Act
       actual = PriceAnalyst.calculate_price(product, order_info, :top_five_average)
@@ -87,7 +90,7 @@ defmodule Manager.PriceAnalystTest do
         new_order_info(60)
       ]
 
-      product = new_product(0, 0)
+      product = new_product(1, 1)
 
       # Act
       actual = PriceAnalyst.calculate_price(product, order_info, :top_five_average)
@@ -111,7 +114,7 @@ defmodule Manager.PriceAnalystTest do
         new_order_info(50_000)
       ]
 
-      product = new_product(0, 0)
+      product = new_product(1, 1)
 
       # Act
       actual = PriceAnalyst.calculate_price(product, order_info, :top_three_average)
@@ -128,7 +131,7 @@ defmodule Manager.PriceAnalystTest do
         new_order_info(55)
       ]
 
-      product = new_product(0, 0)
+      product = new_product(1, 1)
 
       # Act
       actual = PriceAnalyst.calculate_price(product, order_info, :top_three_average)
@@ -152,7 +155,7 @@ defmodule Manager.PriceAnalystTest do
         new_order_info(50_000)
       ]
 
-      product = new_product(0, 0)
+      product = new_product(1, 1)
 
       # Act
       actual = PriceAnalyst.calculate_price(product, order_info, :equal_to_lowest)
@@ -176,7 +179,7 @@ defmodule Manager.PriceAnalystTest do
         new_order_info(50_000)
       ]
 
-      product = new_product(0, 0)
+      product = new_product(1, 1)
 
       # Act
       actual = PriceAnalyst.calculate_price(product, order_info, :lowest_minus_one)
@@ -191,18 +194,26 @@ defmodule Manager.PriceAnalystTest do
   # Private #
   ###########
 
+  @spec new_order_info(price :: non_neg_integer) :: OrderInfo.t()
   defp new_order_info(price),
-    do: %{
-      "visible" => true,
-      "user" => %{"status" => "ingame"},
-      "platform" => "pc",
-      "order_type" => "sell",
-      "platinum" => price
-    }
+    do:
+      OrderInfo.new(%{
+        "visible" => true,
+        "user" => %{"status" => "ingame"},
+        "platform" => "pc",
+        "order_type" => "sell",
+        "platinum" => price
+      })
 
+  @spec new_product(min_price :: non_neg_integer, default_price :: non_neg_integer) :: Product.t()
   defp new_product(min_price, default_price),
-    do: %{
-      "min_price" => min_price,
-      "default_price" => default_price
-    }
+    do:
+      Product.new(%{
+        "name" => "a_name",
+        "id" => "an_id",
+        "min_price" => min_price,
+        "default_price" => default_price,
+        "quantity" => 1,
+        "rank" => 0
+      })
 end
