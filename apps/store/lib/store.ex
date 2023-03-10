@@ -4,6 +4,7 @@ defmodule Store do
   This module contains the Public API for the storage app.
   """
 
+  alias Shared.Data.{Authorization, Order, User}
   alias Store.FileSystem
   alias Store.Type
 
@@ -12,15 +13,17 @@ defmodule Store do
 
   Example:
   ```
+  alias Shared.Data.Product
+
   > Store.list_products("red_veil")
   {:ok, [
-    %{
-      "name" => "Eternal War",
-      "id" => "8ee5b3b0-fa43-4dbc-9363-a52930dc742e",
-      "min_price" => 14,
-      "default_price" => 15,
-      "quantity" => 1,
-      "rank" => 0
+    %Product{
+      name: "Eternal War",
+      id: "8ee5b3b0-fa43-4dbc-9363-a52930dc742e",
+      min_price: 14,
+      default_price: 15,
+      quantity: 1,
+      rank: 0
     },
     ...
   ]}
@@ -53,7 +56,7 @@ defmodule Store do
   Example:
   ```
   > Store.save_order("00f83ca2-67d9-4019-9fea-587b9fc4037c", "red_veil")
-  {:ok, "00f83ca2-67d9-4019-9fea-587b9fc4037c"}
+  :ok
 
   > Store.save_order("invalid_syndicate")
   {:error, :enoent}
@@ -68,7 +71,7 @@ defmodule Store do
   Example:
   ```
   > Store.delete_order("00f83ca2-67d9-4019-9fea-587b9fc4037c", "red_veil")
-  {:ok, "00f83ca2-67d9-4019-9fea-587b9fc4037c"}
+  :ok
 
   > Store.delete_order("invalid_syndicate")
   {:error, :enoent}
@@ -78,33 +81,44 @@ defmodule Store do
   defdelegate delete_order(order_id, syndicate), to: FileSystem
 
   @doc """
-  Saves the authentication information from the user into the storage system.
+  Saves the login information from the user into the storage system.
   Does not perform validation.
 
   Example:
   ```
-  > Store.save_credentials(%{"token" => "a_token", "cookie" => "a_cookie"})
-  {:ok, %{"token" => "a_token", "cookie" => "a_cookie"}}
+  alias Shared.Data.{Authorization, User}
 
-  > Store.save_credentials(%{"token" => "a_token", "cookie" => "a_cookie"})
-  {:error, :no_permissions}
+  > Store.save_login_data(
+    %Authorization{token: "a_token", cookie: "a_cookie"},
+    %User{ingame_name: "username", patreon?: false}
+  )
+  :ok
+
+  > Store.save_login_data(
+    %Authorization{token: "a_token", cookie: "a_cookie"},
+    %User{ingame_name: "username", patreon?: false}
+  )
+  {:error, :enoent}
   ```
   """
-  @spec save_credentials(Type.login_info()) :: Type.save_credentials_response()
-  defdelegate save_credentials(login_info), to: FileSystem
+  @spec save_login_data(Authorization.t(), User.t()) :: Type.save_login_data_response()
+  defdelegate save_login_data(auth, user), to: FileSystem
 
   @doc """
-  Retrieves the user's authentication from Storage.
+  Retrieves the user's login data from Storage.
 
   Example:
   ```
-  > Store.get_credentials()
-  {:ok, %{"token" => "a_token", "cookie" => "a_cookie"}}
+  > Store.get_login_data()
+  {:ok, {
+    %Authorization{token: "a_token", cookie: "a_cookie"},
+    %User{ingame_name: "username", patreon?: false}
+  }}
 
-  > Store.get_credentials()
-  {:error, :enonent}
+  > Store.get_login_data()
+  {:error, :enoent}
   ```
   """
-  @spec get_credentials :: Type.get_credentials_response()
-  defdelegate get_credentials, to: FileSystem
+  @spec get_login_data :: Type.get_login_data_response()
+  defdelegate get_login_data, to: FileSystem
 end
