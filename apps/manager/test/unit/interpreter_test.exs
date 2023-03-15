@@ -7,7 +7,7 @@ defmodule Manager.InterpreterTest do
 
   alias Helpers
   alias Manager.Impl.Interpreter
-  alias Shared.Data.{Authorization, Credentials, Order, OrderInfo, User}
+  alias Shared.Data.{Authorization, Credentials, OrderInfo, User}
 
   describe "activate/4" do
     setup do
@@ -19,30 +19,16 @@ defmodule Manager.InterpreterTest do
       product2_name = "Eroding Blight"
       invalid_id = "some_invalid_id"
 
-      product1 = Helpers.create_product(product1_name, id1, 0)
-      product2 = Helpers.create_product(product2_name, id2)
-      invalid_product = Helpers.create_product(product2_name, invalid_id)
+      product1 = Helpers.create_product(name: product1_name, id: id1, rank: 0)
+      product2 = Helpers.create_product(name: product2_name, id: id2)
+      invalid_product = Helpers.create_product(name: product2_name, id: invalid_id)
 
-      order1 = Helpers.create_order(id1, 52, 0)
-      order2 = Helpers.create_order(id2, 50)
-      invalid_order = Helpers.create_order(invalid_id, 50)
+      order1 = Helpers.create_order(item_id: id1, platinum: 52, mod_rank: 0)
+      order2 = Helpers.create_order(item_id: id2, platinum: 50)
+      invalid_order = Helpers.create_order(item_id: invalid_id, platinum: 50)
 
-      order1_without_market_info =
-        Order.new(%{
-          "item_id" => "54a74454e779892d5e5155d5",
-          "mod_rank" => 0,
-          "order_type" => "sell",
-          "platinum" => 16,
-          "quantity" => 1
-        })
-
-      order2_without_market_info =
-        Order.new(%{
-          "item_id" => "54a74454e779892d5e5155a0",
-          "order_type" => "sell",
-          "platinum" => 16,
-          "quantity" => 1
-        })
+      order1_without_market_info = Helpers.create_order(item_id: id1, platinum: 16, mod_rank: 0)
+      order2_without_market_info = Helpers.create_order(item_id: id2, platinum: 16)
 
       product1_market_orders = [
         OrderInfo.new(%{

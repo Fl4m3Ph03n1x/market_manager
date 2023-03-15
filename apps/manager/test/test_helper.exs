@@ -3,71 +3,35 @@ ExUnit.start()
 defmodule Helpers do
   @moduledoc false
 
-  alias Manager.Type
   alias Shared.Data.{Order, Product}
 
-  # @default_ranked_order [
-  #   platinum: 15,
-  #   quantity: 1,
-  #   rank: "n/a"
-  # ]
+  @default_order %{
+    "item_id" => "default_item_id",
+    "platinum" => 15,
+    "quantity" => 1,
+    "order_type" => "sell"
+  }
 
-  # @spec create_order(Keyword.t()) :: Order.t()
-  # def create_order([item_id: item_id, rank: rank] = data) do
-  #   complete_order_data = Keyword.merge(@default_ranked_order, data)
+  @default_product %{
+    "name" => "default_name",
+    "id" => "default_id",
+    "min_price" => 15,
+    "default_price" => 16,
+    "rank" => "n/a",
+    "quantity" => 1
+  }
 
-  #   Order.new(%{
-  #     "order_type" => "sell",
-  #     "item_id" => item_id,
-  #     "platinum" => complete_order_data[:platinum],
-  #     "quantity" => complete_order_data[:quantity],
-  #     "mod_rank" => rank
-  #   })
-  # end
-
-  @spec create_order(Type.item_id(), platinum :: pos_integer) :: Order.t()
-  def create_order(item_id, platinum),
+  @spec create_order(Keyword.t()) :: Order.t()
+  def create_order(data) when is_list(data),
     do:
-      Order.new(%{
-        "order_type" => "sell",
-        "item_id" => item_id,
-        "platinum" => platinum,
-        "quantity" => 1
-      })
+      @default_order
+      |> Map.merge(Map.new(data, fn {k, v} -> {Atom.to_string(k), v} end))
+      |> Order.new()
 
-  @spec create_order(Type.item_id(), platinum :: pos_integer, rank :: non_neg_integer) ::
-          Order.t()
-  def create_order(item_id, platinum, rank),
+  @spec create_product(Keyword.t()) :: Product.t()
+  def create_product(data) when is_list(data),
     do:
-      Order.new(%{
-        "order_type" => "sell",
-        "item_id" => item_id,
-        "platinum" => platinum,
-        "quantity" => 1,
-        "mod_rank" => rank
-      })
-
-  @spec create_product(name :: String.t(), Type.item_id()) :: Product.t()
-  def create_product(name, id),
-    do:
-      Product.new(%{
-        "name" => name,
-        "id" => id,
-        "min_price" => 15,
-        "default_price" => 16,
-        "rank" => "n/a",
-        "quantity" => 1
-      })
-
-  @spec create_product(name :: String.t(), Type.item_id(), rank :: non_neg_integer) :: Product.t()
-  def create_product(name, id, rank),
-    do:
-      Product.new(%{
-        "name" => name,
-        "id" => id,
-        "min_price" => 15,
-        "default_price" => 16,
-        "rank" => rank,
-        "quantity" => 1
-      })
+      @default_product
+      |> Map.merge(Map.new(data, fn {k, v} -> {Atom.to_string(k), v} end))
+      |> Product.new()
 end
