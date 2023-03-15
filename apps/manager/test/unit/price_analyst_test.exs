@@ -5,7 +5,6 @@ defmodule Manager.PriceAnalystTest do
 
   alias Helpers
   alias Manager.Impl.PriceAnalyst
-  alias Shared.Data.OrderInfo
 
   #########
   # Tests #
@@ -15,7 +14,7 @@ defmodule Manager.PriceAnalystTest do
     test "returns the price of the first element if list size is 1" do
       # Arrange
       order_info = [
-        new_order_info(50)
+        Helpers.create_order_info(platinum: 50)
       ]
 
       product = Helpers.create_product(min_price: 1, default_price: 1)
@@ -44,8 +43,8 @@ defmodule Manager.PriceAnalystTest do
     test "returns min_price if the calculated price is lower than min_price" do
       # Arrange
       order_info = [
-        new_order_info(10),
-        new_order_info(11)
+        Helpers.create_order_info(platinum: 10),
+        Helpers.create_order_info(platinum: 11)
       ]
 
       product = Helpers.create_product(min_price: 14, default_price: 16)
@@ -63,13 +62,13 @@ defmodule Manager.PriceAnalystTest do
     test "calculates :top_five_average with a list bigger than 5" do
       # Arrange
       order_info = [
-        new_order_info(50),
-        new_order_info(55),
-        new_order_info(60),
-        new_order_info(65),
-        new_order_info(55),
-        new_order_info(45),
-        new_order_info(50_000)
+        Helpers.create_order_info(platinum: 50),
+        Helpers.create_order_info(platinum: 55),
+        Helpers.create_order_info(platinum: 60),
+        Helpers.create_order_info(platinum: 65),
+        Helpers.create_order_info(platinum: 55),
+        Helpers.create_order_info(platinum: 45),
+        Helpers.create_order_info(platinum: 50_000)
       ]
 
       product = Helpers.create_product(min_price: 1, default_price: 1)
@@ -85,10 +84,10 @@ defmodule Manager.PriceAnalystTest do
     test "calculates :top_five_average with a list smaller than 5" do
       # Arrange
       order_info = [
-        new_order_info(50),
-        new_order_info(55),
-        new_order_info(50),
-        new_order_info(60)
+        Helpers.create_order_info(platinum: 50),
+        Helpers.create_order_info(platinum: 55),
+        Helpers.create_order_info(platinum: 50),
+        Helpers.create_order_info(platinum: 60)
       ]
 
       product = Helpers.create_product(min_price: 1, default_price: 1)
@@ -106,13 +105,13 @@ defmodule Manager.PriceAnalystTest do
     test "calculates :top_three_average with a list bigger than 3" do
       # Arrange
       order_info = [
-        new_order_info(50),
-        new_order_info(55),
-        new_order_info(60),
-        new_order_info(65),
-        new_order_info(55),
-        new_order_info(45),
-        new_order_info(50_000)
+        Helpers.create_order_info(platinum: 50),
+        Helpers.create_order_info(platinum: 55),
+        Helpers.create_order_info(platinum: 60),
+        Helpers.create_order_info(platinum: 65),
+        Helpers.create_order_info(platinum: 55),
+        Helpers.create_order_info(platinum: 45),
+        Helpers.create_order_info(platinum: 50_000)
       ]
 
       product = Helpers.create_product(min_price: 1, default_price: 1)
@@ -128,8 +127,8 @@ defmodule Manager.PriceAnalystTest do
     test "calculates :top_three_average with a list smaller than 3" do
       # Arrange
       order_info = [
-        new_order_info(50),
-        new_order_info(55)
+        Helpers.create_order_info(platinum: 50),
+        Helpers.create_order_info(platinum: 55)
       ]
 
       product = Helpers.create_product(min_price: 1, default_price: 1)
@@ -147,13 +146,13 @@ defmodule Manager.PriceAnalystTest do
     test "returns the price of the lowest element in the list" do
       # Arrange
       order_info = [
-        new_order_info(50),
-        new_order_info(55),
-        new_order_info(60),
-        new_order_info(65),
-        new_order_info(55),
-        new_order_info(45),
-        new_order_info(50_000)
+        Helpers.create_order_info(platinum: 50),
+        Helpers.create_order_info(platinum: 55),
+        Helpers.create_order_info(platinum: 60),
+        Helpers.create_order_info(platinum: 65),
+        Helpers.create_order_info(platinum: 55),
+        Helpers.create_order_info(platinum: 45),
+        Helpers.create_order_info(platinum: 50_000)
       ]
 
       product = Helpers.create_product(min_price: 1, default_price: 1)
@@ -171,13 +170,13 @@ defmodule Manager.PriceAnalystTest do
     test "returns the price of the lowest element in the list minus 1" do
       # Arrange
       order_info = [
-        new_order_info(50),
-        new_order_info(55),
-        new_order_info(60),
-        new_order_info(65),
-        new_order_info(55),
-        new_order_info(45),
-        new_order_info(50_000)
+        Helpers.create_order_info(platinum: 50),
+        Helpers.create_order_info(platinum: 55),
+        Helpers.create_order_info(platinum: 60),
+        Helpers.create_order_info(platinum: 65),
+        Helpers.create_order_info(platinum: 55),
+        Helpers.create_order_info(platinum: 45),
+        Helpers.create_order_info(platinum: 50_000)
       ]
 
       product = Helpers.create_product(min_price: 1, default_price: 1)
@@ -190,19 +189,4 @@ defmodule Manager.PriceAnalystTest do
       assert actual == expected
     end
   end
-
-  ###########
-  # Private #
-  ###########
-
-  @spec new_order_info(price :: non_neg_integer) :: OrderInfo.t()
-  defp new_order_info(price),
-    do:
-      OrderInfo.new(%{
-        "visible" => true,
-        "user" => %{"status" => "ingame"},
-        "platform" => "pc",
-        "order_type" => "sell",
-        "platinum" => price
-      })
 end

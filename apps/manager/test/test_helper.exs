@@ -3,7 +3,8 @@ ExUnit.start()
 defmodule Helpers do
   @moduledoc false
 
-  alias Shared.Data.{Order, Product}
+  alias Shared.Data.{Order, OrderInfo, Product}
+  alias Shared.Utils.Maps
 
   @default_order %{
     "item_id" => "default_item_id",
@@ -21,17 +22,32 @@ defmodule Helpers do
     "quantity" => 1
   }
 
+  @default_order_info %{
+    "visible" => true,
+    "user" => %{"status" => "ingame"},
+    "platform" => "pc",
+    "order_type" => "sell",
+    "platinum" => 15
+  }
+
   @spec create_order(Keyword.t()) :: Order.t()
   def create_order(data) when is_list(data),
     do:
       @default_order
-      |> Map.merge(Map.new(data, fn {k, v} -> {Atom.to_string(k), v} end))
+      |> Map.merge(Maps.to_string_map(data))
       |> Order.new()
 
   @spec create_product(Keyword.t()) :: Product.t()
   def create_product(data) when is_list(data),
     do:
       @default_product
-      |> Map.merge(Map.new(data, fn {k, v} -> {Atom.to_string(k), v} end))
+      |> Map.merge(Maps.to_string_map(data))
       |> Product.new()
+
+  @spec create_order_info(Keyword.t()) :: Product.t()
+  def create_order_info(data) when is_list(data),
+    do:
+      @default_order_info
+      |> Map.merge(Maps.to_string_map(data))
+      |> OrderInfo.new()
 end
