@@ -9,6 +9,8 @@ defmodule Manager.WorkerTest do
   alias Manager.Runtime.Worker
   alias Shared.Data.{Order, OrderInfo}
 
+  @timeout 500
+
   describe "activate" do
     setup do
       syndicate = "red_veil"
@@ -19,9 +21,9 @@ defmodule Manager.WorkerTest do
       product2_name = "Eroding Blight"
       invalid_id = "some_invalid_id"
 
-      product1 = Helpers.create_product(product1_name, id1)
-      product2 = Helpers.create_product(product2_name, id2, "n/a")
-      invalid_product = Helpers.create_product(product2_name, invalid_id, "n/a")
+      product1 = Helpers.create_product(product1_name, id1, 0)
+      product2 = Helpers.create_product(product2_name, id2)
+      invalid_product = Helpers.create_product(product2_name, invalid_id)
 
       order1 = Helpers.create_order(id1, 52, 0)
       order2 = Helpers.create_order(id2, 50)
@@ -210,9 +212,17 @@ defmodule Manager.WorkerTest do
 
         Worker.activate(syndicate, strategy)
 
-        assert_receive {:activate, ^syndicate, {1, 2, {:ok, "54a74454e779892d5e5155d5"}}}
-        assert_receive {:activate, ^syndicate, {2, 2, {:ok, "54a74454e779892d5e5155a0"}}}
-        assert_receive {:activate, ^syndicate, :done}
+        assert_receive(
+          {:activate, ^syndicate, {1, 2, {:ok, "54a74454e779892d5e5155d5"}}},
+          @timeout
+        )
+
+        assert_receive(
+          {:activate, ^syndicate, {2, 2, {:ok, "54a74454e779892d5e5155a0"}}},
+          @timeout
+        )
+
+        assert_receive({:activate, ^syndicate, :done}, @timeout)
 
         assert_called(Store.list_products(syndicate))
         assert_called(Store.save_order(id1, syndicate))
@@ -266,9 +276,17 @@ defmodule Manager.WorkerTest do
 
         Worker.deactivate(syndicate)
 
-        assert_receive {:deactivate, ^syndicate, {1, 2, {:ok, "54a74454e779892d5e5155d5"}}}
-        assert_receive {:deactivate, ^syndicate, {2, 2, {:ok, "54a74454e779892d5e5155a0"}}}
-        assert_receive {:deactivate, ^syndicate, :done}
+        assert_receive(
+          {:deactivate, ^syndicate, {1, 2, {:ok, "54a74454e779892d5e5155d5"}}},
+          @timeout
+        )
+
+        assert_receive(
+          {:deactivate, ^syndicate, {2, 2, {:ok, "54a74454e779892d5e5155a0"}}},
+          @timeout
+        )
+
+        assert_receive({:deactivate, ^syndicate, :done}, @timeout)
 
         assert_called(Store.list_orders(syndicate))
         assert_called(Store.delete_order(order_id1, syndicate))

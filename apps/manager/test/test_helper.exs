@@ -6,6 +6,25 @@ defmodule Helpers do
   alias Manager.Type
   alias Shared.Data.{Order, Product}
 
+  # @default_ranked_order [
+  #   platinum: 15,
+  #   quantity: 1,
+  #   rank: "n/a"
+  # ]
+
+  # @spec create_order(Keyword.t()) :: Order.t()
+  # def create_order([item_id: item_id, rank: rank] = data) do
+  #   complete_order_data = Keyword.merge(@default_ranked_order, data)
+
+  #   Order.new(%{
+  #     "order_type" => "sell",
+  #     "item_id" => item_id,
+  #     "platinum" => complete_order_data[:platinum],
+  #     "quantity" => complete_order_data[:quantity],
+  #     "mod_rank" => rank
+  #   })
+  # end
+
   @spec create_order(Type.item_id(), platinum :: pos_integer) :: Order.t()
   def create_order(item_id, platinum),
     do:

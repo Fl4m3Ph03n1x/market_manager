@@ -53,7 +53,6 @@ defmodule Manager.Runtime.Worker do
   @spec handle_cast(request :: any, state) :: {:noreply, state}
   def handle_cast({:activate, syndicate, strategy, from_pid}, [interpreter: interpreter] = deps) do
     interpreter.activate(syndicate, strategy, fn result ->
-      IO.inspect(result, label: "RESULT")
       send(from_pid, result)
     end)
 
