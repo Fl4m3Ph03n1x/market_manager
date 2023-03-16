@@ -105,6 +105,21 @@ defmodule Store do
   defdelegate save_login_data(auth, user), to: FileSystem
 
   @doc """
+  Deletes any login information from the storage system.
+
+  Example:
+  ```
+  > Store.delete_login_data()
+  :ok
+
+  > Store.delete_login_data()
+  {:error, :enoent}
+  ```
+  """
+  @spec delete_login_data :: Type.delete_login_data()
+  defdelegate delete_login_data, to: FileSystem
+
+  @doc """
   Retrieves the user's login data from Storage.
 
   Example:

@@ -70,12 +70,39 @@ defmodule Manager.Impl.Interpreter do
   end
 
   @spec login(Credentials.t(), keep_logged_in :: boolean, Type.handle(), dependencies()) :: :ok
-  def login(credentials, keep_logged_in, handle, deps \\ @default_deps) do
-    with {:ok, {authorization, user}} <- deps[:auction_house].login(credentials),
-         :ok <- maybe_save_login_data(keep_logged_in, {authorization, user}, deps) do
-      handle.({:login, credentials, :done})
+  def login(
+        credentials,
+        keep_logged_in,
+        handle,
+        [store: store, auction_house: auction_house] \\ @default_deps
+      ) do
+    if keep_logged_in do
+      # if we have past login, we simply update the auction_house
+      with {:ok, {auth, user}} <- store.get_login_data(),
+           :ok <- auction_house.recover_login({auth, user}) do
+        handle.({:login, credentials, :done})
+      else
+        # if we do not have past login, we need to fetch it manually
+        {:ok, nil} ->
+          with {:ok, login_data} <- auction_house.login(credentials),
+               :ok <- update_login_data(keep_logged_in, login_data, store) do
+            handle.({:login, credentials, :done})
+          else
+            error -> handle.({:login, credentials, error})
+          end
+
+        # if automatic login fails
+        error ->
+          handle.({:login, credentials, error})
+      end
     else
-      error -> handle.({:login, credentials, error})
+      # if we insist on manually logging in
+      with {:ok, login_data} <- auction_house.login(credentials),
+           :ok <- update_login_data(keep_logged_in, login_data, store) do
+        handle.({:login, credentials, :done})
+      else
+        error -> handle.({:login, credentials, error})
+      end
     end
   end
 
@@ -156,13 +183,14 @@ defmodule Manager.Impl.Interpreter do
     end
   end
 
-  @spec maybe_save_login_data(
+  @spec update_login_data(
           keep_logged_in :: boolean,
           {Authorization.t(), User.t()},
-          dependencies
+          store :: module
         ) :: :ok | {:error, any}
-  defp maybe_save_login_data(false, _data, _deps), do: :ok
+  defp update_login_data(false, _data, store),
+    do: store.delete_login_data()
 
-  defp maybe_save_login_data(true, {auth, user}, deps),
-    do: deps[:store].save_login_data(auth, user)
+  defp update_login_data(true, {auth, user}, store),
+    do: store.save_login_data(auth, user)
 end

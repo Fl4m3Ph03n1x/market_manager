@@ -7,7 +7,7 @@ defmodule Manager.WorkerTest do
 
   alias Helpers
   alias Manager.Runtime.Worker
-  alias Shared.Data.OrderInfo
+  alias Shared.Data.{Authorization, Credentials, OrderInfo, User}
 
   @timeout 500
 
@@ -281,6 +281,60 @@ defmodule Manager.WorkerTest do
         assert_called(AuctionHouse.delete_order(order_id1))
         assert_called(AuctionHouse.delete_order(order_id2))
       end
+    end
+  end
+
+  describe "login" do
+    setup do
+      credentials = Credentials.new("an_email", "a_password")
+      authorization = Authorization.new("a_cookie", "a_token")
+      user = User.new("fl4m3", false)
+
+      %{
+        credentials: credentials,
+        authorization: authorization,
+        user: user
+      }
+    end
+
+    # Login the user and delete authorization info in storage
+    test "logs in correctly WITHOUT keep_logged_in checked", %{
+      credentials: credentials,
+      authorization: authorization,
+      user: user
+    } do
+      with_mocks([
+        {
+          Store,
+          [],
+          [
+            delete_login_data: fn -> :ok end
+          ]
+        },
+        {
+          AuctionHouse,
+          [],
+          [
+            login: fn _credentials -> {:ok, {authorization, user}} end
+          ]
+        }
+      ]) do
+        # If the process is not started, start it now
+        start_supervised(Worker)
+
+        Worker.login(credentials)
+
+        assert_receive({:login, ^credentials, :done}, @timeout)
+
+        assert_called(Store.delete_login_data())
+
+        assert_called(AuctionHouse.login(credentials))
+      end
+    end
+
+    # Login the user and update/save authorization information in storage
+    test "logs in correctly with keep_logged_in checked" do
+      throw("Not implemented")
     end
   end
 end

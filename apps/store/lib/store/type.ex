@@ -26,8 +26,9 @@ defmodule Store.Type do
   # Responses #
   #############
 
-  @type get_login_data :: {:ok, {Authorization.t(), User.t()}} | error
+  @type get_login_data :: {:ok, {Authorization.t(), User.t()} | nil} | error
   @type save_login_data_response :: :ok | error
+  @type delete_login_data_response :: :ok | error
   @type list_products_response :: {:ok, [Product.t()]} | error
   @type list_orders_response :: {:ok, [order_id]} | error
   @type save_order_response :: :ok | error
