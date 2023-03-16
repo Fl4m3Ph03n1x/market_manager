@@ -72,38 +72,35 @@ defmodule Manager.Impl.Interpreter do
   @spec login(Credentials.t(), keep_logged_in :: boolean, Type.handle(), dependencies()) :: :ok
   def login(
         credentials,
-        keep_logged_in,
+        true,
         handle,
-        [store: store, auction_house: auction_house] \\ @default_deps
+        [store: store, auction_house: auction_house] = deps \\ @default_deps
       ) do
-    if keep_logged_in do
-      # if we have past login, we simply update the auction_house
-      with {:ok, {auth, user}} <- store.get_login_data(),
-           :ok <- auction_house.recover_login({auth, user}) do
+    # if we have past login, we simply update the auction_house
+    case automatic_login(deps) do
+      :ok ->
         handle.({:login, credentials, :done})
-      else
-        # if we do not have past login, we need to fetch it manually
-        {:ok, nil} ->
-          with {:ok, login_data} <- auction_house.login(credentials),
-               :ok <- update_login_data(keep_logged_in, login_data, store) do
-            handle.({:login, credentials, :done})
-          else
-            error -> handle.({:login, credentials, error})
-          end
 
-        # if automatic login fails
-        error ->
-          handle.({:login, credentials, error})
-      end
-    else
-      # if we insist on manually logging in
-      with {:ok, login_data} <- auction_house.login(credentials),
-           :ok <- update_login_data(keep_logged_in, login_data, store) do
-        handle.({:login, credentials, :done})
-      else
-        error -> handle.({:login, credentials, error})
-      end
+      # if we do not have past login, we need to fetch it manually
+      {:ok, nil} ->
+        case manual_login(credentials, true, deps) do
+          :ok -> handle.({:login, credentials, :done})
+          error -> handle.({:login, credentials, error})
+        end
+
+      error ->
+        handle.({:login, credentials, error})
     end
+  end
+
+  def login(
+        credentials,
+        false,
+        handle,
+        [store: store, auction_house: auction_house] = deps \\ @default_deps
+      ) do
+    # if we insist on manually logging in
+    manual_login(credentials, keep_logged_in, deps)
   end
 
   ###########
@@ -180,6 +177,24 @@ defmodule Manager.Impl.Interpreter do
 
       error ->
         error
+    end
+  end
+
+  @spec automatic_login(dependencies()) :: :ok | {:ok, nil} | {:error, any}
+  defp automatic_login(store: store, auction_house: auction_house) do
+    with {:ok, {auth, user}} <- store.get_login_data() do
+      auction_house.recover_login({auth, user})
+    end
+  end
+
+  @spec manual_login(Credentials.t(), keep_logged_in :: boolean, dependencies()) ::
+          :ok | {:error, any}
+  defp manual_login(credentials, keep_logged_in,
+         store: store,
+         auction_house: auction_house
+       ) do
+    with {:ok, login_data} <- auction_house.login(credentials) do
+      update_login_data(keep_logged_in, login_data, store)
     end
   end
 
