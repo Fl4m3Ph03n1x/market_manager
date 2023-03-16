@@ -70,11 +70,13 @@ defmodule Manager.Impl.Interpreter do
   end
 
   @spec login(Credentials.t(), keep_logged_in :: boolean, Type.handle(), dependencies()) :: :ok
+  def login(credentials, keep_logged_in, handle, deps \\ @default_deps)
+
   def login(
         credentials,
         true,
         handle,
-        [store: store, auction_house: auction_house] = deps \\ @default_deps
+        deps
       ) do
     # if we have past login, we simply update the auction_house
     case automatic_login(deps) do
@@ -97,10 +99,10 @@ defmodule Manager.Impl.Interpreter do
         credentials,
         false,
         handle,
-        [store: store, auction_house: auction_house] = deps \\ @default_deps
+        deps
       ) do
     # if we insist on manually logging in
-    manual_login(credentials, keep_logged_in, deps)
+    manual_login(credentials, false, deps)
   end
 
   ###########

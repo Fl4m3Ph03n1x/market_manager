@@ -5,7 +5,7 @@ defmodule Store.Type do
   a cyclical dependency between them.
   """
 
-  alias Shared.Data.{Authorization, Order, Product, User}
+  alias Shared.Data.{Authorization, Product, User}
 
   ##########
   # Types  #

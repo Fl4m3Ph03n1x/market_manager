@@ -726,7 +726,8 @@ defmodule Manager.InterpreterTest do
           Store,
           [],
           [
-            save_login_data: fn _auth, _user -> :ok end
+            save_login_data: fn _auth, _user -> :ok end,
+            get_login_data: fn -> {:ok, nil} end
           ]
         },
         {
@@ -748,7 +749,10 @@ defmodule Manager.InterpreterTest do
         assert actual == expected
 
         assert_called(AuctionHouse.login(credentials))
+        assert_not_called(AuctionHouse.recover_login(:_))
+
         assert_called(Store.save_login_data(auth, user))
+        assert_called(Store.get_login_data())
 
         assert_received({:login, ^credentials, :done})
       end
@@ -765,7 +769,8 @@ defmodule Manager.InterpreterTest do
           Store,
           [],
           [
-            save_login_data: fn _auth, _user -> {:error, :enoent} end
+            save_login_data: fn _auth, _user -> {:error, :enoent} end,
+            get_login_data: fn -> {:ok, nil} end
           ]
         },
         {
@@ -787,7 +792,10 @@ defmodule Manager.InterpreterTest do
         assert actual == expected
 
         assert_called(AuctionHouse.login(credentials))
+        assert_not_called(AuctionHouse.recover_login(:_))
+
         assert_called(Store.save_login_data(auth, user))
+        assert_called(Store.get_login_data())
 
         assert_received({:login, ^credentials, {:error, :enoent}})
       end
@@ -804,7 +812,8 @@ defmodule Manager.InterpreterTest do
           Store,
           [],
           [
-            delete_login_data: fn -> :ok end
+            delete_login_data: fn -> :ok end,
+            get_login_data: fn -> {:ok, nil} end
           ]
         },
         {
@@ -826,8 +835,10 @@ defmodule Manager.InterpreterTest do
         assert actual == expected
 
         assert_called(AuctionHouse.login(credentials))
+        assert_not_called(AuctionHouse.recover_login(:_))
 
         assert_called(Store.delete_login_data())
+        assert_not_called(Store.get_login_data())
         assert_not_called(Store.save_login_data(:_, :_))
 
         assert_received({:login, ^credentials, :done})
@@ -845,7 +856,8 @@ defmodule Manager.InterpreterTest do
           Store,
           [],
           [
-            delete_login_data: fn -> {:error, :enoent} end
+            delete_login_data: fn -> {:error, :enoent} end,
+            get_login_data: fn -> {:ok, nil} end
           ]
         },
         {
@@ -867,8 +879,10 @@ defmodule Manager.InterpreterTest do
         assert actual == expected
 
         assert_called(AuctionHouse.login(credentials))
+        assert_not_called(AuctionHouse.recover_login(:_))
 
         assert_called(Store.delete_login_data())
+        assert_called(Store.get_login_data())
         assert_not_called(Store.save_login_data(:_, :_))
 
         assert_received({:login, ^credentials, {:error, :enoent}})
@@ -885,8 +899,7 @@ defmodule Manager.InterpreterTest do
           [],
           [
             save_login_data: fn _auth, _user -> {:error, :enoent} end,
-            delete_login_data: fn -> {:error, :enoent} end,
-            get_login_data: fn -> {:error, :enoent} end
+            get_login_data: fn -> {:ok, nil} end
           ]
         },
         {
@@ -909,9 +922,9 @@ defmodule Manager.InterpreterTest do
 
         assert_called(AuctionHouse.login(credentials))
 
+        assert_called(Store.get_login_data())
         assert_not_called(Store.save_login_data(:_, :_))
         assert_not_called(Store.delete_login_data())
-        assert_not_called(Store.get_login_data())
 
         assert_received({:login, ^credentials, {:error, :timeout, ^credentials}})
       end
