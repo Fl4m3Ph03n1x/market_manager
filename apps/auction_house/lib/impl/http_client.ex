@@ -5,8 +5,8 @@ defmodule AuctionHouse.Impl.HTTPClient do
 
   require Logger
 
-  alias AuctionHouse.Data.{Authorization, Credentials, Order, OrderInfo, User}
   alias AuctionHouse.Type
+  alias Shared.Data.{Authorization, Credentials, Order, OrderInfo, User}
 
   @url Application.compile_env!(:auction_house, :api_base_url)
   @search_url Application.compile_env!(:auction_house, :api_search_url)

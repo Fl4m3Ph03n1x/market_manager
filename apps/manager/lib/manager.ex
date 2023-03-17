@@ -8,6 +8,7 @@ defmodule Manager do
   alias Manager.Impl.Interpreter
   alias Manager.Type
   alias Manager.Runtime.{Server, Worker}
+  alias Shared.Data.{Credentials, User}
   alias Supervisor
 
   ##########
@@ -19,7 +20,7 @@ defmodule Manager do
   put on sell all the mods the syndicate has. The price of each mod will be calculated via a
   `PriceAnalyst` depending on which strategy you choose.
 
-  This is an asynchronous operation, which will return `:ok` immediatly.
+  This is an asynchronous operation, which will return `:ok` immediately.
   The caller must have implemented a `handle_info` in its Server to handle messages with the
   following format:
 
@@ -29,7 +30,7 @@ defmodule Manager do
     belongs to.
     The `result` of an operation, will be a tagged tuple. Some common formats are:
 
-     - `{:ok, order_id :: String.t()}`, when the placement was successfull
+     - `{:ok, order_id :: String.t()}`, when the placement was successful
      - `{:error, reason :: any(), item_id :: String.t()}`, when the placement failed
 
   - `{:activate, syndicate :: String.t(), :done}`: Once all orders have been placed (successfully
@@ -82,28 +83,26 @@ defmodule Manager do
   defdelegate deactivate(syndicate), to: Worker
 
   @doc """
-  Saves the login information used in all requests.
-  Required parameters are:
-
-    - token: the xrfc-token used to send requests
-    - cookie: the cookie used to id the user
-
-  Performs validation on the given information.
+  Saves the login information used in all requests. Can optionally keep user
+  logged in for future sessions. Will first attempt to authenticate the user,
+  and then, if successful and if `keep_logged_in` is `true`, will try to save
+  the authentication parameters. Should it fail to save the authentication
+  parameters, the login request is still done.
 
   Example:
   ```
-  > MarketManager.authenticate(%{"token" => "abc", "cookie" => "123"})
-  {:ok, %{"token" => "abc", "cookie" => "123"}}
+  credentials = Credentials.new("username", "password")
 
-  > MarketManager.authenticate(%{"token" => "abc"})
-  {:error, :unable_to_save_authentication, {:missing_mandatory_keys, ["cookie"], %{"token" => "abc"}}}
+  > MarketManager.login(credentials, false)
+  {:ok, %User{ingame_name: "fl4m3", patreon?: false}}
 
-  > MarketManager.authenticate(%{"token" => "abc", "cookie" => "123"})
-  {:error, :unable_to_save_authentication, {:enoent, %{"token" => "abc", "cookie" => "123"}}}
+  > MarketManager.login(credentials, true)
+  {:error, :unable_to_save_authentication, {:enoent, credentials}}
   ```
   """
-  @spec authenticate(Type.credentials()) :: Type.authenticate_response()
-  defdelegate authenticate(credentials), to: Interpreter
+  @spec login(Credentials.t(), keep_logged_in :: boolean) ::
+          Type.login_response()
+  defdelegate login(credentials, keep_logged_in), to: Worker
 
   @doc false
   @spec child_spec(any) :: Supervisor.child_spec()

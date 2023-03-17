@@ -1,4 +1,4 @@
-defmodule AuctionHouse.Data.User do
+defmodule Shared.Data.User do
   @moduledoc """
   Represents relevant User information for clients using this AuctionHouse.
   """

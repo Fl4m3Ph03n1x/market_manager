@@ -1,4 +1,4 @@
-defmodule AuctionHouse.Data.OrderInfo.User do
+defmodule Shared.Data.OrderInfo.User do
   @moduledoc """
   Represents the account information for a warframe.market User who has an order
   posted.
@@ -6,7 +6,7 @@ defmodule AuctionHouse.Data.OrderInfo.User do
 
   use TypedStruct
 
-  alias AuctionHouse.Shared.Utils
+  alias Shared.Utils.Structs
 
   @type user :: %{
           (ingame_name :: String.t()) => String.t(),
@@ -28,5 +28,5 @@ defmodule AuctionHouse.Data.OrderInfo.User do
         } = user
       )
       when is_binary(ingame_name) and is_binary(status),
-      do: Utils.string_map_to_struct(user, __MODULE__)
+      do: Structs.string_map_to_struct(user, __MODULE__)
 end

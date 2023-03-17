@@ -4,11 +4,11 @@ defmodule AuctionHouseTest do
   use ExUnit.Case
 
   alias AuctionHouse
-  alias AuctionHouse.Data.User, as: UserInfo
-  alias AuctionHouse.Data.{Authorization, Credentials, Order, OrderInfo}
-  alias AuctionHouse.Data.OrderInfo.User
   alias AuctionHouse.Runtime.Server
   alias Bypass
+  alias Shared.Data.{Authorization, Credentials, Order, OrderInfo}
+  alias Shared.Data.OrderInfo.User
+  alias Shared.Data.User, as: UserInfo
 
   @test_port 8082
 
@@ -250,9 +250,15 @@ defmodule AuctionHouseTest do
 
       expected =
         {:ok,
-         %UserInfo{
-           patreon?: false,
-           ingame_name: "Fl4m3Ph03n1x"
+         {
+           %Authorization{
+             cookie: "JWT=new_cookie",
+             token: "a_token"
+           },
+           %UserInfo{
+             patreon?: false,
+             ingame_name: "Fl4m3Ph03n1x"
+           }
          }}
 
       # Assert

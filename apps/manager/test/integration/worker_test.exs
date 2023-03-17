@@ -1,10 +1,15 @@
 defmodule Manager.WorkerTest do
+  @moduledoc false
+
   use ExUnit.Case
 
   import Mock
 
   alias Helpers
   alias Manager.Runtime.Worker
+  alias Shared.Data.{Authorization, Credentials, OrderInfo, User}
+
+  @timeout 500
 
   describe "activate" do
     setup do
@@ -16,123 +21,121 @@ defmodule Manager.WorkerTest do
       product2_name = "Eroding Blight"
       invalid_id = "some_invalid_id"
 
-      product1 = Helpers.create_product(product1_name, id1)
-      product2 = Helpers.create_product(product2_name, id2, "n/a")
-      invalid_product = Helpers.create_product(product2_name, invalid_id, "n/a")
+      product1 = Helpers.create_product(name: product1_name, id: id1, rank: 0)
+      product2 = Helpers.create_product(name: product2_name, id: id2)
+      invalid_product = Helpers.create_product(name: product2_name, id: invalid_id)
 
-      order1 = Helpers.create_order(id1, 52, 0)
-      order2 = Helpers.create_order(id2, 50)
-      invalid_order = Helpers.create_order(invalid_id, 50)
+      order1 = Helpers.create_order(item_id: id1, platinum: 52, mod_rank: 0)
+      order2 = Helpers.create_order(item_id: id2, platinum: 50)
+      invalid_order = Helpers.create_order(item_id: invalid_id, platinum: 50)
 
-      order1_without_market_info = %{
-        "item_id" => "54a74454e779892d5e5155d5",
-        "mod_rank" => 0,
-        "order_type" => "sell",
-        "platinum" => 16,
-        "quantity" => 1
-      }
-
-      order2_without_market_info = %{
-        "item_id" => "54a74454e779892d5e5155a0",
-        "order_type" => "sell",
-        "platinum" => 16,
-        "quantity" => 1
-      }
+      order1_without_market_info = Helpers.create_order(item_id: id1, platinum: 16, mod_rank: 0)
+      order2_without_market_info = Helpers.create_order(item_id: id2, platinum: 16)
 
       product1_market_orders = [
-        %{
+        OrderInfo.new(%{
           "order_type" => "sell",
           "platinum" => 45,
           "platform" => "pc",
           "user" => %{
-            "status" => "ingame"
+            "status" => "ingame",
+            "ingame_name" => "ingame_name_1"
           },
           "visible" => true
-        },
-        %{
+        }),
+        OrderInfo.new(%{
           "order_type" => "sell",
           "platinum" => 55,
           "platform" => "pc",
           "user" => %{
-            "status" => "ingame"
+            "status" => "ingame",
+            "ingame_name" => "ingame_name_2"
           },
           "visible" => true
-        },
-        %{
+        }),
+        OrderInfo.new(%{
           "order_type" => "sell",
           "platinum" => 50,
           "platform" => "pc",
           "user" => %{
-            "status" => "ingame"
+            "status" => "ingame",
+            "ingame_name" => "ingame_name_3"
           },
           "visible" => true
-        },
-        %{
+        }),
+        OrderInfo.new(%{
           "order_type" => "sell",
           "platinum" => 60,
           "platform" => "pc",
           "user" => %{
-            "status" => "ingame"
+            "status" => "ingame",
+            "ingame_name" => "ingame_name_4"
           },
           "visible" => true
-        },
-        %{
+        }),
+        OrderInfo.new(%{
           "order_type" => "sell",
           "platinum" => 50,
           "platform" => "pc",
           "user" => %{
-            "status" => "ingame"
+            "status" => "ingame",
+            "ingame_name" => "ingame_name_5"
           },
           "visible" => true
-        }
+        })
       ]
 
       product2_market_orders = [
-        %{
+        OrderInfo.new(%{
           "order_type" => "sell",
           "platinum" => 40,
           "platform" => "pc",
           "user" => %{
-            "status" => "ingame"
+            "status" => "ingame",
+            "ingame_name" => "ingame_name_6"
           },
           "visible" => true
-        },
-        %{
+        }),
+        OrderInfo.new(%{
           "order_type" => "sell",
           "platinum" => 50,
           "platform" => "pc",
           "user" => %{
-            "status" => "ingame"
+            "status" => "ingame",
+            "ingame_name" => "ingame_name_7"
           },
           "visible" => true
-        },
-        %{
+        }),
+        OrderInfo.new(%{
           "order_type" => "sell",
           "platinum" => 50,
           "platform" => "pc",
           "user" => %{
-            "status" => "ingame"
+            "status" => "ingame",
+            "ingame_name" => "ingame_name_8"
           },
           "visible" => true
-        },
-        %{
+        }),
+        OrderInfo.new(%{
           "order_type" => "sell",
           "platinum" => 60,
           "platform" => "pc",
           "user" => %{
-            "status" => "ingame"
+            "status" => "ingame",
+            "ingame_name" => "ingame_name_9"
           },
           "visible" => true
-        },
-        %{
+        }),
+        OrderInfo.new(%{
           "order_type" => "sell",
           "platinum" => 50,
           "platform" => "pc",
           "user" => %{
-            "status" => "ingame"
+            "status" => "ingame",
+            "ingame_name" => "ingame_name_10"
           },
           "visible" => true
-        }
+        })
       ]
 
       %{
@@ -175,7 +178,7 @@ defmodule Manager.WorkerTest do
           [],
           [
             list_products: fn _syndicate -> {:ok, [product1, product2]} end,
-            save_order: fn id, _syndicate -> {:ok, id} end
+            save_order: fn _id, _syndicate -> :ok end
           ]
         },
         {
@@ -186,7 +189,7 @@ defmodule Manager.WorkerTest do
               ^product1_name -> {:ok, product1_market_orders}
               ^product2_name -> {:ok, product2_market_orders}
             end,
-            place_order: fn order -> {:ok, Map.get(order, "item_id")} end
+            place_order: fn order -> {:ok, order.item_id} end
           ]
         }
       ]) do
@@ -195,9 +198,17 @@ defmodule Manager.WorkerTest do
 
         Worker.activate(syndicate, strategy)
 
-        assert_receive {:activate, ^syndicate, {1, 2, {:ok, "54a74454e779892d5e5155d5"}}}
-        assert_receive {:activate, ^syndicate, {2, 2, {:ok, "54a74454e779892d5e5155a0"}}}
-        assert_receive {:activate, ^syndicate, :done}
+        assert_receive(
+          {:activate, ^syndicate, {1, 2, {:ok, "54a74454e779892d5e5155d5"}}},
+          @timeout
+        )
+
+        assert_receive(
+          {:activate, ^syndicate, {2, 2, {:ok, "54a74454e779892d5e5155a0"}}},
+          @timeout
+        )
+
+        assert_receive({:activate, ^syndicate, :done}, @timeout)
 
         assert_called(Store.list_products(syndicate))
         assert_called(Store.save_order(id1, syndicate))
@@ -251,9 +262,17 @@ defmodule Manager.WorkerTest do
 
         Worker.deactivate(syndicate)
 
-        assert_receive {:deactivate, ^syndicate, {1, 2, {:ok, "54a74454e779892d5e5155d5"}}}
-        assert_receive {:deactivate, ^syndicate, {2, 2, {:ok, "54a74454e779892d5e5155a0"}}}
-        assert_receive {:deactivate, ^syndicate, :done}
+        assert_receive(
+          {:deactivate, ^syndicate, {1, 2, {:ok, "54a74454e779892d5e5155d5"}}},
+          @timeout
+        )
+
+        assert_receive(
+          {:deactivate, ^syndicate, {2, 2, {:ok, "54a74454e779892d5e5155a0"}}},
+          @timeout
+        )
+
+        assert_receive({:deactivate, ^syndicate, :done}, @timeout)
 
         assert_called(Store.list_orders(syndicate))
         assert_called(Store.delete_order(order_id1, syndicate))
@@ -261,6 +280,90 @@ defmodule Manager.WorkerTest do
 
         assert_called(AuctionHouse.delete_order(order_id1))
         assert_called(AuctionHouse.delete_order(order_id2))
+      end
+    end
+  end
+
+  describe "login" do
+    setup do
+      credentials = Credentials.new("an_email", "a_password")
+      authorization = Authorization.new("a_cookie", "a_token")
+      user = User.new("fl4m3", false)
+
+      %{
+        credentials: credentials,
+        authorization: authorization,
+        user: user
+      }
+    end
+
+    # Login the user and delete authorization info in storage
+    test "automatic login works", %{
+      credentials: credentials,
+      authorization: authorization,
+      user: user
+    } do
+      with_mocks([
+        {
+          Store,
+          [],
+          [
+            get_login_data: fn -> {:ok, {authorization, user}} end
+          ]
+        },
+        {
+          AuctionHouse,
+          [],
+          [
+            recover_login: fn _auth, _user -> :ok end
+          ]
+        }
+      ]) do
+        # If the process is not started, start it now
+        start_supervised(Worker)
+
+        :ok = Worker.login(credentials, true)
+
+        assert_receive({:login, ^credentials, :done}, @timeout)
+
+        assert_called(Store.get_login_data())
+
+        assert_called(AuctionHouse.recover_login(authorization, user))
+      end
+    end
+
+    # Login the user and update/save authorization information in storage
+    test "manual login works", %{
+      credentials: credentials,
+      authorization: authorization,
+      user: user
+    } do
+      with_mocks([
+        {
+          Store,
+          [],
+          [
+            delete_login_data: fn -> :ok end
+          ]
+        },
+        {
+          AuctionHouse,
+          [],
+          [
+            login: fn _credentials -> {:ok, {authorization, user}} end
+          ]
+        }
+      ]) do
+        # If the process is not started, start it now
+        start_supervised(Worker)
+
+        :ok = Worker.login(credentials, false)
+
+        assert_receive({:login, ^credentials, :done}, @timeout)
+
+        assert_called(Store.delete_login_data())
+
+        assert_called(AuctionHouse.login(credentials))
       end
     end
   end

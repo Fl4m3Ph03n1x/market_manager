@@ -1,4 +1,6 @@
 defmodule Manager.ServerTest do
+  @moduledoc false
+
   use ExUnit.Case
 
   alias Manager

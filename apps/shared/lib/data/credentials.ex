@@ -1,4 +1,4 @@
-defmodule AuctionHouse.Data.Credentials do
+defmodule Shared.Data.Credentials do
   @moduledoc """
   Represents the authentication data for an user.
   """

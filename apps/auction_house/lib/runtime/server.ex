@@ -6,11 +6,11 @@ defmodule AuctionHouse.Runtime.Server do
 
   use GenServer
 
-  alias AuctionHouse.Data.{Credentials, Order}
   alias AuctionHouse.Impl.{HTTPClient, Settings}
   alias AuctionHouse.Type
   alias Floki
   alias HTTPoison
+  alias Shared.Data.{Authorization, Credentials, Order, User}
 
   @genserver_timeout Application.compile_env!(:auction_house, :genserver_timeout)
 
@@ -36,6 +36,10 @@ defmodule AuctionHouse.Runtime.Server do
   @spec login(Credentials.t()) :: Type.login_response()
   def login(credentials),
     do: GenServer.call(__MODULE__, {:login, credentials}, @genserver_timeout)
+
+  @spec recover_login(Authorization.t(), User.t()) :: Type.recover_login_response()
+  def recover_login(auth, user),
+    do: GenServer.call(__MODULE__, {:recover_login, auth, user}, @genserver_timeout)
 
   #############
   # Callbacks #
@@ -104,29 +108,38 @@ defmodule AuctionHouse.Runtime.Server do
         _from,
         state
       ) do
-    authentication_result = HTTPClient.login(credentials, state)
-
-    updated_state =
-      case authentication_result do
-        {:ok, {authorization, user}} ->
+    case HTTPClient.login(credentials, state) do
+      {:ok, {%Authorization{} = authorization, %User{} = user}} = response ->
+        updated_state =
           state
           |> Map.put(:authorization, authorization)
           |> Map.put(:user, user)
 
-        _ ->
-          # in case we have successfully logged in the past, but failed now
+        {:reply, response, updated_state}
+
+      error ->
+        # in case we have successfully logged in the past, but failed now
+        updated_state =
           state
           |> Map.put(:authorization, nil)
           |> Map.put(:user, nil)
-      end
 
-    response =
-      case authentication_result do
-        {:ok, {_authorization, user}} -> {:ok, user}
-        error -> error
-      end
+        {:reply, error, updated_state}
+    end
+  end
 
-    {:reply, response, updated_state}
+  @impl GenServer
+  def handle_call(
+        {:recover_login, auth, user},
+        _from,
+        state
+      ) do
+    updated_state =
+      state
+      |> Map.put(:authorization, auth)
+      |> Map.put(:user, user)
+
+    {:reply, :ok, updated_state}
   end
 
   @impl GenServer

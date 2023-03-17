@@ -1,4 +1,4 @@
-defmodule AuctionHouse.Data.Authorization do
+defmodule Shared.Data.Authorization do
   @moduledoc """
   Saves authorization details for a user. It also contains other details.
   """

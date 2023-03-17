@@ -1,12 +1,13 @@
-defmodule AuctionHouse.Data.OrderInfo do
+defmodule Shared.Data.OrderInfo do
   @moduledoc """
   Represents information about current orders from warframe market.
   """
 
   use TypedStruct
-  import AuctionHouse.Shared.ExtraGuards
 
-  alias AuctionHouse.Shared.Utils
+  import Shared.Utils.ExtraGuards
+
+  alias Shared.Utils.Structs
 
   @type order_info :: %{
           (visible :: String.t()) => boolean(),
@@ -38,8 +39,8 @@ defmodule AuctionHouse.Data.OrderInfo do
       )
       when is_boolean(visible) and is_binary(order_type) and is_binary(platform) and
              is_non_neg_integer(platinum) and is_map(user) do
-    order_info = Utils.string_map_to_struct(order_info, __MODULE__)
-    user = Utils.string_map_to_struct(order_info.user, __MODULE__.User)
+    order_info = Structs.string_map_to_struct(order_info, __MODULE__)
+    user = Structs.string_map_to_struct(order_info.user, __MODULE__.User)
     Map.put(order_info, :user, user)
   end
 end
