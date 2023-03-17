@@ -298,7 +298,42 @@ defmodule Manager.WorkerTest do
     end
 
     # Login the user and delete authorization info in storage
-    test "logs in correctly WITHOUT keep_logged_in checked", %{
+    test "automatic login works", %{
+      credentials: credentials,
+      authorization: authorization,
+      user: user
+    } do
+      with_mocks([
+        {
+          Store,
+          [],
+          [
+            get_login_data: fn -> {:ok, {authorization, user}} end
+          ]
+        },
+        {
+          AuctionHouse,
+          [],
+          [
+            recover_login: fn _auth, _user -> :ok end
+          ]
+        }
+      ]) do
+        # If the process is not started, start it now
+        start_supervised(Worker)
+
+        :ok = Worker.login(credentials, true)
+
+        assert_receive({:login, ^credentials, :done}, @timeout)
+
+        assert_called(Store.get_login_data())
+
+        assert_called(AuctionHouse.recover_login(authorization, user))
+      end
+    end
+
+    # Login the user and update/save authorization information in storage
+    test "manual login works", %{
       credentials: credentials,
       authorization: authorization,
       user: user
@@ -322,7 +357,7 @@ defmodule Manager.WorkerTest do
         # If the process is not started, start it now
         start_supervised(Worker)
 
-        Worker.login(credentials)
+        :ok = Worker.login(credentials, false)
 
         assert_receive({:login, ^credentials, :done}, @timeout)
 
@@ -330,11 +365,6 @@ defmodule Manager.WorkerTest do
 
         assert_called(AuctionHouse.login(credentials))
       end
-    end
-
-    # Login the user and update/save authorization information in storage
-    test "logs in correctly with keep_logged_in checked" do
-      throw("Not implemented")
     end
   end
 end

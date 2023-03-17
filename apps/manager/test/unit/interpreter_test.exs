@@ -715,7 +715,7 @@ defmodule Manager.InterpreterTest do
       }
     end
 
-    test "Returns ok if manual user login was successful and it saved data", %{
+    test "Returns ok if manual login was successful and it saved data", %{
       authorization: auth,
       user: user,
       credentials: credentials,
@@ -758,7 +758,7 @@ defmodule Manager.InterpreterTest do
       end
     end
 
-    test "Returns error if manual user login was successful but failed to save data", %{
+    test "Returns error if manual login was successful but failed to save data", %{
       authorization: auth,
       user: user,
       credentials: credentials,
@@ -801,7 +801,7 @@ defmodule Manager.InterpreterTest do
       end
     end
 
-    test "Returns ok if manual user login was successful and it deleted data", %{
+    test "Returns ok if manual login was successful and it deleted data", %{
       authorization: auth,
       user: user,
       credentials: credentials,
@@ -845,7 +845,7 @@ defmodule Manager.InterpreterTest do
       end
     end
 
-    test "Returns error if manual user login was successful but it failed to delete data", %{
+    test "Returns error if manual login was successful but it failed to delete data", %{
       authorization: auth,
       user: user,
       credentials: credentials,
@@ -882,14 +882,14 @@ defmodule Manager.InterpreterTest do
         assert_not_called(AuctionHouse.recover_login(:_))
 
         assert_called(Store.delete_login_data())
-        assert_called(Store.get_login_data())
+        assert_not_called(Store.get_login_data())
         assert_not_called(Store.save_login_data(:_, :_))
 
         assert_received({:login, ^credentials, {:error, :enoent}})
       end
     end
 
-    test "Returns error if manual user login failed", %{
+    test "Returns error if manual login failed", %{
       credentials: credentials,
       handle: handle
     } do
@@ -930,12 +930,164 @@ defmodule Manager.InterpreterTest do
       end
     end
 
-    test "Returns ok if automatic user login was successful" do
-      throw("Not Implemented")
+    test "Returns ok if automatic login was successful", %{
+      authorization: auth,
+      user: user,
+      credentials: credentials,
+      handle: handle
+    } do
+      with_mocks([
+        {
+          Store,
+          [],
+          [
+            get_login_data: fn -> {:ok, {auth, user}} end
+          ]
+        },
+        {
+          AuctionHouse,
+          [],
+          [
+            recover_login: fn _auth, _user -> :ok end
+          ]
+        }
+      ]) do
+        # Arrange
+        deps = [store: Store, auction_house: AuctionHouse]
+
+        # Act
+        actual = Interpreter.login(credentials, true, handle, deps)
+        expected = :ok
+
+        # Assert
+        assert actual == expected
+
+        assert_called(AuctionHouse.recover_login(auth, user))
+        assert_not_called(AuctionHouse.login(:_))
+
+        assert_called(Store.get_login_data())
+
+        assert_received({:login, ^credentials, :done})
+      end
     end
 
-    test "Returns error if automatic user login failed" do
-      throw("Not Implemented")
+    test "Returns ok if automatic login has no login info returned and manual login succeeds", %{
+      authorization: auth,
+      user: user,
+      credentials: credentials,
+      handle: handle
+    } do
+      with_mocks([
+        {
+          Store,
+          [],
+          [
+            get_login_data: fn -> {:ok, nil} end,
+            save_login_data: fn _auth, _user -> :ok end
+          ]
+        },
+        {
+          AuctionHouse,
+          [],
+          [
+            login: fn _credentials -> {:ok, {auth, user}} end
+          ]
+        }
+      ]) do
+        # Arrange
+        deps = [store: Store, auction_house: AuctionHouse]
+
+        # Act
+        actual = Interpreter.login(credentials, true, handle, deps)
+        expected = :ok
+
+        # Assert
+        assert actual == expected
+
+        assert_called(AuctionHouse.login(credentials))
+
+        assert_called(Store.get_login_data())
+        assert_called(Store.save_login_data(auth, user))
+
+        assert_received({:login, ^credentials, :done})
+      end
+    end
+
+    test "Returns error if automatic login has no login info returned and manual login fails", %{
+      credentials: credentials,
+      handle: handle
+    } do
+      with_mocks([
+        {
+          Store,
+          [],
+          [
+            get_login_data: fn -> {:ok, nil} end
+          ]
+        },
+        {
+          AuctionHouse,
+          [],
+          [
+            login: fn _credentials -> {:error, :timeout, credentials} end
+          ]
+        }
+      ]) do
+        # Arrange
+        deps = [store: Store, auction_house: AuctionHouse]
+
+        # Act
+        actual = Interpreter.login(credentials, true, handle, deps)
+        expected = :ok
+
+        # Assert
+        assert actual == expected
+
+        assert_called(AuctionHouse.login(credentials))
+
+        assert_called(Store.get_login_data())
+        assert_not_called(Store.save_login_data(:_, :_))
+
+        assert_received({:login, ^credentials, {:error, :timeout, ^credentials}})
+      end
+    end
+
+    test "Returns error if automatic login fails", %{
+      credentials: credentials,
+      handle: handle
+    } do
+      with_mocks([
+        {
+          Store,
+          [],
+          [
+            get_login_data: fn -> {:error, :enoent} end
+          ]
+        },
+        {
+          AuctionHouse,
+          [],
+          [
+            recover_login: fn _auth, _user -> :ok end
+          ]
+        }
+      ]) do
+        # Arrange
+        deps = [store: Store, auction_house: AuctionHouse]
+
+        # Act
+        actual = Interpreter.login(credentials, true, handle, deps)
+        expected = :ok
+
+        # Assert
+        assert actual == expected
+
+        assert_not_called(AuctionHouse.recover_login(:_, :_))
+
+        assert_called(Store.get_login_data())
+
+        assert_received({:login, ^credentials, {:error, :enoent}})
+      end
     end
   end
 end

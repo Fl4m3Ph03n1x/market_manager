@@ -101,8 +101,10 @@ defmodule Manager.Impl.Interpreter do
         handle,
         deps
       ) do
-    # if we insist on manually logging in
-    manual_login(credentials, false, deps)
+    case manual_login(credentials, false, deps) do
+      :ok -> handle.({:login, credentials, :done})
+      error -> handle.({:login, credentials, error})
+    end
   end
 
   ###########
@@ -185,7 +187,7 @@ defmodule Manager.Impl.Interpreter do
   @spec automatic_login(dependencies()) :: :ok | {:ok, nil} | {:error, any}
   defp automatic_login(store: store, auction_house: auction_house) do
     with {:ok, {auth, user}} <- store.get_login_data() do
-      auction_house.recover_login({auth, user})
+      auction_house.recover_login(auth, user)
     end
   end
 
