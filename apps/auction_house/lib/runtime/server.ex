@@ -37,6 +37,10 @@ defmodule AuctionHouse.Runtime.Server do
   def login(credentials),
     do: GenServer.call(__MODULE__, {:login, credentials}, @genserver_timeout)
 
+  @spec recover_login(Authorization.t(), User.t()) :: Type.recover_login_response()
+  def recover_login(auth, user),
+    do: GenServer.call(__MODULE__, {:recover_login, auth, user}, @genserver_timeout)
+
   #############
   # Callbacks #
   #############
@@ -122,6 +126,20 @@ defmodule AuctionHouse.Runtime.Server do
 
         {:reply, error, updated_state}
     end
+  end
+
+  @impl GenServer
+  def handle_call(
+        {:recover_login, auth, user},
+        _from,
+        state
+      ) do
+    updated_state =
+      state
+      |> Map.put(:authorization, auth)
+      |> Map.put(:user, user)
+
+    {:reply, :ok, updated_state}
   end
 
   @impl GenServer

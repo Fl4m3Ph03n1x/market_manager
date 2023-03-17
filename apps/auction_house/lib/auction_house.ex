@@ -7,7 +7,7 @@ defmodule AuctionHouse do
 
   alias AuctionHouse.Runtime.Server
   alias AuctionHouse.Type
-  alias Shared.Data.{Credentials, Order}
+  alias Shared.Data.{Authorization, Credentials, Order, User}
   alias Supervisor
 
   #######
@@ -111,6 +111,23 @@ defmodule AuctionHouse do
   """
   @spec login(Credentials.t()) :: Type.login_response()
   defdelegate login(credentials), to: Server
+
+  @doc """
+  Feeds the authorization information directly to the AuctionHouse. Used when
+  the login data is being recovered from a past login.
+
+  Example:
+  ```
+  alias Shared.Data.{Authorization, User}
+  auth = Authorization.new("a_cookie", "a_token")
+  user = User.new("fl4m3", false)
+
+  > AuctionHouse.recover_login(auth, user)
+  :ok
+  ```
+  """
+  @spec recover_login(Authorization.t(), User.t()) :: Type.recover_login_response()
+  defdelegate recover_login(auth, user), to: Server
 
   @doc false
   @spec child_spec(any) :: Supervisor.child_spec()
