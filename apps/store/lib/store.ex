@@ -116,7 +116,7 @@ defmodule Store do
   {:error, :enoent}
   ```
   """
-  @spec delete_login_data :: Type.delete_login_data()
+  @spec delete_login_data :: Type.delete_login_data_response()
   defdelegate delete_login_data, to: FileSystem
 
   @doc """

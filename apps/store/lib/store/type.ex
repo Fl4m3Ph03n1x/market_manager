@@ -13,7 +13,7 @@ defmodule Store.Type do
 
   @type order_id :: String.t()
   @type syndicate :: String.t()
-  @type deps :: keyword
+  @type dependencies :: keyword((... -> any))
   @type all_orders_store :: %{
           (new_loka :: String.t()) => [order_id],
           (perrin_sequence :: String.t()) => [order_id],
