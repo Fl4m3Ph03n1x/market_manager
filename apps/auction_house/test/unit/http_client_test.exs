@@ -11,13 +11,14 @@ defmodule AuctionHouse.HTTPClientTest do
   describe "place_oder/2" do
     test "returns order_id if order was placed correctly" do
       # Arrange
-      order = %Order{
-        order_type: "sell",
-        item_id: "54a74454e779892d5e5155d5",
-        platinum: 15,
-        quantity: 1,
-        mod_rank: 0
-      }
+      order =
+        Order.new(%{
+          "order_type" => "sell",
+          "item_id" => "54a74454e779892d5e5155d5",
+          "platinum" => 15,
+          "quantity" => 1,
+          "mod_rank" => 0
+        })
 
       state = %{
         dependencies: %{
@@ -44,13 +45,14 @@ defmodule AuctionHouse.HTTPClientTest do
 
     test "returns error if order was already placed" do
       # Arrange
-      order = %Order{
-        order_type: "sell",
-        item_id: "54a74454e779892d5e5155d5",
-        platinum: 15,
-        quantity: 1,
-        mod_rank: 0
-      }
+      order =
+        Order.new(%{
+          "order_type" => "sell",
+          "item_id" => "54a74454e779892d5e5155d5",
+          "platinum" => 15,
+          "quantity" => 1,
+          "mod_rank" => 0
+        })
 
       state = %{
         dependencies: %{
@@ -77,13 +79,14 @@ defmodule AuctionHouse.HTTPClientTest do
 
     test "returns error if item_id of order was invalid" do
       # Arrange
-      order = %Order{
-        order_type: "sell",
-        item_id: "54a74454e779892d5e5155d5",
-        platinum: 15,
-        quantity: 1,
-        mod_rank: 0
-      }
+      order =
+        Order.new(%{
+          "order_type" => "sell",
+          "item_id" => "54a74454e779892d5e5155d5",
+          "platinum" => 15,
+          "quantity" => 1,
+          "mod_rank" => 0
+        })
 
       state = %{
         dependencies: %{
@@ -110,13 +113,14 @@ defmodule AuctionHouse.HTTPClientTest do
 
     test "returns error if mod has no level and yet a level was passed" do
       # Arrange
-      order = %Order{
-        order_type: "sell",
-        item_id: "54a74454e779892d5e5155d5",
-        platinum: 15,
-        quantity: 1,
-        mod_rank: 0
-      }
+      order =
+        Order.new(%{
+          "order_type" => "sell",
+          "item_id" => "54a74454e779892d5e5155d5",
+          "platinum" => 15,
+          "quantity" => 1,
+          "mod_rank" => 0
+        })
 
       state = %{
         dependencies: %{
@@ -143,13 +147,14 @@ defmodule AuctionHouse.HTTPClientTest do
 
     test "returns error if server is unavailable" do
       # Arrange
-      order = %Order{
-        order_type: "sell",
-        item_id: "54a74454e779892d5e5155d5",
-        platinum: 15,
-        quantity: 1,
-        mod_rank: 0
-      }
+      order =
+        Order.new(%{
+          "order_type" => "sell",
+          "item_id" => "54a74454e779892d5e5155d5",
+          "platinum" => 15,
+          "quantity" => 1,
+          "mod_rank" => 0
+        })
 
       state = %{
         dependencies: %{
@@ -177,13 +182,14 @@ defmodule AuctionHouse.HTTPClientTest do
 
     test "returns error if server experiences an internal error" do
       # Arrange
-      order = %Order{
-        order_type: "sell",
-        item_id: "54a74454e779892d5e5155d5",
-        platinum: 15,
-        quantity: 1,
-        mod_rank: 0
-      }
+      order =
+        Order.new(%{
+          "order_type" => "sell",
+          "item_id" => "54a74454e779892d5e5155d5",
+          "platinum" => 15,
+          "quantity" => 1,
+          "mod_rank" => 0
+        })
 
       state = %{
         dependencies: %{
@@ -210,13 +216,14 @@ defmodule AuctionHouse.HTTPClientTest do
 
     test "returns error if a generic network error occurred while placing a request" do
       # Arrange
-      order = %Order{
-        order_type: "sell",
-        item_id: "54a74454e779892d5e5155d5",
-        platinum: 15,
-        quantity: 1,
-        mod_rank: 0
-      }
+      order =
+        Order.new(%{
+          "order_type" => "sell",
+          "item_id" => "54a74454e779892d5e5155d5",
+          "platinum" => 15,
+          "quantity" => 1,
+          "mod_rank" => 0
+        })
 
       state = %{
         dependencies: %{
@@ -239,13 +246,14 @@ defmodule AuctionHouse.HTTPClientTest do
 
     test "returns error if user tries to place order without having logged in first" do
       # Arrange
-      order = %Order{
-        order_type: "sell",
-        item_id: "54a74454e779892d5e5155d5",
-        platinum: 15,
-        quantity: 1,
-        mod_rank: 0
-      }
+      order =
+        Order.new(%{
+          "order_type" => "sell",
+          "item_id" => "54a74454e779892d5e5155d5",
+          "platinum" => 15,
+          "quantity" => 1,
+          "mod_rank" => 0
+        })
 
       state = %{
         dependencies: %{
