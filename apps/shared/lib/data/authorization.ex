@@ -5,6 +5,14 @@ defmodule Shared.Data.Authorization do
 
   use TypedStruct
 
+  alias Shared.Utils.Structs
+
+  @type authorization :: %{
+          (cookie :: String.t()) => String.t(),
+          (token :: String.t()) => String.t()
+        }
+
+  @derive Jason.Encoder
   typedstruct enforce: true do
     @typedoc "Authorization information for a user"
 
@@ -12,12 +20,9 @@ defmodule Shared.Data.Authorization do
     field(:token, String.t())
   end
 
-  @spec new(String.t(), String.t()) :: __MODULE__.t()
-  def new(cookie, token)
+  @spec new(authorization()) :: __MODULE__.t()
+  def new(%{"cookie" => cookie, "token" => token} = auth)
       when is_binary(cookie) and is_binary(token) do
-    %__MODULE__{
-      cookie: cookie,
-      token: token
-    }
+    Structs.string_map_to_struct(auth, __MODULE__)
   end
 end
