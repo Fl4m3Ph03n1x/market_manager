@@ -25,11 +25,11 @@ defmodule Store.MixProject do
   defp deps do
     [
       {:jason, "~> 1.2"},
-      {:rop, "~> 0.5"},
       {:shared, in_umbrella: true},
 
       # Test and Dev
-      {:mix_test_watch, "~> 1.0", only: [:dev, :test], runtime: false}
+      {:mix_test_watch, "~> 1.0", only: [:dev, :test], runtime: false},
+      {:mock, "~> 0.3.0", only: :test}
     ]
   end
 end

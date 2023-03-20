@@ -13,9 +13,7 @@ defmodule Store.FileSystem do
   @setup_filename Application.compile_env!(:store, :setup)
 
   @default_deps [
-    read_fn: &File.read/1,
-    write_fn: &File.write/2,
-    current_working_directory: &File.cwd/0
+    file: File
   ]
 
   ##########
@@ -66,17 +64,18 @@ defmodule Store.FileSystem do
     with {:ok, encoded_data} <- read(@setup_filename, deps),
          {:ok, %{"authorization" => decoded_auth, "user" => decoded_user}} <-
            Jason.decode(encoded_data) do
-      if is_nil(decoded_auth) or is_nil(decoded_user) do
-        {:ok, nil}
-      else
+      if valid_data?(decoded_auth, ["cookie", "token"]) and
+           valid_data?(decoded_user, ["ingame_name", "patreon?"]) do
         {:ok, {Authorization.new(decoded_auth), User.new(decoded_user)}}
+      else
+        {:ok, nil}
       end
     end
   end
 
   @spec delete_login_data(Type.dependencies()) :: Type.delete_login_data_response()
   def delete_login_data(deps \\ @default_deps) do
-    nil
+    throw("Not done")
   end
 
   ###########
@@ -127,14 +126,18 @@ defmodule Store.FileSystem do
   @spec send_ok_response(saved_data :: any, response_data :: any) :: {:ok, response_data :: any}
   defp send_ok_response(_saved_data, response_data), do: {:ok, response_data}
 
+  @spec valid_data?(decoded_map :: map, fields :: [String.t()]) :: boolean()
+  defp valid_data?(map, fields),
+    do: not is_nil(map) and Enum.all?(fields, fn field -> not is_nil(Map.get(map, field)) end)
+
   @spec write(data :: String.t(), filename :: String.t(), Type.dependencies()) ::
           :ok | {:error, :file.posix()}
-  defp write(data, filename, deps) do
-    case deps[:current_working_directory].() do
+  defp write(data, filename, file: file) do
+    case file.cwd() do
       {:ok, path} ->
         path
         |> Path.join(filename)
-        |> deps[:write_fn].(data)
+        |> file.write(data)
 
       error ->
         error
@@ -143,12 +146,12 @@ defmodule Store.FileSystem do
 
   @spec read(filename :: String.t(), Type.dependencies()) ::
           {:ok, String.t()} | {:error, :file.posix()}
-  defp read(filename, deps) do
-    case deps[:current_working_directory].() do
+  defp read(filename, file: file) do
+    case file.cwd() do
       {:ok, path} ->
         path
         |> Path.join(filename)
-        |> deps[:read_fn].()
+        |> file.read()
 
       error ->
         error

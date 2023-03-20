@@ -3,6 +3,9 @@ defmodule MarketManager.Store.FileSystemTest do
 
   use ExUnit.Case
 
+  import Mock
+
+  alias Jason
   alias Shared.Data.{Authorization, User}
   alias Store.FileSystem
 
@@ -174,70 +177,188 @@ defmodule MarketManager.Store.FileSystemTest do
   end
 
   describe "save_login_data/3" do
-    test "returns :ok if login data was saved successfully" do
+    test_with_mock "returns :ok if cwd and login data were successful", File,
+      write: fn _file_name, _content -> :ok end,
+      cwd: fn -> {:ok, "home/user"} end do
       # Arrange
       auth = Authorization.new(%{"cookie" => "a_cookie", "token" => "a_token"})
       user = User.new(%{"ingame_name" => "fl4m3", "patreon?" => false})
 
-      deps = [
-        write_fn: fn _file_name, _content -> :ok end,
-        current_working_directory: fn -> {:ok, "home/user"} end
-      ]
-
       # Act
-      actual = FileSystem.save_login_data(auth, user, deps)
+      actual = FileSystem.save_login_data(auth, user)
       expected = :ok
+      expected_content = Jason.encode!(%{authorization: auth, user: user})
 
       # Assert
       assert actual == expected
+      assert_called(File.cwd())
+      assert_called(File.write(:_, expected_content))
     end
 
-    test "returns error if saving to file fails" do
+    test_with_mock "returns error if cwd succeeded but write to file failed", File,
+      write: fn _file_name, _content -> {:error, :enoent} end,
+      cwd: fn -> {:ok, "home/user"} end do
       # Arrange
-      login_info = %{"token" => "a_token", "cookie" => "a_cookie"}
-
-      deps = [
-        write_fn: fn _file_name, _content -> {:error, :enoent} end
-      ]
+      auth = Authorization.new(%{"cookie" => "a_cookie", "token" => "a_token"})
+      user = User.new(%{"ingame_name" => "fl4m3", "patreon?" => false})
 
       # Act
-      actual = FileSystem.save_credentials(login_info, deps)
+      actual = FileSystem.save_login_data(auth, user)
       expected = {:error, :enoent}
+      expected_content = Jason.encode!(%{authorization: auth, user: user})
 
       # Assert
       assert actual == expected
+      assert_called(File.cwd())
+      assert_called(File.write(:_, expected_content))
+    end
+
+    test_with_mock "returns error if cwd failed", File, cwd: fn -> {:error, :no_permissions} end do
+      # Arrange
+      auth = Authorization.new(%{"cookie" => "a_cookie", "token" => "a_token"})
+      user = User.new(%{"ingame_name" => "fl4m3", "patreon?" => false})
+
+      # Act
+      actual = FileSystem.save_login_data(auth, user)
+      expected = {:error, :no_permissions}
+
+      # Assert
+      assert actual == expected
+      assert_called(File.cwd())
     end
   end
 
-  # describe "get_creadentials/0" do
-  #   test "returns login_info" do
-  #     # Arrange
-  #     login_info = %{"token" => "a_token", "cookie" => "a_cookie"}
+  describe "get_login_data/1" do
+    test_with_mock "returns login_data if cwd and read succeeded", File,
+      cwd: fn -> {:ok, "home/user"} end,
+      read: fn _file_name ->
+        {:ok,
+         "{\"authorization\":{\"cookie\":\"a_cookie\",\"token\":\"a_token\"},\"user\":{\"ingame_name\":\"fl4m3\",\"patreon?\":false}}"}
+      end do
+      # Arrange
+      auth = Authorization.new(%{"cookie" => "a_cookie", "token" => "a_token"})
+      user = User.new(%{"ingame_name" => "fl4m3", "patreon?" => false})
 
-  #     deps = [
-  #       read_fn: fn _file_name -> {:ok, '{"cookie":"a_cookie","token":"a_token"}'} end
-  #     ]
+      # Act
+      actual = FileSystem.get_login_data()
+      expected = {:ok, {auth, user}}
 
-  #     # Act
-  #     actual = FileSystem.get_credentials(deps)
-  #     expected = {:ok, login_info}
+      # Assert
+      assert actual == expected
+      assert_called(File.cwd())
+      assert_called(File.read(:_))
+    end
 
-  #     # Assert
-  #     assert actual == expected
-  #   end
+    test_with_mock "returns nil if cwd and read succeeded but authorization cookie is null",
+                   File,
+                   cwd: fn -> {:ok, "home/user"} end,
+                   read: fn _file_name ->
+                     {:ok,
+                      "{\"authorization\":{\"cookie\": null,\"token\":\"a_token\"},\"user\":{\"ingame_name\":\"fl4m3\",\"patreon?\":false}}"}
+                   end do
+      # Act
+      actual = FileSystem.get_login_data()
+      expected = {:ok, nil}
 
-  #   test "returns error if reading file fails" do
-  #     # Arrange
-  #     deps = [
-  #       read_fn: fn _file_name -> {:error, :enoent} end
-  #     ]
+      # Assert
+      assert actual == expected
+      assert_called(File.cwd())
+      assert_called(File.read(:_))
+    end
 
-  #     # Act
-  #     actual = FileSystem.get_credentials(deps)
-  #     expected = {:error, :enoent}
+    test_with_mock "returns nil if cwd and read succeeded but authorization token is null",
+                   File,
+                   cwd: fn -> {:ok, "home/user"} end,
+                   read: fn _file_name ->
+                     {:ok,
+                      "{\"authorization\":{\"cookie\": \"a_cookie\",\"token\": null},\"user\":{\"ingame_name\":\"fl4m3\",\"patreon?\":false}}"}
+                   end do
+      # Act
+      actual = FileSystem.get_login_data()
+      expected = {:ok, nil}
 
-  #     # Assert
-  #     assert actual == expected
-  #   end
-  # end
+      # Assert
+      assert actual == expected
+      assert_called(File.cwd())
+      assert_called(File.read(:_))
+    end
+
+    test_with_mock "returns nil if cwd and read succeeded but user ingame_name is null",
+                   File,
+                   cwd: fn -> {:ok, "home/user"} end,
+                   read: fn _file_name ->
+                     {:ok,
+                      "{\"authorization\":{\"cookie\": \"a_cookie\",\"token\": \"a_token\"},\"user\":{\"ingame_name\": null,\"patreon?\":false}}"}
+                   end do
+      # Act
+      actual = FileSystem.get_login_data()
+      expected = {:ok, nil}
+
+      # Assert
+      assert actual == expected
+      assert_called(File.cwd())
+      assert_called(File.read(:_))
+    end
+
+    test_with_mock "returns nil if cwd and read succeeded but user patreon? is null",
+                   File,
+                   cwd: fn -> {:ok, "home/user"} end,
+                   read: fn _file_name ->
+                     {:ok,
+                      "{\"authorization\":{\"cookie\": \"a_cookie\",\"token\": \"a_token\"},\"user\":{\"ingame_name\": \"fl4m3\",\"patreon?\": null}}"}
+                   end do
+      # Act
+      actual = FileSystem.get_login_data()
+      expected = {:ok, nil}
+
+      # Assert
+      assert actual == expected
+      assert_called(File.cwd())
+      assert_called(File.read(:_))
+    end
+
+    test_with_mock "returns nil if cwd and read succeeded but authorization is null",
+                   File,
+                   cwd: fn -> {:ok, "home/user"} end,
+                   read: fn _file_name ->
+                     {:ok,
+                      "{\"authorization\": null,\"user\":{\"ingame_name\": \"fl4m3\",\"patreon?\": false}}"}
+                   end do
+      # Act
+      actual = FileSystem.get_login_data()
+      expected = {:ok, nil}
+
+      # Assert
+      assert actual == expected
+      assert_called(File.cwd())
+      assert_called(File.read(:_))
+    end
+
+    test_with_mock "returns nil if cwd and read succeeded but user is null",
+                   File,
+                   cwd: fn -> {:ok, "home/user"} end,
+                   read: fn _file_name ->
+                     {:ok,
+                      "{\"authorization\":{\"cookie\": \"a_cookie\",\"token\": \"a_token\"},\"user\": null}"}
+                   end do
+      # Act
+      actual = FileSystem.get_login_data()
+      expected = {:ok, nil}
+
+      # Assert
+      assert actual == expected
+      assert_called(File.cwd())
+      assert_called(File.read(:_))
+    end
+
+    test_with_mock "returns error if cwd fails", File, cwd: fn -> {:error, :no_permissions} end do
+      # Act
+      actual = FileSystem.get_login_data()
+      expected = {:error, :no_permissions}
+
+      # Assert
+      assert actual == expected
+      assert_called(File.cwd())
+    end
+  end
 end
