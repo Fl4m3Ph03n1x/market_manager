@@ -6,7 +6,7 @@ defmodule AuctionHouseTest do
   alias AuctionHouse
   alias AuctionHouse.Runtime.Server
   alias Bypass
-  alias Shared.Data.{Authorization, Credentials, Order, OrderInfo}
+  alias Shared.Data.{Authorization, Credentials, Order, OrderInfo, User}
   alias Shared.Data.OrderInfo.User
   alias Shared.Data.User, as: UserInfo
 
@@ -65,13 +65,14 @@ defmodule AuctionHouseTest do
         Plug.Conn.resp(conn, 200, Jason.encode!(response))
       end)
 
-      order = %Order{
-        order_type: "sell",
-        item_id: "54a74454e779892d5e5155d5",
-        platinum: 15,
-        quantity: 1,
-        mod_rank: 0
-      }
+      order =
+        Order.new(%{
+          "order_type" => "sell",
+          "item_id" => "54a74454e779892d5e5155d5",
+          "platinum" => 15,
+          "quantity" => 1,
+          "mod_rank" => 0
+        })
 
       login_info = %Authorization{cookie: "cookie", token: "token"}
       :sys.replace_state(server, fn state -> Map.put(state, :authorization, login_info) end)
@@ -263,6 +264,23 @@ defmodule AuctionHouseTest do
 
       # Assert
       assert actual == expected
+    end
+  end
+
+  describe "recover_login/2" do
+    test "updates server state correctly", %{server: server} do
+      # Arrange
+      auth = Authorization.new("a_cookie", "a_token")
+      user = UserInfo.new("fl4m3", false)
+
+      # Act
+      actual = AuctionHouse.recover_login(auth, user)
+      server_state = :sys.get_state(server)
+
+      # Assert
+      assert actual == :ok
+      assert Map.get(server_state, :authorization) == auth
+      assert Map.get(server_state, :user) == user
     end
   end
 end

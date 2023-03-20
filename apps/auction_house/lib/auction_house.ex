@@ -114,7 +114,8 @@ defmodule AuctionHouse do
 
   @doc """
   Feeds the authorization information directly to the AuctionHouse. Used when
-  the login data is being recovered from a past login.
+  the login data is being recovered from a past login. Will only fail if this
+  service is down.
 
   Example:
   ```
