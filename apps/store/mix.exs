@@ -12,7 +12,9 @@ defmodule Store.MixProject do
       elixir: "~> 1.13",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      test_coverage: [tool: ExCoveralls]
+      test_coverage: [tool: ExCoveralls],
+      preferred_cli_env: preferred_cli_env(),
+      aliases: aliases()
     ]
   end
 
@@ -32,4 +34,17 @@ defmodule Store.MixProject do
       {:mock, "~> 0.3.0", only: :test}
     ]
   end
+
+  defp preferred_cli_env,
+    do: [
+      "test.unit": :test,
+      "test.integration": :test,
+      "test.watch": :test
+    ]
+
+  defp aliases,
+    do: [
+      "test.unit": ["test test/unit"],
+      "test.integration": ["test test/integration"]
+    ]
 end
