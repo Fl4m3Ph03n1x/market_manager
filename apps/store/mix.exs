@@ -31,7 +31,8 @@ defmodule Store.MixProject do
 
       # Test and Dev
       {:mix_test_watch, "~> 1.0", only: [:dev, :test], runtime: false},
-      {:mock, "~> 0.3.0", only: :test}
+      {:mock, "~> 0.3.0", only: :test},
+      {:gradient, github: "esl/gradient", only: [:dev], runtime: false}
     ]
   end
 
