@@ -6,23 +6,22 @@ defmodule Store.Type do
   """
 
   alias Jason
-  alias Shared.Data.{Authorization, Product, User}
+  alias Shared.Data.{Authorization, PlacedOrder, Product, User}
 
   ##########
   # Types  #
   ##########
 
-  @type order_id :: String.t()
   @type syndicate :: String.t()
   @type dependencies :: keyword(module)
   @type all_orders_store :: %{
-          (arbiters_of_hexis :: String.t()) => [order_id],
-          (cephalon_simaris :: String.t()) => [order_id],
-          (cephalon_suda :: String.t()) => [order_id],
-          (new_loka :: String.t()) => [order_id],
-          (perrin_sequence :: String.t()) => [order_id],
-          (red_veil :: String.t()) => [order_id],
-          (steel_meridian :: String.t()) => [order_id]
+          required(arbiters_of_hexis :: String.t()) => [PlacedOrder.t()],
+          required(cephalon_simaris :: String.t()) => [PlacedOrder.t()],
+          required(cephalon_suda :: String.t()) => [PlacedOrder.t()],
+          required(new_loka :: String.t()) => [PlacedOrder.t()],
+          required(perrin_sequence :: String.t()) => [PlacedOrder.t()],
+          required(red_veil :: String.t()) => [PlacedOrder.t()],
+          required(steel_meridian :: String.t()) => [PlacedOrder.t()]
         }
 
   #############
@@ -40,7 +39,7 @@ defmodule Store.Type do
           {:ok, [Product.t()]}
           | {:error, :file.posix() | Jason.DecodeError.t() | :syndicate_not_found}
   @type list_orders_response ::
-          {:ok, [order_id]}
+          {:ok, [PlacedOrder.t()]}
           | {:error, :file.posix() | Jason.DecodeError.t() | :syndicate_not_found}
   @type save_order_response ::
           :ok | {:error, :file.posix() | Jason.DecodeError.t() | Jason.EncodeError.t()}

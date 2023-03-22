@@ -1,12 +1,12 @@
 defmodule MarketManager.Store.FileSystemTest do
   @moduledoc false
 
-  use ExUnit.Case, async: true
+  use ExUnit.Case
 
   import Mock
 
   alias Jason
-  alias Shared.Data.{Authorization, Product, User}
+  alias Shared.Data.{Authorization, PlacedOrder, Product, User}
   alias Store.FileSystem
 
   describe "list_products/2" do
@@ -89,10 +89,11 @@ defmodule MarketManager.Store.FileSystemTest do
   end
 
   describe "list_orders/2" do
-    test_with_mock "returns list of available orders from given syndicate", File,
+    test_with_mock "returns list of available placed orders from given syndicate", File,
       cwd: fn -> {:ok, ""} end,
       read: fn _file_name ->
-        {:ok, "{\"new_loka\":[\"5ee71a2604d55c0a5cbdc3c2\",\"5ee71a2604d55c0a5cbdc3e3\"]}"}
+        {:ok,
+         "{\"new_loka\":[{\"item_name\":\"Abating link\",\"order_id\":\"5ee71a2604d55c0a5cbdc3c2\"},{\"item_name\":\"Vampire leech\",\"order_id\":\"5ee71a2604d55c0a5cbdc3e3\"}]}"}
       end do
       # Arrange
       syndicate = "new_loka"
@@ -102,7 +103,16 @@ defmodule MarketManager.Store.FileSystemTest do
 
       expected = {
         :ok,
-        ["5ee71a2604d55c0a5cbdc3c2", "5ee71a2604d55c0a5cbdc3e3"]
+        [
+          PlacedOrder.new(%{
+            "item_name" => "Abating link",
+            "order_id" => "5ee71a2604d55c0a5cbdc3c2"
+          }),
+          PlacedOrder.new(%{
+            "item_name" => "Vampire leech",
+            "order_id" => "5ee71a2604d55c0a5cbdc3e3"
+          })
+        ]
       }
 
       # Assert
@@ -162,18 +172,24 @@ defmodule MarketManager.Store.FileSystemTest do
     test_with_mock "returns :ok if order was saved successfully", File,
       cwd: fn -> {:ok, ""} end,
       read: fn _file_name ->
-        {:ok, "{\"perrin_sequence\":[\"5ee71a2604d55c0a5cbdc3c2\"]}"}
+        {:ok,
+         "{\"perrin_sequence\":[{\"item_name\":\"Abating link\",\"order_id\":\"54a74454e779892d5e5155d5\"}]}"}
       end,
       write: fn _file_name, _content -> :ok end do
       # Arrange
       syndicate = "perrin_sequence"
-      order_id = "54a74454e779892d5e5155d5"
+
+      placed_order =
+        PlacedOrder.new(%{
+          "item_name" => "Vampire leech",
+          "order_id" => "5ee71a2604d55c0a5cbdc3e3"
+        })
 
       expected_saved_data =
-        "{\"perrin_sequence\":[\"5ee71a2604d55c0a5cbdc3c2\",\"54a74454e779892d5e5155d5\"]}"
+        "{\"perrin_sequence\":[{\"item_name\":\"Abating link\",\"order_id\":\"54a74454e779892d5e5155d5\"},{\"item_name\":\"Vampire leech\",\"order_id\":\"5ee71a2604d55c0a5cbdc3e3\"}]}"
 
       # Act & Assert
-      assert FileSystem.save_order(order_id, syndicate) == :ok
+      assert FileSystem.save_order(placed_order, syndicate) == :ok
       assert_called(File.cwd())
       assert_called(File.read(:_))
       assert_called(File.write(:_, expected_saved_data))
@@ -183,10 +199,15 @@ defmodule MarketManager.Store.FileSystemTest do
       cwd: fn -> {:error, :no_permissions} end do
       # Arrange
       syndicate = "perrin_sequence"
-      order_id = "54a74454e779892d5e5155d5"
+
+      placed_order =
+        PlacedOrder.new(%{
+          "item_name" => "Vampire leech",
+          "order_id" => "5ee71a2604d55c0a5cbdc3e3"
+        })
 
       # Act & Assert
-      assert FileSystem.save_order(order_id, syndicate) == {:error, :no_permissions}
+      assert FileSystem.save_order(placed_order, syndicate) == {:error, :no_permissions}
       assert_called(File.cwd())
     end
 
@@ -195,10 +216,15 @@ defmodule MarketManager.Store.FileSystemTest do
       read: fn _file_name -> {:error, :enoent} end do
       # Arrange
       syndicate = "perrin_sequence"
-      order_id = "54a74454e779892d5e5155d5"
+
+      placed_order =
+        PlacedOrder.new(%{
+          "item_name" => "Vampire leech",
+          "order_id" => "5ee71a2604d55c0a5cbdc3e3"
+        })
 
       # Act & Assert
-      assert FileSystem.save_order(order_id, syndicate) == {:error, :enoent}
+      assert FileSystem.save_order(placed_order, syndicate) == {:error, :enoent}
       assert_called(File.cwd())
       assert_called(File.read(:_))
     end
@@ -206,15 +232,21 @@ defmodule MarketManager.Store.FileSystemTest do
     test_with_mock "returns error if it failed to save order", File,
       cwd: fn -> {:ok, ""} end,
       read: fn _file_name ->
-        {:ok, "{\"perrin_sequence\":[\"5ee71a2604d55c0a5cbdc3c2\"]}"}
+        {:ok,
+         "{\"perrin_sequence\":[{\"item_name\":\"Abating link\",\"order_id\":\"54a74454e779892d5e5155d5\"}]}"}
       end,
       write: fn _file_name, _content -> {:error, :enoent} end do
       # Arrange
       syndicate = "perrin_sequence"
-      order_id = "54a74454e779892d5e5155d5"
+
+      placed_order =
+        PlacedOrder.new(%{
+          "item_name" => "Vampire leech",
+          "order_id" => "5ee71a2604d55c0a5cbdc3e3"
+        })
 
       # Act & Assert
-      assert FileSystem.save_order(order_id, syndicate) == {:error, :enoent}
+      assert FileSystem.save_order(placed_order, syndicate) == {:error, :enoent}
       assert_called(File.cwd())
       assert_called(File.read(:_))
       assert_called(File.write(:_, :_))
@@ -225,15 +257,21 @@ defmodule MarketManager.Store.FileSystemTest do
     test_with_mock "returns :ok if order was deleted successfully", File,
       cwd: fn -> {:ok, ""} end,
       read: fn _file_name ->
-        {:ok, "{\"perrin_sequence\":[\"5ee71a2604d55c0a5cbdc3c2\"]}"}
+        {:ok,
+         "{\"perrin_sequence\":[{\"item_name\":\"Abating link\",\"order_id\":\"54a74454e779892d5e5155d5\"}]}"}
       end,
       write: fn _file_name, _content -> :ok end do
       # Arrange
       syndicate = "perrin_sequence"
-      order_id = "5ee71a2604d55c0a5cbdc3c2"
+
+      placed_order =
+        PlacedOrder.new(%{
+          "item_name" => "Abating link",
+          "order_id" => "54a74454e779892d5e5155d5"
+        })
 
       # Act & Assert
-      assert FileSystem.delete_order(order_id, syndicate) == :ok
+      assert FileSystem.delete_order(placed_order, syndicate) == :ok
       assert_called(File.cwd())
       assert_called(File.read(:_))
       assert_called(File.write(:_, "{\"perrin_sequence\":[]}"))
@@ -243,10 +281,15 @@ defmodule MarketManager.Store.FileSystemTest do
       cwd: fn -> {:error, :no_permissions} end do
       # Arrange
       syndicate = "perrin_sequence"
-      order_id = "5ee71a2604d55c0a5cbdc3c2"
+
+      placed_order =
+        PlacedOrder.new(%{
+          "item_name" => "Abating link",
+          "order_id" => "54a74454e779892d5e5155d5"
+        })
 
       # Act & Assert
-      assert FileSystem.delete_order(order_id, syndicate) == {:error, :no_permissions}
+      assert FileSystem.delete_order(placed_order, syndicate) == {:error, :no_permissions}
       assert_called(File.cwd())
     end
 
@@ -255,10 +298,15 @@ defmodule MarketManager.Store.FileSystemTest do
       read: fn _file_name -> {:error, :enoent} end do
       # Arrange
       syndicate = "perrin_sequence"
-      order_id = "5ee71a2604d55c0a5cbdc3c2"
+
+      placed_order =
+        PlacedOrder.new(%{
+          "item_name" => "Abating link",
+          "order_id" => "54a74454e779892d5e5155d5"
+        })
 
       # Act & Assert
-      assert FileSystem.delete_order(order_id, syndicate) == {:error, :enoent}
+      assert FileSystem.delete_order(placed_order, syndicate) == {:error, :enoent}
       assert_called(File.cwd())
       assert_called(File.read(:_))
     end
@@ -266,15 +314,21 @@ defmodule MarketManager.Store.FileSystemTest do
     test_with_mock "returns error if it failed to save deleted order", File,
       cwd: fn -> {:ok, ""} end,
       read: fn _file_name ->
-        {:ok, "{\"perrin_sequence\":[\"54a74454e779892d5e5155d5\"]}"}
+        {:ok,
+         "{\"perrin_sequence\":[{\"item_name\":\"Abating link\",\"order_id\":\"54a74454e779892d5e5155d5\"}]}"}
       end,
       write: fn _file_name, _content -> {:error, :enoent} end do
       # Arrange
       syndicate = "perrin_sequence"
-      order_id = "54a74454e779892d5e5155d5"
+
+      placed_order =
+        PlacedOrder.new(%{
+          "item_name" => "Abating link",
+          "order_id" => "54a74454e779892d5e5155d5"
+        })
 
       # Act & Assert
-      assert FileSystem.delete_order(order_id, syndicate) == {:error, :enoent}
+      assert FileSystem.delete_order(placed_order, syndicate) == {:error, :enoent}
       assert_called(File.cwd())
       assert_called(File.read(:_))
       assert_called(File.write(:_, "{\"perrin_sequence\":[]}"))

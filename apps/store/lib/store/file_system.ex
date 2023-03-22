@@ -3,7 +3,8 @@ defmodule Store.FileSystem do
   Adapter for the Store port, implements it using the file system.
   """
 
-  alias Shared.Data.{Authorization, User, Product}
+  alias Shared.Data.{Authorization, PlacedOrder, Product, User}
+  alias Shared.Utils.Tuples
   alias Store.Type
 
   @orders_filename Application.compile_env!(:store, :current_orders)
@@ -30,26 +31,33 @@ defmodule Store.FileSystem do
   end
 
   @spec list_orders(Type.syndicate(), Type.dependencies()) :: Type.list_orders_response()
-  def list_orders(syndicate, deps \\ @default_deps),
-    do: read_syndicate_data(@orders_filename, syndicate, deps)
+  def list_orders(syndicate, deps \\ @default_deps) do
+    case read_syndicate_data(@orders_filename, syndicate, deps) do
+      {:ok, data} ->
+        {:ok, Enum.map(data, &PlacedOrder.new/1)}
 
-  @spec save_order(Type.order_id(), Type.syndicate(), Type.dependencies()) ::
+      err ->
+        err
+    end
+  end
+
+  @spec save_order(PlacedOrder.t(), Type.syndicate(), Type.dependencies()) ::
           Type.save_order_response()
-  def save_order(order_id, syndicate, deps \\ @default_deps) do
+  def save_order(placed_order, syndicate, deps \\ @default_deps) do
     with {:ok, content} <- read(@orders_filename, deps),
          {:ok, orders} <- decode_orders(content),
-         {:ok, updated_orders} <- add_order(orders, order_id, syndicate),
+         {:ok, updated_orders} <- add_order(orders, placed_order, syndicate),
          {:ok, json} <- Jason.encode(updated_orders) do
       write(json, @orders_filename, deps)
     end
   end
 
-  @spec delete_order(Type.order_id(), Type.syndicate(), Type.dependencies()) ::
+  @spec delete_order(PlacedOrder.t(), Type.syndicate(), Type.dependencies()) ::
           Type.delete_order_response()
-  def delete_order(order_id, syndicate, deps \\ @default_deps) do
+  def delete_order(placed_order, syndicate, deps \\ @default_deps) do
     with {:ok, content} <- read(@orders_filename, deps),
          {:ok, orders} <- decode_orders(content),
-         {:ok, updated_orders} <- remove_order(orders, order_id, syndicate),
+         {:ok, updated_orders} <- remove_order(orders, placed_order, syndicate),
          {:ok, json} <- Jason.encode(updated_orders) do
       write(json, @orders_filename, deps)
     end
@@ -116,22 +124,38 @@ defmodule Store.FileSystem do
   defp find_syndicate(_data, _syndicate), do: {:error, :syndicate_not_found}
 
   @spec decode_orders(content :: String.t()) ::
-          {:ok, map} | {:error, Jason.DecodeError.t()}
+          {:ok, Type.all_orders_store() | %{}} | {:error, Jason.DecodeError.t()}
   defp decode_orders(""), do: {:ok, %{}}
-  defp decode_orders(content), do: Jason.decode(content)
 
-  @spec add_order(Type.all_orders_store(), Type.order_id(), Type.syndicate()) ::
-          {:ok, Type.all_orders_store()}
-  defp add_order(all_orders, order_id, syndicate),
-    do: {:ok, Map.put(all_orders, syndicate, Map.get(all_orders, syndicate, []) ++ [order_id])}
+  defp decode_orders(content) do
+    case Jason.decode(content) do
+      {:ok, decoded_content} ->
+        decoded_content
+        |> Enum.map(fn {syndicate, orders} ->
+          {syndicate, Enum.map(orders, fn order -> PlacedOrder.new(order) end)}
+        end)
+        |> Map.new()
+        |> Tuples.to_tagged_tuple()
 
-  @spec remove_order(Type.all_orders_store(), Type.order_id(), Type.syndicate()) ::
+      err ->
+        err
+    end
+  end
+
+  @spec add_order(Type.all_orders_store(), PlacedOrder.t(), Type.syndicate()) ::
           {:ok, Type.all_orders_store()}
-  defp remove_order(all_orders, order_id, syndicate) do
+  defp add_order(all_orders, placed_order, syndicate) do
+    updated_syndicate_orders = Map.get(all_orders, syndicate, []) ++ [placed_order]
+    {:ok, Map.put(all_orders, syndicate, updated_syndicate_orders)}
+  end
+
+  @spec remove_order(Type.all_orders_store(), PlacedOrder.t(), Type.syndicate()) ::
+          {:ok, Type.all_orders_store()}
+  defp remove_order(all_orders, placed_order, syndicate) do
     updated_syndicate_orders =
       all_orders
       |> Map.get(syndicate)
-      |> List.delete(order_id)
+      |> List.delete(placed_order)
 
     {:ok, Map.put(all_orders, syndicate, updated_syndicate_orders)}
   end
