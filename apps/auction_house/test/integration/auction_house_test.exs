@@ -6,7 +6,7 @@ defmodule AuctionHouseTest do
   alias AuctionHouse
   alias AuctionHouse.Runtime.Server
   alias Bypass
-  alias Shared.Data.{Authorization, Credentials, Order, OrderInfo, User}
+  alias Shared.Data.{Authorization, Credentials, Order, OrderInfo, PlacedOrder, User}
   alias Shared.Data.OrderInfo.User
   alias Shared.Data.User, as: UserInfo
 
@@ -79,7 +79,10 @@ defmodule AuctionHouseTest do
 
       # Act
       actual = AuctionHouse.place_order(order)
-      expected = {:ok, "5ee71a2604d55c0a5cbdc3c2"}
+
+      expected =
+        {:ok,
+         PlacedOrder.new(%{"item_id" => order.item_id, "order_id" => "5ee71a2604d55c0a5cbdc3c2"})}
 
       # Assert
       assert actual == expected
@@ -103,7 +106,7 @@ defmodule AuctionHouseTest do
 
       # Act
       actual = AuctionHouse.delete_order(order_id)
-      expected = {:ok, "5ee71a2604d55c0a5cbdc3c2"}
+      expected = :ok
 
       # Assert
       assert actual == expected
@@ -270,8 +273,8 @@ defmodule AuctionHouseTest do
   describe "recover_login/2" do
     test "updates server state correctly", %{server: server} do
       # Arrange
-      auth = Authorization.new("a_cookie", "a_token")
-      user = UserInfo.new("fl4m3", false)
+      auth = Authorization.new(%{"cookie" => "a_cookie", "token" => "a_token"})
+      user = UserInfo.new(%{"ingame_name" => "fl4m3", "patreon?" => false})
 
       # Act
       actual = AuctionHouse.recover_login(auth, user)
