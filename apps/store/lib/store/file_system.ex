@@ -3,8 +3,8 @@ defmodule Store.FileSystem do
   Adapter for the Store port, implements it using the file system.
   """
 
-  use Rop
-
+  alias Shared.Data.{Authorization, PlacedOrder, Product, User}
+  alias Shared.Utils.Tuples
   alias Store.Type
 
   @orders_filename Application.compile_env!(:store, :current_orders)
@@ -12,57 +12,89 @@ defmodule Store.FileSystem do
   @setup_filename Application.compile_env!(:store, :setup)
 
   @default_deps [
-    read_fn: &File.read/1,
-    write_fn: &File.write/2
+    file: File
   ]
 
   ##########
   # Public #
   ##########
 
-  @spec list_products(Type.syndicate()) :: Type.list_products_response()
-  def list_products(syndicate, deps \\ @default_deps),
-    do: read_syndicate_data(@products_filename, syndicate, deps[:read_fn])
+  @spec list_products(Type.syndicate(), Type.dependencies()) :: Type.list_products_response()
+  def list_products(syndicate, deps \\ @default_deps) do
+    case read_syndicate_data(@products_filename, syndicate, deps) do
+      {:ok, products} ->
+        {:ok, Enum.map(products, &Product.new/1)}
 
-  @spec list_orders(Type.syndicate()) :: Type.list_orders_response()
-  def list_orders(syndicate, deps \\ @default_deps),
-    do: read_syndicate_data(@orders_filename, syndicate, deps[:read_fn])
+      err ->
+        err
+    end
+  end
 
-  @spec save_order(Type.order_id(), Type.syndicate()) :: Type.save_order_response()
-  def save_order(order_id, syndicate, deps \\ @default_deps),
-    do:
-      deps[:read_fn].(@orders_filename) >>>
-        decode_orders_or_empty_orders() >>>
-        add_order(order_id, syndicate) >>>
-        Jason.encode() >>>
-        store(@orders_filename, deps) >>>
-        send_ok_response(order_id)
+  @spec list_orders(Type.syndicate(), Type.dependencies()) :: Type.list_orders_response()
+  def list_orders(syndicate, deps \\ @default_deps) do
+    case read_syndicate_data(@orders_filename, syndicate, deps) do
+      {:ok, data} ->
+        {:ok, Enum.map(data, &PlacedOrder.new/1)}
 
-  @spec delete_order(Type.order_id(), Type.syndicate()) :: Type.delete_order_response()
-  def delete_order(order_id, syndicate, deps \\ @default_deps),
-    do:
-      deps[:read_fn].(@orders_filename) >>>
-        decode_orders_or_empty_orders() >>>
-        remove_order(order_id, syndicate) >>>
-        Jason.encode() >>>
-        store(@orders_filename, deps) >>>
-        send_ok_response(order_id)
+      err ->
+        err
+    end
+  end
 
-  @spec save_credentials(Type.login_info()) :: Type.save_credentials_response()
-  def save_credentials(login_info, deps \\ @default_deps),
-    do:
-      login_info
-      |> Jason.encode() >>>
-        store(@setup_filename, deps) >>>
-        send_ok_response(login_info)
+  @spec save_order(PlacedOrder.t(), Type.syndicate(), Type.dependencies()) ::
+          Type.save_order_response()
+  def save_order(placed_order, syndicate, deps \\ @default_deps) do
+    with {:ok, content} <- read(@orders_filename, deps),
+         {:ok, orders} <- decode_orders(content),
+         {:ok, updated_orders} <- add_order(orders, placed_order, syndicate),
+         {:ok, json} <- Jason.encode(updated_orders) do
+      write(json, @orders_filename, deps)
+    end
+  end
 
-  @spec get_credentials :: Type.get_credentials_response()
-  def get_credentials(deps \\ @default_deps),
-    do:
-      File.cwd!()
-      |> Path.join(@setup_filename)
-      |> deps[:read_fn].() >>>
-        Jason.decode()
+  @spec delete_order(PlacedOrder.t(), Type.syndicate(), Type.dependencies()) ::
+          Type.delete_order_response()
+  def delete_order(placed_order, syndicate, deps \\ @default_deps) do
+    with {:ok, content} <- read(@orders_filename, deps),
+         {:ok, orders} <- decode_orders(content),
+         {:ok, updated_orders} <- remove_order(orders, placed_order, syndicate),
+         {:ok, json} <- Jason.encode(updated_orders) do
+      write(json, @orders_filename, deps)
+    end
+  end
+
+  @spec save_login_data(Authorization.t(), User.t(), Type.dependencies()) ::
+          Type.save_login_data_response()
+  def save_login_data(auth, user, deps \\ @default_deps) do
+    case Jason.encode(%{authorization: auth, user: user}) do
+      {:ok, data} -> write(data, @setup_filename, deps)
+      error -> error
+    end
+  end
+
+  @spec get_login_data(Type.dependencies()) :: Type.get_login_data_response()
+  def get_login_data(deps \\ @default_deps) do
+    with {:ok, encoded_data} <- read(@setup_filename, deps),
+         {:ok, decoded_data} <- Jason.decode(encoded_data) do
+      decoded_auth = Map.get(decoded_data, "authorization")
+      decoded_user = Map.get(decoded_data, "user")
+
+      if valid_data?(decoded_auth, ["cookie", "token"]) and
+           valid_data?(decoded_user, ["ingame_name", "patreon?"]) do
+        {:ok, {Authorization.new(decoded_auth), User.new(decoded_user)}}
+      else
+        {:ok, nil}
+      end
+    end
+  end
+
+  @spec delete_login_data(Type.dependencies()) :: Type.delete_login_data_response()
+  def delete_login_data(deps \\ @default_deps) do
+    case Jason.encode(%{}) do
+      {:ok, data} -> write(data, @setup_filename, deps)
+      error -> error
+    end
+  end
 
   ###########
   # Private #
@@ -71,55 +103,92 @@ defmodule Store.FileSystem do
   @spec read_syndicate_data(
           filename :: String.t(),
           Type.syndicate(),
-          file_read_fn :: function
-        ) :: {:ok, [Type.order_id() | [Type.product()]]} | {:error, any}
-  defp read_syndicate_data(filename, syndicate, read_fn) do
-    File.cwd!()
-    |> Path.join(filename)
-    |> read_fn.() >>>
-      Jason.decode() >>>
-      find_syndicate(syndicate)
+          Type.dependencies()
+        ) ::
+          {:ok, [map()]}
+          | {:error, :file.posix() | Jason.DecodeError.t() | :syndicate_not_found}
+  defp read_syndicate_data(filename, syndicate, file: file) do
+    with {:ok, directory} <- file.cwd(),
+         path <- Path.join(directory, filename),
+         {:ok, content} <- file.read(path),
+         {:ok, syndicates_data} <- Jason.decode(content) do
+      find_syndicate(syndicates_data, syndicate)
+    end
   end
 
-  @spec find_syndicate(Type.all_orders_store(), Type.syndicate()) ::
-          {:ok, [Type.order_id()] | [Type.product()]} | {:error, :syndicate_not_found}
-  defp find_syndicate(orders, syndicate) when is_map_key(orders, syndicate),
-    do: {:ok, Map.get(orders, syndicate)}
+  @spec find_syndicate(data :: map(), Type.syndicate()) ::
+          {:ok, [map()]} | {:error, :syndicate_not_found}
+  defp find_syndicate(data, syndicate) when is_map_key(data, syndicate),
+    do: {:ok, Map.get(data, syndicate)}
 
-  defp find_syndicate(_orders, _syndicate), do: {:error, :syndicate_not_found}
+  defp find_syndicate(_data, _syndicate), do: {:error, :syndicate_not_found}
 
-  @spec decode_orders_or_empty_orders(content :: String.t()) ::
-          {:ok, map} | {:error, any}
-  defp decode_orders_or_empty_orders(""), do: {:ok, %{}}
-  defp decode_orders_or_empty_orders(content), do: Jason.decode(content)
+  @spec decode_orders(content :: String.t()) ::
+          {:ok, Type.all_orders_store() | %{}} | {:error, Jason.DecodeError.t()}
+  defp decode_orders(""), do: {:ok, %{}}
 
-  @spec add_order(Type.all_orders_store(), Type.order_id(), Type.syndicate()) ::
+  defp decode_orders(content) do
+    case Jason.decode(content) do
+      {:ok, decoded_content} ->
+        decoded_content
+        |> Enum.map(fn {syndicate, orders} ->
+          {syndicate, Enum.map(orders, fn order -> PlacedOrder.new(order) end)}
+        end)
+        |> Map.new()
+        |> Tuples.to_tagged_tuple()
+
+      err ->
+        err
+    end
+  end
+
+  @spec add_order(Type.all_orders_store() | %{}, PlacedOrder.t(), Type.syndicate()) ::
           {:ok, Type.all_orders_store()}
-  defp add_order(all_orders, order_id, syndicate),
-    do: {:ok, Map.put(all_orders, syndicate, Map.get(all_orders, syndicate, []) ++ [order_id])}
+  defp add_order(all_orders, placed_order, syndicate) do
+    updated_syndicate_orders = Map.get(all_orders, syndicate, []) ++ [placed_order]
+    {:ok, Map.put(all_orders, syndicate, updated_syndicate_orders)}
+  end
 
-  @spec remove_order(Type.all_orders_store(), Type.order_id(), Type.syndicate()) ::
+  @spec remove_order(Type.all_orders_store() | %{}, PlacedOrder.t(), Type.syndicate()) ::
           {:ok, Type.all_orders_store()}
-  defp remove_order(all_orders, order_id, syndicate) do
+  defp remove_order(all_orders, placed_order, syndicate) do
     updated_syndicate_orders =
       all_orders
       |> Map.get(syndicate)
-      |> List.delete(order_id)
+      |> List.delete(placed_order)
 
     {:ok, Map.put(all_orders, syndicate, updated_syndicate_orders)}
   end
 
-  @spec send_ok_response(saved_data :: any, response_data :: any) :: {:ok, response_data :: any}
-  defp send_ok_response(_saved_data, response_data), do: {:ok, response_data}
+  @spec valid_data?(decoded_map :: map, fields :: [String.t()]) :: boolean()
+  defp valid_data?(map, fields),
+    do: not is_nil(map) and Enum.all?(fields, fn field -> not is_nil(Map.get(map, field)) end)
 
-  @spec store(any, String.t(), Type.deps()) :: {:ok, any} | {:error, :file.posix()}
-  defp store(data, filename, deps) do
-    File.cwd!()
-    |> Path.join(filename)
-    |> deps[:write_fn].(data)
-    |> case do
-      :ok -> {:ok, data}
-      err -> err
+  @spec write(data :: String.t(), filename :: String.t(), Type.dependencies()) ::
+          :ok | {:error, :file.posix()}
+  defp write(data, filename, file: file) do
+    case file.cwd() do
+      {:ok, path} ->
+        path
+        |> Path.join(filename)
+        |> file.write(data)
+
+      error ->
+        error
+    end
+  end
+
+  @spec read(filename :: String.t(), Type.dependencies()) ::
+          {:ok, String.t()} | {:error, :file.posix()}
+  defp read(filename, file: file) do
+    case file.cwd() do
+      {:ok, path} ->
+        path
+        |> Path.join(filename)
+        |> file.read()
+
+      error ->
+        error
     end
   end
 end

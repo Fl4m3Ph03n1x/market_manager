@@ -1,6 +1,9 @@
 defmodule StoreTest do
+  @moduledoc false
+
   use ExUnit.Case
 
+  alias Shared.Data.{Authorization, PlacedOrder, Product, User}
   alias Store
 
   ##########
@@ -15,17 +18,22 @@ defmodule StoreTest do
     content =
       Jason.encode!(%{
         "cephalon_simaris" => [
-          %{
+          Product.new(%{
             "name" => "Looter",
             "id" => "5740c1879d238d4a03d28518",
-            "price" => 50
-          },
-          %{
+            "min_price" => 50,
+            "default_price" => 60,
+            "quantity" => 1,
+            "rank" => 0
+          }),
+          Product.new(%{
             "name" => "Astral Autopsy",
             "id" => "588a789c3cf52c408a2f88dc",
-            "price" => 50,
+            "min_price" => 50,
+            "default_price" => 60,
+            "quantity" => 1,
             "rank" => "n/a"
-          }
+          })
         ]
       })
 
@@ -40,7 +48,16 @@ defmodule StoreTest do
         "new_loka" => [],
         "perrin_sequence" => [],
         "red_veil" => [],
-        "cephalon_simaris" => ["5ee71a2604d55c0a5cbdc3c2", "5ee71a2604d55c0a5cbdc3e3"]
+        "cephalon_simaris" => [
+          PlacedOrder.new(%{
+            "item_name" => "Looter",
+            "order_id" => "5ee71a2604d55c0a5cbdc3c2"
+          }),
+          PlacedOrder.new(%{
+            "item_name" => "Negate",
+            "order_id" => "5ee71a2604d55c0a5cbdc3e3"
+          })
+        ]
       })
 
     File.write(@current_orders_file, content)
@@ -49,7 +66,18 @@ defmodule StoreTest do
   defp delete_current_orders_file, do: File.rm!(@current_orders_file)
 
   defp create_setup_file do
-    content = Jason.encode!(%{"cookie" => "a_cookie", "token" => "a_token"})
+    content =
+      Jason.encode!(%{
+        "authorization" => %{
+          "cookie" => "a_cookie",
+          "token" => "a_token"
+        },
+        "user" => %{
+          "ingame_name" => "fl4m3",
+          "patreon?" => false
+        }
+      })
+
     File.write(@setup_file, content)
   end
 
@@ -75,17 +103,22 @@ defmodule StoreTest do
       expected =
         {:ok,
          [
-           %{
+           Product.new(%{
              "name" => "Looter",
              "id" => "5740c1879d238d4a03d28518",
-             "price" => 50
-           },
-           %{
+             "min_price" => 50,
+             "default_price" => 60,
+             "quantity" => 1,
+             "rank" => 0
+           }),
+           Product.new(%{
              "name" => "Astral Autopsy",
              "id" => "588a789c3cf52c408a2f88dc",
-             "price" => 50,
+             "min_price" => 50,
+             "default_price" => 60,
+             "quantity" => 1,
              "rank" => "n/a"
-           }
+           })
          ]}
 
       # Assert
@@ -108,7 +141,16 @@ defmodule StoreTest do
 
       expected = {
         :ok,
-        ["5ee71a2604d55c0a5cbdc3c2", "5ee71a2604d55c0a5cbdc3e3"]
+        [
+          PlacedOrder.new(%{
+            "item_name" => "Looter",
+            "order_id" => "5ee71a2604d55c0a5cbdc3c2"
+          }),
+          PlacedOrder.new(%{
+            "item_name" => "Negate",
+            "order_id" => "5ee71a2604d55c0a5cbdc3e3"
+          })
+        ]
       }
 
       # Assert
@@ -125,14 +167,38 @@ defmodule StoreTest do
     test "returns order_id if order was saved successfully" do
       # Arrange
       syndicate = "perrin_sequence"
-      order_id = "54a74454e779892d5e5155d5"
 
-      # Act
-      actual = Store.save_order(order_id, syndicate)
-      expected = {:ok, order_id}
+      placed_order =
+        PlacedOrder.new(%{
+          "item_name" => "Abating link",
+          "order_id" => "54a74454e779892d5e5155d5"
+        })
 
-      # Assert
-      assert actual == expected
+      # Act & Assert
+      assert Store.save_order(placed_order, syndicate) == :ok
+      {:ok, content} = File.read(@current_orders_file)
+
+      assert content ==
+               Jason.encode!(%{
+                 "new_loka" => [],
+                 "perrin_sequence" => [
+                   PlacedOrder.new(%{
+                     "item_name" => "Abating link",
+                     "order_id" => "54a74454e779892d5e5155d5"
+                   })
+                 ],
+                 "red_veil" => [],
+                 "cephalon_simaris" => [
+                   PlacedOrder.new(%{
+                     "item_name" => "Looter",
+                     "order_id" => "5ee71a2604d55c0a5cbdc3c2"
+                   }),
+                   PlacedOrder.new(%{
+                     "item_name" => "Negate",
+                     "order_id" => "5ee71a2604d55c0a5cbdc3e3"
+                   })
+                 ]
+               })
     end
   end
 
@@ -142,54 +208,87 @@ defmodule StoreTest do
       on_exit(&delete_current_orders_file/0)
     end
 
-    test "returns order_id if order was deleted successfully" do
+    test "returns :ok if order was deleted successfully" do
       # Arrange
       syndicate = "cephalon_simaris"
-      order_id = "5ee71a2604d55c0a5cbdc3c2"
 
-      # Act
-      actual = Store.delete_order(order_id, syndicate)
-      expected = {:ok, order_id}
+      placed_order =
+        PlacedOrder.new(%{
+          "item_name" => "Looter",
+          "order_id" => "5ee71a2604d55c0a5cbdc3c2"
+        })
 
-      # Assert
-      assert actual == expected
+      # Act & Assert
+      assert Store.delete_order(placed_order, syndicate) == :ok
+      {:ok, content} = File.read(@current_orders_file)
+
+      assert content ==
+               Jason.encode!(%{
+                 "new_loka" => [],
+                 "perrin_sequence" => [],
+                 "red_veil" => [],
+                 "cephalon_simaris" => [
+                   PlacedOrder.new(%{
+                     "item_name" => "Negate",
+                     "order_id" => "5ee71a2604d55c0a5cbdc3e3"
+                   })
+                 ]
+               })
     end
   end
 
-  describe "save_credentials/2" do
-    setup do
-      on_exit(&delete_setup_file/0)
-    end
-
-    test "returns login_info if login_info was saved successfully" do
-      # Arrange
-      login_info = %{"token" => "a_token", "cookie" => "a_cookie"}
-
-      # Act
-      actual = Store.save_credentials(login_info)
-      expected = {:ok, login_info}
-
-      # Assert
-      assert actual == expected
-    end
-  end
-
-  describe "get_credentials/0" do
+  describe "save_login_data/2" do
     setup do
       create_setup_file()
       on_exit(&delete_setup_file/0)
     end
 
-    test "returns login_info if login_info" do
+    test "returns :ok if login data was saved successfully" do
       # Arrange
-      login_info = %{"token" => "a_token", "cookie" => "a_cookie"}
+      auth = Authorization.new(%{"cookie" => "new_cookie", "token" => "new_token"})
+      user = User.new(%{"ingame_name" => "ph03n1x", "patreon?" => true})
 
-      # Act
-      actual = Store.get_credentials()
-      expected = {:ok, login_info}
+      # Act & Assert
+      assert Store.save_login_data(auth, user) == :ok
 
-      # Assert
-      assert actual == expected
+      {:ok, content} = File.read(@setup_file)
+
+      assert content ==
+               Jason.encode!(%{
+                 "authorization" => %{"cookie" => "new_cookie", "token" => "new_token"},
+                 "user" => %{"ingame_name" => "ph03n1x", "patreon?" => true}
+               })
+    end
+  end
+
+  describe "delete_login_data/0" do
+    setup do
+      create_setup_file()
+      on_exit(&delete_setup_file/0)
+    end
+
+    test "returns :ok if login data was deleted" do
+      # Act & Assert
+      assert Store.delete_login_data() == :ok
+
+      {:ok, content} = File.read(@setup_file)
+      assert content == "{}"
+    end
+  end
+
+  describe "get_login_data/0" do
+    setup do
+      create_setup_file()
+      on_exit(&delete_setup_file/0)
+    end
+
+    test "returns login data" do
+      # Arrange
+      auth = Authorization.new(%{"cookie" => "a_cookie", "token" => "a_token"})
+      user = User.new(%{"ingame_name" => "fl4m3", "patreon?" => false})
+
+      # Act & Assert
+      assert Store.get_login_data() == {:ok, {auth, user}}
     end
   end
 end

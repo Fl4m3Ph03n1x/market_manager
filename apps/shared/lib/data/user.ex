@@ -5,6 +5,14 @@ defmodule Shared.Data.User do
 
   use TypedStruct
 
+  alias Shared.Utils.Structs
+
+  @type user :: %{
+          (ingame_name :: String.t()) => String.t(),
+          (patreon? :: String.t()) => boolean()
+        }
+
+  @derive Jason.Encoder
   typedstruct enforce: true do
     @typedoc "User information"
 
@@ -12,12 +20,9 @@ defmodule Shared.Data.User do
     field(:patreon?, boolean(), default: false)
   end
 
-  @spec new(ingame_name :: String.t(), patreon? :: boolean()) :: __MODULE__.t()
-  def new(ingame_name, patreon? \\ false)
-      when is_binary(ingame_name) and is_boolean(patreon?) do
-    %__MODULE__{
-      ingame_name: ingame_name,
-      patreon?: patreon?
-    }
+  @spec new(user()) :: __MODULE__.t()
+  def new(%{"ingame_name" => name, "patreon?" => patreon?} = user)
+      when is_binary(name) and is_boolean(patreon?) do
+    Structs.string_map_to_struct(user, __MODULE__)
   end
 end

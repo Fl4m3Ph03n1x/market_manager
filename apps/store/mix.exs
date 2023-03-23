@@ -4,7 +4,7 @@ defmodule Store.MixProject do
   def project do
     [
       app: :store,
-      version: "2.0.0",
+      version: "3.0.0",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
@@ -12,7 +12,9 @@ defmodule Store.MixProject do
       elixir: "~> 1.13",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      test_coverage: [tool: ExCoveralls]
+      test_coverage: [tool: ExCoveralls],
+      preferred_cli_env: preferred_cli_env(),
+      aliases: aliases()
     ]
   end
 
@@ -25,10 +27,25 @@ defmodule Store.MixProject do
   defp deps do
     [
       {:jason, "~> 1.2"},
-      {:rop, "~> 0.5"},
+      {:shared, in_umbrella: true},
 
       # Test and Dev
-      {:mix_test_watch, "~> 1.0", only: [:dev, :test], runtime: false}
+      {:mix_test_watch, "~> 1.0", only: [:dev, :test], runtime: false},
+      {:mock, "~> 0.3.0", only: :test},
+      {:gradient, github: "esl/gradient", only: [:dev], runtime: false}
     ]
   end
+
+  defp preferred_cli_env,
+    do: [
+      "test.unit": :test,
+      "test.integration": :test,
+      "test.watch": :test
+    ]
+
+  defp aliases,
+    do: [
+      "test.unit": ["test test/unit"],
+      "test.integration": ["test test/integration"]
+    ]
 end
