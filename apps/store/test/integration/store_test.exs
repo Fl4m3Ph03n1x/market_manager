@@ -3,7 +3,7 @@ defmodule StoreTest do
 
   use ExUnit.Case
 
-  alias Shared.Data.{Authorization, Product, User}
+  alias Shared.Data.{Authorization, PlacedOrder, Product, User}
   alias Store
 
   ##########
@@ -48,7 +48,16 @@ defmodule StoreTest do
         "new_loka" => [],
         "perrin_sequence" => [],
         "red_veil" => [],
-        "cephalon_simaris" => ["5ee71a2604d55c0a5cbdc3c2", "5ee71a2604d55c0a5cbdc3e3"]
+        "cephalon_simaris" => [
+          PlacedOrder.new(%{
+            "item_name" => "Looter",
+            "order_id" => "5ee71a2604d55c0a5cbdc3c2"
+          }),
+          PlacedOrder.new(%{
+            "item_name" => "Negate",
+            "order_id" => "5ee71a2604d55c0a5cbdc3e3"
+          })
+        ]
       })
 
     File.write(@current_orders_file, content)
@@ -132,7 +141,16 @@ defmodule StoreTest do
 
       expected = {
         :ok,
-        ["5ee71a2604d55c0a5cbdc3c2", "5ee71a2604d55c0a5cbdc3e3"]
+        [
+          PlacedOrder.new(%{
+            "item_name" => "Looter",
+            "order_id" => "5ee71a2604d55c0a5cbdc3c2"
+          }),
+          PlacedOrder.new(%{
+            "item_name" => "Negate",
+            "order_id" => "5ee71a2604d55c0a5cbdc3e3"
+          })
+        ]
       }
 
       # Assert
@@ -149,18 +167,37 @@ defmodule StoreTest do
     test "returns order_id if order was saved successfully" do
       # Arrange
       syndicate = "perrin_sequence"
-      order_id = "54a74454e779892d5e5155d5"
+
+      placed_order =
+        PlacedOrder.new(%{
+          "item_name" => "Abating link",
+          "order_id" => "54a74454e779892d5e5155d5"
+        })
 
       # Act & Assert
-      assert Store.save_order(order_id, syndicate) == :ok
+      assert Store.save_order(placed_order, syndicate) == :ok
       {:ok, content} = File.read(@current_orders_file)
 
       assert content ==
                Jason.encode!(%{
                  "new_loka" => [],
-                 "perrin_sequence" => ["54a74454e779892d5e5155d5"],
+                 "perrin_sequence" => [
+                   PlacedOrder.new(%{
+                     "item_name" => "Abating link",
+                     "order_id" => "54a74454e779892d5e5155d5"
+                   })
+                 ],
                  "red_veil" => [],
-                 "cephalon_simaris" => ["5ee71a2604d55c0a5cbdc3c2", "5ee71a2604d55c0a5cbdc3e3"]
+                 "cephalon_simaris" => [
+                   PlacedOrder.new(%{
+                     "item_name" => "Looter",
+                     "order_id" => "5ee71a2604d55c0a5cbdc3c2"
+                   }),
+                   PlacedOrder.new(%{
+                     "item_name" => "Negate",
+                     "order_id" => "5ee71a2604d55c0a5cbdc3e3"
+                   })
+                 ]
                })
     end
   end
@@ -174,10 +211,15 @@ defmodule StoreTest do
     test "returns :ok if order was deleted successfully" do
       # Arrange
       syndicate = "cephalon_simaris"
-      order_id = "5ee71a2604d55c0a5cbdc3c2"
+
+      placed_order =
+        PlacedOrder.new(%{
+          "item_name" => "Looter",
+          "order_id" => "5ee71a2604d55c0a5cbdc3c2"
+        })
 
       # Act & Assert
-      assert Store.delete_order(order_id, syndicate) == :ok
+      assert Store.delete_order(placed_order, syndicate) == :ok
       {:ok, content} = File.read(@current_orders_file)
 
       assert content ==
@@ -185,7 +227,12 @@ defmodule StoreTest do
                  "new_loka" => [],
                  "perrin_sequence" => [],
                  "red_veil" => [],
-                 "cephalon_simaris" => ["5ee71a2604d55c0a5cbdc3e3"]
+                 "cephalon_simaris" => [
+                   PlacedOrder.new(%{
+                     "item_name" => "Negate",
+                     "order_id" => "5ee71a2604d55c0a5cbdc3e3"
+                   })
+                 ]
                })
     end
   end
