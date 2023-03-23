@@ -3,7 +3,7 @@ defmodule Manager.Type do
   Holds the types for the Manager library.
   """
 
-  alias Shared.Data.{Credentials, User}
+  alias Shared.Data.{Credentials, PlacedOrder, User}
 
   ##########
   # Types  #
@@ -12,10 +12,9 @@ defmodule Manager.Type do
   @type syndicate :: String.t()
   @type strategy :: atom
   @type error_reason :: atom
-  @type order_id :: String.t()
   @type item_id :: String.t()
-
   @type handle :: (result :: any -> :ok)
+  @type dependencies :: keyword(module)
 
   #############
   # Responses #
@@ -28,8 +27,8 @@ defmodule Manager.Type do
 
   @type deactivate_response ::
           {:ok, :success}
-          | {:partial_success, [{:error, error_reason, order_id}, ...]}
-          | {:error, :unable_to_delete_orders, [{:error, error_reason, order_id}]}
+          | {:partial_success, [{:error, error_reason, PlacedOrder.t()}, ...]}
+          | {:error, :unable_to_delete_orders, [{:error, error_reason, PlacedOrder.t()}]}
 
   @type login_response :: {:ok, User.t()} | {:error, error_reason, Credentials.t()}
 end

@@ -8,10 +8,8 @@ defmodule Manager.Impl.Interpreter do
   alias AuctionHouse
   alias Manager.Impl.PriceAnalyst
   alias Manager.Type
-  alias Shared.Data.{Credentials, Order, OrderInfo, Product}
+  alias Shared.Data.{Credentials, Order, OrderInfo, PlacedOrder, Product}
   alias Store
-
-  @type dependencies :: keyword(module())
 
   @default_deps [
     store: Store,
@@ -22,7 +20,7 @@ defmodule Manager.Impl.Interpreter do
   # Public #
   ##########
 
-  @spec activate(Type.syndicate(), Type.strategy(), Type.handle(), dependencies) :: :ok
+  @spec activate(Type.syndicate(), Type.strategy(), Type.handle(), Type.dependencies()) :: :ok
   def activate(
         syndicate,
         strategy,
@@ -30,12 +28,13 @@ defmodule Manager.Impl.Interpreter do
         [store: store, auction_house: _auction_house] = deps \\ @default_deps
       ) do
     with {:ok, products} <- store.list_products(syndicate),
+         {:ok, placed_orders} <- store.list_orders(syndicate),
          total_products <- length(products),
          indexed_products <- Enum.with_index(products) do
       Enum.each(
         indexed_products,
         fn {product, index} ->
-          result = place_request(product, syndicate, strategy, deps)
+          result = create_order(product, syndicate, strategy, placed_orders, deps)
           handle.({:activate, syndicate, {index + 1, total_products, result}})
         end
       )
@@ -46,15 +45,15 @@ defmodule Manager.Impl.Interpreter do
     handle.({:activate, syndicate, :done})
   end
 
-  @spec deactivate(Type.syndicate(), Type.handle(), dependencies()) :: :ok
+  @spec deactivate(Type.syndicate(), Type.handle(), Type.dependencies()) :: :ok
   def deactivate(
         syndicate,
         handle,
         [store: store, auction_house: _auction_house] = deps \\ @default_deps
       ) do
-    with {:ok, order_ids} <- store.list_orders(syndicate),
-         total_orders <- length(order_ids),
-         indexed_orders <- Enum.with_index(order_ids) do
+    with {:ok, placed_orders} <- store.list_orders(syndicate),
+         total_orders <- length(placed_orders),
+         indexed_orders <- Enum.with_index(placed_orders) do
       Enum.each(
         indexed_orders,
         fn {order, index} ->
@@ -69,7 +68,8 @@ defmodule Manager.Impl.Interpreter do
     handle.({:deactivate, syndicate, :done})
   end
 
-  @spec login(Credentials.t(), keep_logged_in :: boolean, Type.handle(), dependencies()) :: :ok
+  @spec login(Credentials.t(), keep_logged_in :: boolean, Type.handle(), Type.dependencies()) ::
+          :ok
   def login(credentials, keep_logged_in, handle, deps \\ @default_deps)
 
   def login(
@@ -111,20 +111,34 @@ defmodule Manager.Impl.Interpreter do
   # Private #
   ###########
 
-  @spec place_request(Product.t(), Type.syndicate(), Type.strategy(), dependencies) ::
-          {:ok, Type.order_id()} | {:error, any}
-  defp place_request(
+  @spec create_order(
+          Product.t(),
+          Type.syndicate(),
+          Type.strategy(),
+          [PlacedOrder.t()],
+          Type.dependencies()
+        ) ::
+          {:ok, PlacedOrder.t()} | {:error, any}
+  defp create_order(
          product,
          syndicate,
          strategy,
+         placed_orders,
          store: store,
          auction_house: auction_house
        ) do
-    with price <- calculate_product_price(product, strategy, auction_house),
-         order <- build_order(product, price),
-         {:ok, order_id} <- auction_house.place_order(order),
-         :ok <- store.save_order(order_id, syndicate) do
-      {:ok, order_id}
+    already_placed_order =
+      Enum.find(placed_orders, fn %PlacedOrder{item_id: id} -> id == product.id end)
+
+    if is_nil(already_placed_order) do
+      with price <- calculate_product_price(product, strategy, auction_house),
+           order <- build_order(product, price),
+           {:ok, placed_order} <- auction_house.place_order(order),
+           :ok <- store.save_order(placed_order, syndicate) do
+        {:ok, placed_order}
+      end
+    else
+      {:ok, already_placed_order}
     end
   end
 
@@ -166,17 +180,21 @@ defmodule Manager.Impl.Interpreter do
         "mod_rank" => product.rank
       })
 
-  @spec delete_order(Type.order_id(), Type.syndicate(), dependencies()) ::
-          {:ok, Type.order_id()} | {:error, atom, Type.order_id()}
-  defp delete_order(order_id, syndicate, store: store, auction_house: auction_house) do
-    with {:ok, _order_id} <- auction_house.delete_order(order_id),
-         :ok <- store.delete_order(order_id, syndicate) do
-      {:ok, order_id}
+  @spec delete_order(PlacedOrder.t(), Type.syndicate(), Type.dependencies()) ::
+          {:ok, PlacedOrder.t()} | {:error, atom, PlacedOrder.t()}
+  defp delete_order(placed_order, syndicate, store: store, auction_house: auction_house) do
+    with :ok <- auction_house.delete_order(placed_order),
+         :ok <- store.delete_order(placed_order, syndicate) do
+      {:ok, placed_order}
     else
-      {:error, :order_non_existent, order_id} ->
-        case store.delete_order(order_id, syndicate) do
-          {:error, reason} -> {:error, reason, order_id}
-          _result -> {:ok, order_id}
+      # placed_order is in storage, but not in market.
+      # This means we deleted the order from the market manually and did not
+      # use the manager to do it, even though we did place the order using the
+      # manger. We simply try to update Storage by removing the placed_order.
+      {:error, :order_non_existent, placed_order} ->
+        case store.delete_order(placed_order, syndicate) do
+          {:error, reason} -> {:error, reason, placed_order}
+          _result -> {:ok, placed_order}
         end
 
       error ->
@@ -184,14 +202,14 @@ defmodule Manager.Impl.Interpreter do
     end
   end
 
-  @spec automatic_login(dependencies()) :: :ok | {:ok, nil} | {:error, any}
+  @spec automatic_login(Type.dependencies()) :: :ok | {:ok, nil} | {:error, any}
   defp automatic_login(store: store, auction_house: auction_house) do
     with {:ok, {auth, user}} <- store.get_login_data() do
       auction_house.recover_login(auth, user)
     end
   end
 
-  @spec manual_login(Credentials.t(), keep_logged_in :: boolean, dependencies()) ::
+  @spec manual_login(Credentials.t(), keep_logged_in :: boolean, Type.dependencies()) ::
           :ok | {:error, any}
   defp manual_login(credentials, keep_logged_in,
          store: store,
