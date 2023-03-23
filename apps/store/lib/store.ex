@@ -4,7 +4,7 @@ defmodule Store do
   This module contains the Public API for the storage app.
   """
 
-  alias Shared.Data.{Authorization, Order, User}
+  alias Shared.Data.{Authorization, PlacedOrder, User}
   alias Store.FileSystem
   alias Store.Type
 
@@ -36,12 +36,18 @@ defmodule Store do
   defdelegate list_products(syndicate), to: FileSystem
 
   @doc """
-  Lists the ids of currently active orders from the given syndicate.
+  Lists all placed orders from the given syndicate.
 
   Example:
   ```
+  alias Shared.Data.PlacedOrder
+
   > Store.list_orders("red_veil")
-  {:ok, ["5a750686-956f-42a6-8194-11925ec9281e", "58f0b7e7-0ded-4932-8ccd-380cc5634c82", ...]}
+  {:ok, [
+    %PlacedOrder{item_name: "Exothermic", order_id: "5526aec1e779896af9418266"},
+    %PlacedOrder{item_name: "Tribunal", order_id: "5ea087d1c160d001303f9ed7"},
+    ...
+  ]}
 
   > Store.list_orders("invalid_syndicate")
   {:error, :syndicate_not_found}
@@ -51,34 +57,42 @@ defmodule Store do
   defdelegate list_orders(syndicate), to: FileSystem
 
   @doc """
-  Saves the given orderId for the given syndicate in the storage system.
+  Saves the given placed_order for the given syndicate in the storage system.
 
   Example:
   ```
-  > Store.save_order("00f83ca2-67d9-4019-9fea-587b9fc4037c", "red_veil")
+  alias Shared.Data.PlacedOrder
+
+  > Store.save_order(
+    %PlacedOrder{item_name: "Exothermic", order_id: "5526aec1e779896af9418266"},
+    "red_veil"
+  )
   :ok
 
   > Store.save_order("invalid_syndicate")
   {:error, :enoent}
   ```
   """
-  @spec save_order(Type.order_id(), Type.syndicate()) :: Type.save_order_response()
-  defdelegate save_order(order_id, syndicate), to: FileSystem
+  @spec save_order(PlacedOrder.t(), Type.syndicate()) :: Type.save_order_response()
+  defdelegate save_order(placed_order, syndicate), to: FileSystem
 
   @doc """
-  Deletes the given orderId from the given syndicate from the storage system.
+  Deletes the given placed_order from the given syndicate from the storage system.
 
   Example:
   ```
-  > Store.delete_order("00f83ca2-67d9-4019-9fea-587b9fc4037c", "red_veil")
+  > Store.delete_order(
+    %PlacedOrder{item_name: "Exothermic", order_id: "5526aec1e779896af9418266"},
+    "red_veil"
+  )
   :ok
 
   > Store.delete_order("invalid_syndicate")
   {:error, :enoent}
   ```
   """
-  @spec delete_order(Type.order_id(), Type.syndicate()) :: Type.delete_order_response()
-  defdelegate delete_order(order_id, syndicate), to: FileSystem
+  @spec delete_order(PlacedOrder.t(), Type.syndicate()) :: Type.delete_order_response()
+  defdelegate delete_order(placed_order, syndicate), to: FileSystem
 
   @doc """
   Saves the login information from the user into the storage system.

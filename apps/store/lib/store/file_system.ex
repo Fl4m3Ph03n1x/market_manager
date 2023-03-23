@@ -105,7 +105,7 @@ defmodule Store.FileSystem do
           Type.syndicate(),
           Type.dependencies()
         ) ::
-          {:ok, [Type.order_id() | map()]}
+          {:ok, [map()]}
           | {:error, :file.posix() | Jason.DecodeError.t() | :syndicate_not_found}
   defp read_syndicate_data(filename, syndicate, file: file) do
     with {:ok, directory} <- file.cwd(),
@@ -117,7 +117,7 @@ defmodule Store.FileSystem do
   end
 
   @spec find_syndicate(data :: map(), Type.syndicate()) ::
-          {:ok, [Type.order_id() | map()]} | {:error, :syndicate_not_found}
+          {:ok, [map()]} | {:error, :syndicate_not_found}
   defp find_syndicate(data, syndicate) when is_map_key(data, syndicate),
     do: {:ok, Map.get(data, syndicate)}
 
@@ -142,14 +142,14 @@ defmodule Store.FileSystem do
     end
   end
 
-  @spec add_order(Type.all_orders_store(), PlacedOrder.t(), Type.syndicate()) ::
+  @spec add_order(Type.all_orders_store() | %{}, PlacedOrder.t(), Type.syndicate()) ::
           {:ok, Type.all_orders_store()}
   defp add_order(all_orders, placed_order, syndicate) do
     updated_syndicate_orders = Map.get(all_orders, syndicate, []) ++ [placed_order]
     {:ok, Map.put(all_orders, syndicate, updated_syndicate_orders)}
   end
 
-  @spec remove_order(Type.all_orders_store(), PlacedOrder.t(), Type.syndicate()) ::
+  @spec remove_order(Type.all_orders_store() | %{}, PlacedOrder.t(), Type.syndicate()) ::
           {:ok, Type.all_orders_store()}
   defp remove_order(all_orders, placed_order, syndicate) do
     updated_syndicate_orders =

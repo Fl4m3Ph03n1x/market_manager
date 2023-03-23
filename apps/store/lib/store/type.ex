@@ -28,7 +28,7 @@ defmodule Store.Type do
   # Responses #
   #############
 
-  @type get_login_data ::
+  @type get_login_data_response ::
           {:ok, {Authorization.t(), User.t()} | nil}
           | {:error, :file.posix() | Jason.DecodeError.t() | :syndicate_not_found}
   @type save_login_data_response ::
