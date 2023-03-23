@@ -9,7 +9,7 @@ defmodule Shared.Data.PlacedOrder do
 
   @type placed_order :: %{
           (order_id :: String.t()) => String.t(),
-          (item_name :: String.t()) => String.t()
+          (item_id :: String.t()) => String.t()
         }
 
   @derive Jason.Encoder
@@ -17,16 +17,16 @@ defmodule Shared.Data.PlacedOrder do
     @typedoc "A PlacedOrder"
 
     field(:order_id, String.t())
-    field(:item_name, String.t())
+    field(:item_id, String.t())
   end
 
   @spec new(placed_order()) :: __MODULE__.t()
   def new(
         %{
           "order_id" => order_id,
-          "item_name" => item_name
+          "item_id" => item_id
         } = placed_order
       )
-      when is_binary(order_id) and is_binary(item_name),
+      when is_binary(order_id) and is_binary(item_id),
       do: Structs.string_map_to_struct(placed_order, __MODULE__)
 end
