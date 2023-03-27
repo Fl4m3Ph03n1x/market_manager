@@ -19,7 +19,7 @@ defmodule AuctionHouseTest do
   end
 
   describe "place_oder/1" do
-    test "returns {:ok, order_id} if order was placed correctly", %{
+    test "returns {:ok, placed_order} if order was placed correctly", %{
       bypass: bypass,
       server: server
     } do
@@ -90,7 +90,7 @@ defmodule AuctionHouseTest do
   end
 
   describe "delete_oder/1" do
-    test "returns {:ok, order_id} if order was deleted correctly", %{
+    test "returns :ok if order was deleted correctly", %{
       bypass: bypass,
       server: server
     } do
@@ -100,12 +100,17 @@ defmodule AuctionHouseTest do
         Plug.Conn.resp(conn, 200, Jason.encode!(response))
       end)
 
-      order_id = "5ee71a2604d55c0a5cbdc3c2"
+      placed_order =
+        PlacedOrder.new(%{
+          "order_id" => "5ee71a2604d55c0a5cbdc3c2",
+          "item_id" => "57c73be094b4b0f159ab5e15"
+        })
+
       login_info = %Authorization{cookie: "cookie", token: "token"}
       :sys.replace_state(server, fn state -> Map.put(state, :authorization, login_info) end)
 
       # Act
-      actual = AuctionHouse.delete_order(order_id)
+      actual = AuctionHouse.delete_order(placed_order)
       expected = :ok
 
       # Assert
