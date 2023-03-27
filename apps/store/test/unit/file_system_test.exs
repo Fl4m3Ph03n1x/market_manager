@@ -93,7 +93,7 @@ defmodule MarketManager.Store.FileSystemTest do
       cwd: fn -> {:ok, ""} end,
       read: fn _file_name ->
         {:ok,
-         "{\"new_loka\":[{\"item_name\":\"Abating link\",\"order_id\":\"5ee71a2604d55c0a5cbdc3c2\"},{\"item_name\":\"Vampire leech\",\"order_id\":\"5ee71a2604d55c0a5cbdc3e3\"}]}"}
+         "{\"new_loka\":[{\"item_id\":\"54e644ffe779897594fa68d2\",\"order_id\":\"5ee71a2604d55c0a5cbdc3c2\"},{\"item_id\":\"Vampire leech\",\"order_id\":\"5ee71a2604d55c0a5cbdc3e3\"}]}"}
       end do
       # Arrange
       syndicate = "new_loka"
@@ -105,11 +105,11 @@ defmodule MarketManager.Store.FileSystemTest do
         :ok,
         [
           PlacedOrder.new(%{
-            "item_name" => "Abating link",
+            "item_id" => "54e644ffe779897594fa68d2",
             "order_id" => "5ee71a2604d55c0a5cbdc3c2"
           }),
           PlacedOrder.new(%{
-            "item_name" => "Vampire leech",
+            "item_id" => "Vampire leech",
             "order_id" => "5ee71a2604d55c0a5cbdc3e3"
           })
         ]
@@ -173,7 +173,7 @@ defmodule MarketManager.Store.FileSystemTest do
       cwd: fn -> {:ok, ""} end,
       read: fn _file_name ->
         {:ok,
-         "{\"perrin_sequence\":[{\"item_name\":\"Abating link\",\"order_id\":\"54a74454e779892d5e5155d5\"}]}"}
+         "{\"perrin_sequence\":[{\"item_id\":\"54e644ffe779897594fa68d2\",\"order_id\":\"54a74454e779892d5e5155d5\"}]}"}
       end,
       write: fn _file_name, _content -> :ok end do
       # Arrange
@@ -181,12 +181,12 @@ defmodule MarketManager.Store.FileSystemTest do
 
       placed_order =
         PlacedOrder.new(%{
-          "item_name" => "Vampire leech",
+          "item_id" => "Vampire leech",
           "order_id" => "5ee71a2604d55c0a5cbdc3e3"
         })
 
       expected_saved_data =
-        "{\"perrin_sequence\":[{\"item_name\":\"Abating link\",\"order_id\":\"54a74454e779892d5e5155d5\"},{\"item_name\":\"Vampire leech\",\"order_id\":\"5ee71a2604d55c0a5cbdc3e3\"}]}"
+        "{\"perrin_sequence\":[{\"item_id\":\"54e644ffe779897594fa68d2\",\"order_id\":\"54a74454e779892d5e5155d5\"},{\"item_id\":\"Vampire leech\",\"order_id\":\"5ee71a2604d55c0a5cbdc3e3\"}]}"
 
       # Act & Assert
       assert FileSystem.save_order(placed_order, syndicate) == :ok
@@ -202,7 +202,7 @@ defmodule MarketManager.Store.FileSystemTest do
 
       placed_order =
         PlacedOrder.new(%{
-          "item_name" => "Vampire leech",
+          "item_id" => "Vampire leech",
           "order_id" => "5ee71a2604d55c0a5cbdc3e3"
         })
 
@@ -219,7 +219,7 @@ defmodule MarketManager.Store.FileSystemTest do
 
       placed_order =
         PlacedOrder.new(%{
-          "item_name" => "Vampire leech",
+          "item_id" => "Vampire leech",
           "order_id" => "5ee71a2604d55c0a5cbdc3e3"
         })
 
@@ -233,7 +233,7 @@ defmodule MarketManager.Store.FileSystemTest do
       cwd: fn -> {:ok, ""} end,
       read: fn _file_name ->
         {:ok,
-         "{\"perrin_sequence\":[{\"item_name\":\"Abating link\",\"order_id\":\"54a74454e779892d5e5155d5\"}]}"}
+         "{\"perrin_sequence\":[{\"item_id\":\"54e644ffe779897594fa68d2\",\"order_id\":\"54a74454e779892d5e5155d5\"}]}"}
       end,
       write: fn _file_name, _content -> {:error, :enoent} end do
       # Arrange
@@ -241,7 +241,7 @@ defmodule MarketManager.Store.FileSystemTest do
 
       placed_order =
         PlacedOrder.new(%{
-          "item_name" => "Vampire leech",
+          "item_id" => "Vampire leech",
           "order_id" => "5ee71a2604d55c0a5cbdc3e3"
         })
 
@@ -258,7 +258,7 @@ defmodule MarketManager.Store.FileSystemTest do
       cwd: fn -> {:ok, ""} end,
       read: fn _file_name ->
         {:ok,
-         "{\"perrin_sequence\":[{\"item_name\":\"Abating link\",\"order_id\":\"54a74454e779892d5e5155d5\"}]}"}
+         "{\"perrin_sequence\":[{\"item_id\":\"54e644ffe779897594fa68d2\",\"order_id\":\"54a74454e779892d5e5155d5\"}]}"}
       end,
       write: fn _file_name, _content -> :ok end do
       # Arrange
@@ -266,7 +266,7 @@ defmodule MarketManager.Store.FileSystemTest do
 
       placed_order =
         PlacedOrder.new(%{
-          "item_name" => "Abating link",
+          "item_id" => "54e644ffe779897594fa68d2",
           "order_id" => "54a74454e779892d5e5155d5"
         })
 
@@ -284,7 +284,7 @@ defmodule MarketManager.Store.FileSystemTest do
 
       placed_order =
         PlacedOrder.new(%{
-          "item_name" => "Abating link",
+          "item_id" => "54e644ffe779897594fa68d2",
           "order_id" => "54a74454e779892d5e5155d5"
         })
 
@@ -301,7 +301,7 @@ defmodule MarketManager.Store.FileSystemTest do
 
       placed_order =
         PlacedOrder.new(%{
-          "item_name" => "Abating link",
+          "item_id" => "54e644ffe779897594fa68d2",
           "order_id" => "54a74454e779892d5e5155d5"
         })
 
@@ -315,7 +315,7 @@ defmodule MarketManager.Store.FileSystemTest do
       cwd: fn -> {:ok, ""} end,
       read: fn _file_name ->
         {:ok,
-         "{\"perrin_sequence\":[{\"item_name\":\"Abating link\",\"order_id\":\"54a74454e779892d5e5155d5\"}]}"}
+         "{\"perrin_sequence\":[{\"item_id\":\"54e644ffe779897594fa68d2\",\"order_id\":\"54a74454e779892d5e5155d5\"}]}"}
       end,
       write: fn _file_name, _content -> {:error, :enoent} end do
       # Arrange
@@ -323,7 +323,7 @@ defmodule MarketManager.Store.FileSystemTest do
 
       placed_order =
         PlacedOrder.new(%{
-          "item_name" => "Abating link",
+          "item_id" => "54e644ffe779897594fa68d2",
           "order_id" => "54a74454e779892d5e5155d5"
         })
 

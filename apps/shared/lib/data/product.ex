@@ -48,4 +48,22 @@ defmodule Shared.Data.Product do
              (is_non_neg_integer(rank) or is_binary(rank)) do
     Structs.string_map_to_struct(product, __MODULE__)
   end
+
+  def new(%{
+        "name" => name,
+        "id" => id,
+        "min_price" => min_price,
+        "default_price" => default_price
+      })
+      when is_binary(name) and is_binary(id) and is_pos_integer(min_price) and
+             is_pos_integer(default_price) do
+    __MODULE__.new(%{
+      "name" => name,
+      "id" => id,
+      "min_price" => min_price,
+      "default_price" => default_price,
+      "quantity" => 1,
+      "rank" => 0
+    })
+  end
 end

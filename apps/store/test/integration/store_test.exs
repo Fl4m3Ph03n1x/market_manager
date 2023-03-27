@@ -50,11 +50,11 @@ defmodule StoreTest do
         "red_veil" => [],
         "cephalon_simaris" => [
           PlacedOrder.new(%{
-            "item_name" => "Looter",
+            "item_id" => "5740c1879d238d4a03d28518",
             "order_id" => "5ee71a2604d55c0a5cbdc3c2"
           }),
           PlacedOrder.new(%{
-            "item_name" => "Negate",
+            "item_id" => "5b00231bac0f7e006fd6f7b4",
             "order_id" => "5ee71a2604d55c0a5cbdc3e3"
           })
         ]
@@ -143,11 +143,11 @@ defmodule StoreTest do
         :ok,
         [
           PlacedOrder.new(%{
-            "item_name" => "Looter",
+            "item_id" => "5740c1879d238d4a03d28518",
             "order_id" => "5ee71a2604d55c0a5cbdc3c2"
           }),
           PlacedOrder.new(%{
-            "item_name" => "Negate",
+            "item_id" => "5b00231bac0f7e006fd6f7b4",
             "order_id" => "5ee71a2604d55c0a5cbdc3e3"
           })
         ]
@@ -170,7 +170,7 @@ defmodule StoreTest do
 
       placed_order =
         PlacedOrder.new(%{
-          "item_name" => "Abating link",
+          "item_id" => "54e644ffe779897594fa68d2",
           "order_id" => "54a74454e779892d5e5155d5"
         })
 
@@ -183,18 +183,18 @@ defmodule StoreTest do
                  "new_loka" => [],
                  "perrin_sequence" => [
                    PlacedOrder.new(%{
-                     "item_name" => "Abating link",
+                     "item_id" => "54e644ffe779897594fa68d2",
                      "order_id" => "54a74454e779892d5e5155d5"
                    })
                  ],
                  "red_veil" => [],
                  "cephalon_simaris" => [
                    PlacedOrder.new(%{
-                     "item_name" => "Looter",
+                     "item_id" => "5740c1879d238d4a03d28518",
                      "order_id" => "5ee71a2604d55c0a5cbdc3c2"
                    }),
                    PlacedOrder.new(%{
-                     "item_name" => "Negate",
+                     "item_id" => "5b00231bac0f7e006fd6f7b4",
                      "order_id" => "5ee71a2604d55c0a5cbdc3e3"
                    })
                  ]
@@ -214,7 +214,7 @@ defmodule StoreTest do
 
       placed_order =
         PlacedOrder.new(%{
-          "item_name" => "Looter",
+          "item_id" => "5740c1879d238d4a03d28518",
           "order_id" => "5ee71a2604d55c0a5cbdc3c2"
         })
 
@@ -229,7 +229,7 @@ defmodule StoreTest do
                  "red_veil" => [],
                  "cephalon_simaris" => [
                    PlacedOrder.new(%{
-                     "item_name" => "Negate",
+                     "item_id" => "5b00231bac0f7e006fd6f7b4",
                      "order_id" => "5ee71a2604d55c0a5cbdc3e3"
                    })
                  ]
