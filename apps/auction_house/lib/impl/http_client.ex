@@ -37,14 +37,14 @@ defmodule AuctionHouse.Impl.HTTPClient do
     end
   end
 
-  @spec delete_order(Type.order_id(), Type.state()) :: Type.delete_order_response()
-  def delete_order(order_id, state) do
+  @spec delete_order(PlacedOrder.t(), Type.state()) :: Type.delete_order_response()
+  def delete_order(placed_order, state) do
     with :ok <- check_authorization(state),
-         url <- build_delete_url(order_id),
+         url <- build_delete_url(placed_order.order_id),
          {:ok, %HTTPoison.Response{status_code: 200, body: _body}} <- http_delete(url, state) do
       :ok
     else
-      error -> to_auction_house_error(error, order_id)
+      error -> to_auction_house_error(error, placed_order)
     end
   end
 
