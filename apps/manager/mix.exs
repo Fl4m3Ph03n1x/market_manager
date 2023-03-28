@@ -34,8 +34,8 @@ defmodule Manager.MixProject do
 
       # Testing and Dev
       {:mix_test_watch, "~> 1.0", only: [:dev, :test], runtime: false},
-      {:mock, "~> 0.3.0", only: :test},
-      {:gradient, github: "esl/gradient", only: [:dev], runtime: false}
+      {:mock, "~> 0.3.0", only: [:dev, :test]},
+      {:gradient, github: "esl/gradient", only: [:dev, :test], runtime: false}
     ]
 
   defp elixirc_paths(:test), do: ["test/support", "lib"]
