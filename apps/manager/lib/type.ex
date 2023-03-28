@@ -3,8 +3,6 @@ defmodule Manager.Type do
   Holds the types for the Manager library.
   """
 
-  alias Shared.Data.PlacedOrder
-
   ##########
   # Types  #
   ##########
