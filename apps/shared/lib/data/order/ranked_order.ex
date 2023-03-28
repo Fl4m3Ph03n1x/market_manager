@@ -1,6 +1,6 @@
 defmodule Shared.Data.Order.RankedOrder do
   @moduledoc """
-  Represents an order to be made to warframe market.
+  Represents an order to be made to warframe market with a rank.
   """
 
   use TypedStruct
