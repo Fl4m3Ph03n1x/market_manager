@@ -16,8 +16,8 @@ defmodule Manager.Runtime.Server do
   # Public API #
   ##############
 
-  @spec start_link(any) :: :ignore | {:error, any} | {:ok, pid}
-  def start_link(_args), do: Supervisor.start_link(__MODULE__, nil, name: __MODULE__)
+  @spec start_link :: :ignore | {:error, any} | {:ok, pid}
+  def start_link, do: Supervisor.start_link(__MODULE__, nil, name: __MODULE__)
 
   ##############
   # Callbacks  #

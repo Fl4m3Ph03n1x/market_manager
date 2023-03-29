@@ -15,11 +15,12 @@ defmodule Manager.WorkerTest do
     setup do
       syndicate = "red_veil"
       strategy = :top_five_average
-      id1 = "54a74454e779892d5e5155d5"
-      id2 = "54a74454e779892d5e5155a0"
       product1_name = "Gleaming Blight"
       product2_name = "Eroding Blight"
       invalid_id = "some_invalid_id"
+
+      id1 = "54a74454e779892d5e5155d5"
+      id2 = "54a74454e779892d5e5155a0"
 
       product1 = Helpers.create_product(name: product1_name, id: id1, rank: 0)
       product2 = Helpers.create_product(name: product2_name, id: id2)
@@ -28,6 +29,10 @@ defmodule Manager.WorkerTest do
       order1 = Helpers.create_order(item_id: id1, platinum: 52, mod_rank: 0)
       order2 = Helpers.create_order(item_id: id2, platinum: 50)
       invalid_order = Helpers.create_order(item_id: invalid_id, platinum: 50)
+
+      placed_order1 = Helpers.create_placed_order(item_id: product1.id)
+      placed_order2 = Helpers.create_placed_order(item_id: product2.id)
+      bad_placed_order = Helpers.create_placed_order(item_id: invalid_id)
 
       order1_without_market_info = Helpers.create_order(item_id: id1, platinum: 16, mod_rank: 0)
       order2_without_market_info = Helpers.create_order(item_id: id2, platinum: 16)
@@ -141,8 +146,6 @@ defmodule Manager.WorkerTest do
       %{
         syndicate: syndicate,
         strategy: strategy,
-        id1: id1,
-        id2: id2,
         product1_name: product1_name,
         product2_name: product2_name,
         invalid_product: invalid_product,
@@ -151,6 +154,9 @@ defmodule Manager.WorkerTest do
         order1: order1,
         order2: order2,
         invalid_order: invalid_order,
+        placed_order1: placed_order1,
+        placed_order2: placed_order2,
+        bad_placed_order: bad_placed_order,
         order1_without_market_info: order1_without_market_info,
         order2_without_market_info: order2_without_market_info,
         product1_market_orders: product1_market_orders,
@@ -165,8 +171,8 @@ defmodule Manager.WorkerTest do
       product2: product2,
       product1_name: product1_name,
       product2_name: product2_name,
-      id1: id1,
-      id2: id2,
+      placed_order1: placed_order1,
+      placed_order2: placed_order2,
       order1: order1,
       order2: order2,
       product1_market_orders: product1_market_orders,
@@ -177,6 +183,7 @@ defmodule Manager.WorkerTest do
           Store,
           [],
           [
+            list_orders: fn _syndicate -> {:ok, []} end,
             list_products: fn _syndicate -> {:ok, [product1, product2]} end,
             save_order: fn _id, _syndicate -> :ok end
           ]
@@ -189,7 +196,10 @@ defmodule Manager.WorkerTest do
               ^product1_name -> {:ok, product1_market_orders}
               ^product2_name -> {:ok, product2_market_orders}
             end,
-            place_order: fn order -> {:ok, order.item_id} end
+            place_order: fn
+              ^order1 -> {:ok, placed_order1}
+              ^order2 -> {:ok, placed_order2}
+            end
           ]
         }
       ]) do
@@ -199,20 +209,20 @@ defmodule Manager.WorkerTest do
         Worker.activate(syndicate, strategy)
 
         assert_receive(
-          {:activate, ^syndicate, {1, 2, {:ok, "54a74454e779892d5e5155d5"}}},
+          {:activate, ^syndicate, {1, 2, {:ok, ^placed_order1}}},
           @timeout
         )
 
         assert_receive(
-          {:activate, ^syndicate, {2, 2, {:ok, "54a74454e779892d5e5155a0"}}},
+          {:activate, ^syndicate, {2, 2, {:ok, ^placed_order2}}},
           @timeout
         )
 
         assert_receive({:activate, ^syndicate, :done}, @timeout)
 
         assert_called(Store.list_products(syndicate))
-        assert_called(Store.save_order(id1, syndicate))
-        assert_called(Store.save_order(id2, syndicate))
+        assert_called(Store.save_order(placed_order1, syndicate))
+        assert_called(Store.save_order(placed_order2, syndicate))
 
         assert_called(AuctionHouse.get_all_orders(product1_name))
         assert_called(AuctionHouse.get_all_orders(product2_name))
@@ -225,35 +235,35 @@ defmodule Manager.WorkerTest do
   describe "deactivate" do
     setup do
       syndicate = "red_veil"
-      order_id1 = "54a74454e779892d5e5155d5"
-      order_id2 = "54a74454e779892d5e5155a0"
+      placed_order1 = Helpers.create_placed_order(item_id: "54a74454e779892d5e5155d5")
+      placed_order2 = Helpers.create_placed_order(item_id: "54a74454e779892d5e5155a0")
 
       %{
         syndicate: syndicate,
-        order_id1: order_id1,
-        order_id2: order_id2
+        placed_order1: placed_order1,
+        placed_order2: placed_order2
       }
     end
 
     test "deactivate works correctly", %{
       syndicate: syndicate,
-      order_id1: order_id1,
-      order_id2: order_id2
+      placed_order1: placed_order1,
+      placed_order2: placed_order2
     } do
       with_mocks([
         {
           Store,
           [],
           [
-            list_orders: fn _syndicate -> {:ok, [order_id1, order_id2]} end,
-            delete_order: fn id, _syndicate -> {:ok, id} end
+            list_orders: fn _syndicate -> {:ok, [placed_order1, placed_order2]} end,
+            delete_order: fn _placed_order, _syndicate -> :ok end
           ]
         },
         {
           AuctionHouse,
           [],
           [
-            delete_order: fn order_id -> {:ok, order_id} end
+            delete_order: fn _placed_order -> :ok end
           ]
         }
       ]) do
@@ -263,23 +273,23 @@ defmodule Manager.WorkerTest do
         Worker.deactivate(syndicate)
 
         assert_receive(
-          {:deactivate, ^syndicate, {1, 2, {:ok, "54a74454e779892d5e5155d5"}}},
+          {:deactivate, ^syndicate, {1, 2, {:ok, ^placed_order1}}},
           @timeout
         )
 
         assert_receive(
-          {:deactivate, ^syndicate, {2, 2, {:ok, "54a74454e779892d5e5155a0"}}},
+          {:deactivate, ^syndicate, {2, 2, {:ok, ^placed_order2}}},
           @timeout
         )
 
         assert_receive({:deactivate, ^syndicate, :done}, @timeout)
 
         assert_called(Store.list_orders(syndicate))
-        assert_called(Store.delete_order(order_id1, syndicate))
-        assert_called(Store.delete_order(order_id2, syndicate))
+        assert_called(Store.delete_order(placed_order1, syndicate))
+        assert_called(Store.delete_order(placed_order2, syndicate))
 
-        assert_called(AuctionHouse.delete_order(order_id1))
-        assert_called(AuctionHouse.delete_order(order_id2))
+        assert_called(AuctionHouse.delete_order(placed_order1))
+        assert_called(AuctionHouse.delete_order(placed_order2))
       end
     end
   end
@@ -287,8 +297,8 @@ defmodule Manager.WorkerTest do
   describe "login" do
     setup do
       credentials = Credentials.new("an_email", "a_password")
-      authorization = Authorization.new("a_cookie", "a_token")
-      user = User.new("fl4m3", false)
+      authorization = Authorization.new(%{"cookie" => "a_cookie", "token" => "a_token"})
+      user = User.new(%{"ingame_name" => "fl4m3", "patreon?" => false})
 
       %{
         credentials: credentials,

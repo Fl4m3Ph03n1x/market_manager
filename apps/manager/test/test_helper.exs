@@ -3,7 +3,7 @@ ExUnit.start()
 defmodule Helpers do
   @moduledoc false
 
-  alias Shared.Data.{Order, OrderInfo, Product}
+  alias Shared.Data.{Order, OrderInfo, PlacedOrder, Product}
   alias Shared.Utils.Maps
 
   @default_order %{
@@ -30,6 +30,11 @@ defmodule Helpers do
     "platinum" => 15
   }
 
+  @default_placed_order %{
+    "item_id" => "default_item_id",
+    "order_id" => "default_order_id"
+  }
+
   @spec create_order(Keyword.t()) :: Order.t()
   def create_order(data) when is_list(data),
     do:
@@ -50,4 +55,11 @@ defmodule Helpers do
       @default_order_info
       |> Map.merge(Maps.to_string_map(data))
       |> OrderInfo.new()
+
+  @spec create_placed_order(Keyword.t()) :: PlacedOrder.t()
+  def create_placed_order(data) when is_list(data),
+    do:
+      @default_placed_order
+      |> Map.merge(Maps.to_string_map(data))
+      |> PlacedOrder.new()
 end

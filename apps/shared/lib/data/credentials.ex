@@ -1,6 +1,8 @@
 defmodule Shared.Data.Credentials do
   @moduledoc """
-  Represents the authentication data for an user.
+  Represents the credentials of an user. Credentials are used to get access
+  to Authorization and User info, which is the used to makes requests to the
+  market.
   """
 
   use TypedStruct

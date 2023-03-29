@@ -7,7 +7,7 @@ defmodule AuctionHouse do
 
   alias AuctionHouse.Runtime.Server
   alias AuctionHouse.Type
-  alias Shared.Data.{Authorization, Credentials, Order, User}
+  alias Shared.Data.{Authorization, Credentials, Order, PlacedOrder, User}
   alias Supervisor
 
   #######
@@ -19,7 +19,7 @@ defmodule AuctionHouse do
 
   Example:
   ```
-  alias Shared.Data.Order
+  alias Shared.Data.{Order, PlacedOrder}
   order = Order.new(%{
     "item_id" => "54e644ffe779897594fa68cd",
     "mod_rank" => 0,
@@ -29,7 +29,12 @@ defmodule AuctionHouse do
   })
 
   > AuctionHouse.place_order(order)
-  {:ok, "626127cbc984ac033cd2bbd2"}
+  {:ok,
+    %PlacedOrder{
+      item_id: "54e644ffe779897594fa68cd",
+      order_id: "626127cbc984ac033cd2bbd2"
+    }
+  }
 
   > AuctionHouse.place_order(order)
   {:error, :reason, order}
@@ -43,16 +48,19 @@ defmodule AuctionHouse do
 
   Example:
   ```
-  order_id = "626127cbc984ac033cd2bbd2"
+  placed_order = PlacedOrder.new(%{
+      "item_id" => "54e644ffe779897594fa68cd",
+      "order_id" => "626127cbc984ac033cd2bbd2"
+  })
 
-  > AuctionHouse.delete_order(order_id)
-  {:ok, order_id}
+  > AuctionHouse.delete_order(placed_order)
+  :ok
 
-  > AuctionHouse.delete_order(order_id)
+  > AuctionHouse.delete_order(placed_order)
   {:error, :reason, order_id}
   ```
   """
-  @spec delete_order(Type.order_id()) :: Type.delete_order_response()
+  @spec delete_order(PlacedOrder.t()) :: Type.delete_order_response()
   defdelegate delete_order(order_id), to: Server
 
   @doc """

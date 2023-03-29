@@ -6,7 +6,7 @@ defmodule AuctionHouse.Impl.HTTPClient do
   require Logger
 
   alias AuctionHouse.Type
-  alias Shared.Data.{Authorization, Credentials, Order, OrderInfo, User}
+  alias Shared.Data.{Authorization, Credentials, Order, OrderInfo, PlacedOrder, User}
 
   @url Application.compile_env!(:auction_house, :api_base_url)
   @search_url Application.compile_env!(:auction_house, :api_search_url)
@@ -31,22 +31,20 @@ defmodule AuctionHouse.Impl.HTTPClient do
            http_post(@url, order_json, state),
          {:ok, content} <- Jason.decode(body),
          {:ok, id} <- get_id(content) do
-      {:ok, id}
+      {:ok, PlacedOrder.new(%{"item_id" => order.item_id, "order_id" => id})}
     else
       error -> to_auction_house_error(error, order)
     end
   end
 
-  @spec delete_order(Type.order_id(), Type.state()) :: Type.delete_order_response()
-  def delete_order(order_id, state) do
+  @spec delete_order(PlacedOrder.t(), Type.state()) :: Type.delete_order_response()
+  def delete_order(placed_order, state) do
     with :ok <- check_authorization(state),
-         url <- build_delete_url(order_id),
-         {:ok, %HTTPoison.Response{status_code: 200, body: body}} <- http_delete(url, state),
-         {:ok, content} <- Jason.decode(body),
-         {:ok, id} <- get_id(content) do
-      {:ok, id}
+         url <- build_delete_url(placed_order.order_id),
+         {:ok, %HTTPoison.Response{status_code: 200, body: _body}} <- http_delete(url, state) do
+      :ok
     else
-      error -> to_auction_house_error(error, order_id)
+      error -> to_auction_house_error(error, placed_order)
     end
   end
 
@@ -75,7 +73,9 @@ defmodule AuctionHouse.Impl.HTTPClient do
          {:ok, updated_cookie} <- parse_cookie(headers),
          {:ok, ingame_name} <- parse_ingame_name(decoded_body),
          {:ok, patreon?} <- parse_patreon(decoded_body) do
-      {:ok, {Authorization.new(updated_cookie, token), User.new(ingame_name, patreon?)}}
+      {:ok,
+       {Authorization.new(%{"cookie" => updated_cookie, "token" => token}),
+        User.new(%{"ingame_name" => ingame_name, "patreon?" => patreon?})}}
     else
       error -> to_auction_house_error(error, credentials)
     end

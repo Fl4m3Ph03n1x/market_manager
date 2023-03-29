@@ -10,7 +10,7 @@ defmodule AuctionHouse.Runtime.Server do
   alias AuctionHouse.Type
   alias Floki
   alias HTTPoison
-  alias Shared.Data.{Authorization, Credentials, Order, User}
+  alias Shared.Data.{Authorization, Credentials, Order, PlacedOrder, User}
 
   @genserver_timeout Application.compile_env!(:auction_house, :genserver_timeout)
 
@@ -29,9 +29,9 @@ defmodule AuctionHouse.Runtime.Server do
   def place_order(order),
     do: GenServer.call(__MODULE__, {:place_order, order}, @genserver_timeout)
 
-  @spec delete_order(Type.order_id()) :: Type.delete_order_response()
-  def delete_order(order_id),
-    do: GenServer.call(__MODULE__, {:delete_order, order_id}, @genserver_timeout)
+  @spec delete_order(PlacedOrder.t()) :: Type.delete_order_response()
+  def delete_order(placed_order),
+    do: GenServer.call(__MODULE__, {:delete_order, placed_order}, @genserver_timeout)
 
   @spec login(Credentials.t()) :: Type.login_response()
   def login(credentials),
@@ -95,8 +95,8 @@ defmodule AuctionHouse.Runtime.Server do
     do: {:reply, HTTPClient.place_order(order, state), state}
 
   @impl GenServer
-  def handle_call({:delete_order, order_id}, _from, state),
-    do: {:reply, HTTPClient.delete_order(order_id, state), state}
+  def handle_call({:delete_order, placed_order}, _from, state),
+    do: {:reply, HTTPClient.delete_order(placed_order, state), state}
 
   @impl GenServer
   def handle_call({:get_all_orders, item_name}, _from, state),

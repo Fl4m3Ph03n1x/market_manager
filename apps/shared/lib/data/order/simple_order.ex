@@ -1,6 +1,6 @@
 defmodule Shared.Data.Order.SimpleOrder do
   @moduledoc """
-  Represents an order to be made to warframe market.
+  Represents an order to be made to warframe market without a rank.
   """
 
   use TypedStruct

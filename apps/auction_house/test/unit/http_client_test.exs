@@ -1,15 +1,15 @@
 defmodule AuctionHouse.HTTPClientTest do
   @moduledoc false
 
-  use ExUnit.Case
+  use ExUnit.Case, async: true
 
   import ExUnit.CaptureLog
 
   alias AuctionHouse.Impl.HTTPClient
-  alias Shared.Data.{Authorization, Credentials, Order, OrderInfo, User}
+  alias Shared.Data.{Authorization, Credentials, Order, OrderInfo, PlacedOrder, User}
 
   describe "place_oder/2" do
-    test "returns order_id if order was placed correctly" do
+    test "returns placed_order if order was placed correctly" do
       # Arrange
       order =
         Order.new(%{
@@ -37,7 +37,13 @@ defmodule AuctionHouse.HTTPClientTest do
 
       # Act
       actual = HTTPClient.place_order(order, state)
-      expected = {:ok, "5ee71a2604d55c0a5cbdc3c2"}
+
+      expected =
+        {:ok,
+         PlacedOrder.new(%{
+           "item_id" => order.item_id,
+           "order_id" => "5ee71a2604d55c0a5cbdc3c2"
+         })}
 
       # Assert
       assert actual == expected
@@ -280,9 +286,13 @@ defmodule AuctionHouse.HTTPClientTest do
   end
 
   describe "delete_oder/2" do
-    test "returns {:ok, order_id} if order was deleted correctly" do
+    test "returns :ok if order was deleted correctly" do
       # Arrange
-      order_id = "5ee71a2604d55c0a5cbdc3c2"
+      placed_order =
+        PlacedOrder.new(%{
+          "order_id" => "5ee71a2604d55c0a5cbdc3c2",
+          "item_id" => "57c73be094b4b0f159ab5e15"
+        })
 
       state = %{
         dependencies: %{
@@ -300,8 +310,8 @@ defmodule AuctionHouse.HTTPClientTest do
       }
 
       # Act
-      actual = HTTPClient.delete_order(order_id, state)
-      expected = {:ok, "5ee71a2604d55c0a5cbdc3c2"}
+      actual = HTTPClient.delete_order(placed_order, state)
+      expected = :ok
 
       # Assert
       assert actual == expected
@@ -309,7 +319,11 @@ defmodule AuctionHouse.HTTPClientTest do
 
     test "returns error if order did not exist" do
       # Arrange
-      order_id = "5ee71a2604d55c0a5cbdc3c2"
+      placed_order =
+        PlacedOrder.new(%{
+          "order_id" => "5ee71a2604d55c0a5cbdc3c2",
+          "item_id" => "57c73be094b4b0f159ab5e15"
+        })
 
       state = %{
         dependencies: %{
@@ -327,8 +341,8 @@ defmodule AuctionHouse.HTTPClientTest do
       }
 
       # Act
-      actual = HTTPClient.delete_order(order_id, state)
-      expected = {:error, :order_non_existent, "5ee71a2604d55c0a5cbdc3c2"}
+      actual = HTTPClient.delete_order(placed_order, state)
+      expected = {:error, :order_non_existent, placed_order}
 
       # Assert
       assert actual == expected
@@ -336,7 +350,11 @@ defmodule AuctionHouse.HTTPClientTest do
 
     test "returns error if a generic network error occurred while deleting a request" do
       # Arrange
-      order_id = "5ee71a2604d55c0a5cbdc3c2"
+      placed_order =
+        PlacedOrder.new(%{
+          "order_id" => "5ee71a2604d55c0a5cbdc3c2",
+          "item_id" => "57c73be094b4b0f159ab5e15"
+        })
 
       state = %{
         dependencies: %{
@@ -350,8 +368,8 @@ defmodule AuctionHouse.HTTPClientTest do
       }
 
       # Act
-      actual = HTTPClient.delete_order(order_id, state)
-      expected = {:error, :timeout, "5ee71a2604d55c0a5cbdc3c2"}
+      actual = HTTPClient.delete_order(placed_order, state)
+      expected = {:error, :timeout, placed_order}
 
       # Assert
       assert actual == expected
@@ -359,7 +377,11 @@ defmodule AuctionHouse.HTTPClientTest do
 
     test "returns error if server experiences an internal error" do
       # Arrange
-      order_id = "5ee71a2604d55c0a5cbdc3c2"
+      placed_order =
+        PlacedOrder.new(%{
+          "order_id" => "5ee71a2604d55c0a5cbdc3c2",
+          "item_id" => "57c73be094b4b0f159ab5e15"
+        })
 
       state = %{
         dependencies: %{
@@ -377,8 +399,8 @@ defmodule AuctionHouse.HTTPClientTest do
       }
 
       # Act
-      actual = HTTPClient.delete_order(order_id, state)
-      expected = {:error, :internal_server_error, order_id}
+      actual = HTTPClient.delete_order(placed_order, state)
+      expected = {:error, :internal_server_error, placed_order}
 
       # Assert
       assert actual == expected
@@ -386,13 +408,17 @@ defmodule AuctionHouse.HTTPClientTest do
 
     test "returns error if user tries to delete order without having logged in first" do
       # Arrange
-      order_id = "5ee71a2604d55c0a5cbdc3c2"
+      placed_order =
+        PlacedOrder.new(%{
+          "order_id" => "5ee71a2604d55c0a5cbdc3c2",
+          "item_id" => "57c73be094b4b0f159ab5e15"
+        })
 
       state = %{authorization: nil}
 
       # Act
-      actual = HTTPClient.delete_order(order_id, state)
-      expected = {:error, :missing_authorization_credentials, order_id}
+      actual = HTTPClient.delete_order(placed_order, state)
+      expected = {:error, :missing_authorization_credentials, placed_order}
 
       # Assert
       assert actual == expected
@@ -538,7 +564,11 @@ defmodule AuctionHouse.HTTPClientTest do
       actual = HTTPClient.login(credentials, state)
 
       expected =
-        {:ok, {Authorization.new("JWT=new_cookie", "a_token"), User.new("Fl4m3Ph03n1x", false)}}
+        {:ok,
+         {
+           Authorization.new(%{"cookie" => "JWT=new_cookie", "token" => "a_token"}),
+           User.new(%{"ingame_name" => "Fl4m3Ph03n1x", "patreon?" => false})
+         }}
 
       # Assert
       assert actual == expected

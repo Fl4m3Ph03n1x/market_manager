@@ -26,7 +26,8 @@ defmodule Shared.MixProject do
       {:jason, "~> 1.4"},
 
       # Test and Dev
-      {:mix_test_watch, "~> 1.0", only: :dev, runtime: false}
+      {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
+      {:gradient, github: "esl/gradient", only: [:dev, :test], runtime: false}
     ]
   end
 end

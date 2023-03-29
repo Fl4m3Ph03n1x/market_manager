@@ -5,11 +5,9 @@ defmodule Manager do
   and you need to talk to MarketManager, this is who you call, the public API.
   """
 
-  alias Manager.Impl.Interpreter
   alias Manager.Type
   alias Manager.Runtime.{Server, Worker}
   alias Shared.Data.{Credentials, User}
-  alias Supervisor
 
   ##########
   # Public #
