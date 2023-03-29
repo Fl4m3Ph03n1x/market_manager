@@ -1,21 +1,32 @@
 # Shared
 
-**TODO: Add description**
+This is a Functional Library that holds general utility functions used across 
+all the project. 
 
-## Installation
+It also holds the DataStructures and Types used to represent the Domain. 
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `shared` to your list of dependencies in `mix.exs`:
+As you can see from below, every app depends on this library.
+
+![dependencies-graph](./store_logic.svg)
+
+## Developer Guide
+
+This project uses Gradient as a static type checking tool. This means there 
+may be con conflicts with other tools, but this is being worked on. 
+
+### Testing
+
+Since this is a functional library, there are only unit tests. You can run them
+via `mix test`.
+
+### Usage
+
+To use this library into your project, simply add it to your `mix.exs`:
 
 ```elixir
 def deps do
   [
-    {:shared, "~> 0.1.0"}
+    {:shared, in_umbrella: true}
   ]
 end
 ```
-
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at <https://hexdocs.pm/shared>.
-
