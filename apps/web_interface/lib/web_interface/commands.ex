@@ -6,13 +6,14 @@ defmodule WebInterface.Commands do
 
   alias Manager
   alias Manager.Type, as: ManagerTypes
+  alias Shared.Data.Credentials
   alias WebInterface.Syndicates
 
   @default_deps %{
     manager: Manager
   }
 
-  @type command_id :: :activate | :deactivate | :authenticate
+  @type command_id :: :activate | :deactivate | :login
 
   @type command :: %{
           name: String.t(),
@@ -33,13 +34,13 @@ defmodule WebInterface.Commands do
           syndicates: [ManagerTypes.syndicate()]
         }
 
-  @type authenticate_request :: %{
-          command: :authenticate,
-          cookie: String.t(),
-          token: String.t()
+  @type login_request :: %{
+          command: :login,
+          email: String.t(),
+          password: String.t()
         }
 
-  @type request :: activate_request | deactivate_request | authenticate_request
+  @type request :: activate_request | deactivate_request | login_request
 
   @spec list_commands :: [command]
   def list_commands,
@@ -60,12 +61,12 @@ defmodule WebInterface.Commands do
         id: :deactivate
       },
       %{
-        name: "Authenticate",
+        name: "Login",
         description: "
-          Saving authentication information will allow this application to make requests in your behalf.
+          Log in with your Warframe Market information. This is saved locally and only used to make requests to the website.
           It is a required step for the application to work.
         ",
-        id: :authenticate
+        id: :login
       }
     ]
 
@@ -73,22 +74,28 @@ defmodule WebInterface.Commands do
   def execute(command, deps \\ @default_deps)
 
   def execute(
-        %{command: :activate, strategy: strat, syndicates: synds},
+        %{command: :activate, strategy: strategy, syndicates: syndicates},
         %{manager: manager}
       ),
       do:
-        synds
+        syndicates
         |> Enum.map(&Syndicates.get_id/1)
-        |> Enum.map(&manager.activate(&1, strat))
+        |> Enum.map(&manager.activate(&1, strategy))
 
-  def execute(%{command: :deactivate, syndicates: synds}, %{manager: manager}),
+  def execute(%{command: :deactivate, syndicates: syndicates}, %{manager: manager}),
     do:
-      synds
+      syndicates
       |> Enum.map(&Syndicates.get_id/1)
       |> Enum.map(&manager.deactivate/1)
 
-  def execute(%{command: :authenticate, cookie: cookie, token: token}, %{manager: manager}),
-    do: manager.authenticate(%{"cookie" => cookie, "token" => token})
+  def execute(
+        %{command: :login, email: email, password: password, keep_logged_in: keep_logged_in},
+        %{manager: manager}
+      ),
+      do:
+        email
+        |> Credentials.new(password)
+        |> manager.login(keep_logged_in)
 
   @spec get_command(atom) :: command | nil
   def get_command(id),

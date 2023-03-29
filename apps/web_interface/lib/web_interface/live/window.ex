@@ -1,8 +1,8 @@
 defmodule WebInterface.Live.Window do
   @moduledoc """
-  Rrepresents the full interface. This module is responsible for receiving
+  Represents the full interface. This module is responsible for receiving
   messages from its LiveView subcomponents and to give them the information
-  they need to perform adequatly.
+  they need to perform adequately.
 
   It is the starting point for the user interface.
   """
@@ -39,7 +39,8 @@ defmodule WebInterface.Live.Window do
         active_syndicates: [],
         progress_bar_value: 0,
         operation_in_progress: false,
-        current_syndicate: nil
+        current_syndicate: nil,
+        authenticated?: false
       )
 
     {:ok, socket}
@@ -53,7 +54,8 @@ defmodule WebInterface.Live.Window do
       <%= live_component(Sidebar, [
         commands: @commands,
         selected_command: @selected_command,
-        operation_in_progress: @operation_in_progress
+        operation_in_progress: @operation_in_progress,
+        authenticated?: @authenticated?
       ], id: 7244) %>
       <%= live_component(Main, [
         selected_command: @selected_command,
