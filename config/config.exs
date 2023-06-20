@@ -9,6 +9,41 @@
 # move said applications out of the umbrella.
 import Config
 
+config :web_interface,
+  generators: [context_app: false]
+
+# Configures the endpoint
+config :web_interface, WebInterface.Endpoint,
+  url: [host: "localhost"],
+  render_errors: [
+    formats: [html: WebInterface.ErrorHTML, json: WebInterface.ErrorJSON],
+    layout: false
+  ],
+  pubsub_server: WebInterface.PubSub,
+  live_view: [signing_salt: "/JvbjLh6"]
+
+# Configure esbuild (the version is required)
+config :esbuild,
+  version: "0.17.11",
+  default: [
+    args:
+      ~w(js/app.js --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
+    cd: Path.expand("../apps/web_interface/assets", __DIR__),
+    env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
+  ]
+
+# Configure tailwind (the version is required)
+config :tailwind,
+  version: "3.2.7",
+  default: [
+    args: ~w(
+      --config=tailwind.config.js
+      --input=css/app.css
+      --output=../priv/static/assets/app.css
+    ),
+    cd: Path.expand("../apps/web_interface/assets", __DIR__)
+  ]
+
 config :store,
   products: "test/products.json",
   current_orders: "test/current_orders.json",

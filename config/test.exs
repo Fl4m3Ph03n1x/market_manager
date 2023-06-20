@@ -4,6 +4,13 @@ import Config
 # you can enable the server option below.
 config :web_interface, WebInterface.Endpoint,
   http: [ip: {127, 0, 0, 1}, port: 4002],
+  secret_key_base: "0wO2E46q8MBY9aKZIowrNzjwJfzefGx7o94dtvYpidIK81uZxDOCLHAgKOhHQwLx",
+  server: false
+
+# We don't run a server during test. If one is required,
+# you can enable the server option below.
+config :web_interface, WebInterface.Endpoint,
+  http: [ip: {127, 0, 0, 1}, port: 4002],
   secret_key_base: "A6xbGasiCzawAwCjBQW6eO2ExEbRWykU57rU+NmdiP3qugMGTg7XqPIsmxveodFz",
   server: false
 

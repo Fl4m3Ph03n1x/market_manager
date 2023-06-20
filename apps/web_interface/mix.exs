@@ -4,7 +4,7 @@ defmodule WebInterface.MixProject do
   def project do
     [
       app: :web_interface,
-      version: "2.1.0",
+      version: "2.2.0",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
@@ -32,32 +32,41 @@ defmodule WebInterface.MixProject do
   defp elixirc_paths(:test), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
 
+  # Specifies your project dependencies.
+  #
+  # Type `mix help deps` for examples and options.
   defp deps do
     [
-      # Phoenix deps
-      {:phoenix, "~> 1.6.5"},
-      {:phoenix_html, "~> 3.0"},
+      {:phoenix, "~> 1.7.2"},
+      {:phoenix_html, "~> 3.3"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
-      {:phoenix_live_view, "~> 0.17.5"},
-      {:floki, ">= 0.30.0"},
-      {:esbuild, "~> 0.3", runtime: Mix.env() == :dev},
+      {:phoenix_live_view, "~> 0.18.16"},
+      {:floki, "~> 0.34"},
+      {:esbuild, "~> 0.7", runtime: Mix.env() == :dev},
+      {:tailwind, "~> 0.2.0", runtime: Mix.env() == :dev},
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
 
       # Project deps
-      {:desktop, "~> 1.4"},
+      {:desktop, "~> 1.5"},
 
       # Umbrella deps
-      {:manager, in_umbrella: true}
+      {:manager, in_umbrella: true},
+      {:shared, in_umbrella: true}
     ]
   end
 
+  # Aliases are shortcuts or tasks specific to the current project.
+  #
+  # See the documentation for `Mix` for more info on aliases.
   defp aliases do
     [
-      setup: ["deps.get"],
-      "assets.deploy": ["esbuild default --minify", "phx.digest"]
+      setup: ["deps.get", "assets.setup", "assets.build"],
+      "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
+      "assets.build": ["tailwind default", "esbuild default"],
+      "assets.deploy": ["tailwind default --minify", "esbuild default --minify", "phx.digest"]
     ]
   end
 end

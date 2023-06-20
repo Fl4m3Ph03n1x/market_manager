@@ -5,7 +5,7 @@ defmodule WebInterface.Router do
     plug :accepts, ["html"]
     plug :fetch_session
     plug :fetch_live_flash
-    plug :put_root_layout, {WebInterface.LayoutView, :root}
+    plug :put_root_layout, {WebInterface.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
   end
@@ -17,6 +17,12 @@ defmodule WebInterface.Router do
   scope "/", WebInterface do
     pipe_through :browser
 
-    live("/", Live.Window)
+    get "/", PageController, :home
+    live "/login", UserLoginLive
   end
+
+  # Other scopes may use custom stacks.
+  # scope "/api", WebInterface do
+  #   pipe_through :api
+  # end
 end

@@ -1,5 +1,5 @@
 defmodule WebInterface.Endpoint do
-  use Phoenix.Endpoint, otp_app: :web_interface
+  use Desktop.Endpoint, otp_app: :web_interface
 
   # The session will be stored in the cookie and signed,
   # this means its contents can be read but not tampered with.
@@ -7,7 +7,8 @@ defmodule WebInterface.Endpoint do
   @session_options [
     store: :cookie,
     key: "_web_interface_key",
-    signing_salt: "TJg52k7S"
+    signing_salt: "l0zNMAB0",
+    same_site: "Lax"
   ]
 
   socket "/live", Phoenix.LiveView.Socket, websocket: [connect_info: [session: @session_options]]
@@ -20,7 +21,7 @@ defmodule WebInterface.Endpoint do
     at: "/",
     from: :web_interface,
     gzip: false,
-    only: ~w(assets fonts images favicon.ico robots.txt)
+    only: WebInterface.static_paths()
 
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
