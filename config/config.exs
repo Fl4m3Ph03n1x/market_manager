@@ -14,7 +14,6 @@ config :web_interface,
 
 # Configures the endpoint
 config :web_interface, WebInterface.Endpoint,
-  url: [host: "localhost"],
   render_errors: [
     formats: [html: WebInterface.ErrorHTML, json: WebInterface.ErrorJSON],
     layout: false
@@ -42,31 +41,6 @@ config :tailwind,
       --output=../priv/static/assets/app.css
     ),
     cd: Path.expand("../apps/web_interface/assets", __DIR__)
-  ]
-
-config :store,
-  products: "test/products.json",
-  current_orders: "test/current_orders.json",
-  setup: "test/setup.json"
-
-config :web_interface,
-  generators: [context_app: false]
-
-# Configures the endpoint
-config :web_interface, WebInterface.Endpoint,
-  url: [host: "localhost"],
-  render_errors: [view: WebInterface.ErrorView, accepts: ~w(html json), layout: false],
-  pubsub_server: WebInterface.PubSub,
-  live_view: [signing_salt: "j3hbjc+u"]
-
-# Configure esbuild (the version is required)
-config :esbuild,
-  version: "0.14.0",
-  default: [
-    args:
-      ~w(js/app.js --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
-    cd: Path.expand("../apps/web_interface/assets", __DIR__),
-    env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
   ]
 
 # Sample configuration:
