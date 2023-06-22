@@ -86,7 +86,7 @@ defmodule Manager.Impl.Interpreter do
       # if we do not have past login, we need to fetch it manually
       {:ok, nil} ->
         case manual_login(credentials, true, deps) do
-          :ok -> handle.({:login, credentials, :done})
+          {:ok, user} -> handle.({:login, user, :done})
           error -> handle.({:login, credentials, error})
         end
 
@@ -102,7 +102,7 @@ defmodule Manager.Impl.Interpreter do
         deps
       ) do
     case manual_login(credentials, false, deps) do
-      :ok -> handle.({:login, credentials, :done})
+      {:ok, user} -> handle.({:login, user, :done})
       error -> handle.({:login, credentials, error})
     end
   end
@@ -215,8 +215,9 @@ defmodule Manager.Impl.Interpreter do
          store: store,
          auction_house: auction_house
        ) do
-    with {:ok, login_data} <- auction_house.login(credentials) do
-      update_login_data(keep_logged_in, login_data, store)
+    with {:ok, {_auth, user} = login_data} <- auction_house.login(credentials),
+      :ok <-  update_login_data(keep_logged_in, login_data, store) do
+      {:ok, user}
     end
   end
 

@@ -28,7 +28,7 @@ defmodule WebInterface.Application do
           size: WindowUtils.calculate_window_size(0.4, 0.8),
           menubar: MenuBar,
           icon: "static/images/resized_logo_5_32x32.png",
-          url: fn -> "#{WebInterface.Endpoint.url()}/#{@landing_page}" end
+          url: fn -> "#{WebInterface.Endpoint.url()}#{@landing_page}" end
         ]]},
         restart: :transient,
         shutdown: 5_000

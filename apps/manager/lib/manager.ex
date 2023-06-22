@@ -87,15 +87,23 @@ defmodule Manager do
   the authentication parameters. Should it fail to save the authentication
   parameters, the login request is still done.
 
+  This is an asynchronous operation, which will return `:ok` immediately.
+  The caller must have implemented a `handle_info` in its Server to handle messages with the
+  following format:
+
+  - `{:login, user_info :: Shared.Data.User.t(), :done}`: If the operation was successful.
+
+  - `{:login, credentials :: Shared.Data.Credentials.t(), error :: any}`: If the login operation failed.
+    This can happen due to a network error, wrong password or any other cause.
+
   Example:
   ```
+  alias Shared.Data.Credentials
+
   credentials = Credentials.new("username", "password")
 
   > MarketManager.login(credentials, false)
-  {:ok, %User{ingame_name: "fl4m3", patreon?: false}}
-
-  > MarketManager.login(credentials, true)
-  {:error, :unable_to_save_authentication, {:enoent, credentials}}
+  :ok
   ```
   """
   @spec login(Credentials.t(), keep_logged_in :: boolean) ::

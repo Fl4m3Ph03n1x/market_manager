@@ -290,7 +290,16 @@ defmodule AuctionHouse.Impl.HTTPClient do
   defp map_error(~s({"error": {"password": ["app.account.password_invalid"]}})),
     do: {:error, :wrong_password}
 
-  defp map_error(html) when is_binary(html), do: {:error, :server_unavailable}
+  defp map_error(~s({"error": {"email": ["app.account.email_not_exist"]}})),
+    do: {:error, :wrong_email}
+
+  defp map_error(~s({"error": {"email": ["app.form.invalid"]}})),
+    do: {:error, :invalid_email}
+
+  defp map_error(html) when is_binary(html) do
+    Logger.error("AuctionHouse.map_error/1 received an unknown error: #{html}")
+    {:error, :unknown_error}
+  end
 
   @spec get_id(response :: map) ::
           {:ok, Type.order_id() | Type.item_id()} | {:error, {:missing_id, map()}}
