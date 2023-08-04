@@ -18,15 +18,23 @@ defmodule WebInterface.UserLoginLive do
       |> Credentials.new(password)
       |> Manager.login(Map.has_key?(params, "remember-me"))
 
-    {:noreply, socket}
-    # case Manager.login(credentials, remember?) do
-    #   {:ok, _user} -> {:noreply, socket |> redirect(to: ~p"/")}
-    #   {:error, reason, data} ->   {:noreply, socket |> put_flash(:error, "Login failed with reason: #{reason}")}
-    #   Logger.error("Login failed. Reason: #{reason}\tData: #{data}")
-    # end
+      # show spninning wheel animation
+      {:noreply, socket}
   end
 
   @impl true
+  def handle_info({:login, %User{} = user, :done}, socket) do
+    Logger.info("Authentication succeeded for user #{inspect(user)}")
+
+    updated_socket =
+      socket
+      |> assign(:user, user)
+      |> redirect(to: ~p"/activate")
+
+    {:noreply, updated_socket}
+  end
+
+
   def handle_info({:login, _credentials, {:error, :econnrefused, _data}}, socket) do
     {:noreply, socket |> put_flash(:error, "Unable to connect to warframe.market. Please verify your internet connection.")}
   end
@@ -44,13 +52,12 @@ defmodule WebInterface.UserLoginLive do
   end
 
   def handle_info({:login, _credentials, {:error, :unknown_error, _data}}, socket) do
-    {:noreply, socket |> put_flash(:error, "An unknown error ocurred, please report it !")}
+    {:noreply, socket |> put_flash(:error, "An unknown error ocurred, please report it!")}
   end
 
   def handle_info(message, socket) do
-    IO.inspect(message, label: "MESSAGE")
-    IO.inspect(socket, label: "SOCKET")
-
-    {:noreply, socket}
+    Logger.error("Unknow message received: #{inspect(message)}")
+    {:noreply, socket |> put_flash(:error, "Something unexpected happened, please report it!")}
   end
+
 end

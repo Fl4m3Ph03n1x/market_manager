@@ -18,7 +18,10 @@ defmodule WebInterface.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+
     live "/login", UserLoginLive
+    live "/activate", ActivateLive
+    live "/deactivate", DeactivateLive
   end
 
   # Other scopes may use custom stacks.

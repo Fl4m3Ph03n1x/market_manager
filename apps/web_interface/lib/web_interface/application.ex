@@ -25,7 +25,7 @@ defmodule WebInterface.Application do
           app: :web_interface,
           id: WebInterface,
           title: "Market Manager",
-          size: WindowUtils.calculate_window_size(0.4, 0.8),
+          size: WindowUtils.calculate_window_size(0.6, 0.8),
           menubar: MenuBar,
           icon: "static/images/resized_logo_5_32x32.png",
           url: fn -> "#{WebInterface.Endpoint.url()}#{@landing_page}" end
