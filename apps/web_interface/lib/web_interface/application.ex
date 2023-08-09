@@ -6,9 +6,11 @@ defmodule WebInterface.Application do
   use Application
 
   alias Desktop
+  alias ETS
   alias Manager
   alias WebInterface.{Endpoint, PubSub, Telemetry}
   alias WebInterface.Desktop.{MenuBar, WindowUtils}
+  alias WebInterface.Persistence
 
   @landing_page "/login"
 
@@ -34,6 +36,8 @@ defmodule WebInterface.Application do
         shutdown: 5_000
       }
     ]
+
+    :ok = Persistence.init()
 
     opts = [strategy: :one_for_one, name: WebInterface.Supervisor]
     Supervisor.start_link(children, opts)

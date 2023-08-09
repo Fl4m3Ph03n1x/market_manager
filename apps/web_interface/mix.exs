@@ -37,6 +37,7 @@ defmodule WebInterface.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      # Phoenix
       {:phoenix, "~> 1.7.2"},
       {:phoenix_html, "~> 3.3"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
@@ -52,6 +53,7 @@ defmodule WebInterface.MixProject do
 
       # Project deps
       {:desktop, "~> 1.5"},
+      {:ets, "~> 0.9.0"},
 
       # Umbrella deps
       {:manager, in_umbrella: true},

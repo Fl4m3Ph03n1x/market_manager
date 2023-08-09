@@ -5,6 +5,7 @@ defmodule WebInterface.UserLoginLive do
 
   alias Manager
   alias Shared.Data.{Credentials, User}
+  alias WebInterface.Persistence
 
   @impl true
   def mount(_params, _session, socket) do
@@ -26,12 +27,9 @@ defmodule WebInterface.UserLoginLive do
   def handle_info({:login, %User{} = user, :done}, socket) do
     Logger.info("Authentication succeeded for user #{inspect(user)}")
 
-    updated_socket =
-      socket
-      |> assign(:user, user)
-      |> redirect(to: ~p"/activate")
+    :ok = Persistence.set_user(user)
 
-    {:noreply, updated_socket}
+    {:noreply,  socket |> redirect(to: ~p"/activate")}
   end
 
 
