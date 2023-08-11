@@ -49,6 +49,10 @@ defmodule WebInterface.UserLoginLive do
     {:noreply, socket |> put_flash(:error, "Please provide a valid email!")}
   end
 
+  def handle_info({:login, _credentials, {:error, :timeout, _data}}, socket) do
+    {:noreply, socket |> put_flash(:error, "The request timedout, try again later!")}
+  end
+
   def handle_info({:login, _credentials, {:error, :unknown_error, _data}}, socket) do
     {:noreply, socket |> put_flash(:error, "An unknown error ocurred, please report it!")}
   end
