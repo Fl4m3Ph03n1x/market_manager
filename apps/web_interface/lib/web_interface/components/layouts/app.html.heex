@@ -51,7 +51,14 @@
 
         <div class="-mr-2 flex md:hidden">
           <!-- Mobile menu button -->
-          <button type="button" class="relative inline-flex items-center justify-center rounded-md bg-gray-800 p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" aria-controls="mobile-menu" aria-expanded="false">
+          <button 
+          type="button" 
+          class="relative inline-flex items-center justify-center rounded-md bg-gray-800 p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" 
+          aria-controls="mobile-menu" 
+          aria-expanded="false"
+          phx-click={toggle("#profile-dropdown-mobile")} 
+          phx-click-away={hide("#profile-dropdown-mobile")}
+          >
             <span class="absolute -inset-0.5"></span>
             <span class="sr-only">Open main menu</span>
             <!-- Menu open: "hidden", Menu closed: "block" -->
@@ -82,7 +89,7 @@
           </div>
 
         </div>
-        <div class="mt-3 space-y-1 px-2">
+        <div class="mt-3 space-y-1 px-2" id="profile-dropdown-mobile">
           <a href="#" class="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white">Your Profile</a>
           <a href="#" class="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white">Sign out</a>
         </div>
