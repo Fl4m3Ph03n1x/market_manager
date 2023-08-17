@@ -1,5 +1,6 @@
 <header>
- <%= if WebInterface.Persistence.has_user?() do %>
+
+<%= if WebInterface.Persistence.has_user?() do %>
 <nav class="bg-gray-800">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div class="flex h-16 items-center justify-between">
@@ -21,8 +22,8 @@
             <div class="relative ml-3">
               <div >
                 <button type="button" class="relative flex max-w-xs items-center rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" id="user-menu-button" aria-expanded="false" aria-haspopup="true" 
-                phx-click={toggle("#profile-dropdown")} 
-                phx-click-away={hide("#profile-dropdown")}
+                phx-click={toggle_dropdown("#profile-dropdown")} 
+                phx-click-away={hide_dropdown("#profile-dropdown")}
                 >
                   <span class="absolute -inset-1.5"></span>
                   <span class="leading-none text-base  text-white rounded-md px-3 py-2 font-medium"><%= @user.ingame_name %></span>
@@ -56,8 +57,8 @@
           class="relative inline-flex items-center justify-center rounded-md bg-gray-800 p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" 
           aria-controls="mobile-menu" 
           aria-expanded="false"
-          phx-click={toggle("#profile-dropdown-mobile")} 
-          phx-click-away={hide("#profile-dropdown-mobile")}
+          phx-click={toggle_dropdown("#profile-dropdown-mobile")} 
+          phx-click-away={hide_dropdown("#profile-dropdown-mobile")}
           >
             <span class="absolute -inset-0.5"></span>
             <span class="sr-only">Open main menu</span>
@@ -97,8 +98,6 @@
     </div>
   </nav>
 
-
-  
  <% end %>
 
 </header>

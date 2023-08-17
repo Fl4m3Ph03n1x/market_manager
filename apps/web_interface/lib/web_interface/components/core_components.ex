@@ -564,14 +564,14 @@ defmodule WebInterface.CoreComponents do
 
   ## JS Commands
 
-  def toggle(to), do:
+  def toggle_dropdown(to), do:
     JS.toggle(
       to: to,
       in: {"transition ease-out duration-100", "transform opacity-0 scale-95", "transform opacity-100 scale-100"},
       out: {"transition ease-in duration-75", "transform opacity-100 scale-100", "transform opacity-0 scale-95"}
     )
 
-  def hide(to), do:
+  def hide_dropdown(to), do:
     JS.hide(to: to, transition: {"transition ease-in duration-75", "transform opacity-100 scale-100", "transform opacity-0 scale-95"})
 
   def show(js \\ %JS{}, selector) do

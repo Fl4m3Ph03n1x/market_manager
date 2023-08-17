@@ -19,7 +19,7 @@ defmodule WebInterface.UserLoginLive do
       |> Credentials.new(password)
       |> Manager.login(Map.has_key?(params, "remember-me"))
 
-      # show spninning wheel animation
+      # show spinning wheel animation
       {:noreply, socket}
   end
 
@@ -31,7 +31,6 @@ defmodule WebInterface.UserLoginLive do
 
     {:noreply,  socket |> redirect(to: ~p"/activate")}
   end
-
 
   def handle_info({:login, _credentials, {:error, :econnrefused, _data}}, socket) do
     {:noreply, socket |> put_flash(:error, "Unable to connect to warframe.market. Please verify your internet connection.")}
