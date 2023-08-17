@@ -17,6 +17,7 @@
         "lightpurple",
         "loka",
         "Morphix",
+        "noreply",
         "onclick",
         "posix",
         "Razorwing",
@@ -30,11 +31,18 @@
         "subcomponent",
         "subcomponents",
         "suda",
+        "typedstruct",
         "Venari",
         "warframe",
         "whipclaw",
         "xrfc",
         "zstandard"
     ],
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "editor.rulers": [
+        {
+            "column": 120,
+            "color": "#00f7ff"
+        }
+    ]
 }
