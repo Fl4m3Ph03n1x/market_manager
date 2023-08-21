@@ -6,12 +6,7 @@ if config_env() == :prod do
   # want to use a different value for prod and you most likely don't want
   # to check this value into version control, so we use an environment
   # variable instead.
-  secret_key_base =
-    System.get_env("SECRET_KEY_BASE") ||
-      raise """
-      environment variable SECRET_KEY_BASE is missing.
-      You can generate one by calling: mix phx.gen.secret
-      """
+  secret_key_base = "LQndr6C6k6w3xmnfzZLDC6y6OrTWl7SNkvv+vmE6TycvxqcQ6U7luzDJRnl7+Ucu"
 
   config :web_interface, WebInterface.Endpoint,
     http: [
