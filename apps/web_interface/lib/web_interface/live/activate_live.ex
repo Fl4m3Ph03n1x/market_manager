@@ -68,6 +68,7 @@ defmodule WebInterface.ActivateLive do
   @impl true
   def handle_info(message, socket) do
     Logger.error("Unknown message received: #{inspect(message)}")
+
     {:noreply, socket |> put_flash(:error, "Something unexpected happened, please report it!")}
   end
 end
