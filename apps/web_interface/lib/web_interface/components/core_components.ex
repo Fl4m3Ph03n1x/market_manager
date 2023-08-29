@@ -224,6 +224,32 @@ defmodule WebInterface.CoreComponents do
   end
 
   @doc """
+  Generate a checkbox group for multi-select.
+
+  ## Examples
+
+    <.checkgroup field={@form[:genres]} label="Genres" options={[{"Fantasy", "fantasy"}, {"Science Fiction", "sci-fi"}]} />
+  """
+  attr :id, :any
+  attr :name, :any
+  attr :label, :string, default: nil
+  attr :field, Phoenix.HTML.FormField, doc: "a form field struct retrieved from the form, for example: @form[:genres]"
+  attr :errors, :list
+  attr :required, :boolean, default: false
+  attr :options, :list, doc: "the options to pass to Phoenix.HTML.Form.options_for_select/2"
+  attr :rest, :global, include: ~w(disabled form readonly)
+  attr :class, :string, default: nil
+
+  def checkgroup(assigns) do
+    new_assigns =
+      assigns
+      |> assign(:multiple, true)
+      |> assign(:type, "checkgroup")
+
+    input(new_assigns)
+  end
+
+  @doc """
   Renders an input with label and error messages.
 
   A `%Phoenix.HTML.Form{}` and field name may be passed to the input
@@ -267,6 +293,25 @@ defmodule WebInterface.CoreComponents do
     |> assign_new(:name, fn -> if assigns.multiple, do: field.name <> "[]", else: field.name end)
     |> assign_new(:value, fn -> field.value end)
     |> input()
+  end
+
+  def input(%{type: "checkgroup"} = assigns) do
+    ~H"""
+    <div class="mt-2">
+      <%= for synd <- @options do %>
+
+        <div class="relative flex gap-x-3">
+          <div class="flex h-6 items-center">
+            <input id={synd.id} name={@name} type="checkbox" value={synd.id} class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
+          </div>
+          <div class="text-sm leading-6">
+            <label  for={synd.id} class="text-base font-semibold text-gray-900"><%= synd.name %></label>
+          </div>
+        </div>
+
+      <% end %>
+    </div>
+    """
   end
 
   def input(%{type: "checkbox", value: value} = assigns) do

@@ -56,6 +56,36 @@ defmodule WebInterface.Persistence do
     end
   end
 
+  @spec get_strategy_by_id(String.t()) :: {:ok, Strategy.t()} | {:error, any}
+  def get_strategy_by_id(id) do
+    with {:ok, table} <- ETS.KeyValueSet.wrap_existing(@table_name),
+     {:ok, strategies} <- ETS.KeyValueSet.get(table, :strategies) do
+      {:ok, Enum.find(strategies, fn strategy -> strategy.id == String.to_existing_atom(id) end)}
+    end
+  end
+
+  @spec get_all_syndicates_by_id([String.t()]) :: {:ok, [Syndicate.t()]} | {:error, any}
+  def get_all_syndicates_by_id(ids) do
+    valid_ids = Enum.filter(ids, fn id -> id != "" end)
+
+    with {:ok, table} <- ETS.KeyValueSet.wrap_existing(@table_name),
+     {:ok, syndicates} <- ETS.KeyValueSet.get(table, :syndicates) do
+
+      all_syndicates =
+        for syndicate <- syndicates, id <- valid_ids, syndicate.id == String.to_existing_atom(id), do: syndicate
+
+      {:ok, all_syndicates}
+    end
+  end
+
+  @spec get_syndicate_by_id(String.t()) :: {:ok, Syndicate.t()} | {:error, any}
+  def get_syndicate_by_id(id) do
+    with {:ok, table} <- ETS.KeyValueSet.wrap_existing(@table_name),
+     {:ok, syndicates} <- ETS.KeyValueSet.get(table, :syndicates) do
+      {:ok, Enum.find(syndicates, fn syndicate -> syndicate.id == String.to_existing_atom(id) end)}
+    end
+  end
+
   @spec activate_syndicate(Syndicate.t) :: :ok | {:error, any}
   def activate_syndicate(syndicate), do: set_syndicate(syndicate, true)
 
