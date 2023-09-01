@@ -80,8 +80,6 @@ defmodule WebInterface.ActivateLive do
   ####################
 
   @spec disable_button?(Strategy.t() | nil, [Syndicates.t()] ) :: boolean
-  def disable_button?(strategy, syndicates) do
-    is_nil(strategy) or Enum.empty?(syndicates)
-  end
+  def disable_button?(strategy, syndicates), do: is_nil(strategy) or Enum.empty?(syndicates)
 
 end
