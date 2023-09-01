@@ -19,6 +19,43 @@ defmodule WebInterface.CoreComponents do
   alias Phoenix.LiveView.JS
 
   @doc """
+  Renders the title and description for a new section.
+
+  ## Examples
+
+      <.section title="Strategy" description="This is a cool strategy!" />
+
+  """
+  attr :title, :string, required: true, doc: "the title of the section"
+  attr :description, :string, required: true, doc: "the description of the section"
+
+  def section(assigns) do
+    ~H"""
+    <div>
+      <h3 class="text-lg font-semibold leading-8 text-gray-900"><%= @title %></h3>
+      <.description text={@description}/>
+    </div>
+    """
+  end
+
+  @doc """
+  Renders a description paragraph.
+
+  ## Examples
+
+      <.description text="Some description here!" class="additional-class" />
+
+  """
+  attr :text, :string, required: true, doc: "the description of the section"
+  attr :class, :string, default: nil
+
+  def description(assigns) do
+    ~H"""
+    <p class={["text-gray-500", @class]}><%= @text  %></p>
+    """
+  end
+
+  @doc """
   Renders a modal.
 
   ## Examples
@@ -199,11 +236,12 @@ defmodule WebInterface.CoreComponents do
   ## Examples
 
       <.button>Send!</.button>
-      <.button phx-click="go" class="ml-2">Send!</.button>
+      <.button phx-click="go" class="ml-2" disabled=false>Send!</.button>
   """
   attr :type, :string, default: nil
   attr :class, :string, default: nil
-  attr :rest, :global, include: ~w(disabled form name value)
+  attr :disabled, :boolean, default: false
+  attr :rest, :global, include: ~w(form name value)
 
   slot :inner_block, required: true
 
@@ -211,12 +249,20 @@ defmodule WebInterface.CoreComponents do
     ~H"""
     <button
       type={@type}
-      class={[
-        "phx-submit-loading:opacity-75 rounded-lg bg-zinc-900 hover:bg-zinc-700 py-2 px-3",
-        "text-sm font-semibold leading-6 text-white active:text-white/80",
+      class={if @disabled do
+      [
+        "rounded-md bg-slate-400 px-3 py-2 text-sm font-semibold text-white shadow-sm",
         @class
-      ]}
+      ]
+    else
+      [
+        "phx-submit-loading:opacity-75 rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm",
+        "hover:bg-indigo-500 active:text-white/80",
+        @class
+      ]
+    end}
       {@rest}
+      disabled={@disabled}
     >
       <%= render_slot(@inner_block) %>
     </button>
@@ -228,7 +274,13 @@ defmodule WebInterface.CoreComponents do
 
   ## Examples
 
-    <.checkgroup field={@form[:genres]} label="Genres" options={[{"Fantasy", "fantasy"}, {"Science Fiction", "sci-fi"}]} />
+    <.checkgroup
+      field={@form[:genres]}
+      label="Genres"
+      options={[{"Fantasy", "fantasy"}, {"Science Fiction", "sci-fi"}]}
+      selected={[{"Fantasy", "fantasy"}]}
+    />
+
   """
   attr :id, :any
   attr :name, :any
@@ -240,11 +292,48 @@ defmodule WebInterface.CoreComponents do
   attr :rest, :global, include: ~w(disabled form readonly)
   attr :class, :string, default: nil
 
+  attr :selected, :any, default: [],
+    doc: "the currently selected options, to know which boxes are checked"
+
   def checkgroup(assigns) do
     new_assigns =
       assigns
       |> assign(:multiple, true)
       |> assign(:type, "checkgroup")
+
+    input(new_assigns)
+  end
+
+  @doc """
+  Generate a radio button group.
+
+  ## Examples
+
+    <.radiogroup
+      field={@form[:genres]}
+      label="Genres"
+      options={[{"Fantasy", "fantasy"}, {"Science Fiction", "sci-fi"}]}
+      selected={%{"Science Fiction", "sci-fi"}}
+    />
+  """
+  attr :id, :any
+  attr :name, :any
+  attr :label, :string, default: nil
+  attr :field, Phoenix.HTML.FormField, doc: "a form field struct retrieved from the form, for example: @form[:genres]"
+  attr :errors, :list
+  attr :required, :boolean, default: false
+  attr :options, :list, doc: "the options to pass to Phoenix.HTML.Form.options_for_select/2"
+  attr :rest, :global, include: ~w(disabled form readonly)
+  attr :class, :string, default: nil
+
+  attr :selected, :any, default: nil,
+    doc: "the currently selected option, to know which radio button is checked"
+
+  def radiogroup(assigns) do
+
+    new_assigns =
+      assigns
+      |> assign(:type, "radiogroup")
 
     input(new_assigns)
   end
@@ -284,6 +373,9 @@ defmodule WebInterface.CoreComponents do
     include: ~w(autocomplete cols disabled form list max maxlength min minlength
                 pattern placeholder readonly required rows size step)
 
+  attr :selected, :any, default: [],
+    doc: "the currently selected option, to know which input(s) is/are currently selected"
+
   slot :inner_block
 
   def input(%{field: %Phoenix.HTML.FormField{} = field} = assigns) do
@@ -295,17 +387,38 @@ defmodule WebInterface.CoreComponents do
     |> input()
   end
 
+  def input(%{type: "radiogroup"} = assigns) do
+    ~H"""
+    <div class="mt-2">
+      <%= for opt <- @options  do %>
+
+        <div class="relative flex gap-x-3">
+          <div>
+            <input type="radio" id={opt.id} name={@name} value={opt.id} checked={opt == @selected}
+              class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
+          </div>
+          <div class="leading-6 mb-1">
+            <label for={opt.id} class="text-base font-semibold text-gray-900"><%= opt.name %></label>
+            <p class="ml-2 text-sm text-gray-500"><%= opt.description %></p>
+          </div>
+        </div>
+
+      <% end %>
+    </div>
+    """
+  end
+
   def input(%{type: "checkgroup"} = assigns) do
     ~H"""
     <div class="mt-2">
-      <%= for synd <- @options do %>
+      <%= for opt <- @options do %>
 
         <div class="relative flex gap-x-3">
           <div class="flex h-6 items-center">
-            <input id={synd.id} name={@name} type="checkbox" value={synd.id} class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
+            <input id={opt.id} name={@name} type="checkbox" value={opt.id} class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600" checked={opt in @selected}>
           </div>
           <div class="text-sm leading-6">
-            <label  for={synd.id} class="text-base font-semibold text-gray-900"><%= synd.name %></label>
+            <label  for={opt.id} class="text-base font-semibold text-gray-900"><%= opt.name %></label>
           </div>
         </div>
 

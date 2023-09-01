@@ -139,4 +139,36 @@ defmodule WebInterface.Persistence do
     end
   end
 
+  @spec set_selected_strategy(Strategy.t()) :: :ok | {:error, any()}
+  def set_selected_strategy(strategy) do
+    with {:ok, table} <- ETS.KeyValueSet.wrap_existing(@table_name),
+      {:ok, _updated_table} <-  ETS.KeyValueSet.put(table, :selected_strategy, strategy) do
+      :ok
+    end
+  end
+
+  @spec get_selected_strategy :: {:ok, Strategy.t()} | {:error, any()}
+  def get_selected_strategy do
+    case ETS.KeyValueSet.wrap_existing(@table_name) do
+      {:ok, table} -> ETS.KeyValueSet.get(table, :selected_strategy, nil)
+      err -> err
+    end
+  end
+
+  @spec set_selected_syndicates([Syndicate.t()]) :: :ok | {:error, any()}
+  def set_selected_syndicates(syndicates) do
+    with {:ok, table} <- ETS.KeyValueSet.wrap_existing(@table_name),
+      {:ok, _updated_table} <-  ETS.KeyValueSet.put(table, :selected_syndicates, syndicates) do
+      :ok
+    end
+  end
+
+  @spec get_selected_syndicates :: {:ok, [Syndicate.t()]} | {:error, any()}
+  def get_selected_syndicates do
+    case ETS.KeyValueSet.wrap_existing(@table_name) do
+      {:ok, table} -> ETS.KeyValueSet.get(table, :selected_syndicates, [])
+      err -> err
+    end
+  end
+
 end
