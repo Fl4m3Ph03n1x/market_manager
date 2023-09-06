@@ -40,7 +40,7 @@ defmodule WebInterface.CoreComponents do
     ~H"""
     <div class={@class} hidden={@hidden}>
       <div class="flex items-center justify-center">
-        <p><%= @message %></p>
+        <p class="text-lg font-semibold"><%= @message %></p>
       </div>
 
       <div class="flex items-center justify-center">
@@ -50,9 +50,9 @@ defmodule WebInterface.CoreComponents do
             <circle cx="145" cy="145" r="120" stroke-width="30" fill="transparent"
                 stroke-dasharray={@circumference}
                 stroke-dashoffset={@offset}
-                class="stroke-blue-500" />
+                class="stroke-indigo-500" />
         </svg>
-        <span class="absolute text-5xl text-lime-600"><%= @progress %></span>
+        <span class="absolute text-5xl stroke-black"><%= @progress %></span>
       </div>
 
     </div>

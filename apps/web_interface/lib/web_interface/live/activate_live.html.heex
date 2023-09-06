@@ -1,35 +1,38 @@
-<div class="min-h-full mx-auto py-6 sm:px-6 lg:px-8">
+<div class="min-h-full max-w-full mx-auto py-6 sm:px-6 lg:px-8">
+  <%= if @activation_in_progress do %>
+    <.progress_bar hidden={false} progress={@activation_progress} message={"Activation for #{@activation_current_syndicate} in progress ..."} />
+  <% else %>
+  
+    <div class="shadow">
+      <.description>
+        Activating a syndicate will cause the app to create a sell order on warframe.market for each product of the said syndicate.
+        The prices of each item will be determined according to a strategy that you can define.
+      </.description>
+    </div>
 
-  <div class="shadow">
-    <.description text="
-      Activating a syndicate will cause the app to create a sell order on warframe.market for each product of the said syndicate.
-      The prices of each item will be determined according to a strategy that you can define.
-    "/>
-  </div>
+    <div>
+      <%= if @all_syndicates_active? do %>
+        <p class="nothing-to-see">All syndicates are active!</p>
+      <% else %>
 
-  <div>
+        <.simple_form for={@form} phx-change="change" phx-submit="execute">
+          <div class="mt-4">
+            <.section title="Strategies" description="Strategies will automatically calculate the prices for your items. If a price's item cannot be calculated, a default one will be used instead."/>
+            <.radiogroup field={@form[:strategy]} label="Strategies" options={@strategies} selected={@selected_strategy} required/>
+          </div>
 
-    <%= if @all_syndicates_active? do %>
-      <p class="nothing-to-see">All syndicates are active!</p>
-    <% else %>
+          <div class="mt-4">
+            <.section title="Syndicates" description="The syndicates from the game. Only the ones that have items capable of being traded between players are shown."/>
+            <.checkgroup field={@form[:syndicates]} label="Syndicates" options={@inactive_syndicates} selected={@selected_syndicates} required/>
+          </div>
 
-      <.simple_form for={@form} phx-change="change" phx-submit="execute">
-        <div class="mt-4">
-          <.section title="Strategies" description="Strategies will automatically calculate the prices for your items. If a price's item cannot be calculated, a default one will be used instead."/>
-          <.radiogroup field={@form[:strategy]} label="Strategies" options={@strategies} selected={@selected_strategy} required/>
-        </div>
+          <div class="mt-4">
+            <.button class="min-w-full" disabled={disable_button?(@selected_strategy, @selected_syndicates)}>Execute Command</.button>
+          </div>
+        </.simple_form>
 
-        <div class="mt-4">
-          <.section title="Syndicates" description="The syndicates from the game. Only the ones that have items capable of being traded between players are shown."/>
-          <.checkgroup field={@form[:syndicates]} label="Syndicates" options={@inactive_syndicates} selected={@selected_syndicates} required/>
-        </div>
+      <% end %>
+    </div>
 
-        <div class="mt-4">
-          <.button class="min-w-full" disabled={disable_button?(@selected_strategy, @selected_syndicates)}>Execute Command</.button>
-        </div>
-      </.simple_form>
-
-    <% end %>
-
-  </div>
+  <% end %>
 </div>
