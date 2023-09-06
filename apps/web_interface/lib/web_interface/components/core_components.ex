@@ -19,12 +19,52 @@ defmodule WebInterface.CoreComponents do
   alias Phoenix.LiveView.JS
 
   @doc """
+  Renders a progress bar for an ongoing operation.
+
+  ## Examples
+
+      <.progress_bar hidden=false progress=15 />
+      <.progress_bar hidden=false progress=20 message="Activating system ..." />
+      <.progress_bar hidden=false class="cool-bar" />
+  """
+  attr :hidden, :boolean, default: true, doc: "whether or not to show the progress bar"
+  attr :progress, :integer, default: 0, doc: "the current progress of the bar"
+  attr :message, :string, default: "Operation in progress ...", doc: "the message to show while the bar is progressing"
+  attr :class, :string, default: nil
+
+  def progress_bar(assigns) do
+
+    assigns = assign(assigns, :circumference, 2 * 22 / 7 * 120)
+    assigns = assign(assigns, :offset, assigns.circumference - assigns.progress / 100 * assigns.circumference)
+
+    ~H"""
+    <div class={@class} hidden={@hidden}>
+      <div class="flex items-center justify-center">
+        <p><%= @message %></p>
+      </div>
+
+      <div class="flex items-center justify-center">
+        <svg class="transform -rotate-90 w-72 h-72">
+            <circle cx="145" cy="145" r="120" stroke-width="30" fill="transparent" class="stroke-gray-700" />
+
+            <circle cx="145" cy="145" r="120" stroke-width="30" fill="transparent"
+                stroke-dasharray={@circumference}
+                stroke-dashoffset={@offset}
+                class="stroke-blue-500" />
+        </svg>
+        <span class="absolute text-5xl text-lime-600"><%= @progress %></span>
+      </div>
+
+    </div>
+    """
+  end
+
+  @doc """
   Renders the title and description for a new section.
 
   ## Examples
 
       <.section title="Strategy" description="This is a cool strategy!" />
-
   """
   attr :title, :string, required: true, doc: "the title of the section"
   attr :description, :string, required: true, doc: "the description of the section"
@@ -33,7 +73,7 @@ defmodule WebInterface.CoreComponents do
     ~H"""
     <div>
       <h3 class="text-lg font-semibold leading-8 text-gray-900"><%= @title %></h3>
-      <.description text={@description}/>
+      <.description><%= @description %></.description>
     </div>
     """
   end
@@ -43,15 +83,15 @@ defmodule WebInterface.CoreComponents do
 
   ## Examples
 
-      <.description text="Some description here!" class="additional-class" />
-
+      <.description class="additional-class"> Some description here! </.description>
   """
-  attr :text, :string, required: true, doc: "the description of the section"
   attr :class, :string, default: nil
+
+  slot :inner_block, required: true, doc: "the text representing a description"
 
   def description(assigns) do
     ~H"""
-    <p class={["text-gray-500", @class]}><%= @text  %></p>
+    <p class={["text-gray-500", @class]}><%= render_slot(@inner_block) %></p>
     """
   end
 
@@ -70,7 +110,6 @@ defmodule WebInterface.CoreComponents do
       <.modal id="confirm" on_cancel={JS.navigate(~p"/posts")}>
         This is another modal.
       </.modal>
-
   """
   attr :id, :string, required: true
   attr :show, :boolean, default: false
@@ -220,7 +259,7 @@ defmodule WebInterface.CoreComponents do
   def simple_form(assigns) do
     ~H"""
     <.form :let={f} for={@for} as={@as} {@rest}>
-      <div class="mt-10 space-y-8 bg-white">
+      <div class="bg-white">
         <%= render_slot(@inner_block, f) %>
         <div :for={action <- @actions} class="mt-2 flex items-center justify-between gap-6">
           <%= render_slot(action, f) %>
