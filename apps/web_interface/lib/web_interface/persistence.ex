@@ -60,7 +60,13 @@ defmodule WebInterface.Persistence do
   def get_strategy_by_id(id) do
     with {:ok, table} <- ETS.KeyValueSet.wrap_existing(@table_name),
      {:ok, strategies} <- ETS.KeyValueSet.get(table, :strategies) do
-      {:ok, Enum.find(strategies, fn strategy -> strategy.id == String.to_existing_atom(id) end)}
+
+      strategies
+      |> Enum.find(fn strategy -> strategy.id == String.to_existing_atom(id) end)
+      |> case do
+        nil -> {:error, :not_found}
+        strategy -> {:ok, strategy}
+      end
     end
   end
 
@@ -82,7 +88,13 @@ defmodule WebInterface.Persistence do
   def get_syndicate_by_id(id) do
     with {:ok, table} <- ETS.KeyValueSet.wrap_existing(@table_name),
      {:ok, syndicates} <- ETS.KeyValueSet.get(table, :syndicates) do
-      {:ok, Enum.find(syndicates, fn syndicate -> syndicate.id == String.to_existing_atom(id) end)}
+
+      syndicates
+      |> Enum.find(fn syndicate -> syndicate.id == String.to_existing_atom(id) end)
+      |> case do
+        nil -> {:error, :not_found}
+        syndicate -> {:ok, syndicate}
+      end
     end
   end
 
@@ -95,18 +107,21 @@ defmodule WebInterface.Persistence do
   @spec set_syndicate(Syndicate.t, boolean) :: :ok | {:error, any}
   defp set_syndicate(syndicate, value) do
     with {:ok, table} <- ETS.KeyValueSet.wrap_existing(@table_name),
-      {:ok, active_syndicates} <- ETS.KeyValueSet.get(table, :active_syndicates, nil) do
-
-        updated_active_syndicates =
-          cond do
-            is_nil(active_syndicates) and not value -> MapSet.new()
-            is_nil(active_syndicates) -> MapSet.new() |> MapSet.put(syndicate)
-            not value -> MapSet.delete(active_syndicates, syndicate)
-            true -> MapSet.put(active_syndicates, syndicate)
-          end
-
-        ETS.KeyValueSet.put(table, :active_syndicates, updated_active_syndicates)
+      {:ok, active_syndicates} <- ETS.KeyValueSet.get(table, :active_syndicates, nil),
+      updated_active_syndicates = update_active_syndicates(active_syndicates, syndicate, value),
+      {:ok, _table} <- ETS.KeyValueSet.put(table, :active_syndicates, updated_active_syndicates) do
+        :ok
       end
+  end
+
+  @spec update_active_syndicates([Syndicate.t], Syndicate.t, boolean) :: MapSet.t()
+  defp update_active_syndicates(active_syndicates, syndicate, value) do
+    cond do
+      is_nil(active_syndicates) and not value -> MapSet.new()
+      is_nil(active_syndicates) -> MapSet.new() |> MapSet.put(syndicate)
+      not value -> MapSet.delete(active_syndicates, syndicate)
+      true -> MapSet.put(active_syndicates, syndicate)
+    end
   end
 
   @spec syndicate_active?(atom) :: boolean()
