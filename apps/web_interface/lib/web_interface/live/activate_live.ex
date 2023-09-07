@@ -24,6 +24,7 @@ defmodule WebInterface.ActivateLive do
         syndicates: syndicates,
         strategies: strategies,
         inactive_syndicates: syndicates -- active_syndicates,
+        active_syndicates: active_syndicates,
         selected_strategy: selected_strategy,
         selected_syndicates: selected_syndicates,
         form: to_form(%{"activate_syndicates" => []}),
@@ -38,17 +39,16 @@ defmodule WebInterface.ActivateLive do
   @impl true
   def handle_event("execute", %{"strategy" => strategy_id, "syndicates" => syndicate_ids}, socket) do
     with  {:ok, strategy} <- Persistence.get_strategy_by_id(strategy_id),
-          {:ok, syndicates} <- Persistence.get_all_syndicates_by_id(syndicate_ids) do
+          {:ok, [syndicate | _rest] = syndicates} <- Persistence.get_all_syndicates_by_id(syndicate_ids) do
 
-          for syndicate <- syndicates do
-            :ok = Manager.activate(Atom.to_string(syndicate.id), strategy.id)
-          end
+          :ok = Manager.activate(Atom.to_string(syndicate.id), strategy.id)
 
           updated_socket =
             socket
             |> assign(selected_strategy: strategy)
             |> assign(selected_syndicates: syndicates)
             |> assign(activation_in_progress: true)
+            |> assign(activation_current_syndicate: syndicate)
             |> assign(activation_progress: 0)
 
           {:noreply, updated_socket}
@@ -59,10 +59,31 @@ defmodule WebInterface.ActivateLive do
     end
   end
 
-  def handle_event("change", params, socket) do
+  def handle_event("change", %{"_target" => ["syndicates"]} = change_data, socket) do
+    syndicate_ids = Map.get(change_data, "syndicates", [])
 
-    strategy_id = Map.get(params, "strategy", "")
-    syndicate_ids = Map.get(params, "syndicates", [])
+    with  {:ok, syndicates} <- Persistence.get_all_syndicates_by_id(syndicate_ids),
+          :ok <- Persistence.set_selected_syndicates(syndicates) do
+      {:noreply, assign(socket, selected_syndicates: syndicates)}
+    else
+      err ->
+        Logger.error("Unable to retrieve syndicate data: #{inspect(err)}")
+        {:noreply, socket |> put_flash(:error, "Unable to retrieve data!")}
+    end
+  end
+
+  def handle_event("change", %{"strategy" => strategy_id}, socket) do
+    with  {:ok, strategy} <- Persistence.get_strategy_by_id(strategy_id),
+          :ok <- Persistence.set_selected_strategy(strategy) do
+      {:noreply, assign(socket, selected_strategy: strategy)}
+    else
+      err ->
+        Logger.error("Unable to retrieve strategy data: #{inspect(err)}")
+        {:noreply, socket |> put_flash(:error, "Unable to retrieve data!")}
+    end
+  end
+
+  def handle_event("change", %{"syndicates" => syndicate_ids, "strategies" => strategy_id}, socket) do
 
     with  {:ok, strategy} <- Persistence.get_strategy_by_id(strategy_id),
           {:ok, syndicates} <- Persistence.get_all_syndicates_by_id(syndicate_ids),
@@ -71,7 +92,7 @@ defmodule WebInterface.ActivateLive do
       {:noreply, assign(socket, selected_strategy: strategy, selected_syndicates: syndicates)}
     else
       err ->
-        Logger.error("Unable to retrieve data: #{inspect(err)}")
+        Logger.error("Unable to retrieve change data: #{inspect(err)}")
         {:noreply, socket |> put_flash(:error, "Unable to retrieve data!")}
     end
 
@@ -106,15 +127,45 @@ defmodule WebInterface.ActivateLive do
     {:noreply, assign(socket, activation_progress: round((current_item / total_items) * 100))}
   end
 
-  def handle_info({:activate, syndicate_name, :done}, socket) do
-    Logger.info("Activation of #{syndicate_name} complete.")
+  def handle_info({:activate, syndicate_id_str, :done} = mess, socket) do
+    Logger.info("Activation of #{syndicate_id_str} complete.")
 
-    updated_socket =
-      socket
-      |> assign(activation_current_syndicate: nil)
-      |> assign(activation_in_progress: false)
+    with {:ok, syndicate} <- Persistence.get_syndicate_by_id(syndicate_id_str),
+      {:ok, strategy} <- Persistence.get_selected_strategy(),
+      :ok <- Persistence.activate_syndicate(syndicate),
+      {:ok, all_syndicates_active?} <- Persistence.all_syndicates_active?(),
+      {:ok, selected_syndicates} <- Persistence.get_selected_syndicates(),
+      {:ok, active_syndicates} <- Persistence.get_active_syndicates(),
+      {:ok, syndicates} <- Persistence.get_syndicates() do
 
-    {:noreply, updated_socket}
+        missing_syndicates =
+          selected_syndicates
+          |> MapSet.new()
+          |> MapSet.difference(MapSet.new(active_syndicates))
+          |> MapSet.to_list()
+
+        to_assign =
+          if Enum.empty?(missing_syndicates) do
+            [activation_current_syndicate: nil, activation_in_progress: false]
+          else
+            [next_syndicate | _rest] = missing_syndicates
+            :ok = Manager.activate(Atom.to_string(next_syndicate.id), strategy.id)
+            [activation_current_syndicate: next_syndicate, activation_progress: 0]
+          end
+
+        updated_socket =
+          socket
+          |> assign(active_syndicates: active_syndicates)
+          |> assign(inactive_syndicates: syndicates -- active_syndicates)
+          |> assign(all_syndicates_active?: all_syndicates_active?)
+          |> assign(to_assign)
+
+        {:noreply, updated_socket}
+      else
+        error ->
+          Logger.error("Unable complete syndicate activation: #{inspect(error)}")
+          {:noreply, socket |> put_flash(:error, "Unable complete syndicate activation!")}
+      end
   end
 
   def handle_info(message, socket) do
