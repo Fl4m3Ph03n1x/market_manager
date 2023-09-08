@@ -24,10 +24,10 @@ defmodule WebInterface.CoreComponents do
   ## Examples
 
       <.progress_bar hidden=false progress=15 />
-      <.progress_bar hidden=false progress=20 message="Activating system ..." />
-      <.progress_bar hidden=false class="cool-bar" />
+      <.progress_bar hidden=true progress=0 message="Activating system ..." />
+      <.progress_bar class="cool-bar" />
   """
-  attr :hidden, :boolean, default: true, doc: "whether or not to show the progress bar"
+  attr :hidden, :boolean, default: false, doc: "whether or not to show the progress bar"
   attr :progress, :integer, default: 0, doc: "the current progress of the bar"
   attr :message, :string, default: "Operation in progress ...", doc: "the message to show while the bar is progressing"
   attr :class, :string, default: nil
