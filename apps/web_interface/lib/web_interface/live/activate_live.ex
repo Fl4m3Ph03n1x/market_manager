@@ -62,9 +62,11 @@ defmodule WebInterface.ActivateLive do
   def handle_event("change", %{"_target" => ["syndicates"]} = change_data, socket) do
     syndicate_ids = Map.get(change_data, "syndicates", [])
 
-    with {:ok, syndicates} <- Syndicate.get_all_syndicates_by_id(syndicate_ids),
-         :ok <- Syndicate.set_selected_syndicates(syndicates) do
-      {:noreply, assign(socket, selected_syndicates: syndicates)}
+    with  {:ok, syndicates} <- Syndicate.get_all_syndicates_by_id(syndicate_ids)  |> IO.inspect(label: "CHANGE 1.0"),
+          {:ok, active_syndicates} <- Syndicate.get_active_syndicates(),
+          new_selected_syndicates = Enum.uniq(syndicates ++ active_syndicates) |> IO.inspect(label: "CHANGE 1.1"),
+          :ok <- Syndicate.set_selected_syndicates(new_selected_syndicates) do
+      {:noreply, assign(socket, selected_syndicates: new_selected_syndicates)}
     else
       err ->
         Logger.error("Unable to retrieve syndicate data: #{inspect(err)}")
@@ -89,10 +91,12 @@ defmodule WebInterface.ActivateLive do
         socket
       ) do
     with {:ok, strategy} <- Strategy.get_strategy_by_id(strategy_id),
-         {:ok, syndicates} <- Syndicate.get_all_syndicates_by_id(syndicate_ids),
+         {:ok, syndicates} <- Syndicate.get_all_syndicates_by_id(syndicate_ids) |> IO.inspect(label: "CHANGE 2.0"),
          :ok <- Strategy.set_selected_strategy(strategy),
-         :ok <- Syndicate.set_selected_syndicates(syndicates) do
-      {:noreply, assign(socket, selected_strategy: strategy, selected_syndicates: syndicates)}
+         {:ok, active_syndicates} <- Syndicate.get_active_syndicates(),
+         new_selected_syndicates = Enum.uniq(syndicates ++ active_syndicates) |> IO.inspect(label: "CHANGE 2.1"),
+         :ok <- Syndicate.set_selected_syndicates(new_selected_syndicates) do
+      {:noreply, assign(socket, selected_strategy: strategy, selected_syndicates: new_selected_syndicates)}
     else
       err ->
         Logger.error("Unable to retrieve change data: #{inspect(err)}")
@@ -150,12 +154,16 @@ defmodule WebInterface.ActivateLive do
          {:ok, all_syndicates_active?} <- Syndicate.all_syndicates_active?(),
          {:ok, selected_syndicates} <- Syndicate.get_selected_syndicates(),
          {:ok, active_syndicates} <- Syndicate.get_active_syndicates(),
-         {:ok, syndicates} <- Syndicate.get_syndicates() do
+         {:ok, syndicates} <- Syndicate.get_syndicates(),
+         new_selected_syndicates = Enum.uniq(selected_syndicates ++ active_syndicates) |> IO.inspect(label: "DONE 1.0"),
+         :ok <- Syndicate.set_selected_syndicates(new_selected_syndicates) do
+
       missing_syndicates =
         selected_syndicates
         |> MapSet.new()
         |> MapSet.difference(MapSet.new(active_syndicates))
         |> MapSet.to_list()
+        |> List.flatten()
 
       to_assign =
         if Enum.empty?(missing_syndicates) do
@@ -171,6 +179,7 @@ defmodule WebInterface.ActivateLive do
         |> assign(active_syndicates: active_syndicates)
         |> assign(inactive_syndicates: syndicates -- active_syndicates)
         |> assign(all_syndicates_active?: all_syndicates_active?)
+        |> assign(selected_syndicates: new_selected_syndicates)
         |> assign(to_assign)
 
       {:noreply, updated_socket}
@@ -191,11 +200,12 @@ defmodule WebInterface.ActivateLive do
   # Helper Functions #
   ####################
 
-  @spec disable_button?(Strategy.t() | nil, [Syndicates.t()]) :: boolean
-  def disable_button?(strategy, syndicates), do: is_nil(strategy) or Enum.empty?(syndicates)
+  @spec disable_button?(Strategy.t() | nil, [Syndicates.t()], [Syndicates.t()]) :: boolean
+  def disable_button?(strategy, selected_syndicates, active_syndicates), do:
+    is_nil(strategy) or Enum.empty?(selected_syndicates) or selected_syndicates == active_syndicates
 
   @spec progress_bar_message(Syndicates.t() | nil) :: String.t()
-  def progress_bar_message(_activation_current_syndicate), do: "Operation in progress ..."
+  def progress_bar_message(nil), do: "Operation in progress ..."
 
   def progress_bar_message(activation_current_syndicate),
     do: "Activation for #{activation_current_syndicate.name} in progress ..."

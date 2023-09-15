@@ -16,6 +16,7 @@ defmodule WebInterface.CoreComponents do
   """
   use Phoenix.Component
 
+  alias Phoenix.HTML.Form
   alias Phoenix.LiveView.JS
 
   @doc """
@@ -246,7 +247,7 @@ defmodule WebInterface.CoreComponents do
         </:actions>
       </.simple_form>
   """
-  attr :for, :any, required: true, doc: "the datastructure for the form"
+  attr :for, :any, required: true, doc: "the data-structure for the form"
   attr :as, :any, default: nil, doc: "the server side parameter to collect all input under"
 
   attr :rest, :global,
@@ -323,24 +324,49 @@ defmodule WebInterface.CoreComponents do
   """
   attr :id, :any
   attr :name, :any
-  attr :label, :string, default: nil
   attr :field, Phoenix.HTML.FormField, doc: "a form field struct retrieved from the form, for example: @form[:genres]"
+  attr :label, :string, default: nil
   attr :errors, :list
   attr :required, :boolean, default: false
-  attr :options, :list, doc: "the options to pass to Phoenix.HTML.Form.options_for_select/2"
-  attr :rest, :global, include: ~w(disabled form readonly)
+  attr :rest, :global, include: ~w(form readonly)
   attr :class, :string, default: nil
+  attr :options, :list, default: [], doc: "the options to pass to Phoenix.HTML.Form.options_for_select/2"
+  attr :disabled, :list, default: [], doc: "the list of options that are disabled"
+  attr :selected, :list, default: [], doc: "the currently selected options, to know which boxes are checked"
 
-  attr :selected, :any, default: [],
-    doc: "the currently selected options, to know which boxes are checked"
+  def checkgroup(%{field: %Phoenix.HTML.FormField{} = field} = assigns) do
 
-  def checkgroup(assigns) do
-    new_assigns =
+    assigns =
       assigns
-      |> assign(:multiple, true)
-      |> assign(:type, "checkgroup")
+      |> assign(:name, "#{field.name}[]")
 
-    input(new_assigns)
+    ~H"""
+    <div class="mt-2">
+      <%= for opt <- @options do %>
+
+        <div class="relative flex gap-x-3">
+          <div class="flex h-6 items-center">
+            <input id={opt.id} name={@name} type="checkbox" value={opt.id} class={
+              if opt in @disabled do
+                "h-4 w-4 rounded border-gray-300 text-gray-300 focus:ring-indigo-600"
+              else
+                "h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+              end
+            } checked={opt in @selected} disabled={opt in @disabled} />
+          </div>
+          <div class="text-sm leading-6">
+            <label  for={opt.id} class={
+              if opt in @disabled do
+                "text-base font-semibold text-gray-300"
+              else
+                "text-base font-semibold text-gray-900"
+              end}><%= opt.name %></label>
+          </div>
+        </div>
+
+      <% end %>
+    </div>
+    """
   end
 
   @doc """
@@ -447,28 +473,9 @@ defmodule WebInterface.CoreComponents do
     """
   end
 
-  def input(%{type: "checkgroup"} = assigns) do
-    ~H"""
-    <div class="mt-2">
-      <%= for opt <- @options do %>
-
-        <div class="relative flex gap-x-3">
-          <div class="flex h-6 items-center">
-            <input id={opt.id} name={@name} type="checkbox" value={opt.id} class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600" checked={opt in @selected}>
-          </div>
-          <div class="text-sm leading-6">
-            <label  for={opt.id} class="text-base font-semibold text-gray-900"><%= opt.name %></label>
-          </div>
-        </div>
-
-      <% end %>
-    </div>
-    """
-  end
-
   def input(%{type: "checkbox", value: value} = assigns) do
     assigns =
-      assign_new(assigns, :checked, fn -> Phoenix.HTML.Form.normalize_value("checkbox", value) end)
+      assign_new(assigns, :checked, fn -> Form.normalize_value("checkbox", value) end)
 
     ~H"""
     <div phx-feedback-for={@name}>
@@ -502,7 +509,7 @@ defmodule WebInterface.CoreComponents do
         {@rest}
       >
         <option :if={@prompt} value=""><%= @prompt %></option>
-        <%= Phoenix.HTML.Form.options_for_select(@options, @value) %>
+        <%= Form.options_for_select(@options, @value) %>
       </select>
       <.error :for={msg <- @errors}><%= msg %></.error>
     </div>
@@ -523,7 +530,7 @@ defmodule WebInterface.CoreComponents do
           @errors != [] && "border-rose-400 focus:border-rose-400"
         ]}
         {@rest}
-      ><%= Phoenix.HTML.Form.normalize_value("textarea", @value) %></textarea>
+      ><%= Form.normalize_value("textarea", @value) %></textarea>
       <.error :for={msg <- @errors}><%= msg %></.error>
     </div>
     """

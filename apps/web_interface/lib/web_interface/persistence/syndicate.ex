@@ -71,11 +71,11 @@ defmodule WebInterface.Persistence.Syndicate do
     end
   end
 
-  @spec syndicate_active?(atom) :: boolean()
-  def syndicate_active?(syndicate_id) do
+  @spec syndicate_active?(Syndicate.t()) :: boolean()
+  def syndicate_active?(syndicate) do
     with {:ok, table} <- ETS.KeyValueSet.wrap_existing(Persistence.table()),
-         {:ok, true} <- ETS.KeyValueSet.get(table, syndicate_id) do
-      true
+         {:ok, active_syndicates} <- ETS.KeyValueSet.get(table, :active_syndicates, MapSet.new()) do
+          MapSet.member?(active_syndicates, syndicate)
     else
       _error -> false
     end
@@ -85,10 +85,7 @@ defmodule WebInterface.Persistence.Syndicate do
   def all_syndicates_active? do
     with {:ok, table} <- ETS.KeyValueSet.wrap_existing(Persistence.table()),
          {:ok, syndicates} <- ETS.KeyValueSet.get(table, :syndicates) do
-      {:ok,
-       syndicates
-       |> Enum.map(fn synd -> synd.id end)
-       |> Enum.all?(&syndicate_active?/1)}
+      {:ok, Enum.all?(syndicates, &syndicate_active?/1)}
     end
   end
 
@@ -101,7 +98,7 @@ defmodule WebInterface.Persistence.Syndicate do
   end
 
   @spec set_selected_syndicates([Syndicate.t()]) :: :ok | {:error, any()}
-  def set_selected_syndicates(syndicates) do
+  def set_selected_syndicates(syndicates) when is_list(syndicates) do
     with {:ok, table} <- ETS.KeyValueSet.wrap_existing(Persistence.table()),
          {:ok, _updated_table} <- ETS.KeyValueSet.put(table, :selected_syndicates, syndicates) do
       :ok

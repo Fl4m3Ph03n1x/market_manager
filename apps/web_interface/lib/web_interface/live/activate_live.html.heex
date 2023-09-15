@@ -18,11 +18,11 @@
 
         <div class="mt-4">
           <.section title="Syndicates" description="The syndicates from the game. Only the ones that have items capable of being traded between players are shown."/>
-          <.checkgroup field={@form[:syndicates]} label="Syndicates" options={@syndicates} selected={@selected_syndicates} required/>
+          <.checkgroup field={@form[:syndicates]} label="Syndicates" options={@syndicates} selected={@selected_syndicates} disabled={@active_syndicates} required />
         </div>
 
         <div class="mt-4">
-          <.button class="min-w-full" disabled={disable_button?(@selected_strategy, @selected_syndicates)}>Execute Command</.button>
+          <.button class="min-w-full" disabled={disable_button?(@selected_strategy, @selected_syndicates, @active_syndicates)}>Execute Command</.button>
         </div>
       </.simple_form>
     </div>
