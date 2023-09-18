@@ -30,13 +30,22 @@ defmodule WebInterface.CoreComponents do
   """
   attr :hidden, :boolean, default: false, doc: "whether or not to show the progress bar"
   attr :progress, :integer, default: 0, doc: "the current progress of the bar"
-  attr :message, :string, default: "Operation in progress ...", doc: "the message to show while the bar is progressing"
+
+  attr :message, :string,
+    default: "Operation in progress ...",
+    doc: "the message to show while the bar is progressing"
+
   attr :class, :string, default: nil
 
   def progress_bar(assigns) do
-
     assigns = assign(assigns, :circumference, 2 * 22 / 7 * 120)
-    assigns = assign(assigns, :offset, assigns.circumference - assigns.progress / 100 * assigns.circumference)
+
+    assigns =
+      assign(
+        assigns,
+        :offset,
+        assigns.circumference - assigns.progress / 100 * assigns.circumference
+      )
 
     ~H"""
     <div class={@class} hidden={@hidden}>
@@ -46,16 +55,28 @@ defmodule WebInterface.CoreComponents do
 
       <div class="flex items-center justify-center">
         <svg class="transform -rotate-90 w-72 h-72">
-            <circle cx="145" cy="145" r="120" stroke-width="30" fill="transparent" class="stroke-gray-700" />
+          <circle
+            cx="145"
+            cy="145"
+            r="120"
+            stroke-width="30"
+            fill="transparent"
+            class="stroke-gray-700"
+          />
 
-            <circle cx="145" cy="145" r="120" stroke-width="30" fill="transparent"
-                stroke-dasharray={@circumference}
-                stroke-dashoffset={@offset}
-                class="stroke-indigo-500" />
+          <circle
+            cx="145"
+            cy="145"
+            r="120"
+            stroke-width="30"
+            fill="transparent"
+            stroke-dasharray={@circumference}
+            stroke-dashoffset={@offset}
+            class="stroke-indigo-500"
+          />
         </svg>
         <span class="absolute text-5xl stroke-black"><%= @progress %></span>
       </div>
-
     </div>
     """
   end
@@ -289,18 +310,20 @@ defmodule WebInterface.CoreComponents do
     ~H"""
     <button
       type={@type}
-      class={if @disabled do
-      [
-        "rounded-md bg-slate-400 px-3 py-2 text-sm font-semibold text-white shadow-sm",
-        @class
-      ]
-    else
-      [
-        "phx-submit-loading:opacity-75 rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm",
-        "hover:bg-indigo-500 active:text-white/80",
-        @class
-      ]
-    end}
+      class={
+        if @disabled do
+          [
+            "rounded-md bg-slate-400 px-3 py-2 text-sm font-semibold text-white shadow-sm",
+            @class
+          ]
+        else
+          [
+            "phx-submit-loading:opacity-75 rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm",
+            "hover:bg-indigo-500 active:text-white/80",
+            @class
+          ]
+        end
+      }
       {@rest}
       disabled={@disabled}
     >
@@ -322,20 +345,24 @@ defmodule WebInterface.CoreComponents do
     />
 
   """
-  attr :id, :any
   attr :name, :any
-  attr :field, Phoenix.HTML.FormField, doc: "a form field struct retrieved from the form, for example: @form[:genres]"
-  attr :label, :string, default: nil
-  attr :errors, :list
+
+  attr :field, Phoenix.HTML.FormField,
+    doc: "a form field struct retrieved from the form, for example: @form[:genres]"
+
   attr :required, :boolean, default: false
-  attr :rest, :global, include: ~w(form readonly)
-  attr :class, :string, default: nil
-  attr :options, :list, default: [], doc: "the options to pass to Phoenix.HTML.Form.options_for_select/2"
+
+  attr :options, :list,
+    default: [],
+    doc: "the options to pass to Phoenix.HTML.Form.options_for_select/2"
+
   attr :disabled, :list, default: [], doc: "the list of options that are disabled"
-  attr :selected, :list, default: [], doc: "the currently selected options, to know which boxes are checked"
+
+  attr :selected, :list,
+    default: [],
+    doc: "the currently selected options, to know which boxes are checked"
 
   def checkgroup(%{field: %Phoenix.HTML.FormField{} = field} = assigns) do
-
     assigns =
       assigns
       |> assign(:name, "#{field.name}[]")
@@ -343,27 +370,39 @@ defmodule WebInterface.CoreComponents do
     ~H"""
     <div class="mt-2">
       <%= for opt <- @options do %>
-
         <div class="relative flex gap-x-3">
           <div class="flex h-6 items-center">
-            <input id={opt.id} name={@name} type="checkbox" value={opt.id} class={
-              if opt in @disabled do
-                "h-4 w-4 rounded border-gray-300 text-gray-300 focus:ring-indigo-600"
-              else
-                "h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-              end
-            } checked={opt in @selected} disabled={opt in @disabled} />
+            <input
+              id={opt.id}
+              name={@name}
+              type="checkbox"
+              value={opt.id}
+              class={
+                if opt in @disabled do
+                  "h-4 w-4 rounded border-gray-300 text-gray-300 focus:ring-indigo-600"
+                else
+                  "h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                end
+              }
+              checked={opt in @selected}
+              disabled={opt in @disabled}
+            />
           </div>
           <div class="text-sm leading-6">
-            <label  for={opt.id} class={
-              if opt in @disabled do
-                "text-base font-semibold text-gray-300"
-              else
-                "text-base font-semibold text-gray-900"
-              end}><%= opt.name %></label>
+            <label
+              for={opt.id}
+              class={
+                if opt in @disabled do
+                  "text-base font-semibold text-gray-300"
+                else
+                  "text-base font-semibold text-gray-900"
+                end
+              }
+            >
+              <%= opt.name %>
+            </label>
           </div>
         </div>
-
       <% end %>
     </div>
     """
@@ -384,18 +423,21 @@ defmodule WebInterface.CoreComponents do
   attr :id, :any
   attr :name, :any
   attr :label, :string, default: nil
-  attr :field, Phoenix.HTML.FormField, doc: "a form field struct retrieved from the form, for example: @form[:genres]"
+
+  attr :field, Phoenix.HTML.FormField,
+    doc: "a form field struct retrieved from the form, for example: @form[:genres]"
+
   attr :errors, :list
   attr :required, :boolean, default: false
   attr :options, :list, doc: "the options to pass to Phoenix.HTML.Form.options_for_select/2"
   attr :rest, :global, include: ~w(disabled form readonly)
   attr :class, :string, default: nil
 
-  attr :selected, :any, default: nil,
+  attr :selected, :any,
+    default: nil,
     doc: "the currently selected option, to know which radio button is checked"
 
   def radiogroup(assigns) do
-
     new_assigns =
       assigns
       |> assign(:type, "radiogroup")
@@ -438,7 +480,8 @@ defmodule WebInterface.CoreComponents do
     include: ~w(autocomplete cols disabled form list max maxlength min minlength
                 pattern placeholder readonly required rows size step)
 
-  attr :selected, :any, default: [],
+  attr :selected, :any,
+    default: [],
     doc: "the currently selected option, to know which input(s) is/are currently selected"
 
   slot :inner_block
@@ -456,18 +499,22 @@ defmodule WebInterface.CoreComponents do
     ~H"""
     <div class="mt-2">
       <%= for opt <- @options  do %>
-
         <div class="relative flex gap-x-3">
           <div>
-            <input type="radio" id={opt.id} name={@name} value={opt.id} checked={opt == @selected}
-              class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
+            <input
+              type="radio"
+              id={opt.id}
+              name={@name}
+              value={opt.id}
+              checked={opt == @selected}
+              class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+            />
           </div>
           <div class="leading-6 mb-1">
             <label for={opt.id} class="text-base font-semibold text-gray-900"><%= opt.name %></label>
             <p class="ml-2 text-sm text-gray-500"><%= opt.description %></p>
           </div>
         </div>
-
       <% end %>
     </div>
     """
@@ -768,15 +815,26 @@ defmodule WebInterface.CoreComponents do
 
   ## JS Commands
 
-  def toggle_dropdown(to), do:
-    JS.toggle(
-      to: to,
-      in: {"transition ease-out duration-100", "transform opacity-0 scale-95", "transform opacity-100 scale-100"},
-      out: {"transition ease-in duration-75", "transform opacity-100 scale-100", "transform opacity-0 scale-95"}
-    )
+  def toggle_dropdown(to),
+    do:
+      JS.toggle(
+        to: to,
+        in:
+          {"transition ease-out duration-100", "transform opacity-0 scale-95",
+           "transform opacity-100 scale-100"},
+        out:
+          {"transition ease-in duration-75", "transform opacity-100 scale-100",
+           "transform opacity-0 scale-95"}
+      )
 
-  def hide_dropdown(to), do:
-    JS.hide(to: to, transition: {"transition ease-in duration-75", "transform opacity-100 scale-100", "transform opacity-0 scale-95"})
+  def hide_dropdown(to),
+    do:
+      JS.hide(
+        to: to,
+        transition:
+          {"transition ease-in duration-75", "transform opacity-100 scale-100",
+           "transform opacity-0 scale-95"}
+      )
 
   def show(js \\ %JS{}, selector) do
     JS.show(js,
