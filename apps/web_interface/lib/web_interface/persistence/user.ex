@@ -7,18 +7,18 @@ defmodule WebInterface.Persistence.User do
   alias Shared.Data.User
   alias WebInterface.Persistence
 
-  @spec set_user(User.t()) :: :ok | {:error, any}
-  def set_user(%User{} = user) do
+  @spec set_user(User.t() | nil) :: :ok | {:error, any}
+  def set_user(user) do
     with {:ok, table} <- ETS.KeyValueSet.wrap_existing(Persistence.table()),
          {:ok, _updated_table} <- ETS.KeyValueSet.put(table, :user, user) do
       :ok
     end
   end
 
-  @spec get_user :: {:ok, User.t()} | {:error, any}
+  @spec get_user :: {:ok, User.t() | nil} | {:error, any}
   def get_user do
     with {:ok, table} <- ETS.KeyValueSet.wrap_existing(Persistence.table()) do
-      ETS.KeyValueSet.get(table, :user)
+      ETS.KeyValueSet.get(table, :user, nil)
     end
   end
 
