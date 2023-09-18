@@ -62,10 +62,10 @@ defmodule WebInterface.ActivateLive do
   def handle_event("change", %{"_target" => ["syndicates"]} = change_data, socket) do
     syndicate_ids = Map.get(change_data, "syndicates", [])
 
-    with  {:ok, syndicates} <- Syndicate.get_all_syndicates_by_id(syndicate_ids)  |> IO.inspect(label: "CHANGE 1.0"),
-          {:ok, active_syndicates} <- Syndicate.get_active_syndicates(),
-          new_selected_syndicates = Enum.uniq(syndicates ++ active_syndicates) |> IO.inspect(label: "CHANGE 1.1"),
-          :ok <- Syndicate.set_selected_syndicates(new_selected_syndicates) do
+    with {:ok, syndicates} <- Syndicate.get_all_syndicates_by_id(syndicate_ids),
+         {:ok, active_syndicates} <- Syndicate.get_active_syndicates(),
+         new_selected_syndicates = Enum.uniq(syndicates ++ active_syndicates),
+         :ok <- Syndicate.set_selected_syndicates(new_selected_syndicates) do
       {:noreply, assign(socket, selected_syndicates: new_selected_syndicates)}
     else
       err ->
@@ -91,12 +91,15 @@ defmodule WebInterface.ActivateLive do
         socket
       ) do
     with {:ok, strategy} <- Strategy.get_strategy_by_id(strategy_id),
-         {:ok, syndicates} <- Syndicate.get_all_syndicates_by_id(syndicate_ids) |> IO.inspect(label: "CHANGE 2.0"),
+         {:ok, syndicates} <-
+           Syndicate.get_all_syndicates_by_id(syndicate_ids),
          :ok <- Strategy.set_selected_strategy(strategy),
          {:ok, active_syndicates} <- Syndicate.get_active_syndicates(),
-         new_selected_syndicates = Enum.uniq(syndicates ++ active_syndicates) |> IO.inspect(label: "CHANGE 2.1"),
+         new_selected_syndicates =
+           Enum.uniq(syndicates ++ active_syndicates),
          :ok <- Syndicate.set_selected_syndicates(new_selected_syndicates) do
-      {:noreply, assign(socket, selected_strategy: strategy, selected_syndicates: new_selected_syndicates)}
+      {:noreply,
+       assign(socket, selected_strategy: strategy, selected_syndicates: new_selected_syndicates)}
     else
       err ->
         Logger.error("Unable to retrieve change data: #{inspect(err)}")
@@ -155,9 +158,9 @@ defmodule WebInterface.ActivateLive do
          {:ok, selected_syndicates} <- Syndicate.get_selected_syndicates(),
          {:ok, active_syndicates} <- Syndicate.get_active_syndicates(),
          {:ok, syndicates} <- Syndicate.get_syndicates(),
-         new_selected_syndicates = Enum.uniq(selected_syndicates ++ active_syndicates) |> IO.inspect(label: "DONE 1.0"),
+         new_selected_syndicates =
+           Enum.uniq(selected_syndicates ++ active_syndicates),
          :ok <- Syndicate.set_selected_syndicates(new_selected_syndicates) do
-
       missing_syndicates =
         selected_syndicates
         |> MapSet.new()
@@ -201,8 +204,10 @@ defmodule WebInterface.ActivateLive do
   ####################
 
   @spec disable_button?(Strategy.t() | nil, [Syndicates.t()], [Syndicates.t()]) :: boolean
-  def disable_button?(strategy, selected_syndicates, active_syndicates), do:
-    is_nil(strategy) or Enum.empty?(selected_syndicates) or selected_syndicates == active_syndicates
+  def disable_button?(strategy, selected_syndicates, active_syndicates),
+    do:
+      is_nil(strategy) or Enum.empty?(selected_syndicates) or
+        selected_syndicates == active_syndicates
 
   @spec progress_bar_message(Syndicates.t() | nil) :: String.t()
   def progress_bar_message(nil), do: "Operation in progress ..."
