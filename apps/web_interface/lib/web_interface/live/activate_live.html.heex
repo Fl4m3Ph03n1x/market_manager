@@ -1,6 +1,9 @@
-<div class="min-h-full max-w-full mx-auto py-6 sm:px-6 lg:px-8">
-  <.progress_bar hidden={not @activation_in_progress} progress={@activation_progress} message={progress_bar_message(@activation_current_syndicate)} />
-  
+<div class="container min-h-full mx-auto py-6 sm:px-6 lg:px-8">
+  <.progress_bar
+    hidden={not @activation_in_progress}
+    progress={@activation_progress}
+    message={progress_bar_message(@activation_current_syndicate)}
+  />
   <%= if not @activation_in_progress do %>
     <div class="shadow">
       <.description>
@@ -8,24 +11,49 @@
         The prices of each item will be determined according to a strategy that you can define.
       </.description>
     </div>
-
+    
     <div>
       <.simple_form for={@form} phx-change="change" phx-submit="execute">
         <div class="mt-4">
-          <.section title="Strategies" description="Strategies will automatically calculate the prices for your items. If a price's item cannot be calculated, a default one will be used instead."/>
-          <.radiogroup field={@form[:strategy]} label="Strategies" options={@strategies} selected={@selected_strategy} required/>
+          <.section
+            title="Strategies"
+            description="Strategies will automatically calculate the prices for your items. If a price's item cannot be calculated, a default one will be used instead."
+          />
+          <.radiogroup
+            field={@form[:strategy]}
+            label="Strategies"
+            options={@strategies}
+            selected={@selected_strategy}
+            required
+          />
         </div>
-
+        
         <div class="mt-4">
-          <.section title="Syndicates" description="The syndicates from the game. Only the ones that have items capable of being traded between players are shown."/>
-          <.checkgroup field={@form[:syndicates]} label="Syndicates" options={@syndicates} selected={@selected_syndicates} disabled={@active_syndicates} required />
+          <.section
+            title="Syndicates"
+            description="The syndicates from the game. Only the ones that have items capable of being traded between players are shown."
+          />
+          <.checkgroup
+            field={@form[:syndicates]}
+            label="Syndicates"
+            options={@syndicates}
+            selected={@selected_syndicates}
+            disabled={@active_syndicates}
+            required
+          />
         </div>
-
+        
         <div class="mt-4">
-          <.button class="min-w-full" disabled={disable_button?(@selected_strategy, @selected_syndicates, @active_syndicates)}>Execute Command</.button>
+          <.button
+            class="min-w-full"
+            disabled={
+              disable_button?(@selected_strategy, @selected_syndicates, @active_syndicates)
+            }
+          >
+            Execute Command
+          </.button>
         </div>
       </.simple_form>
     </div>
-
   <% end %>
 </div>
