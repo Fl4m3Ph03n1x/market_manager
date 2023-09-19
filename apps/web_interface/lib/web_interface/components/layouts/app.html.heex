@@ -10,8 +10,19 @@
           </div>
           <div class="hidden md:block">
             <div class="ml-10 flex items-baseline space-x-4">
-              <a href={~p"/activate"} class="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium" aria-current="page">Activate</a>
-              <a href={~p"/deactivate"} class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Deactivate</a>
+              <a href={~p"/activate"} class={
+                if WebInterface.Persistence.Button.button_selected?(:activate) do
+                  "bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium"
+                else
+                  "hover:bg-gray-700 text-white rounded-md px-3 py-2 text-sm font-medium"
+                end}>Activate</a>
+  
+              <a href={~p"/deactivate"} class={
+                if WebInterface.Persistence.Button.button_selected?(:deactivate) do
+                  "bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium"
+                else
+                  "hover:bg-gray-700 text-white rounded-md px-3 py-2 text-sm font-medium"
+                end}>Deactivate</a>
             </div>
           </div>
         </div>

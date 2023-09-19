@@ -4,38 +4,38 @@ defmodule WebInterface.ActivateLive do
   require Logger
 
   alias Manager
-  alias WebInterface.Persistence.{Strategy, Syndicate, User}
+  alias WebInterface.Persistence.{Button, Strategy, Syndicate, User}
 
   @impl true
   def mount(_params, _session, socket) do
-    with {:ok, user} <- User.get_user(),
-    {:ok, syndicates} <- Syndicate.get_syndicates(),
-    {:ok, strategies} <- Strategy.get_strategies(),
-    {:ok, active_syndicates} <- Syndicate.get_active_syndicates(),
-    {:ok, selected_strategy} <- Strategy.get_selected_strategy(),
-    {:ok, selected_active_syndicates} <- Syndicate.get_selected_active_syndicates() do
+    with  :ok <- Button.set_button(:activate),
+          {:ok, user} <- User.get_user(),
+          {:ok, syndicates} <- Syndicate.get_syndicates(),
+          {:ok, strategies} <- Strategy.get_strategies(),
+          {:ok, active_syndicates} <- Syndicate.get_active_syndicates(),
+          {:ok, selected_strategy} <- Strategy.get_selected_strategy(),
+          {:ok, selected_active_syndicates} <- Syndicate.get_selected_active_syndicates() do
+            updated_socket =
+              assign(
+                socket,
+                user: user,
+                syndicates: syndicates,
+                strategies: strategies,
+                active_syndicates: active_syndicates,
+                selected_strategy: selected_strategy,
+                selected_active_syndicates: selected_active_syndicates,
+                form: to_form(%{"activate_syndicates" => []}),
+                activation_in_progress: false,
+                activation_progress: 0,
+                activation_current_syndicate: nil
+              )
 
-      updated_socket =
-        assign(
-          socket,
-          user: user,
-          syndicates: syndicates,
-          strategies: strategies,
-          active_syndicates: active_syndicates,
-          selected_strategy: selected_strategy,
-          selected_active_syndicates: selected_active_syndicates,
-          form: to_form(%{"activate_syndicates" => []}),
-          activation_in_progress: false,
-          activation_progress: 0,
-          activation_current_syndicate: nil
-        )
-
-      {:ok, updated_socket}
-    else
-      error ->
-        Logger.error("Unable to show deactivation page: #{inspect(error)}")
-        {:error, socket |> put_flash(:error, "Unable to show deactivation page!")}
-    end
+            {:ok, updated_socket}
+          else
+            error ->
+              Logger.error("Unable to show deactivation page: #{inspect(error)}")
+              {:error, socket |> put_flash(:error, "Unable to show deactivation page!")}
+          end
   end
 
   @impl true

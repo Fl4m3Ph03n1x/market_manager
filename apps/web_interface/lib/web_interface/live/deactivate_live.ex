@@ -4,11 +4,12 @@ defmodule WebInterface.DeactivateLive do
   require Logger
 
   alias Manager
-  alias WebInterface.Persistence.{Syndicate, User}
+  alias WebInterface.Persistence.{Button, Syndicate, User}
 
   @impl true
   def mount(_params, _session, socket) do
-    with  {:ok, user} <- User.get_user(),
+    with  :ok <- Button.set_button(:deactivate),
+          {:ok, user} <- User.get_user(),
           {:ok, syndicates} <- Syndicate.get_syndicates(),
           {:ok, inactive_syndicates} <- Syndicate.get_inactive_syndicates(),
           {:ok, selected_inactive_syndicates} <- Syndicate.get_selected_inactive_syndicates() do
@@ -54,7 +55,7 @@ defmodule WebInterface.DeactivateLive do
     end
   end
 
-  def handle_event("change", %{"syndicates" => syndicate_ids} = e, socket) do
+  def handle_event("change", %{"syndicates" => syndicate_ids}, socket) do
     with {:ok, syndicates} <- Syndicate.get_all_syndicates_by_id(syndicate_ids),
          {:ok, inactive_syndicates} <- Syndicate.get_inactive_syndicates(),
          new_selected_syndicates =
@@ -69,7 +70,7 @@ defmodule WebInterface.DeactivateLive do
     end
   end
 
-  def handle_event("change", no_syndicates_selected, socket) do
+  def handle_event("change", _no_syndicates_selected, socket) do
     with {:ok, inactive_syndicates} <- Syndicate.get_inactive_syndicates(),
          :ok <- Syndicate.set_selected_inactive_syndicates(inactive_syndicates) do
       {:noreply,
