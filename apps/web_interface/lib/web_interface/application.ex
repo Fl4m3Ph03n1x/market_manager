@@ -11,6 +11,7 @@ defmodule WebInterface.Application do
   alias WebInterface.{Endpoint, PubSub, Telemetry}
   alias WebInterface.Desktop.{MenuBar, WindowUtils}
   alias WebInterface.Persistence
+  alias WebInterface.Persistence.Syndicate, as: SyndicateStore
 
   alias Shared.Data.{Strategy, Syndicate}
 
@@ -74,6 +75,7 @@ defmodule WebInterface.Application do
     ]
 
     :ok = Persistence.init(@strategies, @syndicates)
+    :ok = SyndicateStore.set_selected_inactive_syndicates(@syndicates)
 
     opts = [strategy: :one_for_one, name: WebInterface.Supervisor]
     Supervisor.start_link(children, opts)

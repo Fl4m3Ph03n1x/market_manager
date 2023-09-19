@@ -37,7 +37,7 @@
             field={@form[:syndicates]}
             label="Syndicates"
             options={@syndicates}
-            selected={@selected_syndicates}
+            selected={@selected_active_syndicates}
             disabled={@active_syndicates}
             required
           />
@@ -47,7 +47,7 @@
           <.button
             class="min-w-full"
             disabled={
-              disable_button?(@selected_strategy, @selected_syndicates, @active_syndicates)
+              disable_button?(@selected_strategy, @selected_active_syndicates, @active_syndicates)
             }
           >
             Execute Command

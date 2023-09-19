@@ -22,73 +22,117 @@ defmodule WebInterface.Persistence.SyndicateTest do
     %{syndicates: syndicates}
   end
 
-  test "gets all syndicates", %{syndicates: syndicates} do
-    assert SyndicateStore.get_syndicates() == {:ok, syndicates}
+  describe "get_syndicates" do
+    test "gets all syndicates", %{syndicates: syndicates} do
+      assert SyndicateStore.get_syndicates() == {:ok, syndicates}
+    end
   end
 
-  test "gets a syndicate all syndicates by its ids", _data do
-    {:ok, syndicates} = SyndicateStore.get_all_syndicates_by_id(["red_veil", "new_loka"])
-    assert syndicates == [Syndicate.new(name: "Red Veil", id: :red_veil), Syndicate.new(name: "New Loka", id: :new_loka)]
+  describe "get_all_syndicates_by_id" do
+    test "get all syndicates by its ids", _data do
+      {:ok, syndicates} = SyndicateStore.get_all_syndicates_by_id(["red_veil", "new_loka"])
+      assert syndicates == [Syndicate.new(name: "Red Veil", id: :red_veil), Syndicate.new(name: "New Loka", id: :new_loka)]
+    end
   end
 
-  test "gets a syndicate by its id", _data do
-    {:ok, syndicate} = SyndicateStore.get_syndicate_by_id("red_veil")
-    assert syndicate == Syndicate.new(name: "Red Veil", id: :red_veil)
+  describe "get_syndicate_by_id" do
+    test "gets a syndicate by its id", _data do
+      {:ok, syndicate} = SyndicateStore.get_syndicate_by_id("red_veil")
+      assert syndicate == Syndicate.new(name: "Red Veil", id: :red_veil)
+    end
+
+    test "returns error if syndicate is not found" do
+      assert {:error, :not_found} == SyndicateStore.get_syndicate_by_id("error")
+    end
   end
 
-  test "activates the given syndicate", _data do
-    red_veil = Syndicate.new(name: "Red Veil", id: :red_veil)
+  describe "activate_syndicate" do
+    test "activates the given syndicate", _data do
+      red_veil = Syndicate.new(name: "Red Veil", id: :red_veil)
 
-    :ok = SyndicateStore.activate_syndicate(red_veil)
-    {:ok, active_syndicates} = SyndicateStore.get_active_syndicates()
+      :ok = SyndicateStore.activate_syndicate(red_veil)
+      {:ok, active_syndicates} = SyndicateStore.get_active_syndicates()
 
-    assert active_syndicates == [red_veil]
+      assert active_syndicates == [red_veil]
 
-    :ok = SyndicateStore.deactivate_syndicate(red_veil)
+      :ok = SyndicateStore.deactivate_syndicate(red_veil)
+    end
   end
 
-  test "deactivates the given syndicate", _data do
-    red_veil = Syndicate.new(name: "Red Veil", id: :red_veil)
-    :ok = SyndicateStore.activate_syndicate(red_veil)
+  describe "deactivate_syndicate" do
+    test "deactivates the given syndicate", _data do
+      red_veil = Syndicate.new(name: "Red Veil", id: :red_veil)
+      :ok = SyndicateStore.activate_syndicate(red_veil)
 
-    :ok = SyndicateStore.deactivate_syndicate(red_veil)
-    {:ok, active_syndicates} = SyndicateStore.get_active_syndicates()
+      :ok = SyndicateStore.deactivate_syndicate(red_veil)
+      {:ok, active_syndicates} = SyndicateStore.get_active_syndicates()
 
-    assert active_syndicates == []
+      assert active_syndicates == []
+    end
   end
 
-  test "returns whether or not a syndicate is active", _data do
-    red_veil = Syndicate.new(name: "Red Veil", id: :red_veil)
+  describe "syndicate_active?" do
+    test "returns whether or not a syndicate is active", _data do
+      red_veil = Syndicate.new(name: "Red Veil", id: :red_veil)
 
-    :ok = SyndicateStore.activate_syndicate(red_veil)
+      :ok = SyndicateStore.activate_syndicate(red_veil)
 
-    assert SyndicateStore.syndicate_active?(red_veil)
+      assert SyndicateStore.syndicate_active?(red_veil)
 
-    :ok = SyndicateStore.deactivate_syndicate(red_veil)
+      :ok = SyndicateStore.deactivate_syndicate(red_veil)
+    end
   end
 
-  test "returns whether or not all syndicates are active", %{syndicates: syndicates} do
-    Enum.each(syndicates, fn syndicate ->  SyndicateStore.activate_syndicate(syndicate) end)
+  describe "all_syndicates_active?" do
+    test "returns whether or not all syndicates are active", %{syndicates: syndicates} do
+      Enum.each(syndicates, fn syndicate ->  SyndicateStore.activate_syndicate(syndicate) end)
 
-    assert SyndicateStore.all_syndicates_active?()
+      assert SyndicateStore.all_syndicates_active?()
 
-    Enum.each(syndicates, fn syndicate ->  SyndicateStore.deactivate_syndicate(syndicate) end)
+      Enum.each(syndicates, fn syndicate ->  SyndicateStore.deactivate_syndicate(syndicate) end)
+    end
   end
 
-  test "returns active syndicates", %{syndicates: syndicates} do
-    Enum.each(syndicates, fn syndicate ->  SyndicateStore.activate_syndicate(syndicate) end)
+  describe "get_active_syndicates" do
+    test "returns active syndicates", %{syndicates: syndicates} do
+      Enum.each(syndicates, fn syndicate ->  SyndicateStore.activate_syndicate(syndicate) end)
 
-    {:ok, active_syndicates} = SyndicateStore.get_active_syndicates()
-    assert Enum.sort(active_syndicates) == Enum.sort(syndicates)
+      {:ok, active_syndicates} = SyndicateStore.get_active_syndicates()
+      assert Enum.sort(active_syndicates) == Enum.sort(syndicates)
 
-    Enum.each(syndicates, fn syndicate ->  SyndicateStore.deactivate_syndicate(syndicate) end)
+      Enum.each(syndicates, fn syndicate ->  SyndicateStore.deactivate_syndicate(syndicate) end)
+    end
   end
 
-  test "sets and gets selected syndicates", %{syndicates: [syndicate | _rest]} do
-    :ok = SyndicateStore.set_selected_syndicates([syndicate])
-    {:ok, selected_syndicates} = SyndicateStore.get_selected_syndicates()
-    assert selected_syndicates == [syndicate]
+  describe "get_inactive_syndicates" do
+    test "returns inactive syndicates", %{syndicates: [active_syndicate | rest ]} do
+      SyndicateStore.activate_syndicate(active_syndicate)
 
-    :ok = SyndicateStore.set_selected_syndicates([])
+      {:ok, inactive_syndicates} = SyndicateStore.get_inactive_syndicates()
+      assert Enum.sort(inactive_syndicates) == Enum.sort(rest)
+
+      SyndicateStore.deactivate_syndicate(active_syndicate)
+    end
   end
+
+  describe "set_selected_active_syndicates && get_selected_active_syndicates" do
+    test "sets and gets selected syndicates in Activate tab", %{syndicates: [syndicate | _rest]} do
+      :ok = SyndicateStore.set_selected_active_syndicates([syndicate])
+      {:ok, selected_syndicates} = SyndicateStore.get_selected_active_syndicates()
+      assert selected_syndicates == [syndicate]
+
+      :ok = SyndicateStore.set_selected_active_syndicates([])
+    end
+  end
+
+  describe "set_selected_inactive_syndicates && get_selected_inactive_syndicates" do
+    test "sets and gets selected syndicates in Deactivate tab", %{syndicates: [syndicate | _rest]} do
+      :ok = SyndicateStore.set_selected_inactive_syndicates([syndicate])
+      {:ok, selected_syndicates} = SyndicateStore.get_selected_inactive_syndicates()
+      assert selected_syndicates == [syndicate]
+
+      :ok = SyndicateStore.set_selected_inactive_syndicates([])
+    end
+  end
+
 end

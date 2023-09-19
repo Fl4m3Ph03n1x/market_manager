@@ -339,7 +339,6 @@ defmodule WebInterface.CoreComponents do
 
     <.checkgroup
       field={@form[:genres]}
-      label="Genres"
       options={[{"Fantasy", "fantasy"}, {"Science Fiction", "sci-fi"}]}
       selected={[{"Fantasy", "fantasy"}]}
     />

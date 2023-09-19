@@ -8,32 +8,34 @@ defmodule WebInterface.ActivateLive do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, user} = User.get_user()
-    {:ok, syndicates} = Syndicate.get_syndicates()
-    {:ok, strategies} = Strategy.get_strategies()
-    {:ok, all_active} = Syndicate.all_syndicates_active?()
-    {:ok, active_syndicates} = Syndicate.get_active_syndicates()
-    {:ok, selected_strategy} = Strategy.get_selected_strategy()
-    {:ok, selected_syndicates} = Syndicate.get_selected_syndicates()
+    with {:ok, user} <- User.get_user(),
+    {:ok, syndicates} <- Syndicate.get_syndicates(),
+    {:ok, strategies} <- Strategy.get_strategies(),
+    {:ok, active_syndicates} <- Syndicate.get_active_syndicates(),
+    {:ok, selected_strategy} <- Strategy.get_selected_strategy(),
+    {:ok, selected_active_syndicates} <- Syndicate.get_selected_active_syndicates() do
 
-    updated_socket =
-      assign(
-        socket,
-        user: user,
-        all_syndicates_active?: all_active,
-        syndicates: syndicates,
-        strategies: strategies,
-        inactive_syndicates: syndicates -- active_syndicates,
-        active_syndicates: active_syndicates,
-        selected_strategy: selected_strategy,
-        selected_syndicates: selected_syndicates,
-        form: to_form(%{"activate_syndicates" => []}),
-        activation_in_progress: false,
-        activation_progress: 0,
-        activation_current_syndicate: nil
-      )
+      updated_socket =
+        assign(
+          socket,
+          user: user,
+          syndicates: syndicates,
+          strategies: strategies,
+          active_syndicates: active_syndicates,
+          selected_strategy: selected_strategy,
+          selected_active_syndicates: selected_active_syndicates,
+          form: to_form(%{"activate_syndicates" => []}),
+          activation_in_progress: false,
+          activation_progress: 0,
+          activation_current_syndicate: nil
+        )
 
-    {:ok, updated_socket}
+      {:ok, updated_socket}
+    else
+      error ->
+        Logger.error("Unable to show deactivation page: #{inspect(error)}")
+        {:error, socket |> put_flash(:error, "Unable to show deactivation page!")}
+    end
   end
 
   @impl true
@@ -46,7 +48,7 @@ defmodule WebInterface.ActivateLive do
       updated_socket =
         socket
         |> assign(selected_strategy: strategy)
-        |> assign(selected_syndicates: syndicates)
+        |> assign(selected_active_syndicates: syndicates)
         |> assign(activation_in_progress: true)
         |> assign(activation_current_syndicate: syndicate)
         |> assign(activation_progress: 0)
@@ -65,8 +67,8 @@ defmodule WebInterface.ActivateLive do
     with {:ok, syndicates} <- Syndicate.get_all_syndicates_by_id(syndicate_ids),
          {:ok, active_syndicates} <- Syndicate.get_active_syndicates(),
          new_selected_syndicates = Enum.uniq(syndicates ++ active_syndicates),
-         :ok <- Syndicate.set_selected_syndicates(new_selected_syndicates) do
-      {:noreply, assign(socket, selected_syndicates: new_selected_syndicates)}
+         :ok <- Syndicate.set_selected_active_syndicates(new_selected_syndicates) do
+      {:noreply, assign(socket, selected_active_syndicates: new_selected_syndicates)}
     else
       err ->
         Logger.error("Unable to retrieve syndicate data: #{inspect(err)}")
@@ -97,9 +99,9 @@ defmodule WebInterface.ActivateLive do
          {:ok, active_syndicates} <- Syndicate.get_active_syndicates(),
          new_selected_syndicates =
            Enum.uniq(syndicates ++ active_syndicates),
-         :ok <- Syndicate.set_selected_syndicates(new_selected_syndicates) do
+         :ok <- Syndicate.set_selected_active_syndicates(new_selected_syndicates) do
       {:noreply,
-       assign(socket, selected_strategy: strategy, selected_syndicates: new_selected_syndicates)}
+       assign(socket, selected_strategy: strategy, selected_active_syndicates: new_selected_syndicates)}
     else
       err ->
         Logger.error("Unable to retrieve change data: #{inspect(err)}")
@@ -155,12 +157,11 @@ defmodule WebInterface.ActivateLive do
          {:ok, strategy} <- Strategy.get_selected_strategy(),
          :ok <- Syndicate.activate_syndicate(syndicate),
          {:ok, all_syndicates_active?} <- Syndicate.all_syndicates_active?(),
-         {:ok, selected_syndicates} <- Syndicate.get_selected_syndicates(),
+         {:ok, selected_syndicates} <- Syndicate.get_selected_active_syndicates(),
          {:ok, active_syndicates} <- Syndicate.get_active_syndicates(),
-         {:ok, syndicates} <- Syndicate.get_syndicates(),
          new_selected_syndicates =
            Enum.uniq(selected_syndicates ++ active_syndicates),
-         :ok <- Syndicate.set_selected_syndicates(new_selected_syndicates) do
+         :ok <- Syndicate.set_selected_active_syndicates(new_selected_syndicates) do
       missing_syndicates =
         selected_syndicates
         |> MapSet.new()
@@ -180,9 +181,8 @@ defmodule WebInterface.ActivateLive do
       updated_socket =
         socket
         |> assign(active_syndicates: active_syndicates)
-        |> assign(inactive_syndicates: syndicates -- active_syndicates)
         |> assign(all_syndicates_active?: all_syndicates_active?)
-        |> assign(selected_syndicates: new_selected_syndicates)
+        |> assign(selected_active_syndicates: new_selected_syndicates)
         |> assign(to_assign)
 
       {:noreply, updated_socket}
@@ -207,7 +207,7 @@ defmodule WebInterface.ActivateLive do
   def disable_button?(strategy, selected_syndicates, active_syndicates),
     do:
       is_nil(strategy) or Enum.empty?(selected_syndicates) or
-        selected_syndicates == active_syndicates
+        Enum.sort(selected_syndicates) == Enum.sort(active_syndicates)
 
   @spec progress_bar_message(Syndicates.t() | nil) :: String.t()
   def progress_bar_message(nil), do: "Operation in progress ..."

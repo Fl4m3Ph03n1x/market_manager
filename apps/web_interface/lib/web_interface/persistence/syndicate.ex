@@ -97,18 +97,43 @@ defmodule WebInterface.Persistence.Syndicate do
     end
   end
 
-  @spec set_selected_syndicates([Syndicate.t()]) :: :ok | {:error, any()}
-  def set_selected_syndicates(syndicates) when is_list(syndicates) do
+  @spec get_inactive_syndicates :: {:ok, [Syndicate.t()]} | {:error, any()}
+  def get_inactive_syndicates do
     with {:ok, table} <- ETS.KeyValueSet.wrap_existing(Persistence.table()),
-         {:ok, _updated_table} <- ETS.KeyValueSet.put(table, :selected_syndicates, syndicates) do
+          {:ok, all_syndicates} <- ETS.KeyValueSet.get(table, :syndicates),
+         {:ok, active_syndicates} <- ETS.KeyValueSet.get(table, :active_syndicates, []) do
+      {:ok, Enum.to_list(all_syndicates) -- Enum.to_list(active_syndicates)}
+    end
+  end
+
+  @spec set_selected_active_syndicates([Syndicate.t()]) :: :ok | {:error, any()}
+  def set_selected_active_syndicates(syndicates) when is_list(syndicates) do
+    set_selection(syndicates, :active_syndicates)
+  end
+
+  @spec get_selected_active_syndicates :: {:ok, [Syndicate.t()]} | {:error, any()}
+  def get_selected_active_syndicates, do: get_selection(:active_syndicates)
+
+  @spec set_selected_inactive_syndicates([Syndicate.t()]) :: :ok | {:error, any()}
+  def set_selected_inactive_syndicates(syndicates) when is_list(syndicates) do
+    set_selection(syndicates, :inactive_syndicates)
+  end
+
+  @spec get_selected_inactive_syndicates :: {:ok, [Syndicate.t()]} | {:error, any()}
+  def get_selected_inactive_syndicates, do: get_selection(:inactive_syndicates)
+
+  @spec set_selection([Syndicate.t()], key :: atom) ::  :ok | {:error, any()}
+  defp set_selection(syndicates, key) do
+    with {:ok, table} <- ETS.KeyValueSet.wrap_existing(Persistence.table()),
+         {:ok, _updated_table} <- ETS.KeyValueSet.put(table, String.to_atom("selected_#{key}"), syndicates) do
       :ok
     end
   end
 
-  @spec get_selected_syndicates :: {:ok, [Syndicate.t()]} | {:error, any()}
-  def get_selected_syndicates do
+  @spec get_selection(key :: atom) ::   {:ok, [Syndicate.t()]} | {:error, any()}
+  defp get_selection(key) do
     case ETS.KeyValueSet.wrap_existing(Persistence.table()) do
-      {:ok, table} -> ETS.KeyValueSet.get(table, :selected_syndicates, [])
+      {:ok, table} -> ETS.KeyValueSet.get(table, String.to_atom("selected_#{key}"), [])
       err -> err
     end
   end
