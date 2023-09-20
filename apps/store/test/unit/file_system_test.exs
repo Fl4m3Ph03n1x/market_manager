@@ -557,4 +557,54 @@ defmodule MarketManager.Store.FileSystemTest do
       assert_called(File.cwd())
     end
   end
+
+  describe "list_syndicates/1" do
+    test_with_mock "returns the list of all known syndicates", File,
+      cwd: fn -> {:ok, ""} end,
+      read: fn _filename ->
+        {:ok,
+        "[{\"id\":\"red_veil\",\"name\":\"Red Veil\"},{\"id\":\"perrin_sequence\",\"name\":\"Perrin Sequence\"}]"}
+      end do
+      # Act
+      actual = FileSystem.list_syndicates()
+
+      expected =
+        {:ok,
+         [
+           %Syndicate{name: "Red Veil", id: :red_veil},
+           %Syndicate{name: "Perrin Sequence", id: :perrin_sequence}
+         ]}
+
+      # Assert
+      assert actual == expected
+      assert_called(File.cwd())
+      assert_called(File.read(:_))
+    end
+
+    test_with_mock "returns error if it cannot find directory", File,
+      cwd: fn -> {:error, :no_permissions} end do
+
+      # Act
+      actual = FileSystem.list_syndicates()
+      expected = {:error, :no_permissions}
+
+      # Assert
+      assert actual == expected
+      assert_called(File.cwd())
+    end
+
+    test_with_mock "returns error if it cannot read file", File,
+      cwd: fn -> {:ok, ""} end,
+      read: fn _file_name -> {:error, :enoent} end do
+
+      # Act
+      actual = FileSystem.list_syndicates()
+      expected = {:error, :enoent}
+
+      # Assert
+      assert actual == expected
+      assert_called(File.cwd())
+      assert_called(File.read(:_))
+    end
+  end
 end

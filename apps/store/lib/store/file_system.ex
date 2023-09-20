@@ -9,6 +9,7 @@ defmodule Store.FileSystem do
 
   @orders_filename Application.compile_env!(:store, :current_orders)
   @products_filename Application.compile_env!(:store, :products)
+  @syndicates_filename Application.compile_env!(:store, :syndicates)
   @setup_filename Application.compile_env!(:store, :setup)
 
   @default_deps [
@@ -93,6 +94,16 @@ defmodule Store.FileSystem do
     case Jason.encode(%{}) do
       {:ok, data} -> write(data, @setup_filename, deps)
       error -> error
+    end
+  end
+
+  @spec list_syndicates(Type.dependencies()) :: Type.list_syndicates_response()
+  def list_syndicates([file: file] \\ @default_deps) do
+    with {:ok, directory} <- file.cwd(),
+         path <- Path.join(directory, @syndicates_filename),
+         {:ok, content} <- file.read(path),
+         {:ok, syndicates_data} <- Jason.decode(content) do
+      {:ok, Enum.map(syndicates_data, &Syndicate.new/1)}
     end
   end
 

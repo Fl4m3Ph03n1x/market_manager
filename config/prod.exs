@@ -19,7 +19,8 @@ config :web_interface, WebInterface.Endpoint,
 config :store,
   products: "products.json",
   current_orders: "current_orders.json",
-  setup: "setup.json"
+  setup: "setup.json",
+  syndicates: "syndicates.json"
 
 config :auction_house,
   api_search_url: "https://api.warframe.market/v1/items",

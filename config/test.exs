@@ -10,7 +10,8 @@ config :web_interface, WebInterface.Endpoint,
 config :store,
   products: "products.json",
   current_orders: "current_orders.json",
-  setup: "setup.json"
+  setup: "setup.json",
+  syndicates: "syndicates.json"
 
 config :auction_house,
   api_base_url: "http://localhost:8082/v1/profile/orders",

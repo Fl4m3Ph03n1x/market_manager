@@ -13,7 +13,7 @@ defmodule Store do
 
   Example:
   ```
-  alias Shared.Data.{Product, Syndicate}
+  > alias Shared.Data.{Product, Syndicate}
 
   > syndicate = Syndicate.new(name: "Red Veil", id: :red_veil)
   > Store.list_products(syndicate)
@@ -42,7 +42,7 @@ defmodule Store do
 
   Example:
   ```
-  alias Shared.Data.{PlacedOrder, Syndicate}
+  > alias Shared.Data.{PlacedOrder, Syndicate}
 
   > syndicate = Syndicate.new(name: "Red Veil", id: :red_veil)
   > Store.list_orders(syndicate)
@@ -65,7 +65,7 @@ defmodule Store do
 
   Example:
   ```
-  alias Shared.Data.{PlacedOrder, Syndicate}
+  > alias Shared.Data.{PlacedOrder, Syndicate}
 
   > Store.save_order(
     %PlacedOrder{item_name: "Exothermic", order_id: "5526aec1e779896af9418266"},
@@ -86,7 +86,7 @@ defmodule Store do
 
   Example:
   ```
-  alias Shared.Data.{PlacedOrder, Syndicate}
+  > alias Shared.Data.{PlacedOrder, Syndicate}
 
   > Store.delete_order(
     %PlacedOrder{item_name: "Exothermic", order_id: "5526aec1e779896af9418266"},
@@ -108,7 +108,7 @@ defmodule Store do
 
   Example:
   ```
-  alias Shared.Data.{Authorization, User}
+  > alias Shared.Data.{Authorization, User}
 
   > Store.save_login_data(
     %Authorization{token: "a_token", cookie: "a_cookie"},
@@ -158,4 +158,21 @@ defmodule Store do
   """
   @spec get_login_data :: Type.get_login_data_response()
   defdelegate get_login_data, to: FileSystem
+
+  @doc """
+  Returns all the syndicates currently stored. The fact a syndicate is stored does not mean it has products, nor orders.
+
+  Example:
+  ```
+  > alias Shared.Data.Syndicate
+
+  > Store.list_syndicates()
+  {:ok, [%Syndicate{name: "Red Veil", id: :red_veil}, %Syndicate{name: "New Loka", id: :new_loka}]}
+
+  > Store.list_syndicates()
+  {:error, :enoent}
+  ```
+  """
+  @spec list_syndicates :: Type.list_syndicates_response()
+  defdelegate list_syndicates, to: FileSystem
 end
