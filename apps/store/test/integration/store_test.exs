@@ -3,7 +3,7 @@ defmodule StoreTest do
 
   use ExUnit.Case
 
-  alias Shared.Data.{Authorization, PlacedOrder, Product, User}
+  alias Shared.Data.{Authorization, PlacedOrder, Product, Syndicate, User}
   alias Store
 
   ##########
@@ -95,7 +95,7 @@ defmodule StoreTest do
 
     test "returns list of available products from given syndicate" do
       # Arrange
-      syndicate = "cephalon_simaris"
+      syndicate = Syndicate.new(name: "Cephalon Simaris", id: :cephalon_simaris)
 
       # Act
       actual = Store.list_products(syndicate)
@@ -134,7 +134,7 @@ defmodule StoreTest do
 
     test "returns list of available orders from given syndicate" do
       # Arrange
-      syndicate = "cephalon_simaris"
+      syndicate = Syndicate.new(name: "Cephalon Simaris", id: :cephalon_simaris)
 
       # Act
       actual = Store.list_orders(syndicate)
@@ -166,7 +166,7 @@ defmodule StoreTest do
 
     test "returns order_id if order was saved successfully" do
       # Arrange
-      syndicate = "perrin_sequence"
+      syndicate = Syndicate.new(name: "Perrin Sequence", id: :perrin_sequence)
 
       placed_order =
         PlacedOrder.new(%{
@@ -210,7 +210,7 @@ defmodule StoreTest do
 
     test "returns :ok if order was deleted successfully" do
       # Arrange
-      syndicate = "cephalon_simaris"
+      syndicate = Syndicate.new(name: "Cephalon Simaris", id: :cephalon_simaris)
 
       placed_order =
         PlacedOrder.new(%{

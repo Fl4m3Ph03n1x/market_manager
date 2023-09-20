@@ -4,7 +4,7 @@ defmodule Store do
   This module contains the Public API for the storage app.
   """
 
-  alias Shared.Data.{Authorization, PlacedOrder, User}
+  alias Shared.Data.{Authorization, PlacedOrder, Syndicate, User}
   alias Store.FileSystem
   alias Store.Type
 
@@ -13,9 +13,10 @@ defmodule Store do
 
   Example:
   ```
-  alias Shared.Data.Product
+  alias Shared.Data.{Product, Syndicate}
 
-  > Store.list_products("red_veil")
+  > syndicate = Syndicate.new(name: "Red Veil", id: :red_veil)
+  > Store.list_products(syndicate)
   {:ok, [
     %Product{
       name: "Eternal War",
@@ -28,11 +29,12 @@ defmodule Store do
     ...
   ]}
 
-  > Store.list_products("invalid_syndicate")
+  > invalid_syndicate = Syndicate.new(name: "Bad Synd", id: :bad_syndicate)
+  > Store.list_products(invalid_syndicate)
   {:error, :syndicate_not_found}
   ```
   """
-  @spec list_products(Type.syndicate()) :: Type.list_products_response()
+  @spec list_products(Syndicate.t()) :: Type.list_products_response()
   defdelegate list_products(syndicate), to: FileSystem
 
   @doc """
@@ -40,20 +42,22 @@ defmodule Store do
 
   Example:
   ```
-  alias Shared.Data.PlacedOrder
+  alias Shared.Data.{PlacedOrder, Syndicate}
 
-  > Store.list_orders("red_veil")
+  > syndicate = Syndicate.new(name: "Red Veil", id: :red_veil)
+  > Store.list_orders(syndicate)
   {:ok, [
     %PlacedOrder{item_name: "Exothermic", order_id: "5526aec1e779896af9418266"},
     %PlacedOrder{item_name: "Tribunal", order_id: "5ea087d1c160d001303f9ed7"},
     ...
   ]}
 
-  > Store.list_orders("invalid_syndicate")
+  > invalid_syndicate = Syndicate.new(name: "Bad Synd", id: :bad_syndicate)
+  > Store.list_orders(invalid_syndicate)
   {:error, :syndicate_not_found}
   ```
   """
-  @spec list_orders(Type.syndicate()) :: Type.list_orders_response()
+  @spec list_orders(Syndicate.t()) :: Type.list_orders_response()
   defdelegate list_orders(syndicate), to: FileSystem
 
   @doc """
@@ -61,19 +65,20 @@ defmodule Store do
 
   Example:
   ```
-  alias Shared.Data.PlacedOrder
+  alias Shared.Data.{PlacedOrder, Syndicate}
 
   > Store.save_order(
     %PlacedOrder{item_name: "Exothermic", order_id: "5526aec1e779896af9418266"},
-    "red_veil"
+    Syndicate.new(name: "Red Veil", id: :red_veil)
   )
   :ok
 
-  > Store.save_order("invalid_syndicate")
+  > invalid_syndicate = Syndicate.new(name: "Bad Synd", id: :bad_syndicate)
+  > Store.save_order(invalid_syndicate)
   {:error, :enoent}
   ```
   """
-  @spec save_order(PlacedOrder.t(), Type.syndicate()) :: Type.save_order_response()
+  @spec save_order(PlacedOrder.t(), Syndicate.t()) :: Type.save_order_response()
   defdelegate save_order(placed_order, syndicate), to: FileSystem
 
   @doc """
@@ -81,17 +86,20 @@ defmodule Store do
 
   Example:
   ```
+  alias Shared.Data.{PlacedOrder, Syndicate}
+
   > Store.delete_order(
     %PlacedOrder{item_name: "Exothermic", order_id: "5526aec1e779896af9418266"},
-    "red_veil"
+    Syndicate.new(name: "Red Veil", id: :red_veil)
   )
   :ok
 
-  > Store.delete_order("invalid_syndicate")
+  > invalid_syndicate = Syndicate.new(name: "Bad Synd", id: :bad_syndicate)
+  > Store.delete_order(invalid_syndicate)
   {:error, :enoent}
   ```
   """
-  @spec delete_order(PlacedOrder.t(), Type.syndicate()) :: Type.delete_order_response()
+  @spec delete_order(PlacedOrder.t(), Syndicate.t()) :: Type.delete_order_response()
   defdelegate delete_order(placed_order, syndicate), to: FileSystem
 
   @doc """

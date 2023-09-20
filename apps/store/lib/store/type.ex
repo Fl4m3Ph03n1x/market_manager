@@ -12,7 +12,6 @@ defmodule Store.Type do
   # Types  #
   ##########
 
-  @type syndicate :: String.t()
   @type dependencies :: keyword(module)
   @type all_orders_store :: %{
           required(arbiters_of_hexis :: String.t()) => [PlacedOrder.t()],

@@ -6,7 +6,7 @@ defmodule MarketManager.Store.FileSystemTest do
   import Mock
 
   alias Jason
-  alias Shared.Data.{Authorization, PlacedOrder, Product, User}
+  alias Shared.Data.{Authorization, PlacedOrder, Product, Syndicate, User}
   alias Store.FileSystem
 
   describe "list_products/2" do
@@ -17,7 +17,7 @@ defmodule MarketManager.Store.FileSystemTest do
          "{\"red_veil\": [{\"name\": \"Gleaming Blight\",\"id\": \"54a74454e779892d5e5155d5\",\"min_price\": 14,\"default_price\": 16,\"quantity\": 1, \"rank\": 0}]}"}
       end do
       # Arrange
-      syndicate = "red_veil"
+      syndicate = Syndicate.new(name: "Red Veil", id: :red_veil)
 
       # Act
       actual = FileSystem.list_products(syndicate)
@@ -44,7 +44,7 @@ defmodule MarketManager.Store.FileSystemTest do
     test_with_mock "returns error if it cannot find directory", File,
       cwd: fn -> {:error, :no_permissions} end do
       # Arrange
-      syndicate = "new_loka"
+      syndicate = Syndicate.new(name: "New Loka", id: :new_loka)
 
       # Act
       actual = FileSystem.list_products(syndicate)
@@ -59,7 +59,7 @@ defmodule MarketManager.Store.FileSystemTest do
       cwd: fn -> {:ok, ""} end,
       read: fn _file_name -> {:error, :enoent} end do
       # Arrange
-      syndicate = "new_loka"
+      syndicate = Syndicate.new(name: "New Loka", id: :new_loka)
 
       # Act
       actual = FileSystem.list_products(syndicate)
@@ -75,7 +75,7 @@ defmodule MarketManager.Store.FileSystemTest do
       cwd: fn -> {:ok, ""} end,
       read: fn _filename -> {:ok, "{}"} end do
       # Arrange
-      syndicate = "new_loka"
+      syndicate = Syndicate.new(name: "New Loka", id: :new_loka)
 
       # Act
       actual = FileSystem.list_products(syndicate)
@@ -96,7 +96,7 @@ defmodule MarketManager.Store.FileSystemTest do
          "{\"new_loka\":[{\"item_id\":\"54e644ffe779897594fa68d2\",\"order_id\":\"5ee71a2604d55c0a5cbdc3c2\"},{\"item_id\":\"Vampire leech\",\"order_id\":\"5ee71a2604d55c0a5cbdc3e3\"}]}"}
       end do
       # Arrange
-      syndicate = "new_loka"
+      syndicate = Syndicate.new(name: "New Loka", id: :new_loka)
 
       # Act
       actual = FileSystem.list_orders(syndicate)
@@ -124,7 +124,7 @@ defmodule MarketManager.Store.FileSystemTest do
     test_with_mock "returns error if it cannot find directory", File,
       cwd: fn -> {:error, :no_permissions} end do
       # Arrange
-      syndicate = "new_loka"
+      syndicate = Syndicate.new(name: "New Loka", id: :new_loka)
 
       # Act
       actual = FileSystem.list_orders(syndicate)
@@ -139,7 +139,7 @@ defmodule MarketManager.Store.FileSystemTest do
       cwd: fn -> {:ok, ""} end,
       read: fn _file_name -> {:error, :enoent} end do
       # Arrange
-      syndicate = "new_loka"
+      syndicate = Syndicate.new(name: "New Loka", id: :new_loka)
 
       # Act
       actual = FileSystem.list_orders(syndicate)
@@ -155,7 +155,7 @@ defmodule MarketManager.Store.FileSystemTest do
       cwd: fn -> {:ok, ""} end,
       read: fn _file_name -> {:ok, "{}"} end do
       # Arrange
-      syndicate = "new_loka"
+      syndicate = Syndicate.new(name: "New Loka", id: :new_loka)
 
       # Act
       actual = FileSystem.list_orders(syndicate)
@@ -177,7 +177,7 @@ defmodule MarketManager.Store.FileSystemTest do
       end,
       write: fn _file_name, _content -> :ok end do
       # Arrange
-      syndicate = "perrin_sequence"
+      syndicate = Syndicate.new(name: "Perrin Sequence", id: :perrin_sequence)
 
       placed_order =
         PlacedOrder.new(%{
@@ -198,7 +198,7 @@ defmodule MarketManager.Store.FileSystemTest do
     test_with_mock "returns error if it fails to find directory", File,
       cwd: fn -> {:error, :no_permissions} end do
       # Arrange
-      syndicate = "perrin_sequence"
+      syndicate = Syndicate.new(name: "Perrin Sequence", id: :perrin_sequence)
 
       placed_order =
         PlacedOrder.new(%{
@@ -215,7 +215,7 @@ defmodule MarketManager.Store.FileSystemTest do
       cwd: fn -> {:ok, ""} end,
       read: fn _file_name -> {:error, :enoent} end do
       # Arrange
-      syndicate = "perrin_sequence"
+      syndicate = Syndicate.new(name: "Perrin Sequence", id: :perrin_sequence)
 
       placed_order =
         PlacedOrder.new(%{
@@ -237,7 +237,7 @@ defmodule MarketManager.Store.FileSystemTest do
       end,
       write: fn _file_name, _content -> {:error, :enoent} end do
       # Arrange
-      syndicate = "perrin_sequence"
+      syndicate = Syndicate.new(name: "Perrin Sequence", id: :perrin_sequence)
 
       placed_order =
         PlacedOrder.new(%{
@@ -262,7 +262,7 @@ defmodule MarketManager.Store.FileSystemTest do
       end,
       write: fn _file_name, _content -> :ok end do
       # Arrange
-      syndicate = "perrin_sequence"
+      syndicate = Syndicate.new(name: "Perrin Sequence", id: :perrin_sequence)
 
       placed_order =
         PlacedOrder.new(%{
@@ -280,7 +280,7 @@ defmodule MarketManager.Store.FileSystemTest do
     test_with_mock "returns error if it fails to find directory", File,
       cwd: fn -> {:error, :no_permissions} end do
       # Arrange
-      syndicate = "perrin_sequence"
+      syndicate = Syndicate.new(name: "Perrin Sequence", id: :perrin_sequence)
 
       placed_order =
         PlacedOrder.new(%{
@@ -297,7 +297,7 @@ defmodule MarketManager.Store.FileSystemTest do
       cwd: fn -> {:ok, ""} end,
       read: fn _file_name -> {:error, :enoent} end do
       # Arrange
-      syndicate = "perrin_sequence"
+      syndicate = Syndicate.new(name: "Perrin Sequence", id: :perrin_sequence)
 
       placed_order =
         PlacedOrder.new(%{
@@ -319,7 +319,7 @@ defmodule MarketManager.Store.FileSystemTest do
       end,
       write: fn _file_name, _content -> {:error, :enoent} end do
       # Arrange
-      syndicate = "perrin_sequence"
+      syndicate = Syndicate.new(name: "Perrin Sequence", id: :perrin_sequence)
 
       placed_order =
         PlacedOrder.new(%{

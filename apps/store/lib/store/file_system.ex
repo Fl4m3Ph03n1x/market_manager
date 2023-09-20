@@ -3,7 +3,7 @@ defmodule Store.FileSystem do
   Adapter for the Store port, implements it using the file system.
   """
 
-  alias Shared.Data.{Authorization, PlacedOrder, Product, User}
+  alias Shared.Data.{Authorization, PlacedOrder, Product, Syndicate, User}
   alias Shared.Utils.Tuples
   alias Store.Type
 
@@ -19,7 +19,7 @@ defmodule Store.FileSystem do
   # Public #
   ##########
 
-  @spec list_products(Type.syndicate(), Type.dependencies()) :: Type.list_products_response()
+  @spec list_products(Syndicate.t(), Type.dependencies()) :: Type.list_products_response()
   def list_products(syndicate, deps \\ @default_deps) do
     case read_syndicate_data(@products_filename, syndicate, deps) do
       {:ok, products} ->
@@ -30,7 +30,7 @@ defmodule Store.FileSystem do
     end
   end
 
-  @spec list_orders(Type.syndicate(), Type.dependencies()) :: Type.list_orders_response()
+  @spec list_orders(Syndicate.t(), Type.dependencies()) :: Type.list_orders_response()
   def list_orders(syndicate, deps \\ @default_deps) do
     case read_syndicate_data(@orders_filename, syndicate, deps) do
       {:ok, data} ->
@@ -41,7 +41,7 @@ defmodule Store.FileSystem do
     end
   end
 
-  @spec save_order(PlacedOrder.t(), Type.syndicate(), Type.dependencies()) ::
+  @spec save_order(PlacedOrder.t(), Syndicate.t(), Type.dependencies()) ::
           Type.save_order_response()
   def save_order(placed_order, syndicate, deps \\ @default_deps) do
     with {:ok, content} <- read(@orders_filename, deps),
@@ -52,7 +52,7 @@ defmodule Store.FileSystem do
     end
   end
 
-  @spec delete_order(PlacedOrder.t(), Type.syndicate(), Type.dependencies()) ::
+  @spec delete_order(PlacedOrder.t(), Syndicate.t(), Type.dependencies()) ::
           Type.delete_order_response()
   def delete_order(placed_order, syndicate, deps \\ @default_deps) do
     with {:ok, content} <- read(@orders_filename, deps),
@@ -102,7 +102,7 @@ defmodule Store.FileSystem do
 
   @spec read_syndicate_data(
           filename :: String.t(),
-          Type.syndicate(),
+          Syndicate.t(),
           Type.dependencies()
         ) ::
           {:ok, [map()]}
@@ -116,12 +116,14 @@ defmodule Store.FileSystem do
     end
   end
 
-  @spec find_syndicate(data :: map(), Type.syndicate()) ::
+  @spec find_syndicate(data :: map(), Syndicate.t()) ::
           {:ok, [map()]} | {:error, :syndicate_not_found}
-  defp find_syndicate(data, syndicate) when is_map_key(data, syndicate),
-    do: {:ok, Map.get(data, syndicate)}
-
-  defp find_syndicate(_data, _syndicate), do: {:error, :syndicate_not_found}
+  defp find_syndicate(data, syndicate) do
+    case Map.get(data, Atom.to_string(syndicate.id), nil) do
+      nil -> {:error, :syndicate_not_found}
+      data -> {:ok, data}
+    end
+  end
 
   @spec decode_orders(content :: String.t()) ::
           {:ok, Type.all_orders_store() | %{}} | {:error, Jason.DecodeError.t()}
@@ -142,22 +144,26 @@ defmodule Store.FileSystem do
     end
   end
 
-  @spec add_order(Type.all_orders_store() | %{}, PlacedOrder.t(), Type.syndicate()) ::
+  @spec add_order(Type.all_orders_store() | %{}, PlacedOrder.t(), Syndicate.t()) ::
           {:ok, Type.all_orders_store()}
   defp add_order(all_orders, placed_order, syndicate) do
-    updated_syndicate_orders = Map.get(all_orders, syndicate, []) ++ [placed_order]
-    {:ok, Map.put(all_orders, syndicate, updated_syndicate_orders)}
+    syndicate_id_str = Atom.to_string(syndicate.id)
+
+    updated_syndicate_orders = Map.get(all_orders, syndicate_id_str, []) ++ [placed_order]
+    {:ok, Map.put(all_orders, syndicate_id_str, updated_syndicate_orders)}
   end
 
-  @spec remove_order(Type.all_orders_store() | %{}, PlacedOrder.t(), Type.syndicate()) ::
+  @spec remove_order(Type.all_orders_store() | %{}, PlacedOrder.t(), Syndicate.t()) ::
           {:ok, Type.all_orders_store()}
   defp remove_order(all_orders, placed_order, syndicate) do
+    syndicate_id_str = Atom.to_string(syndicate.id)
+
     updated_syndicate_orders =
       all_orders
-      |> Map.get(syndicate)
+      |> Map.get(syndicate_id_str)
       |> List.delete(placed_order)
 
-    {:ok, Map.put(all_orders, syndicate, updated_syndicate_orders)}
+    {:ok, Map.put(all_orders, syndicate_id_str, updated_syndicate_orders)}
   end
 
   @spec valid_data?(decoded_map :: map, fields :: [String.t()]) :: boolean()
