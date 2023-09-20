@@ -7,7 +7,7 @@ defmodule Manager do
 
   alias Manager.Type
   alias Manager.Runtime.{Server, Worker}
-  alias Shared.Data.{Credentials, User}
+  alias Shared.Data.{Credentials, Strategy, Syndicate}
 
   ##########
   # Public #
@@ -44,7 +44,7 @@ defmodule Manager do
   :ok
   ```
   """
-  @spec activate(Type.syndicate(), Type.strategy()) :: :ok
+  @spec activate(Syndicate.t(), Strategy.t()) :: :ok
   defdelegate activate(syndicate, strategy), to: Worker
 
   @doc """
@@ -77,7 +77,7 @@ defmodule Manager do
   :ok
   ```
   """
-  @spec deactivate(Type.syndicate()) :: :ok
+  @spec deactivate(Syndicate.t()) :: :ok
   defdelegate deactivate(syndicate), to: Worker
 
   @doc """
@@ -110,7 +110,16 @@ defmodule Manager do
           Type.login_response()
   defdelegate login(credentials, keep_logged_in), to: Worker
 
+
+  # @spec syndicates :: {:ok, [Syndicate.t()]} | {:error, any}
+
+  # @spec strategies :: {:ok, [Syndicate.t()]} | {:error, any}
+
+
+
+
   @doc false
   @spec child_spec(any) :: Supervisor.child_spec()
   defdelegate child_spec(args), to: Server
+
 end

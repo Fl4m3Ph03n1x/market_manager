@@ -13,10 +13,9 @@ defmodule Manager.ServerTest do
 
   test "returns child_spec correctly" do
     # Act & Assert
-    assert %{
-             id: Server,
-             start: {Server, :start_link, [nil]},
-             type: :supervisor
-           } = Manager.child_spec(nil)
+    assert Manager.child_spec(nil) ==  %{
+      id: Server,
+      start: {Server, :start_link, []}
+    }
   end
 end

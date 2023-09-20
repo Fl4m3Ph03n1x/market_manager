@@ -6,14 +6,13 @@ defmodule Manager.Impl.PriceAnalyst do
   on getting more profit.
   """
 
-  alias Manager.Type
-  alias Shared.Data.{OrderInfo, Product}
+  alias Shared.Data.{OrderInfo, Product, Strategy}
 
   ##########
   # Public #
   ##########
 
-  @spec calculate_price(Product.t(), [OrderInfo.t()], Type.strategy()) ::
+  @spec calculate_price(Product.t(), [OrderInfo.t()], Strategy.t()) ::
           non_neg_integer
   def calculate_price(product, all_orders, strategy),
     do:
@@ -52,33 +51,33 @@ defmodule Manager.Impl.PriceAnalyst do
   @spec price_ascending(OrderInfo.t(), OrderInfo.t()) :: boolean
   defp price_ascending(order1, order2), do: order1.platinum < order2.platinum
 
-  @spec apply_strategy([OrderInfo.t()], Type.strategy()) :: number
+  @spec apply_strategy([OrderInfo.t()], Strategy.t()) :: number
   defp apply_strategy([], _strategy), do: 0
 
   defp apply_strategy([%OrderInfo{platinum: price}], _strategy), do: price
 
-  defp apply_strategy(orders, :top_five_average),
+  defp apply_strategy(orders, %Strategy{id: :top_five_average}),
     do:
       orders
       |> Enum.take(5)
       |> Enum.map(&platinum/1)
       |> average()
 
-  defp apply_strategy(orders, :top_three_average),
+  defp apply_strategy(orders, %Strategy{id: :top_three_average}),
     do:
       orders
       |> Enum.take(3)
       |> Enum.map(&platinum/1)
       |> average()
 
-  defp apply_strategy(orders, :equal_to_lowest),
+  defp apply_strategy(orders, %Strategy{id: :equal_to_lowest}),
     do:
       orders
       |> Enum.take(1)
       |> Enum.map(&platinum/1)
       |> List.first()
 
-  defp apply_strategy(orders, :lowest_minus_one),
+  defp apply_strategy(orders, %Strategy{id: :lowest_minus_one}),
     do:
       orders
       |> Enum.take(1)

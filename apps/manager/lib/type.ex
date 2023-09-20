@@ -7,8 +7,8 @@ defmodule Manager.Type do
   # Types  #
   ##########
 
-  @type syndicate :: String.t()
-  @type strategy :: :top_five_average | :top_three_average | :equal_to_lowest | :lowest_minus_one
+  # @type syndicate :: String.t()
+  # @type strategy :: :top_five_average | :top_three_average | :equal_to_lowest | :lowest_minus_one
   @type error_reason :: atom
   @type item_id :: String.t()
   @type handle :: (result :: any -> :ok)

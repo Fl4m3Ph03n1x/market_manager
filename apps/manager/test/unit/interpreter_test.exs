@@ -7,12 +7,16 @@ defmodule Manager.InterpreterTest do
 
   alias Helpers
   alias Manager.Impl.Interpreter
-  alias Shared.Data.{Authorization, Credentials, OrderInfo, PlacedOrder, User}
+  alias Shared.Data.{Authorization, Credentials, OrderInfo, PlacedOrder, Strategy, Syndicate, User}
 
   describe "activate/4" do
     setup do
-      syndicate = "red_veil"
-      strategy = :top_five_average
+      syndicate = Syndicate.new(name: "Red Veil", id: :red_veil)
+      strategy = Strategy.new(
+        name: "Top 5 Average",
+        id: :top_five_average,
+        description: "Gets the 5 lowest prices for the given item and calculates the average."
+      )
       id1 = "54a74454e779892d5e5155d5"
       id2 = "54a74454e779892d5e5155a0"
       product1_name = "Gleaming Blight"
@@ -509,7 +513,7 @@ defmodule Manager.InterpreterTest do
 
   describe "deactivate/3" do
     setup do
-      syndicate = "red_veil"
+      syndicate = Syndicate.new(name: "Red Veil", id: :red_veil)
 
       placed_order1 =
         PlacedOrder.new(%{
@@ -774,7 +778,7 @@ defmodule Manager.InterpreterTest do
         assert_called(Store.save_login_data(auth, user))
         assert_called(Store.get_login_data())
 
-        assert_received({:login, ^credentials, :done})
+        assert_received({:login, ^user, :done})
       end
     end
 
@@ -861,7 +865,7 @@ defmodule Manager.InterpreterTest do
         assert_not_called(Store.get_login_data())
         assert_not_called(Store.save_login_data(:_, :_))
 
-        assert_received({:login, ^credentials, :done})
+        assert_received({:login, ^user, :done})
       end
     end
 
@@ -1029,7 +1033,7 @@ defmodule Manager.InterpreterTest do
         assert_called(Store.get_login_data())
         assert_called(Store.save_login_data(auth, user))
 
-        assert_received({:login, ^credentials, :done})
+        assert_received({:login, ^user, :done})
       end
     end
 

@@ -8,7 +8,7 @@ defmodule Manager.Impl.Interpreter do
   alias AuctionHouse
   alias Manager.Impl.PriceAnalyst
   alias Manager.Type
-  alias Shared.Data.{Credentials, Order, OrderInfo, PlacedOrder, Product}
+  alias Shared.Data.{Credentials, Order, OrderInfo, PlacedOrder, Product, Strategy, Syndicate}
   alias Store
 
   @default_deps [
@@ -20,7 +20,7 @@ defmodule Manager.Impl.Interpreter do
   # Public #
   ##########
 
-  @spec activate(Type.syndicate(), Type.strategy(), Type.handle(), Type.dependencies()) :: :ok
+  @spec activate(Syndicate.t(), Strategy.t(), Type.handle(), Type.dependencies()) :: :ok
   def activate(
         syndicate,
         strategy,
@@ -45,7 +45,7 @@ defmodule Manager.Impl.Interpreter do
     handle.({:activate, syndicate, :done})
   end
 
-  @spec deactivate(Type.syndicate(), Type.handle(), Type.dependencies()) :: :ok
+  @spec deactivate(Syndicate.t(), Type.handle(), Type.dependencies()) :: :ok
   def deactivate(
         syndicate,
         handle,

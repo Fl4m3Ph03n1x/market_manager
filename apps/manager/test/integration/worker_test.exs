@@ -7,14 +7,18 @@ defmodule Manager.WorkerTest do
 
   alias Helpers
   alias Manager.Runtime.Worker
-  alias Shared.Data.{Authorization, Credentials, OrderInfo, User}
+  alias Shared.Data.{Authorization, Credentials, OrderInfo, User, Syndicate, Strategy}
 
   @timeout 500
 
   describe "activate" do
     setup do
-      syndicate = "red_veil"
-      strategy = :top_five_average
+      syndicate = Syndicate.new(name: "Red Veil", id: :red_veil)
+      strategy = Strategy.new(
+        name: "Top 5 Average",
+        id: :top_five_average,
+        description: "Gets the 5 lowest prices for the given item and calculates the average."
+      )
       product1_name = "Gleaming Blight"
       product2_name = "Eroding Blight"
       invalid_id = "some_invalid_id"
@@ -369,7 +373,7 @@ defmodule Manager.WorkerTest do
 
         :ok = Worker.login(credentials, false)
 
-        assert_receive({:login, ^credentials, :done}, @timeout)
+        assert_receive({:login, ^user, :done}, @timeout)
 
         assert_called(Store.delete_login_data())
 
