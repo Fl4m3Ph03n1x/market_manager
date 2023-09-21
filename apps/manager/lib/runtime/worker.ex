@@ -9,8 +9,7 @@ defmodule Manager.Runtime.Worker do
   use GenServer
 
   alias Manager.Impl.Interpreter
-  alias Manager.Type
-  alias Shared.Data.Credentials
+  alias Shared.Data.{Credentials, Strategy, Syndicate}
 
   @type from :: pid
   @type state :: keyword(module)
@@ -30,11 +29,11 @@ defmodule Manager.Runtime.Worker do
   def start_link(deps),
     do: GenServer.start_link(__MODULE__, deps, name: __MODULE__)
 
-  @spec activate(Type.syndicate(), Type.strategy()) :: :ok
+  @spec activate(Syndicate.t(), Strategy.t()) :: :ok
   def activate(syndicate, strategy),
     do: GenServer.cast(__MODULE__, {:activate, syndicate, strategy, self()})
 
-  @spec deactivate(Type.syndicate()) :: :ok
+  @spec deactivate(Syndicate.t()) :: :ok
   def deactivate(syndicate), do: GenServer.cast(__MODULE__, {:deactivate, syndicate, self()})
 
   @spec login(Credentials.t(), keep_logged_in :: boolean) :: :ok

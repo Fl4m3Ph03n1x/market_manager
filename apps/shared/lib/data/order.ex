@@ -7,9 +7,10 @@ defmodule Shared.Data.Order do
 
   alias __MODULE__.{RankedOrder, SimpleOrder}
 
-  @type t :: RankedOrder.ranked_order() | SimpleOrder.simple_order()
+  @type order :: RankedOrder.ranked_order() | SimpleOrder.simple_order()
+  @type t ::  SimpleOrder.t() | RankedOrder.t()
 
-  @spec new(t) :: SimpleOrder.t() | RankedOrder.t()
+  @spec new(order) :: t()
   def new(
         %{
           "item_id" => _item_id,

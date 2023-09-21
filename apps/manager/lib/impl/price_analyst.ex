@@ -12,15 +12,13 @@ defmodule Manager.Impl.PriceAnalyst do
   # Public #
   ##########
 
-  @spec calculate_price(Product.t(), [OrderInfo.t()], Strategy.t()) ::
-          non_neg_integer
+  @spec calculate_price(Product.t(), [OrderInfo.t()], Strategy.t()) :: pos_integer()
   def calculate_price(product, all_orders, strategy),
     do:
       all_orders
       |> pre_process_orders()
       |> apply_strategy(strategy)
       |> apply_boundaries(product)
-      |> round()
 
   ###########
   # Private #
@@ -51,7 +49,7 @@ defmodule Manager.Impl.PriceAnalyst do
   @spec price_ascending(OrderInfo.t(), OrderInfo.t()) :: boolean
   defp price_ascending(order1, order2), do: order1.platinum < order2.platinum
 
-  @spec apply_strategy([OrderInfo.t()], Strategy.t()) :: number
+  @spec apply_strategy([OrderInfo.t()], Strategy.t()) :: integer
   defp apply_strategy([], _strategy), do: 0
 
   defp apply_strategy([%OrderInfo{platinum: price}], _strategy), do: price
@@ -62,6 +60,7 @@ defmodule Manager.Impl.PriceAnalyst do
       |> Enum.take(5)
       |> Enum.map(&platinum/1)
       |> average()
+      |> round()
 
   defp apply_strategy(orders, %Strategy{id: :top_three_average}),
     do:
@@ -69,6 +68,7 @@ defmodule Manager.Impl.PriceAnalyst do
       |> Enum.take(3)
       |> Enum.map(&platinum/1)
       |> average()
+      |> round()
 
   defp apply_strategy(orders, %Strategy{id: :equal_to_lowest}),
     do:
@@ -93,8 +93,8 @@ defmodule Manager.Impl.PriceAnalyst do
   @spec average([number]) :: number
   defp average(prices), do: Enum.sum(prices) / length(prices)
 
-  @spec apply_boundaries(non_neg_integer, Product.t()) :: non_neg_integer
+  @spec apply_boundaries(integer, Product.t()) :: pos_integer
   defp apply_boundaries(price, %Product{default_price: default}) when price == 0, do: default
   defp apply_boundaries(price, %Product{min_price: min}) when price < min, do: min
-  defp apply_boundaries(price, _product), do: price
+  defp apply_boundaries(price, _product) when price > 0, do: price
 end

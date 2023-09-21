@@ -8,7 +8,7 @@ defmodule Manager.Impl.Interpreter do
   alias AuctionHouse
   alias Manager.Impl.PriceAnalyst
   alias Manager.Type
-  alias Shared.Data.{Credentials, Order, OrderInfo, PlacedOrder, Product, Strategy, Syndicate}
+  alias Shared.Data.{Credentials, Order, OrderInfo, PlacedOrder, Product, Strategy, Syndicate, User}
   alias Store
 
   @default_deps [
@@ -113,8 +113,8 @@ defmodule Manager.Impl.Interpreter do
 
   @spec create_order(
           Product.t(),
-          Type.syndicate(),
-          Type.strategy(),
+          Syndicate.t(),
+          Strategy.t(),
           [PlacedOrder.t()],
           Type.dependencies()
         ) ::
@@ -142,8 +142,7 @@ defmodule Manager.Impl.Interpreter do
     end
   end
 
-  @spec calculate_product_price(Product.t(), Type.strategy(), deps :: module) ::
-          Product.t()
+  @spec calculate_product_price(Product.t(), Strategy.t(), deps :: module) :: pos_integer()
   defp calculate_product_price(product, strategy, auction_house_api),
     do:
       product.name
@@ -152,9 +151,9 @@ defmodule Manager.Impl.Interpreter do
 
   @spec calculate_price(
           {:ok, [OrderInfo.t()]} | {:error, any, product_name :: String.t()},
-          Type.strategy(),
+          Strategy.t(),
           Product.t()
-        ) :: non_neg_integer
+        ) :: pos_integer()
   defp calculate_price({:ok, all_orders}, strategy, product),
     do: PriceAnalyst.calculate_price(product, all_orders, strategy)
 
@@ -180,7 +179,7 @@ defmodule Manager.Impl.Interpreter do
         "mod_rank" => product.rank
       })
 
-  @spec delete_order(PlacedOrder.t(), Type.syndicate(), Type.dependencies()) ::
+  @spec delete_order(PlacedOrder.t(), Syndicate.t(), Type.dependencies()) ::
           {:ok, PlacedOrder.t()} | {:error, atom, PlacedOrder.t()}
   defp delete_order(placed_order, syndicate, store: store, auction_house: auction_house) do
     with :ok <- auction_house.delete_order(placed_order),
@@ -210,7 +209,7 @@ defmodule Manager.Impl.Interpreter do
   end
 
   @spec manual_login(Credentials.t(), keep_logged_in :: boolean, Type.dependencies()) ::
-          :ok | {:error, any}
+          {:ok, User.t()} | {:error, any}
   defp manual_login(credentials, keep_logged_in,
          store: store,
          auction_house: auction_house

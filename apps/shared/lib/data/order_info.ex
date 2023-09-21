@@ -13,7 +13,7 @@ defmodule Shared.Data.OrderInfo do
           (visible :: String.t()) => boolean(),
           (order_type :: String.t()) => String.t(),
           (platform :: String.t()) => String.t(),
-          (platinum :: String.t()) => non_neg_integer(),
+          (platinum :: String.t()) => pos_integer(),
           (user :: String.t()) => __MODULE__.User.user()
         }
 
@@ -23,7 +23,7 @@ defmodule Shared.Data.OrderInfo do
     field(:visible, boolean())
     field(:order_type, String.t())
     field(:platform, String.t())
-    field(:platinum, non_neg_integer())
+    field(:platinum, pos_integer())
     field(:user, __MODULE__.User.t())
   end
 
@@ -38,7 +38,7 @@ defmodule Shared.Data.OrderInfo do
         } = order_info
       )
       when is_boolean(visible) and is_binary(order_type) and is_binary(platform) and
-             is_non_neg_integer(platinum) and is_map(user) do
+             is_pos_integer(platinum) and is_map(user) do
     order_info = Structs.string_map_to_struct(order_info, __MODULE__)
     user = Structs.string_map_to_struct(order_info.user, __MODULE__.User)
     Map.put(order_info, :user, user)
