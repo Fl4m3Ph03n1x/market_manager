@@ -50,5 +50,7 @@ And then in your `config/config.exs` (or equivalent):
 config :store,
   products: "path_to_products.json",
   current_orders: "path_to_current_orders.json",
-  setup: "path_to_setup.json"
+  setup: "path_to_setup.json",
+  syndicates: "path_to_syndicates.json"
 ```
+

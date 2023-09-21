@@ -13,15 +13,7 @@ defmodule Store.Type do
   ##########
 
   @type dependencies :: keyword(module)
-  @type all_orders_store :: %{
-          required(arbiters_of_hexis :: String.t()) => [PlacedOrder.t()],
-          required(cephalon_simaris :: String.t()) => [PlacedOrder.t()],
-          required(cephalon_suda :: String.t()) => [PlacedOrder.t()],
-          required(new_loka :: String.t()) => [PlacedOrder.t()],
-          required(perrin_sequence :: String.t()) => [PlacedOrder.t()],
-          required(red_veil :: String.t()) => [PlacedOrder.t()],
-          required(steel_meridian :: String.t()) => [PlacedOrder.t()]
-        }
+  @type all_orders_store :: %{String.t() => [PlacedOrder.t()]}
 
   #############
   # Responses #
@@ -40,5 +32,5 @@ defmodule Store.Type do
           | {:error, :file.posix() | Jason.DecodeError.t() | :syndicate_not_found}
   @type save_order_response :: :ok | {:error, :file.posix() | Jason.DecodeError.t() | Jason.EncodeError.t()}
   @type delete_order_response :: :ok | {:error, :file.posix() | Jason.DecodeError.t() | Jason.EncodeError.t()}
-  @type list_products_response :: {:ok, [Syndicate.t()]} | {:error, :file.posix() | Jason.DecodeError.t()}
+  @type list_syndicates_response :: {:ok, [Syndicate.t()]} | {:error, :file.posix() | Jason.DecodeError.t()}
 end

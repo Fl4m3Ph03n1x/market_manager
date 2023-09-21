@@ -12,6 +12,7 @@ defmodule StoreTest do
 
   @products_file Application.compile_env!(:store, :products)
   @current_orders_file Application.compile_env!(:store, :current_orders)
+  @syndicates_file Application.compile_env!(:store, :syndicates)
   @setup_file Application.compile_env!(:store, :setup)
 
   defp create_products_file do
@@ -82,6 +83,18 @@ defmodule StoreTest do
   end
 
   defp delete_setup_file, do: File.rm!(@setup_file)
+
+  defp create_syndicates_file do
+    content =
+      Jason.encode!([
+        Syndicate.new(name: "Red Veil", id: :red_veil),
+        Syndicate.new(name: "New Loka", id: :new_loka)
+      ])
+
+    File.write(@syndicates_file, content)
+  end
+
+  defp delete_syndicates_file, do: File.rm!(@syndicates_file)
 
   ##########
   # Tests  #
@@ -289,6 +302,28 @@ defmodule StoreTest do
 
       # Act & Assert
       assert Store.get_login_data() == {:ok, {auth, user}}
+    end
+  end
+
+  describe "list_syndicates/0" do
+    setup do
+      create_syndicates_file()
+      on_exit(&delete_syndicates_file/0)
+    end
+
+    test "returns list of all syndicates" do
+      # Act
+      actual = Store.list_syndicates()
+
+      expected =
+        {:ok,
+         [
+           Syndicate.new(name: "Red Veil", id: :red_veil),
+           Syndicate.new(name: "New Loka", id: :new_loka),
+         ]}
+
+      # Assert
+      assert actual == expected
     end
   end
 end
