@@ -13,7 +13,7 @@ defmodule WebInterface.Application do
   alias WebInterface.Persistence
   alias WebInterface.Persistence.Syndicate, as: SyndicateStore
 
-  alias Shared.Data.{Strategy, Syndicate}
+  alias Shared.Data.Strategy
 
   @landing_page "/login"
 
@@ -40,17 +40,6 @@ defmodule WebInterface.Application do
     )
   ]
 
-  @syndicates [
-    Syndicate.new(name: "Red Veil", id: :red_veil),
-    Syndicate.new(name: "Perrin Sequence", id: :perrin_sequence),
-    Syndicate.new(name: "New Loka", id: :new_loka),
-    Syndicate.new(name: "Arbiters of Hexis", id: :arbiters_of_hexis),
-    Syndicate.new(name: "Steel Meridian", id: :steel_meridian),
-    Syndicate.new(name: "Cephalon Suda", id: :cephalon_suda),
-    Syndicate.new(name: "Cephalon Simaris", id: :cephalon_simaris),
-    Syndicate.new(name: "Arbitrations", id: :arbitrations)
-  ]
-
   @impl true
   def start(_type, _args) do
     children = [
@@ -73,12 +62,14 @@ defmodule WebInterface.Application do
         shutdown: 5_000
       }
     ]
-
-    :ok = Persistence.init(@strategies, @syndicates)
-    :ok = SyndicateStore.set_selected_inactive_syndicates(@syndicates)
-
     opts = [strategy: :one_for_one, name: WebInterface.Supervisor]
-    Supervisor.start_link(children, opts)
+
+    with  {:ok, _pid} = link <- Supervisor.start_link(children, opts),
+          {:ok, syndicates} <- Manager.syndicates(),
+          :ok <- Persistence.init(@strategies, syndicates),
+          :ok <- SyndicateStore.set_selected_inactive_syndicates(syndicates) do
+            link
+    end
   end
 
   # Tell Phoenix to update the endpoint configuration
