@@ -381,4 +381,34 @@ defmodule Manager.WorkerTest do
       end
     end
   end
+
+  describe "syndicates" do
+    setup do
+      %{
+        syndicates: [
+          Syndicate.new(name: "Red Veil", id: :red_veil),
+          Syndicate.new(name: "New Loka", id: :new_loka)
+        ]
+      }
+    end
+
+    # Login the user and delete authorization info in storage
+    test "returns known syndicates", %{syndicates: syndicates} do
+      with_mocks([
+        {
+          Store,
+          [],
+          [
+            list_syndicates: fn -> {:ok, syndicates} end
+          ]
+        }
+      ]) do
+        # If the process is not started, start it now
+        start_supervised(Worker)
+
+        assert Worker.syndicates() == {:ok, syndicates}
+        assert_called(Store.list_syndicates())
+      end
+    end
+  end
 end

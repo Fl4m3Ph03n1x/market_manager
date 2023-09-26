@@ -36,9 +36,12 @@ defmodule Manager.Runtime.Worker do
   @spec deactivate(Syndicate.t()) :: :ok
   def deactivate(syndicate), do: GenServer.cast(__MODULE__, {:deactivate, syndicate, self()})
 
-  @spec login(Credentials.t(), keep_logged_in :: boolean) :: :ok
+  @spec login(Credentials.t(), keep_logged_in :: boolean) :: Type.login_response()
   def login(credentials, keep_logged_in),
     do: GenServer.cast(__MODULE__, {:login, {credentials, keep_logged_in}, self()})
+
+  @spec syndicates :: Type.syndicates_response()
+  def syndicates, do: GenServer.call(__MODULE__, :syndicates)
 
   ##############
   # Callbacks  #
@@ -75,5 +78,11 @@ defmodule Manager.Runtime.Worker do
     end)
 
     {:noreply, deps}
+  end
+
+  @impl GenServer
+  @spec handle_call(request :: any, from, state) :: {:reply, response :: any, state}
+  def handle_call(:syndicates, _from, [interpreter: interpreter] = deps) do
+    {:reply, interpreter.syndicates(), deps}
   end
 end

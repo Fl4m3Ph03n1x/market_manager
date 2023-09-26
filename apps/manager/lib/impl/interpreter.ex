@@ -107,6 +107,9 @@ defmodule Manager.Impl.Interpreter do
     end
   end
 
+  @spec syndicates(Type.dependencies()) :: Type.syndicates_response()
+  def syndicates([store: store, auction_house: _auction_house] \\ @default_deps), do: store.list_syndicates()
+
   ###########
   # Private #
   ###########

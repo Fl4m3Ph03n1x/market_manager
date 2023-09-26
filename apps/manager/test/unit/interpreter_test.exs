@@ -1114,4 +1114,44 @@ defmodule Manager.InterpreterTest do
       end
     end
   end
+
+  describe "syndicates/1" do
+    setup do
+      %{
+        syndicates: [
+          Syndicate.new(name: "Red Veil", id: :red_veil),
+          Syndicate.new(name: "New Loka", id: :new_loka)
+        ]
+      }
+    end
+
+    test "returns the list of known syndicates", %{syndicates: syndicates} do
+      with_mocks([
+        {Store, [], [list_syndicates: fn() -> {:ok, syndicates} end]}
+      ]) do
+       # Act
+       actual = Interpreter.syndicates()
+       expected = {:ok, syndicates}
+
+       # Assert
+       assert actual == expected
+       assert_called Store.list_syndicates()
+      end
+    end
+
+    test "returns error if it cannot return syndicate list" do
+      with_mocks([
+        {Store, [], [list_syndicates: fn() -> {:error, :enoent} end]}
+      ]) do
+       # Act
+       actual = Interpreter.syndicates()
+       expected = {:error, :enoent}
+
+       # Assert
+       assert actual == expected
+       assert_called Store.list_syndicates()
+      end
+    end
+
+  end
 end

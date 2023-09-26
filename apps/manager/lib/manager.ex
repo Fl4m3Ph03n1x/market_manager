@@ -110,13 +110,25 @@ defmodule Manager do
           Type.login_response()
   defdelegate login(credentials, keep_logged_in), to: Worker
 
+  @doc """
+  Returns the list of known syndicates, or an error if it fails.
+  This is a synchronous call.
 
-  # @spec syndicates :: {:ok, [Syndicate.t()]} | {:error, any}
+  Example:
+  ```
+  alias Shared.Data.Syndicate
+
+  > MarketManager.syndicates()
+  {:ok, [%Syndicate{name: "Red Veil", id: :red_veil}]}
+
+  > MarketManager.syndicates()
+  {:error, :enoent}
+  ```
+  """
+  @spec syndicates :: Type.syndicates_response()
+  defdelegate syndicates, to: Worker
 
   # @spec strategies :: {:ok, [Syndicate.t()]} | {:error, any}
-
-
-
 
   @doc false
   @spec child_spec(any) :: Supervisor.child_spec()

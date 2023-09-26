@@ -3,12 +3,12 @@ defmodule Manager.Type do
   Holds the types for the Manager library.
   """
 
+  alias Shared.Data.Syndicate
+
   ##########
   # Types  #
   ##########
 
-  # @type syndicate :: String.t()
-  # @type strategy :: :top_five_average | :top_three_average | :equal_to_lowest | :lowest_minus_one
   @type error_reason :: atom
   @type item_id :: String.t()
   @type handle :: (result :: any -> :ok)
@@ -21,4 +21,5 @@ defmodule Manager.Type do
   @type activate_response :: :ok
   @type deactivate_response :: :ok
   @type login_response :: :ok
+  @type syndicates_response :: {:ok, [Syndicate.t()]} | {:error, any}
 end
