@@ -4,7 +4,6 @@ defmodule WebInterface.Persistence.Button do
   """
 
   alias ETS
-  alias Shared.Data.User
   alias WebInterface.Persistence
 
   @spec set_button(atom) :: :ok | {:error, any}
