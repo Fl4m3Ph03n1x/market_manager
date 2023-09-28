@@ -7,7 +7,7 @@ defmodule Manager.WorkerTest do
 
   alias Helpers
   alias Manager.Runtime.Worker
-  alias Shared.Data.{Authorization, Credentials, OrderInfo, User, Syndicate, Strategy}
+  alias Shared.Data.{Authorization, Credentials, OrderInfo, Strategy, Syndicate, User}
 
   @timeout 500
 
@@ -392,7 +392,6 @@ defmodule Manager.WorkerTest do
       }
     end
 
-    # Login the user and delete authorization info in storage
     test "returns known syndicates", %{syndicates: syndicates} do
       with_mocks([
         {
@@ -409,6 +408,39 @@ defmodule Manager.WorkerTest do
         assert Worker.syndicates() == {:ok, syndicates}
         assert_called(Store.list_syndicates())
       end
+    end
+  end
+
+  describe "strategies" do
+    test "returns the strategies" do
+      # Arrange
+      # If the process is not started, start it now
+      start_supervised(Worker)
+      expected_strategies = [
+        %Strategy{
+          description: "Gets the 3 lowest prices for the given item and calculates the average.",
+          id: :top_three_average,
+          name: "Top 3 Average"
+        },
+        %Strategy{
+          description: "Gets the 5 lowest prices for the given item and calculates the average.",
+          id: :top_five_average,
+          name: "Top 5 Average"
+        },
+        %Strategy{
+          description: "Gets the lowest price for the given item and beats it by 1.",
+          id: :lowest_minus_one,
+          name: "Lowest minus one"
+        },
+        %Strategy{
+          description: "Gets the lowest price for the given item and uses it.",
+          id: :equal_to_lowest,
+          name: "Equal to lowest"
+        }
+      ]
+
+      # Act and Assert
+      assert Worker.strategies() == {:ok, expected_strategies}
     end
   end
 end

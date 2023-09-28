@@ -1152,6 +1152,40 @@ defmodule Manager.InterpreterTest do
        assert_called Store.list_syndicates()
       end
     end
+  end
 
+  describe "strategies/0" do
+    test "returns the list of available strategies" do
+      # Arrange
+      expected_strategies = [
+        %Strategy{
+          description: "Gets the 3 lowest prices for the given item and calculates the average.",
+          id: :top_three_average,
+          name: "Top 3 Average"
+        },
+        %Strategy{
+          description: "Gets the 5 lowest prices for the given item and calculates the average.",
+          id: :top_five_average,
+          name: "Top 5 Average"
+        },
+        %Strategy{
+          description: "Gets the lowest price for the given item and beats it by 1.",
+          id: :lowest_minus_one,
+          name: "Lowest minus one"
+        },
+        %Strategy{
+          description: "Gets the lowest price for the given item and uses it.",
+          id: :equal_to_lowest,
+          name: "Equal to lowest"
+        }
+      ]
+
+      # Act
+      actual = Interpreter.strategies()
+      expected = {:ok, expected_strategies}
+
+      # Assert
+      assert actual == expected
+    end
   end
 end

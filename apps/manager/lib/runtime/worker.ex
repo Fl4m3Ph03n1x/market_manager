@@ -9,6 +9,7 @@ defmodule Manager.Runtime.Worker do
   use GenServer
 
   alias Manager.Impl.Interpreter
+  alias Manager.Type
   alias Shared.Data.{Credentials, Strategy, Syndicate}
 
   @type from :: pid
@@ -42,6 +43,9 @@ defmodule Manager.Runtime.Worker do
 
   @spec syndicates :: Type.syndicates_response()
   def syndicates, do: GenServer.call(__MODULE__, :syndicates)
+
+  @spec strategies :: Type.strategies_response()
+  def strategies, do: GenServer.call(__MODULE__, :strategies)
 
   ##############
   # Callbacks  #
@@ -84,5 +88,9 @@ defmodule Manager.Runtime.Worker do
   @spec handle_call(request :: any, from, state) :: {:reply, response :: any, state}
   def handle_call(:syndicates, _from, [interpreter: interpreter] = deps) do
     {:reply, interpreter.syndicates(), deps}
+  end
+
+  def handle_call(:strategies, _from, [interpreter: interpreter] = deps) do
+    {:reply, interpreter.strategies(), deps}
   end
 end

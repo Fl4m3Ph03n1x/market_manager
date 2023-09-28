@@ -3,7 +3,7 @@ defmodule Manager.Type do
   Holds the types for the Manager library.
   """
 
-  alias Shared.Data.Syndicate
+  alias Shared.Data.{Strategy, Syndicate}
 
   ##########
   # Types  #
@@ -22,4 +22,5 @@ defmodule Manager.Type do
   @type deactivate_response :: :ok
   @type login_response :: :ok
   @type syndicates_response :: {:ok, [Syndicate.t()]} | {:error, any}
+  @type strategies_response :: {:ok, [Strategy.t()]} | {:error, any}
 end

@@ -40,7 +40,7 @@ defmodule Manager do
 
   Example:
   ```
-  > MarketManager.activate("cephalon_simaris", :lowest_minus_one)
+  > Manager.activate("cephalon_simaris", :lowest_minus_one)
   :ok
   ```
   """
@@ -73,7 +73,7 @@ defmodule Manager do
 
   Example:
   ```
-  > MarketManager.deactivate("cephalon_simaris")
+  > Manager.deactivate("cephalon_simaris")
   :ok
   ```
   """
@@ -102,7 +102,7 @@ defmodule Manager do
 
   credentials = Credentials.new("username", "password")
 
-  > MarketManager.login(credentials, false)
+  > Manager.login(credentials, false)
   :ok
   ```
   """
@@ -121,14 +121,41 @@ defmodule Manager do
   > MarketManager.syndicates()
   {:ok, [%Syndicate{name: "Red Veil", id: :red_veil}]}
 
-  > MarketManager.syndicates()
+  > Manager.syndicates()
   {:error, :enoent}
   ```
   """
   @spec syndicates :: Type.syndicates_response()
   defdelegate syndicates, to: Worker
 
-  # @spec strategies :: {:ok, [Syndicate.t()]} | {:error, any}
+  @doc """
+  Returns the list of available strategies, or an error if it fails.
+  This is a synchronous call.
+
+  Example:
+  ```
+  alias Shared.Data.Strategy
+
+  > Manager.strategies()
+  {:ok, [
+    %Strategy{
+      name: "Top 3 Average",
+      id: :top_three_average,
+      description: "Gets the 3 lowest prices for the given item and calculates the average."
+    },
+    %Strategy{
+      name: "Top 5 Average",
+      id: :top_five_average,
+      description: "Gets the 5 lowest prices for the given item and calculates the average."
+    }
+  ]}
+
+  > Manager.strategies()
+  {:error, :reason}
+  ```
+  """
+  @spec strategies :: {:ok, [Strategy.t()]} | {:error, any}
+  defdelegate strategies, to: Worker
 
   @doc false
   @spec child_spec(any) :: Supervisor.child_spec()

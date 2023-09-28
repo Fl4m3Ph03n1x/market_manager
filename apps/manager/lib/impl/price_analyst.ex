@@ -1,12 +1,16 @@
 defmodule Manager.Impl.PriceAnalyst do
   @moduledoc """
-  Contains the formulas and calculations for all the strategies.
   Strategies calculate the optimum price for you to sell an item.
+
   There are several strategies, some focus more on selling fast, while others
   on getting more profit.
+
+  The strategy to use is selected at runtime. See the Manager.Impl.Strategy for more information on this.
   """
 
+  alias Manager.Impl.Strategy, as: StrategyInterface
   alias Shared.Data.{OrderInfo, Product, Strategy}
+  alias Shared.Utils.Tuples
 
   ##########
   # Public #
@@ -19,6 +23,20 @@ defmodule Manager.Impl.PriceAnalyst do
       |> pre_process_orders()
       |> apply_strategy(strategy)
       |> apply_boundaries(product)
+
+  @spec list_strategies :: {:ok, [Strategy.t]} | {:error, any}
+  def list_strategies do
+    case :application.get_key(:manager, :modules) do
+      {:ok, modules} ->
+        modules
+        |> Enum.filter(fn module -> (module.module_info(:attributes)[:behaviour] || []) |> Enum.member?(StrategyInterface) end)
+        |> Enum.map(&(&1.info/0))
+        |> Enum.sort()
+        |> Tuples.to_tagged_tuple()
+
+      error -> {:error, error}
+    end
+  end
 
   ###########
   # Private #
@@ -49,51 +67,17 @@ defmodule Manager.Impl.PriceAnalyst do
   @spec price_ascending(OrderInfo.t(), OrderInfo.t()) :: boolean
   defp price_ascending(order1, order2), do: order1.platinum < order2.platinum
 
-  @spec apply_strategy([OrderInfo.t()], Strategy.t()) :: integer
+  @spec apply_strategy([OrderInfo.t()], Strategy.t()) :: non_neg_integer()
   defp apply_strategy([], _strategy), do: 0
 
   defp apply_strategy([%OrderInfo{platinum: price}], _strategy), do: price
 
-  defp apply_strategy(orders, %Strategy{id: :top_five_average}),
-    do:
-      orders
-      |> Enum.take(5)
-      |> Enum.map(&platinum/1)
-      |> average()
-      |> round()
+  defp apply_strategy(order_info_from_auction, %Strategy{id: id}) do
+    module = StrategyInterface.id_to_module(id)
+    module.calculate_price(order_info_from_auction)
+  end
 
-  defp apply_strategy(orders, %Strategy{id: :top_three_average}),
-    do:
-      orders
-      |> Enum.take(3)
-      |> Enum.map(&platinum/1)
-      |> average()
-      |> round()
-
-  defp apply_strategy(orders, %Strategy{id: :equal_to_lowest}),
-    do:
-      orders
-      |> Enum.take(1)
-      |> Enum.map(&platinum/1)
-      |> List.first()
-
-  defp apply_strategy(orders, %Strategy{id: :lowest_minus_one}),
-    do:
-      orders
-      |> Enum.take(1)
-      |> Enum.map(&platinum_minus_one/1)
-      |> List.first()
-
-  @spec platinum(OrderInfo.t()) :: non_neg_integer
-  defp platinum(order), do: order.platinum
-
-  @spec platinum_minus_one(OrderInfo.t()) :: integer
-  defp platinum_minus_one(order), do: order.platinum - 1
-
-  @spec average([number]) :: number
-  defp average(prices), do: Enum.sum(prices) / length(prices)
-
-  @spec apply_boundaries(integer, Product.t()) :: pos_integer
+  @spec apply_boundaries(non_neg_integer(), Product.t()) :: pos_integer()
   defp apply_boundaries(price, %Product{default_price: default}) when price == 0, do: default
   defp apply_boundaries(price, %Product{min_price: min}) when price < min, do: min
   defp apply_boundaries(price, _product) when price > 0, do: price
