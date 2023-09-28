@@ -13,32 +13,7 @@ defmodule WebInterface.Application do
   alias WebInterface.Persistence
   alias WebInterface.Persistence.Syndicate, as: SyndicateStore
 
-  alias Shared.Data.Strategy
-
   @landing_page "/login"
-
-  @strategies [
-    Strategy.new(
-      name: "Top 3 Average",
-      id: :top_three_average,
-      description: "Gets the 3 lowest prices for the given item and calculates the average."
-    ),
-    Strategy.new(
-      name: "Top 5 Average",
-      id: :top_five_average,
-      description: "Gets the 5 lowest prices for the given item and calculates the average."
-    ),
-    Strategy.new(
-      name: "Equal to lowest",
-      id: :equal_to_lowest,
-      description: "Gets the lowest price for the given item and uses it."
-    ),
-    Strategy.new(
-      name: "Lowest minus one",
-      id: :lowest_minus_one,
-      description: "Gets the lowest price for the given item and beats it by 1."
-    )
-  ]
 
   @impl true
   def start(_type, _args) do
@@ -66,7 +41,8 @@ defmodule WebInterface.Application do
 
     with  {:ok, _pid} = link <- Supervisor.start_link(children, opts),
           {:ok, syndicates} <- Manager.syndicates(),
-          :ok <- Persistence.init(@strategies, syndicates),
+          {:ok, strategies} <- Manager.strategies(),
+          :ok <- Persistence.init(strategies, syndicates),
           :ok <- SyndicateStore.set_selected_inactive_syndicates(syndicates) do
             link
     end
