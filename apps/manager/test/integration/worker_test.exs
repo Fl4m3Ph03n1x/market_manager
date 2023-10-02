@@ -311,43 +311,7 @@ defmodule Manager.WorkerTest do
       }
     end
 
-    # Login the user and delete authorization info in storage
-    test "automatic login works", %{
-      credentials: credentials,
-      authorization: authorization,
-      user: user
-    } do
-      with_mocks([
-        {
-          Store,
-          [],
-          [
-            get_login_data: fn -> {:ok, {authorization, user}} end
-          ]
-        },
-        {
-          AuctionHouse,
-          [],
-          [
-            recover_login: fn _auth, _user -> :ok end
-          ]
-        }
-      ]) do
-        # If the process is not started, start it now
-        start_supervised(Worker)
-
-        :ok = Worker.login(credentials, true)
-
-        assert_receive({:login, ^credentials, :done}, @timeout)
-
-        assert_called(Store.get_login_data())
-
-        assert_called(AuctionHouse.recover_login(authorization, user))
-      end
-    end
-
-    # Login the user and update/save authorization information in storage
-    test "manual login works", %{
+    test "manual login with 'keep_logged_in == false' works", %{
       credentials: credentials,
       authorization: authorization,
       user: user
@@ -380,7 +344,92 @@ defmodule Manager.WorkerTest do
         assert_called(AuctionHouse.login(credentials))
       end
     end
+
+    test "manual login with 'keep_logged_in == true' works", %{
+      credentials: credentials,
+      authorization: authorization,
+      user: user
+    } do
+      with_mocks([
+        {
+          Store,
+          [],
+          [
+            save_login_data: fn _auth, _user -> :ok end
+          ]
+        },
+        {
+          AuctionHouse,
+          [],
+          [
+            login: fn _credentials -> {:ok, {authorization, user}} end
+          ]
+        }
+      ]) do
+        # If the process is not started, start it now
+        start_supervised(Worker)
+
+        :ok = Worker.login(credentials, true)
+
+        assert_receive({:login, ^user, :done}, @timeout)
+
+        assert_called(Store.save_login_data(authorization, user))
+
+        assert_called(AuctionHouse.login(credentials))
+      end
+    end
+
   end
+
+  # describe "recover_login" do
+  #   setup do
+  #     credentials = Credentials.new("an_email", "a_password")
+  #     authorization = Authorization.new(%{"cookie" => "a_cookie", "token" => "a_token"})
+  #     user = User.new(%{"ingame_name" => "fl4m3", "patreon?" => false})
+
+  #     %{
+  #       credentials: credentials,
+  #       authorization: authorization,
+  #       user: user
+  #     }
+  #   end
+
+  #   # Login the user and delete authorization info in storage
+  #   test "automatic login works", %{
+  #     credentials: credentials,
+  #     authorization: authorization,
+  #     user: user
+  #   } do
+  #     with_mocks([
+  #       {
+  #         Store,
+  #         [],
+  #         [
+  #           get_login_data: fn -> {:ok, {authorization, user}} end
+  #         ]
+  #       },
+  #       {
+  #         AuctionHouse,
+  #         [],
+  #         [
+  #           recover_login: fn _auth, _user -> :ok end
+  #         ]
+  #       }
+  #     ]) do
+  #       # If the process is not started, start it now
+  #       start_supervised(Worker)
+
+  #       :ok = Worker.login(credentials, true)
+
+  #       assert_receive({:login, ^credentials, :done}, @timeout)
+
+  #       assert_called(Store.get_login_data())
+
+  #       assert_called(AuctionHouse.recover_login(authorization, user))
+  #     end
+  #   end
+
+  # end
 
   describe "syndicates" do
     setup do

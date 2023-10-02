@@ -41,6 +41,9 @@ defmodule Manager.Runtime.Worker do
   def login(credentials, keep_logged_in),
     do: GenServer.cast(__MODULE__, {:login, {credentials, keep_logged_in}, self()})
 
+  @spec recover_login :: Type.recover_login_response()
+  def recover_login, do: GenServer.call(__MODULE__, :recover_login)
+
   @spec syndicates :: Type.syndicates_response()
   def syndicates, do: GenServer.call(__MODULE__, :syndicates)
 
@@ -92,5 +95,9 @@ defmodule Manager.Runtime.Worker do
 
   def handle_call(:strategies, _from, [interpreter: interpreter] = deps) do
     {:reply, interpreter.strategies(), deps}
+  end
+
+  def handle_call(:recover_login, _from, [interpreter: interpreter] = deps) do
+    {:reply, interpreter.recover_login(), deps}
   end
 end

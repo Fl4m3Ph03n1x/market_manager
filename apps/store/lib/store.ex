@@ -146,6 +146,8 @@ defmodule Store do
 
   Example:
   ```
+  > alias Shared.Data.{Authorization, User}
+
   > Store.get_login_data()
   {:ok, {
     %Authorization{token: "a_token", cookie: "a_cookie"},

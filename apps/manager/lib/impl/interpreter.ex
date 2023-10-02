@@ -20,7 +20,7 @@ defmodule Manager.Impl.Interpreter do
   # Public #
   ##########
 
-  @spec activate(Syndicate.t(), Strategy.t(), Type.handle(), Type.dependencies()) :: :ok
+  @spec activate(Syndicate.t(), Strategy.t(), Type.handle(), Type.dependencies()) :: Type.activate_response()
   def activate(
         syndicate,
         strategy,
@@ -45,7 +45,7 @@ defmodule Manager.Impl.Interpreter do
     handle.({:activate, syndicate, :done})
   end
 
-  @spec deactivate(Syndicate.t(), Type.handle(), Type.dependencies()) :: :ok
+  @spec deactivate(Syndicate.t(), Type.handle(), Type.dependencies()) :: Type.deactivate_response()
   def deactivate(
         syndicate,
         handle,
@@ -68,42 +68,26 @@ defmodule Manager.Impl.Interpreter do
     handle.({:deactivate, syndicate, :done})
   end
 
-  @spec login(Credentials.t(), keep_logged_in :: boolean, Type.handle(), Type.dependencies()) ::
-          :ok
-  def login(credentials, keep_logged_in, handle, deps \\ @default_deps)
-
-  def login(
-        credentials,
-        true,
-        handle,
-        deps
-      ) do
-    # if we have past login, we simply update the auction_house
-    case automatic_login(deps) do
-      :ok ->
-        handle.({:login, credentials, :done})
-
-      # if we do not have past login, we need to fetch it manually
-      {:ok, nil} ->
-        case manual_login(credentials, true, deps) do
-          {:ok, user} -> handle.({:login, user, :done})
-          error -> handle.({:login, credentials, error})
-        end
-
-      error ->
-        handle.({:login, credentials, error})
-    end
+  @spec login(Credentials.t(), keep_logged_in :: boolean, Type.handle(), Type.dependencies()) :: Type.login_response()
+  def login(credentials, keep_logged_in, handle, deps \\ @default_deps) do
+      case manual_login(credentials, keep_logged_in, deps) do
+        {:ok, user} -> handle.({:login, user, :done})
+        error -> handle.({:login, credentials, error})
+      end
   end
 
-  def login(
-        credentials,
-        false,
-        handle,
-        deps
-      ) do
-    case manual_login(credentials, false, deps) do
-      {:ok, user} -> handle.({:login, user, :done})
-      error -> handle.({:login, credentials, error})
+  @spec recover_login(Type.dependencies()) :: Type.recover_login_response()
+  def recover_login(deps \\ @default_deps) do
+    case automatic_login(deps) do
+      :ok ->
+        :ok
+
+      # if we do not have past login saved in storage, we returns error
+      {:ok, nil} ->
+        {:error, :not_logged_in}
+
+      error ->
+        error
     end
   end
 

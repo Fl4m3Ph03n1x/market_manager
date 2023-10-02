@@ -111,6 +111,23 @@ defmodule Manager do
   defdelegate login(credentials, keep_logged_in), to: Worker
 
   @doc """
+  Login into the application using a previous session.
+  If this operation is attempted and the user has not logged in yet, an error is returned instead.
+  This is a synchronous operation.
+
+  Example:
+  ```
+  > Manager.recover_login()
+  :ok
+
+  > Manager.recover_login()
+  {:error, :not_logged_in}
+  ```
+  """
+  @spec recover_login :: Type.recover_login_response()
+  defdelegate recover_login, to: Worker
+
+  @doc """
   Returns the list of known syndicates, or an error if it fails.
   This is a synchronous call.
 
