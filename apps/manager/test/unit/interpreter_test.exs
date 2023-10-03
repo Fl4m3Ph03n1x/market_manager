@@ -994,7 +994,7 @@ defmodule Manager.InterpreterTest do
       end
     end
 
-    test "Returns error if automatic login has no login info" do
+    test "Returns nil if automatic login has no login info" do
       with_mocks([
         {
           Store,
@@ -1017,7 +1017,7 @@ defmodule Manager.InterpreterTest do
 
         # Act
         actual = Interpreter.recover_login(deps)
-        expected = {:error, :not_logged_in}
+        expected = {:ok, nil}
 
         # Assert
         assert actual == expected

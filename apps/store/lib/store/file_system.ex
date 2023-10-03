@@ -80,8 +80,7 @@ defmodule Store.FileSystem do
       decoded_auth = Map.get(decoded_data, "authorization")
       decoded_user = Map.get(decoded_data, "user")
 
-      if valid_data?(decoded_auth, ["cookie", "token"]) and
-           valid_data?(decoded_user, ["ingame_name", "patreon?"]) do
+      if valid_data?(decoded_auth, ["cookie", "token"]) and valid_data?(decoded_user, ["ingame_name", "patreon?"]) do
         {:ok, {Authorization.new(decoded_auth), User.new(decoded_user)}}
       else
         {:ok, nil}

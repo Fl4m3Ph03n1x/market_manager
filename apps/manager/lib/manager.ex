@@ -112,7 +112,7 @@ defmodule Manager do
 
   @doc """
   Login into the application using a previous session.
-  If this operation is attempted and the user has not logged in yet, an error is returned instead.
+  If this operation is attempted and the user has not logged in yet, `nil` is returned instead of a User.
   This is a synchronous operation.
 
   Example:
@@ -123,7 +123,10 @@ defmodule Manager do
   {:ok, %User{ingame_name: "user_1", patreon?: false}}
 
   > Manager.recover_login()
-  {:error, :not_logged_in}
+  {:ok, nil}
+
+  > Manager.recover_login()
+  {:error, :enoent}
   ```
   """
   @spec recover_login :: Type.recover_login_response()

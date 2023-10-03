@@ -425,13 +425,13 @@ defmodule Manager.WorkerTest do
       end
     end
 
-    test "returns error if no login session is found" do
+    test "returns nil if no login session is found" do
       with_mocks([
         {
           Store,
           [],
           [
-            get_login_data: fn -> {:error, :not_logged_in} end
+            get_login_data: fn -> {:ok, nil} end
           ]
         },
         {
@@ -445,7 +445,7 @@ defmodule Manager.WorkerTest do
         # If the process is not started, start it now
         start_supervised(Worker)
 
-        {:error, :not_logged_in} = Worker.recover_login()
+        assert Worker.recover_login() == {:ok, nil}
 
         assert_called(Store.get_login_data())
 

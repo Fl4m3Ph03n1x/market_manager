@@ -77,19 +77,7 @@ defmodule Manager.Impl.Interpreter do
   end
 
   @spec recover_login(Type.dependencies()) :: Type.recover_login_response()
-  def recover_login(deps \\ @default_deps) do
-    case automatic_login(deps) do
-      :ok ->
-        :ok
-
-      # if we do not have past login saved in storage, we returns error
-      {:ok, nil} ->
-        {:error, :not_logged_in}
-
-      error ->
-        error
-    end
-  end
+  def recover_login(deps \\ @default_deps), do: automatic_login(deps)
 
   @spec syndicates(Type.dependencies()) :: Type.syndicates_response()
   def syndicates([store: store, auction_house: _auction_house] \\ @default_deps), do: store.list_syndicates()
