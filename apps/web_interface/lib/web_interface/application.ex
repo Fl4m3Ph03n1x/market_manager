@@ -13,8 +13,6 @@ defmodule WebInterface.Application do
   alias WebInterface.Persistence
   alias WebInterface.Persistence.Syndicate, as: SyndicateStore
 
-  @landing_page "/login"
-
   @impl true
   def start(_type, _args) do
     children = [
@@ -31,7 +29,7 @@ defmodule WebInterface.Application do
           size: WindowUtils.calculate_window_size(0.6, 0.8),
           menubar: MenuBar,
           icon: "static/images/resized_logo_5_32x32.png",
-          url: fn -> "#{WebInterface.Endpoint.url()}#{@landing_page}" end
+          url: fn -> "#{WebInterface.Endpoint.url()}/" end
         ]]},
         restart: :transient,
         shutdown: 5_000
@@ -42,7 +40,8 @@ defmodule WebInterface.Application do
     with  {:ok, _pid} = link <- Supervisor.start_link(children, opts),
           {:ok, syndicates} <- Manager.syndicates(),
           {:ok, strategies} <- Manager.strategies(),
-          :ok <- Persistence.init(strategies, syndicates),
+          {:ok, user} <- Manager.recover_login(),
+          :ok <- Persistence.init(strategies, syndicates, user),
           :ok <- SyndicateStore.set_selected_inactive_syndicates(syndicates) do
             link
     end

@@ -5,13 +5,16 @@ defmodule WebInterface.Persistence do
   """
 
   alias ETS
+  alias Shared.Data.{Strategy, Syndicate, User}
+
   @table_name :data
 
-  @spec init([Strategy.t()], [Syndicate.t()]) :: :ok | {:error, any}
-  def init(strategies, syndicates) do
-    with {:ok, new_table} <- ETS.KeyValueSet.new(name: @table_name, protection: :public),
-         {:ok, table_with_syndicates} <- ETS.KeyValueSet.put(new_table, :syndicates, syndicates),
-         {:ok, _table} <- ETS.KeyValueSet.put(table_with_syndicates, :strategies, strategies) do
+  @spec init([Strategy.t()], [Syndicate.t()], User.t()) :: :ok | {:error, any}
+  def init(strategies, syndicates, user) do
+    with {:ok, table} <- ETS.KeyValueSet.new(name: @table_name, protection: :public),
+         {:ok, table} <- ETS.KeyValueSet.put(table, :syndicates, syndicates),
+         {:ok, table} <- ETS.KeyValueSet.put(table, :strategies, strategies),
+         {:ok, _table} <- ETS.KeyValueSet.put(table, :user, user) do
       :ok
     end
   end

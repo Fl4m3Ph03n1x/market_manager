@@ -1,9 +1,13 @@
 defmodule WebInterface.PageController do
   use WebInterface, :controller
 
+  alias WebInterface.Persistence.User, as: UserStore
+
   def home(conn, _params) do
-    # The home page is often custom made,
-    # so skip the default app layout.
-    render(conn, :home, layout: false)
+    if UserStore.has_user?() do
+      redirect(conn, to: ~p"/activate")
+    else
+      redirect(conn, to: ~p"/login")
+    end
   end
 end
