@@ -381,55 +381,106 @@ defmodule Manager.WorkerTest do
 
   end
 
-  # describe "recover_login" do
-  #   setup do
-  #     credentials = Credentials.new("an_email", "a_password")
-  #     authorization = Authorization.new(%{"cookie" => "a_cookie", "token" => "a_token"})
-  #     user = User.new(%{"ingame_name" => "fl4m3", "patreon?" => false})
+  describe "recover_login" do
+    setup do
+      credentials = Credentials.new("an_email", "a_password")
+      authorization = Authorization.new(%{"cookie" => "a_cookie", "token" => "a_token"})
+      user = User.new(%{"ingame_name" => "fl4m3", "patreon?" => false})
 
-  #     %{
-  #       credentials: credentials,
-  #       authorization: authorization,
-  #       user: user
-  #     }
-  #   end
+      %{
+        credentials: credentials,
+        authorization: authorization,
+        user: user
+      }
+    end
 
-  #   # Login the user and delete authorization info in storage
-  #   test "automatic login works", %{
-  #     credentials: credentials,
-  #     authorization: authorization,
-  #     user: user
-  #   } do
-  #     with_mocks([
-  #       {
-  #         Store,
-  #         [],
-  #         [
-  #           get_login_data: fn -> {:ok, {authorization, user}} end
-  #         ]
-  #       },
-  #       {
-  #         AuctionHouse,
-  #         [],
-  #         [
-  #           recover_login: fn _auth, _user -> :ok end
-  #         ]
-  #       }
-  #     ]) do
-  #       # If the process is not started, start it now
-  #       start_supervised(Worker)
+    test "returns OK when successful", %{
+      authorization: authorization,
+      user: user
+    } do
+      with_mocks([
+        {
+          Store,
+          [],
+          [
+            get_login_data: fn -> {:ok, {authorization, user}} end
+          ]
+        },
+        {
+          AuctionHouse,
+          [],
+          [
+            recover_login: fn _auth, _user -> :ok end
+          ]
+        }
+      ]) do
+        # If the process is not started, start it now
+        start_supervised(Worker)
 
-  #       :ok = Worker.login(credentials, true)
+        :ok = Worker.recover_login()
 
-  #       assert_receive({:login, ^credentials, :done}, @timeout)
+        assert_called(Store.get_login_data())
 
-  #       assert_called(Store.get_login_data())
+        assert_called(AuctionHouse.recover_login(authorization, user))
+      end
+    end
 
-  #       assert_called(AuctionHouse.recover_login(authorization, user))
-  #     end
-  #   end
+    test "returns error if no login session is found" do
+      with_mocks([
+        {
+          Store,
+          [],
+          [
+            get_login_data: fn -> {:error, :not_logged_in} end
+          ]
+        },
+        {
+          AuctionHouse,
+          [],
+          [
+            recover_login: fn _auth, _user -> :ok end
+          ]
+        }
+      ]) do
+        # If the process is not started, start it now
+        start_supervised(Worker)
 
-  # end
+        {:error, :not_logged_in} = Worker.recover_login()
+
+        assert_called(Store.get_login_data())
+
+        assert_not_called(AuctionHouse.recover_login(:_, :_))
+      end
+    end
+
+    test "returns error if it fails to retrieve a store session" do
+      with_mocks([
+        {
+          Store,
+          [],
+          [
+            get_login_data: fn -> {:error, :enoent} end
+          ]
+        },
+        {
+          AuctionHouse,
+          [],
+          [
+            recover_login: fn _auth, _user -> :ok end
+          ]
+        }
+      ]) do
+        # If the process is not started, start it now
+        start_supervised(Worker)
+
+        {:error, :enoent} = Worker.recover_login()
+
+        assert_called(Store.get_login_data())
+
+        assert_not_called(AuctionHouse.recover_login(:_, :_))
+      end
+    end
+  end
 
   describe "syndicates" do
     setup do
