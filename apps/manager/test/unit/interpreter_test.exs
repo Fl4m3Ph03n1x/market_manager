@@ -982,7 +982,7 @@ defmodule Manager.InterpreterTest do
 
         # Act
         actual = Interpreter.recover_login(deps)
-        expected = :ok
+        expected = {:ok, user}
 
         # Assert
         assert actual == expected

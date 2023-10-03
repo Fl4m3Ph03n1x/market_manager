@@ -193,8 +193,9 @@ defmodule Manager.Impl.Interpreter do
 
   @spec automatic_login(Type.dependencies()) :: :ok | {:ok, nil} | {:error, any}
   defp automatic_login(store: store, auction_house: auction_house) do
-    with {:ok, {auth, user}} <- store.get_login_data() do
-      auction_house.recover_login(auth, user)
+    with {:ok, {auth, user}} <- store.get_login_data(),
+        :ok <- auction_house.recover_login(auth, user) do
+          {:ok, user}
     end
   end
 

@@ -417,7 +417,7 @@ defmodule Manager.WorkerTest do
         # If the process is not started, start it now
         start_supervised(Worker)
 
-        :ok = Worker.recover_login()
+        {:ok, user} = Worker.recover_login()
 
         assert_called(Store.get_login_data())
 

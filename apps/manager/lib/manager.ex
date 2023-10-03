@@ -98,9 +98,9 @@ defmodule Manager do
 
   Example:
   ```
-  alias Shared.Data.Credentials
+  > alias Shared.Data.Credentials
 
-  credentials = Credentials.new("username", "password")
+  > credentials = Credentials.new("username", "password")
 
   > Manager.login(credentials, false)
   :ok
@@ -117,8 +117,10 @@ defmodule Manager do
 
   Example:
   ```
+  > alias Shared.Data.User
+
   > Manager.recover_login()
-  :ok
+  {:ok, %User{ingame_name: "user_1", patreon?: false}}
 
   > Manager.recover_login()
   {:error, :not_logged_in}
@@ -133,7 +135,7 @@ defmodule Manager do
 
   Example:
   ```
-  alias Shared.Data.Syndicate
+  > alias Shared.Data.Syndicate
 
   > MarketManager.syndicates()
   {:ok, [%Syndicate{name: "Red Veil", id: :red_veil}]}
@@ -151,7 +153,7 @@ defmodule Manager do
 
   Example:
   ```
-  alias Shared.Data.Strategy
+  > alias Shared.Data.Strategy
 
   > Manager.strategies()
   {:ok, [
