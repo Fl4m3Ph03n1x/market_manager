@@ -1,4 +1,4 @@
-defmodule WebInterface.UserLoginLive do
+defmodule WebInterface.LoginLive do
   use WebInterface, :live_view
 
   require Logger

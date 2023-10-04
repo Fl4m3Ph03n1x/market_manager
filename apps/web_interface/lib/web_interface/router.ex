@@ -19,7 +19,9 @@ defmodule WebInterface.Router do
 
     get "/", PageController, :home
 
-    live "/login", UserLoginLive
+    live "/profile", ProfileLive
+    live "/login", LoginLive
+    live "/logout", LogoutLive
     live "/activate", ActivateLive
     live "/deactivate", DeactivateLive
   end
