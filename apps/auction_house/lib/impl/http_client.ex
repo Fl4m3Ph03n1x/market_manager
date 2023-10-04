@@ -273,18 +273,17 @@ defmodule AuctionHouse.Impl.HTTPClient do
            :invalid_item_id
            | :order_already_placed
            | :order_non_existent
-           | :rank_level_non_applicable
-           | :server_unavailable}
-  defp map_error(~s({"error":{"item_id":["app.form.invalid"]}})),
+           | :rank_level_non_applicable}
+  defp map_error(~s({"error": {"item_id": ["app.form.invalid"]}})),
     do: {:error, :invalid_item_id}
 
-  defp map_error(~s({"error":{"_form": ["app.post_order.already_created_no_duplicates"]}})),
+  defp map_error(~s({"error": {"_form": ["app.post_order.already_created_no_duplicates"]}})),
     do: {:error, :order_already_placed}
 
   defp map_error(~s({"error": {"order_id": ["app.form.invalid"]}})),
     do: {:error, :order_non_existent}
 
-  defp map_error(~s({"error":{"mod_rank": ["app.form.invalid"]}})),
+  defp map_error(~s({"error": {"rank": ["app.form.invalid"]}})),
     do: {:error, :rank_level_non_applicable}
 
   defp map_error(~s({"error": {"password": ["app.account.password_invalid"]}})),

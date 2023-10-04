@@ -949,7 +949,7 @@ defmodule Manager.InterpreterTest do
     end
   end
 
-  describe "recover_login/0" do
+  describe "recover_login/1" do
     setup do
       %{
         authorization: Authorization.new(%{"cookie" => "a_cookie", "token" => "a_token"}),
@@ -1062,6 +1062,109 @@ defmodule Manager.InterpreterTest do
         assert_called(Store.get_login_data())
       end
     end
+  end
+
+  describe "logout/1" do
+
+    test "returns OK if logout is successful" do
+      with_mocks([
+        {
+          Store,
+          [],
+          [
+            delete_login_data: fn -> :ok end
+          ]
+        },
+        {
+          AuctionHouse,
+          [],
+          [
+            logout: fn -> :ok end
+          ]
+        }
+      ]) do
+        # Arrange
+        deps = [store: Store, auction_house: AuctionHouse]
+
+        # Act
+        actual = Interpreter.logout(deps)
+        expected = :ok
+
+        # Assert
+        assert actual == expected
+
+        assert_called(AuctionHouse.logout())
+
+        assert_called(Store.delete_login_data())
+      end
+    end
+
+    test "returns error if it fails to delete session from file but still deletes session from memory" do
+      with_mocks([
+        {
+          Store,
+          [],
+          [
+            delete_login_data: fn -> {:error, :enoent} end
+          ]
+        },
+        {
+          AuctionHouse,
+          [],
+          [
+            logout: fn -> :ok end
+          ]
+        }
+      ]) do
+        # Arrange
+        deps = [store: Store, auction_house: AuctionHouse]
+
+        # Act
+        actual = Interpreter.logout(deps)
+        expected = {:error, :enoent}
+
+        # Assert
+        assert actual == expected
+
+        assert_called(AuctionHouse.logout())
+
+        assert_called(Store.delete_login_data())
+      end
+    end
+
+    test "returns error if it fails to delete session from memory and does not attempt to delete it from file" do
+      with_mocks([
+        {
+          Store,
+          [],
+          [
+            delete_login_data: fn -> :ok end
+          ]
+        },
+        {
+          AuctionHouse,
+          [],
+          [
+            logout: fn -> {:error, :reason} end
+          ]
+        }
+      ]) do
+        # Arrange
+        deps = [store: Store, auction_house: AuctionHouse]
+
+        # Act
+        actual = Interpreter.logout(deps)
+        expected = {:error, :reason}
+
+        # Assert
+        assert actual == expected
+
+        assert_called(AuctionHouse.logout())
+
+        assert_not_called(Store.delete_login_data())
+      end
+    end
+
   end
 
   describe "syndicates/1" do

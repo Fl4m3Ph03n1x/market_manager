@@ -79,6 +79,13 @@ defmodule Manager.Impl.Interpreter do
   @spec recover_login(Type.dependencies()) :: Type.recover_login_response()
   def recover_login(deps \\ @default_deps), do: automatic_login(deps)
 
+  @spec logout(Type.dependencies()) :: Type.logout_response()
+  def logout([store: store, auction_house: auction_house] \\ @default_deps) do
+    with  :ok <- auction_house.logout() do
+      store.delete_login_data()
+    end
+  end
+
   @spec syndicates(Type.dependencies()) :: Type.syndicates_response()
   def syndicates([store: store, auction_house: _auction_house] \\ @default_deps), do: store.list_syndicates()
 

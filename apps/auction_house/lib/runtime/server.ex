@@ -41,6 +41,9 @@ defmodule AuctionHouse.Runtime.Server do
   def recover_login(auth, user),
     do: GenServer.call(__MODULE__, {:recover_login, auth, user}, @genserver_timeout)
 
+  @spec logout :: Type.logout_response()
+  def logout, do: GenServer.call(__MODULE__, :logout, @genserver_timeout)
+
   #############
   # Callbacks #
   #############
@@ -94,15 +97,12 @@ defmodule AuctionHouse.Runtime.Server do
   def handle_call({:place_order, order}, _from, state),
     do: {:reply, HTTPClient.place_order(order, state), state}
 
-  @impl GenServer
   def handle_call({:delete_order, placed_order}, _from, state),
     do: {:reply, HTTPClient.delete_order(placed_order, state), state}
 
-  @impl GenServer
   def handle_call({:get_all_orders, item_name}, _from, state),
     do: {:reply, HTTPClient.get_all_orders(item_name, state), state}
 
-  @impl GenServer
   def handle_call(
         {:login, credentials},
         _from,
@@ -128,16 +128,20 @@ defmodule AuctionHouse.Runtime.Server do
     end
   end
 
-  @impl GenServer
-  def handle_call(
-        {:recover_login, auth, user},
-        _from,
-        state
-      ) do
+  def handle_call({:recover_login, auth, user}, _from, state) do
     updated_state =
       state
       |> Map.put(:authorization, auth)
       |> Map.put(:user, user)
+
+    {:reply, :ok, updated_state}
+  end
+
+  def handle_call(:logout, _from, state) do
+    updated_state =
+      state
+      |> Map.put(:authorization, nil)
+      |> Map.put(:user, nil)
 
     {:reply, :ok, updated_state}
   end

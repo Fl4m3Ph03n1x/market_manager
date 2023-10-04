@@ -66,7 +66,7 @@ defmodule AuctionHouse.HTTPClientTest do
             {:ok,
              %HTTPoison.Response{
                status_code: 400,
-               body: "{\"error\":{\"_form\":[\"app.post_order.already_created_no_duplicates\"]}}"
+               body: "{\"error\": {\"_form\": [\"app.post_order.already_created_no_duplicates\"]}}"
              }}
           end,
           run_fn: fn _queue_name, func -> func.() end,
@@ -100,7 +100,7 @@ defmodule AuctionHouse.HTTPClientTest do
             {:ok,
              %HTTPoison.Response{
                status_code: 400,
-               body: "{\"error\":{\"item_id\":[\"app.form.invalid\"]}}"
+               body: "{\"error\": {\"item_id\": [\"app.form.invalid\"]}}"
              }}
           end,
           run_fn: fn _queue_name, func -> func.() end,
@@ -134,7 +134,7 @@ defmodule AuctionHouse.HTTPClientTest do
             {:ok,
              %HTTPoison.Response{
                status_code: 400,
-               body: "{\"error\":{\"mod_rank\":[\"app.form.invalid\"]}}"
+               body: "{\"error\": {\"rank\": [\"app.form.invalid\"]}}"
              }}
           end,
           run_fn: fn _queue_name, func -> func.() end,
@@ -146,41 +146,6 @@ defmodule AuctionHouse.HTTPClientTest do
       # Act
       actual = HTTPClient.place_order(order, state)
       expected = {:error, :rank_level_non_applicable, order}
-
-      # Assert
-      assert actual == expected
-    end
-
-    test "returns error if server is unavailable" do
-      # Arrange
-      order =
-        Order.new(%{
-          "order_type" => "sell",
-          "item_id" => "54a74454e779892d5e5155d5",
-          "platinum" => 15,
-          "quantity" => 1,
-          "mod_rank" => 0
-        })
-
-      state = %{
-        dependencies: %{
-          post_fn: fn _url, _body, _headers, _opts ->
-            {:ok,
-             %HTTPoison.Response{
-               status_code: 503,
-               body:
-                 "<html><head><title>503 Service Temporarily Unavailable</title></head></html>"
-             }}
-          end,
-          run_fn: fn _queue_name, func -> func.() end,
-          requests_queue: nil
-        },
-        authorization: %Authorization{cookie: "cookie", token: "token"}
-      }
-
-      # Act
-      actual = HTTPClient.place_order(order, state)
-      expected = {:error, :server_unavailable, order}
 
       # Assert
       assert actual == expected

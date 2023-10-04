@@ -44,6 +44,9 @@ defmodule Manager.Runtime.Worker do
   @spec recover_login :: Type.recover_login_response()
   def recover_login, do: GenServer.call(__MODULE__, :recover_login)
 
+  @spec logout :: Type.logout_response()
+  def logout, do: GenServer.call(__MODULE__, :logout)
+
   @spec syndicates :: Type.syndicates_response()
   def syndicates, do: GenServer.call(__MODULE__, :syndicates)
 
@@ -99,5 +102,9 @@ defmodule Manager.Runtime.Worker do
 
   def handle_call(:recover_login, _from, [interpreter: interpreter] = deps) do
     {:reply, interpreter.recover_login(), deps}
+  end
+
+  def handle_call(:logout, _from, [interpreter: interpreter] = deps) do
+    {:reply, interpreter.logout(), deps}
   end
 end

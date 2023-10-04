@@ -14,6 +14,8 @@ defmodule Manager do
   ##########
 
   @doc """
+  Asynchronous operation.
+
   Activates a syndicate in warframe.market. Activating a syndicate means you
   put on sell all the mods the syndicate has. The price of each mod will be calculated via a
   `PriceAnalyst` depending on which strategy you choose.
@@ -48,6 +50,8 @@ defmodule Manager do
   defdelegate activate(syndicate, strategy), to: Worker
 
   @doc """
+  Asynchronous operation.
+
   Deactivates a syndicate in warframe.market. Deactivating a syndicate means you
   delete all orders you have placed before that belong to the given syndicate.
 
@@ -81,6 +85,8 @@ defmodule Manager do
   defdelegate deactivate(syndicate), to: Worker
 
   @doc """
+  Asynchronous operation.
+
   Saves the login information used in all requests. Can optionally keep user
   logged in for future sessions. Will first attempt to authenticate the user,
   and then, if successful and if `keep_logged_in` is `true`, will try to save
@@ -111,9 +117,10 @@ defmodule Manager do
   defdelegate login(credentials, keep_logged_in), to: Worker
 
   @doc """
+  Synchronous operation.
+
   Login into the application using a previous session.
   If this operation is attempted and the user has not logged in yet, `nil` is returned instead of a User.
-  This is a synchronous operation.
 
   Example:
   ```
@@ -133,8 +140,32 @@ defmodule Manager do
   defdelegate recover_login, to: Worker
 
   @doc """
+  Synchronous operation.
+
+  Deletes the current active session. This only logs out the MarketManager application and does not affect the
+  login session in the AuctionHouse. If a user is logged in the AuctionHouse, it will continue logged in there, but next
+  time this application is launched, the user will have to login into the AuctionHouse from this application to be able
+  to use it.
+
+  This operation deletes the sessions data from memory and from disk. Even if the second fails, the first will still
+  be attempted.
+
+  Example:
+  ```
+  > Manager.logout()
+  :ok
+
+  > Manager.logout()
+  {:error, :reason}
+  ```
+  """
+  @spec logout :: Type.logout_response()
+  defdelegate logout, to: Worker
+
+  @doc """
+  Synchronous operation.
+
   Returns the list of known syndicates, or an error if it fails.
-  This is a synchronous call.
 
   Example:
   ```
@@ -151,8 +182,9 @@ defmodule Manager do
   defdelegate syndicates, to: Worker
 
   @doc """
+  Synchronous operation.
+
   Returns the list of available strategies, or an error if it fails.
-  This is a synchronous call.
 
   Example:
   ```

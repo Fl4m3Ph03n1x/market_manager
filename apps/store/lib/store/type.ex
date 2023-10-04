@@ -21,9 +21,9 @@ defmodule Store.Type do
 
   @type get_login_data_response ::
           {:ok, {Authorization.t(), User.t()} | nil}
-          | {:error, :file.posix() | Jason.DecodeError.t() | :syndicate_not_found}
-  @type save_login_data_response :: :ok | {:error, :file.posix() | Jason.EncodeError.t() | :syndicate_not_found}
-  @type delete_login_data_response :: :ok | {:error, :file.posix() | Jason.EncodeError.t() | :syndicate_not_found}
+          | {:error, :file.posix() | Jason.DecodeError.t()}
+  @type save_login_data_response :: :ok | {:error, :file.posix() | Jason.EncodeError.t()}
+  @type delete_login_data_response :: :ok | {:error, :file.posix() | Jason.EncodeError.t()}
   @type list_products_response ::
           {:ok, [Product.t()]}
           | {:error, :file.posix() | Jason.DecodeError.t() | :syndicate_not_found}

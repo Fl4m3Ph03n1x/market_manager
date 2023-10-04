@@ -482,6 +482,65 @@ defmodule Manager.WorkerTest do
     end
   end
 
+  describe "logout" do
+    test "returns OK if session is deleted from disk and memory" do
+      with_mocks([
+        {
+          Store,
+          [],
+          [
+            delete_login_data: fn -> :ok end
+          ]
+        },
+        {
+          AuctionHouse,
+          [],
+          [
+            logout: fn -> :ok end
+          ]
+        }
+      ]) do
+        # If the process is not started, start it now
+        start_supervised(Worker)
+
+        :ok = Worker.logout()
+
+        assert_called(Store.delete_login_data())
+
+        assert_called(AuctionHouse.logout())
+      end
+    end
+
+    test "returns error if it fails to delete session" do
+      with_mocks([
+        {
+          Store,
+          [],
+          [
+            delete_login_data: fn -> {:error, :enoent} end
+          ]
+        },
+        {
+          AuctionHouse,
+          [],
+          [
+            logout: fn -> :ok end
+          ]
+        }
+      ]) do
+        # If the process is not started, start it now
+        start_supervised(Worker)
+
+        {:error, :enoent} = Worker.logout()
+
+        assert_called(Store.delete_login_data())
+
+        assert_called(AuctionHouse.logout())
+      end
+    end
+
+  end
+
   describe "syndicates" do
     setup do
       %{

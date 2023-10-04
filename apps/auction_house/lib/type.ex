@@ -27,4 +27,5 @@ defmodule AuctionHouse.Type do
   @type get_all_orders_response :: {:ok, [OrderInfo.t()]} | {:error, reason, item_name}
   @type login_response :: {:ok, {Authorization.t(), User.t()}} | {:error, reason, Credentials.t()}
   @type recover_login_response :: :ok
+  @type logout_response :: :ok
 end

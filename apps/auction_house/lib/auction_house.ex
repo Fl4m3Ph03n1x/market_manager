@@ -19,8 +19,8 @@ defmodule AuctionHouse do
 
   Example:
   ```
-  alias Shared.Data.{Order, PlacedOrder}
-  order = Order.new(%{
+  > alias Shared.Data.{Order, PlacedOrder}
+  > order = Order.new(%{
     "item_id" => "54e644ffe779897594fa68cd",
     "mod_rank" => 0,
     "order_type" => "sell",
@@ -48,7 +48,7 @@ defmodule AuctionHouse do
 
   Example:
   ```
-  placed_order = PlacedOrder.new(%{
+  > placed_order = PlacedOrder.new(%{
       "item_id" => "54e644ffe779897594fa68cd",
       "order_id" => "626127cbc984ac033cd2bbd2"
   })
@@ -70,7 +70,7 @@ defmodule AuctionHouse do
 
   Example:
   ```
-  item_name = "Despoil"
+  > item_name = "Despoil"
 
   > AuctionHouse.get_all_orders(item_name)
   {:ok, [
@@ -102,8 +102,8 @@ defmodule AuctionHouse do
 
   Example:
   ```
-  alias Shared.Data.{Authorization, Credentials, User}
-  credentials = Credentials.new("the_username", "the_password")
+  > alias Shared.Data.{Authorization, Credentials, User}
+  > credentials = Credentials.new("the_username", "the_password")
 
   > AuctionHouse.login(credentials)
   {:ok,
@@ -127,9 +127,9 @@ defmodule AuctionHouse do
 
   Example:
   ```
-  alias Shared.Data.{Authorization, User}
-  auth = Authorization.new("a_cookie", "a_token")
-  user = User.new("fl4m3", false)
+  > alias Shared.Data.{Authorization, User}
+  > auth = Authorization.new("a_cookie", "a_token")
+  > user = User.new("fl4m3", false)
 
   > AuctionHouse.recover_login(auth, user)
   :ok
@@ -137,6 +137,18 @@ defmodule AuctionHouse do
   """
   @spec recover_login(Authorization.t(), User.t()) :: Type.recover_login_response()
   defdelegate recover_login(auth, user), to: Server
+
+  @doc """
+  Deletes the current session and user data from the this application.
+  Does not interact with the External AuctionHouse, this is a local operation only.
+
+  Example:
+  ```
+  > AuctionHouse.logout()
+  :ok
+  """
+  @spec logout :: Type.logout_response()
+  defdelegate logout, to: Server
 
   @doc false
   @spec child_spec(any) :: Supervisor.child_spec()
