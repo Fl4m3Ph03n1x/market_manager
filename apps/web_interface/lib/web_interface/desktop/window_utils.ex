@@ -7,7 +7,7 @@ defmodule WebInterface.Desktop.WindowUtils do
   Calculates the width and height for the window. Fetches the display
   information using :wx. Because we create a :wx server every time we call this
   function this is a heavy operation and should be used cautiously.
-  
+
   Both percentages given must be > 0 and <= 1.
   """
   @spec calculate_window_size(float, float) :: {pos_integer, pos_integer}

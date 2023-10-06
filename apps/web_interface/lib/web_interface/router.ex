@@ -1,4 +1,6 @@
 defmodule WebInterface.Router do
+  @moduledoc false
+
   use WebInterface, :router
 
   pipeline :browser do

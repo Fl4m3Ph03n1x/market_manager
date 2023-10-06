@@ -1,4 +1,6 @@
 defmodule WebInterface.Endpoint do
+  @moduledoc false
+
   use Desktop.Endpoint, otp_app: :web_interface
 
   # The session will be stored in the cookie and signed,
