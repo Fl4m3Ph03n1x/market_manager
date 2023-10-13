@@ -21,7 +21,7 @@ defmodule Manager.Type do
   @type deactivate_response :: :ok
   @type login_response :: :ok
   @type recover_login_response :: {:ok, User.t() | nil} | {:error, any}
-  @type logout :: :ok | {:error, any}
+  @type logout_response :: :ok | {:error, any}
   @type syndicates_response :: {:ok, [Syndicate.t()]} | {:error, any}
   @type strategies_response :: {:ok, [Strategy.t()]} | {:error, any}
 end

@@ -12,7 +12,6 @@ defmodule Manager.Runtime.Worker do
   alias Manager.Type
   alias Shared.Data.{Credentials, Strategy, Syndicate}
 
-  @type from :: pid
   @type state :: keyword(module)
 
   @default_deps [
@@ -91,7 +90,7 @@ defmodule Manager.Runtime.Worker do
   end
 
   @impl GenServer
-  @spec handle_call(request :: any, from, state) :: {:reply, response :: any, state}
+  @spec handle_call(request :: any, GenServer.from(), state) :: {:reply, response :: any, state}
   def handle_call(:syndicates, _from, [interpreter: interpreter] = deps) do
     {:reply, interpreter.syndicates(), deps}
   end

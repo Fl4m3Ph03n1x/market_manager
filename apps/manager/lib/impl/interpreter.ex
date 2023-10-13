@@ -8,7 +8,19 @@ defmodule Manager.Impl.Interpreter do
   alias AuctionHouse
   alias Manager.Impl.PriceAnalyst
   alias Manager.Type
-  alias Shared.Data.{Credentials, Order, OrderInfo, PlacedOrder, Product, Strategy, Syndicate, User}
+
+  alias Shared.Data.{
+    Authorization,
+    Credentials,
+    Order,
+    OrderInfo,
+    PlacedOrder,
+    Product,
+    Strategy,
+    Syndicate,
+    User
+  }
+
   alias Store
 
   @default_deps [
@@ -20,7 +32,8 @@ defmodule Manager.Impl.Interpreter do
   # Public #
   ##########
 
-  @spec activate(Syndicate.t(), Strategy.t(), Type.handle(), Type.dependencies()) :: Type.activate_response()
+  @spec activate(Syndicate.t(), Strategy.t(), Type.handle(), Type.dependencies()) ::
+          Type.activate_response()
   def activate(
         syndicate,
         strategy,
@@ -45,7 +58,8 @@ defmodule Manager.Impl.Interpreter do
     handle.({:activate, syndicate, :done})
   end
 
-  @spec deactivate(Syndicate.t(), Type.handle(), Type.dependencies()) :: Type.deactivate_response()
+  @spec deactivate(Syndicate.t(), Type.handle(), Type.dependencies()) ::
+          Type.deactivate_response()
   def deactivate(
         syndicate,
         handle,
@@ -68,12 +82,13 @@ defmodule Manager.Impl.Interpreter do
     handle.({:deactivate, syndicate, :done})
   end
 
-  @spec login(Credentials.t(), keep_logged_in :: boolean, Type.handle(), Type.dependencies()) :: Type.login_response()
+  @spec login(Credentials.t(), keep_logged_in :: boolean, Type.handle(), Type.dependencies()) ::
+          Type.login_response()
   def login(credentials, keep_logged_in, handle, deps \\ @default_deps) do
-      case manual_login(credentials, keep_logged_in, deps) do
-        {:ok, user} -> handle.({:login, user, :done})
-        error -> handle.({:login, credentials, error})
-      end
+    case manual_login(credentials, keep_logged_in, deps) do
+      {:ok, user} -> handle.({:login, user, :done})
+      error -> handle.({:login, credentials, error})
+    end
   end
 
   @spec recover_login(Type.dependencies()) :: Type.recover_login_response()
@@ -81,13 +96,14 @@ defmodule Manager.Impl.Interpreter do
 
   @spec logout(Type.dependencies()) :: Type.logout_response()
   def logout([store: store, auction_house: auction_house] \\ @default_deps) do
-    with  :ok <- auction_house.logout() do
+    with :ok <- auction_house.logout() do
       store.delete_login_data()
     end
   end
 
   @spec syndicates(Type.dependencies()) :: Type.syndicates_response()
-  def syndicates([store: store, auction_house: _auction_house] \\ @default_deps), do: store.list_syndicates()
+  def syndicates([store: store, auction_house: _auction_house] \\ @default_deps),
+    do: store.list_syndicates()
 
   @spec strategies :: Type.strategies_response()
   def strategies, do: PriceAnalyst.list_strategies()
@@ -189,8 +205,8 @@ defmodule Manager.Impl.Interpreter do
   @spec automatic_login(Type.dependencies()) :: :ok | {:ok, nil} | {:error, any}
   defp automatic_login(store: store, auction_house: auction_house) do
     with {:ok, {auth, user}} <- store.get_login_data(),
-        :ok <- auction_house.recover_login(auth, user) do
-          {:ok, user}
+         :ok <- auction_house.recover_login(auth, user) do
+      {:ok, user}
     end
   end
 
@@ -201,7 +217,7 @@ defmodule Manager.Impl.Interpreter do
          auction_house: auction_house
        ) do
     with {:ok, {_auth, user} = login_data} <- auction_house.login(credentials),
-      :ok <-  update_login_data(keep_logged_in, login_data, store) do
+         :ok <- update_login_data(keep_logged_in, login_data, store) do
       {:ok, user}
     end
   end

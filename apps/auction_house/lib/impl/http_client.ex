@@ -301,7 +301,7 @@ defmodule AuctionHouse.Impl.HTTPClient do
   end
 
   @spec get_id(response :: map) ::
-          {:ok, Type.order_id() | Type.item_id()} | {:error, {:missing_id, map()}}
+          {:ok, String.t() | Type.item_id()} | {:error, {:missing_id, map()}}
   defp get_id(%{"payload" => %{"order" => %{"id" => id}}}), do: {:ok, id}
   defp get_id(%{"payload" => %{"order_id" => id}}), do: {:ok, id}
   defp get_id(data), do: {:error, :missing_id, data}
@@ -311,7 +311,7 @@ defmodule AuctionHouse.Impl.HTTPClient do
   defp build_error_response({:error, reason}, data),
     do: {:error, reason, data}
 
-  @spec build_delete_url(Type.order_id()) :: uri :: String.t()
+  @spec build_delete_url(String.t()) :: uri :: String.t()
   defp build_delete_url(id), do: URI.encode(@url <> "/" <> id)
 
   @spec build_headers(String.t(), String.t()) :: [{String.t(), String.t()}]
