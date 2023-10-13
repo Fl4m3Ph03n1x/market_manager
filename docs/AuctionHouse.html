@@ -4,38 +4,45 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="ExDoc v0.28.0">
+    <meta name="generator" content="ExDoc v0.30.6">
     <meta name="project" content="Market Manager v2.1.5">
 
     <title>AuctionHouse — Market Manager v2.1.5</title>
-    <link rel="stylesheet" href="dist/elixir-a816d167216329cc463d.css" />
+    <link rel="stylesheet" href="dist/html-elixir-M3TQBNKO.css" />
 
-    <script src="dist/sidebar_items-a204c62895.js"></script>
+
+    <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
+    <script src="dist/handlebars.templates-KDPBTEPL.js"></script>
+    <script src="dist/sidebar_items-1C5C5552.js"></script>
 
       <script src="docs_config.js"></script>
 
-    <script async src="dist/app-80aa23c1d96b6dc3c064.js"></script>
+    <script async src="dist/html-CP2A7WXZ.js"></script>
 
 
   </head>
-  <body data-type="modules">
+  <body data-type="modules" class="page-module">
     <script>
 
       try {
-        if (localStorage.getItem('night-mode') === 'true') {
-          document.body.classList.add('night-mode');
+        var settings = JSON.parse(localStorage.getItem('ex_doc:settings') || '{}');
+
+        if (settings.theme === 'dark' ||
+           ((settings.theme === 'system' || settings.theme == null) &&
+             window.matchMedia('(prefers-color-scheme: dark)').matches)
+           ) {
+          document.body.classList.add('dark')
         }
       } catch (error) { }
     </script>
 
 <div class="main">
 
+<button class="sidebar-button sidebar-toggle" aria-label="toggle sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
 
 <section class="sidebar">
-  <button class="sidebar-button sidebar-toggle">
-    <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
-  </button>
-
   <form class="sidebar-search" action="search.html">
     <button type="submit" class="search-button" aria-label="Submit Search">
       <i class="ri-search-2-line" aria-hidden="true" title="Submit search"></i>
@@ -44,7 +51,8 @@
       <i class="ri-close-line ri-lg" aria-hidden="true" title="Cancel search"></i>
     </button>
     <label class="search-label">
-      <input name="q" type="text" class="search-input" placeholder="Search..." aria-label="Input your search terms" autocomplete="off" />
+      <p class="sr-only">Search</p>
+      <input name="q" type="text" class="search-input" placeholder="Search..." aria-label="Input your search terms" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
     </label>
   </form>
 
@@ -63,9 +71,9 @@
       <a href="https://fl4m3ph03n1x.github.io/market_manager/" class="sidebar-projectName" translate="no">
 Market Manager
       </a>
-      <strong class="sidebar-projectVersion" translate="no">
+      <div class="sidebar-projectVersion" translate="no">
         v2.1.5
-      </strong>
+      </div>
     </div>
     <ul class="sidebar-listNav">
       <li><a id="extras-list-link" href="#full-list">Pages</a></li>
@@ -76,22 +84,22 @@ Market Manager
     </ul>
   </div>
 
-  <div class="gradient"></div>
-  <ul id="full-list" class="sidebar-fullList"></ul>
+  <ul id="full-list"></ul>
 </section>
 
 <section class="content">
+  <output role="status" id="toast"></output>
   <div class="content-outer">
     <div id="content" class="content-inner">
 
 <h1>
-<button class="settings display-settings">
+<button class="icon-action display-settings">
   <i class="ri-settings-3-line"></i>
   <span class="sr-only">Settings</span>
 </button>
 
 
-    <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/auction_house.ex#L1" title="View Source" class="view-source" rel="help">
+    <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/auction_house.ex#L1" title="View Source" class="icon-action" rel="help">
       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
       <span class="sr-only">View Source</span>
     </a>
@@ -103,7 +111,7 @@ Market Manager
 
 
   <section id="moduledoc">
-<p>Librabry representing the interface for the auction house.
+<p>Library representing the interface for the auction house.
 Responsible for making calls and decoding the answers from the auction house
 into a format the manager understands.</p>
   </section>
@@ -113,61 +121,83 @@ into a format the manager understands.</p>
     <h1 class="section-heading">
       <a class="hover-link" href="#summary">
         <i class="ri-link-m" aria-hidden="true"></i>
-        <span class="sr-only">Link to this section</span>
+        Summary
       </a>
-      Summary
     </h1>
+<div class="summary-functions summary">
+  <h2>
+    <a href="#functions">Functions</a>
+  </h2>
 
-  <div class="summary-functions summary">
-    <h2>
-      <a href="#functions">Functions</a>
-    </h2>
-
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#delete_order/1" translate="no">delete_order(order_id)</a>
-
-        </div>
-
-          <div class="summary-synopsis"><p>Deletes an order from warframe market.</p></div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#delete_order/1" translate="no">delete_order(order_id)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#get_all_orders/1" translate="no">get_all_orders(item_name)</a>
+        <div class="summary-synopsis"><p>Deletes an order from warframe market.</p></div>
 
-        </div>
+    </div>
 
-          <div class="summary-synopsis"><p>Gets all warframe market orders for the item with the given name.
-The itema name is in human readable format. This function also converts the name into a format
-that the external party can understand.</p></div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#get_all_orders/1" translate="no">get_all_orders(item_name)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#place_order/1" translate="no">place_order(order)</a>
+        <div class="summary-synopsis"><p>Gets all warframe market orders for the item with the given name.
+The item's name is in human readable format. This function also converts the
+name into a format that the external party can understand.</p></div>
 
-        </div>
+    </div>
 
-          <div class="summary-synopsis"><p>Places an order in warframe market.</p></div>
-
-      </div>
-
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#update_credentials/1" translate="no">update_credentials(credentials)</a>
-
-        </div>
-
-          <div class="summary-synopsis"><p>Updates the credentials used to make requests to warframe market.
-Must be used before using any other functions from this API.
-Credentials are only persisted in memory, and are not persisted anywhere else.</p></div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#login/1" translate="no">login(credentials)</a>
 
       </div>
 
-  </div>
+        <div class="summary-synopsis"><p>Stores the user's credentials and  authenticates with the auction house to
+make requests. Must be invoked every time the application is launched.
+It also performs the necessary steps for authorization. Returns user
+information.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#logout/0" translate="no">logout()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Deletes the current session and user data from the this application.
+Does not interact with the External AuctionHouse, this is a local operation only.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#place_order/1" translate="no">place_order(order)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Places an order in warframe market.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#recover_login/2" translate="no">recover_login(auth, user)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Feeds the authorization information directly to the AuctionHouse. Used when
+the login data is being recovered from a past login. Will only fail if this
+service is down.</p></div>
+
+    </div>
+
+</div>
 
   </section>
 
@@ -176,9 +206,8 @@ Credentials are only persisted in memory, and are not persisted anywhere else.</
     <h1 class="section-heading">
       <a class="hover-link" href="#functions">
         <i class="ri-link-m" aria-hidden="true"></i>
-        <span class="sr-only">Link to this section</span>
-      </a>
 Functions
+      </a>
     </h1>
     <div class="functions-list">
 <section class="detail" id="delete_order/1">
@@ -190,7 +219,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">delete_order(order_id)</h1>
 
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/auction_house.ex#L54" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/auction_house.ex#L64" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -200,21 +229,23 @@ Functions
 
   <section class="docstring">
 
-      <h2>Specs</h2>
       <div class="specs">
 
-          <pre translate="no">delete_order(<a href="AuctionHouse.Type.html#t:order_id/0">AuctionHouse.Type.order_id</a>()) ::
+          <pre translate="no"><span class="attribute">@spec</span> delete_order(<a href="Shared.Data.PlacedOrder.html#t:t/0">Shared.Data.PlacedOrder.t</a>()) ::
   <a href="AuctionHouse.Type.html#t:delete_order_response/0">AuctionHouse.Type.delete_order_response</a>()</pre>
 
       </div>
 
-<p>Deletes an order from warframe market.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="n">order_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;626127cbc984ac033cd2bbd2&quot;</span><span class="w">
+<p>Deletes an order from warframe market.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="n">placed_order</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">PlacedOrder</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="8994639574-1">(</span><span class="p" data-group-id="8994639574-2">%{</span><span class="w">
+    </span><span class="s">&quot;item_id&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;54e644ffe779897594fa68cd&quot;</span><span class="p">,</span><span class="w">
+    </span><span class="s">&quot;order_id&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;626127cbc984ac033cd2bbd2&quot;</span><span class="w">
+</span><span class="p" data-group-id="8994639574-2">}</span><span class="p" data-group-id="8994639574-1">)</span><span class="w">
 
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">AuctionHouse</span><span class="o">.</span><span class="n">delete_order</span><span class="p" data-group-id="3180217219-1">(</span><span class="n">order_id</span><span class="p" data-group-id="3180217219-1">)</span><span class="w">
-</span><span class="p" data-group-id="3180217219-2">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="n">order_id</span><span class="p" data-group-id="3180217219-2">}</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">AuctionHouse</span><span class="o">.</span><span class="n">delete_order</span><span class="p" data-group-id="8994639574-3">(</span><span class="n">placed_order</span><span class="p" data-group-id="8994639574-3">)</span><span class="w">
+</span><span class="ss">:ok</span><span class="w">
 
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">AuctionHouse</span><span class="o">.</span><span class="n">delete_order</span><span class="p" data-group-id="3180217219-3">(</span><span class="n">order_id</span><span class="p" data-group-id="3180217219-3">)</span><span class="w">
-</span><span class="p" data-group-id="3180217219-4">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:reason</span><span class="p">,</span><span class="w"> </span><span class="n">order_id</span><span class="p" data-group-id="3180217219-4">}</span></code></pre>
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">AuctionHouse</span><span class="o">.</span><span class="n">delete_order</span><span class="p" data-group-id="8994639574-4">(</span><span class="n">placed_order</span><span class="p" data-group-id="8994639574-4">)</span><span class="w">
+</span><span class="p" data-group-id="8994639574-5">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:reason</span><span class="p">,</span><span class="w"> </span><span class="n">order_id</span><span class="p" data-group-id="8994639574-5">}</span></code></pre>
   </section>
 </section>
 <section class="detail" id="get_all_orders/1">
@@ -226,7 +257,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">get_all_orders(item_name)</h1>
 
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/auction_house.ex#L83" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/auction_house.ex#L95" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -236,33 +267,107 @@ Functions
 
   <section class="docstring">
 
-      <h2>Specs</h2>
       <div class="specs">
 
-          <pre translate="no">get_all_orders(<a href="AuctionHouse.Type.html#t:item_name/0">AuctionHouse.Type.item_name</a>()) ::
+          <pre translate="no"><span class="attribute">@spec</span> get_all_orders(<a href="AuctionHouse.Type.html#t:item_name/0">AuctionHouse.Type.item_name</a>()) ::
   <a href="AuctionHouse.Type.html#t:get_all_orders_response/0">AuctionHouse.Type.get_all_orders_response</a>()</pre>
 
       </div>
 
 <p>Gets all warframe market orders for the item with the given name.
-The itema name is in human readable format. This function also converts the name into a format
-that the external party can understand.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="n">item_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Despoil&quot;</span><span class="w">
+The item's name is in human readable format. This function also converts the
+name into a format that the external party can understand.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="n">item_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Despoil&quot;</span><span class="w">
 
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">AuctionHouse</span><span class="o">.</span><span class="n">get_all_orders</span><span class="p" data-group-id="2547536175-1">(</span><span class="n">item_name</span><span class="p" data-group-id="2547536175-1">)</span><span class="w">
-</span><span class="p" data-group-id="2547536175-2">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="2547536175-3">[</span><span class="p" data-group-id="2547536175-4">%{</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">AuctionHouse</span><span class="o">.</span><span class="n">get_all_orders</span><span class="p" data-group-id="5568059525-1">(</span><span class="n">item_name</span><span class="p" data-group-id="5568059525-1">)</span><span class="w">
+</span><span class="p" data-group-id="5568059525-2">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="5568059525-3">[</span><span class="w">
+  </span><span class="p" data-group-id="5568059525-4">%</span><span class="nc" data-group-id="5568059525-4">Shared.Data.OrderInfo</span><span class="p" data-group-id="5568059525-4">{</span><span class="w">
         </span><span class="s">&quot;visible&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="no">true</span><span class="p">,</span><span class="w">
         </span><span class="s">&quot;order_type&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;sell&quot;</span><span class="p">,</span><span class="w">
         </span><span class="s">&quot;platform&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;pc&quot;</span><span class="p">,</span><span class="w">
         </span><span class="s">&quot;platinum&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="mi">20</span><span class="p">,</span><span class="w">
-        </span><span class="s">&quot;user&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p" data-group-id="2547536175-5">%{</span><span class="w">
-          </span><span class="s">&quot;ingame_name&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;usern_name_1&quot;</span><span class="p">,</span><span class="w">
+        </span><span class="s">&quot;user&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p" data-group-id="5568059525-5">%</span><span class="nc" data-group-id="5568059525-5">Shared.Data.OrderInfo.User</span><span class="p" data-group-id="5568059525-5">{</span><span class="w">
+          </span><span class="s">&quot;ingame_name&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;user_name_1&quot;</span><span class="p">,</span><span class="w">
           </span><span class="s">&quot;status&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;ingame&quot;</span><span class="w">
-        </span><span class="p" data-group-id="2547536175-5">}</span><span class="w">
-      </span><span class="p" data-group-id="2547536175-4">}</span><span class="p" data-group-id="2547536175-3">]</span><span class="w">
-</span><span class="p" data-group-id="2547536175-2">}</span><span class="w">
+        </span><span class="p" data-group-id="5568059525-5">}</span><span class="w">
+      </span><span class="p" data-group-id="5568059525-4">}</span><span class="w">
+    </span><span class="p" data-group-id="5568059525-3">]</span><span class="w">
+</span><span class="p" data-group-id="5568059525-2">}</span><span class="w">
 
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">AuctionHouse</span><span class="o">.</span><span class="n">get_all_orders</span><span class="p" data-group-id="2547536175-6">(</span><span class="n">item_name</span><span class="p" data-group-id="2547536175-6">)</span><span class="w">
-</span><span class="p" data-group-id="2547536175-7">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:reason</span><span class="p">,</span><span class="w"> </span><span class="n">item_name</span><span class="p" data-group-id="2547536175-7">}</span></code></pre>
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">AuctionHouse</span><span class="o">.</span><span class="n">get_all_orders</span><span class="p" data-group-id="5568059525-6">(</span><span class="n">item_name</span><span class="p" data-group-id="5568059525-6">)</span><span class="w">
+</span><span class="p" data-group-id="5568059525-7">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:reason</span><span class="p">,</span><span class="w"> </span><span class="n">item_name</span><span class="p" data-group-id="5568059525-7">}</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="login/1">
+
+  <div class="detail-header">
+    <a href="#login/1" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">login(credentials)</h1>
+
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/auction_house.ex#L121" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> login(<a href="Shared.Data.Credentials.html#t:t/0">Shared.Data.Credentials.t</a>()) :: <a href="AuctionHouse.Type.html#t:login_response/0">AuctionHouse.Type.login_response</a>()</pre>
+
+      </div>
+
+<p>Stores the user's credentials and  authenticates with the auction house to
+make requests. Must be invoked every time the application is launched.
+It also performs the necessary steps for authorization. Returns user
+information.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="kn">alias</span><span class="w"> </span><span class="nc">Shared.Data</span><span class="o">.</span><span class="p" data-group-id="8017543431-1">{</span><span class="nc">Authorization</span><span class="p">,</span><span class="w"> </span><span class="nc">Credentials</span><span class="p">,</span><span class="w"> </span><span class="nc">User</span><span class="p" data-group-id="8017543431-1">}</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="n">credentials</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Credentials</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="8017543431-2">(</span><span class="s">&quot;the_username&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;the_password&quot;</span><span class="p" data-group-id="8017543431-2">)</span><span class="w">
+
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">AuctionHouse</span><span class="o">.</span><span class="n">login</span><span class="p" data-group-id="8017543431-3">(</span><span class="n">credentials</span><span class="p" data-group-id="8017543431-3">)</span><span class="w">
+</span><span class="p" data-group-id="8017543431-4">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w">
+  </span><span class="p" data-group-id="8017543431-5">{</span><span class="w">
+    </span><span class="p" data-group-id="8017543431-6">%</span><span class="nc" data-group-id="8017543431-6">Authorization</span><span class="p" data-group-id="8017543431-6">{</span><span class="ss">cookie</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;a_cookie&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">token</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;a_token&quot;</span><span class="p" data-group-id="8017543431-6">}</span><span class="p">,</span><span class="w">
+    </span><span class="p" data-group-id="8017543431-7">%</span><span class="nc" data-group-id="8017543431-7">User</span><span class="p" data-group-id="8017543431-7">{</span><span class="ss">patreon?</span><span class="p">:</span><span class="w"> </span><span class="no">false</span><span class="p">,</span><span class="w"> </span><span class="ss">ingame_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;fl4m3&quot;</span><span class="p" data-group-id="8017543431-7">}</span><span class="w">
+  </span><span class="p" data-group-id="8017543431-5">}</span><span class="w">
+</span><span class="p" data-group-id="8017543431-4">}</span><span class="w">
+
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">AuctionHouse</span><span class="o">.</span><span class="n">login</span><span class="p" data-group-id="8017543431-8">(</span><span class="n">credentials</span><span class="p" data-group-id="8017543431-8">)</span><span class="w">
+</span><span class="p" data-group-id="8017543431-9">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:reason</span><span class="p">,</span><span class="w"> </span><span class="n">credentials</span><span class="p" data-group-id="8017543431-9">}</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="logout/0">
+
+  <div class="detail-header">
+    <a href="#logout/0" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">logout()</h1>
+
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/auction_house.ex#L152" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> logout() :: <a href="AuctionHouse.Type.html#t:logout_response/0">AuctionHouse.Type.logout_response</a>()</pre>
+
+      </div>
+
+<p>Deletes the current session and user data from the this application.
+Does not interact with the External AuctionHouse, this is a local operation only.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="nc">AuctionHouse</span><span class="o">.</span><span class="n">logout</span><span class="p" data-group-id="9241399881-1">(</span><span class="p" data-group-id="9241399881-1">)</span><span class="w">
+</span><span class="ss">:ok</span></code></pre>
   </section>
 </section>
 <section class="detail" id="place_order/1">
@@ -274,7 +379,7 @@ that the external party can understand.</p><p>Example:</p><pre><code class="make
     </a>
     <h1 class="signature" translate="no">place_order(order)</h1>
 
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/auction_house.ex#L37" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/auction_house.ex#L44" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -284,39 +389,43 @@ that the external party can understand.</p><p>Example:</p><pre><code class="make
 
   <section class="docstring">
 
-      <h2>Specs</h2>
       <div class="specs">
 
-          <pre translate="no">place_order(<a href="AuctionHouse.Type.html#t:order/0">AuctionHouse.Type.order</a>()) ::
-  <a href="AuctionHouse.Type.html#t:place_order_response/0">AuctionHouse.Type.place_order_response</a>()</pre>
+          <pre translate="no"><span class="attribute">@spec</span> place_order(<a href="Shared.Data.Order.html#t:t/0">Shared.Data.Order.t</a>()) :: <a href="AuctionHouse.Type.html#t:place_order_response/0">AuctionHouse.Type.place_order_response</a>()</pre>
 
       </div>
 
-<p>Places an order in warframe market.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="n">order</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p" data-group-id="6904257767-1">%{</span><span class="w">
+<p>Places an order in warframe market.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="kn">alias</span><span class="w"> </span><span class="nc">Shared.Data</span><span class="o">.</span><span class="p" data-group-id="2640277691-1">{</span><span class="nc">Order</span><span class="p">,</span><span class="w"> </span><span class="nc">PlacedOrder</span><span class="p" data-group-id="2640277691-1">}</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="n">order</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Order</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="2640277691-2">(</span><span class="p" data-group-id="2640277691-3">%{</span><span class="w">
   </span><span class="s">&quot;item_id&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;54e644ffe779897594fa68cd&quot;</span><span class="p">,</span><span class="w">
   </span><span class="s">&quot;mod_rank&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
   </span><span class="s">&quot;order_type&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;sell&quot;</span><span class="p">,</span><span class="w">
   </span><span class="s">&quot;platinum&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="mi">20</span><span class="p">,</span><span class="w">
   </span><span class="s">&quot;quantity&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="mi">1</span><span class="w">
-</span><span class="p" data-group-id="6904257767-1">}</span><span class="w">
+</span><span class="p" data-group-id="2640277691-3">}</span><span class="p" data-group-id="2640277691-2">)</span><span class="w">
 
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">AuctionHouse</span><span class="o">.</span><span class="n">place_order</span><span class="p" data-group-id="6904257767-2">(</span><span class="n">order</span><span class="p" data-group-id="6904257767-2">)</span><span class="w">
-</span><span class="p" data-group-id="6904257767-3">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;626127cbc984ac033cd2bbd2&quot;</span><span class="p" data-group-id="6904257767-3">}</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">AuctionHouse</span><span class="o">.</span><span class="n">place_order</span><span class="p" data-group-id="2640277691-4">(</span><span class="n">order</span><span class="p" data-group-id="2640277691-4">)</span><span class="w">
+</span><span class="p" data-group-id="2640277691-5">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w">
+  </span><span class="p" data-group-id="2640277691-6">%</span><span class="nc" data-group-id="2640277691-6">PlacedOrder</span><span class="p" data-group-id="2640277691-6">{</span><span class="w">
+    </span><span class="ss">item_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;54e644ffe779897594fa68cd&quot;</span><span class="p">,</span><span class="w">
+    </span><span class="ss">order_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;626127cbc984ac033cd2bbd2&quot;</span><span class="w">
+  </span><span class="p" data-group-id="2640277691-6">}</span><span class="w">
+</span><span class="p" data-group-id="2640277691-5">}</span><span class="w">
 
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">AuctionHouse</span><span class="o">.</span><span class="n">place_order</span><span class="p" data-group-id="6904257767-4">(</span><span class="n">order</span><span class="p" data-group-id="6904257767-4">)</span><span class="w">
-</span><span class="p" data-group-id="6904257767-5">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:reason</span><span class="p">,</span><span class="w"> </span><span class="n">order</span><span class="p" data-group-id="6904257767-5">}</span></code></pre>
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">AuctionHouse</span><span class="o">.</span><span class="n">place_order</span><span class="p" data-group-id="2640277691-7">(</span><span class="n">order</span><span class="p" data-group-id="2640277691-7">)</span><span class="w">
+</span><span class="p" data-group-id="2640277691-8">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:reason</span><span class="p">,</span><span class="w"> </span><span class="n">order</span><span class="p" data-group-id="2640277691-8">}</span></code></pre>
   </section>
 </section>
-<section class="detail" id="update_credentials/1">
+<section class="detail" id="recover_login/2">
 
   <div class="detail-header">
-    <a href="#update_credentials/1" class="detail-link" title="Link to this function">
+    <a href="#recover_login/2" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">update_credentials(credentials)</h1>
+    <h1 class="signature" translate="no">recover_login(auth, user)</h1>
 
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/auction_house.ex#L102" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/auction_house.ex#L139" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -326,23 +435,21 @@ that the external party can understand.</p><p>Example:</p><pre><code class="make
 
   <section class="docstring">
 
-      <h2>Specs</h2>
       <div class="specs">
 
-          <pre translate="no">update_credentials(<a href="AuctionHouse.Type.html#t:credentials/0">AuctionHouse.Type.credentials</a>()) ::
-  <a href="AuctionHouse.Type.html#t:update_credentials_response/0">AuctionHouse.Type.update_credentials_response</a>()</pre>
+          <pre translate="no"><span class="attribute">@spec</span> recover_login(<a href="Shared.Data.Authorization.html#t:t/0">Shared.Data.Authorization.t</a>(), <a href="Shared.Data.User.html#t:t/0">Shared.Data.User.t</a>()) ::
+  <a href="AuctionHouse.Type.html#t:recover_login_response/0">AuctionHouse.Type.recover_login_response</a>()</pre>
 
       </div>
 
-<p>Updates the credentials used to make requests to warframe market.
-Must be used before using any other functions from this API.
-Credentials are only persisted in memory, and are not persisted anywhere else.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="n">credentials</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p" data-group-id="8292892189-1">%{</span><span class="w">
-  </span><span class="s">&quot;cookie&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;a_cookie&quot;</span><span class="p">,</span><span class="w">
-  </span><span class="s">&quot;token&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;a_token&quot;</span><span class="w">
-</span><span class="p" data-group-id="8292892189-1">}</span><span class="w">
+<p>Feeds the authorization information directly to the AuctionHouse. Used when
+the login data is being recovered from a past login. Will only fail if this
+service is down.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="kn">alias</span><span class="w"> </span><span class="nc">Shared.Data</span><span class="o">.</span><span class="p" data-group-id="5375048246-1">{</span><span class="nc">Authorization</span><span class="p">,</span><span class="w"> </span><span class="nc">User</span><span class="p" data-group-id="5375048246-1">}</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="n">auth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Authorization</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="5375048246-2">(</span><span class="s">&quot;a_cookie&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;a_token&quot;</span><span class="p" data-group-id="5375048246-2">)</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">User</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="5375048246-3">(</span><span class="s">&quot;fl4m3&quot;</span><span class="p">,</span><span class="w"> </span><span class="no">false</span><span class="p" data-group-id="5375048246-3">)</span><span class="w">
 
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">AuctionHouse</span><span class="o">.</span><span class="n">update_credentials</span><span class="p" data-group-id="8292892189-2">(</span><span class="n">credentials</span><span class="p" data-group-id="8292892189-2">)</span><span class="w">
-</span><span class="p" data-group-id="8292892189-3">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="n">credentials</span><span class="p" data-group-id="8292892189-3">}</span></code></pre>
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">AuctionHouse</span><span class="o">.</span><span class="n">recover_login</span><span class="p" data-group-id="5375048246-4">(</span><span class="n">auth</span><span class="p">,</span><span class="w"> </span><span class="n">user</span><span class="p" data-group-id="5375048246-4">)</span><span class="w">
+</span><span class="ss">:ok</span></code></pre>
   </section>
 </section>
 
@@ -350,11 +457,26 @@ Credentials are only persisted in memory, and are not persisted anywhere else.</
   </section>
 
       <footer class="footer">
-
         <p>
+
+          <span class="line">
+            <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
+              Search HexDocs
+            </button>
+
+              <a href="Market Manager.epub" title="ePub version">
+                Download ePub version
+              </a>
+
+          </span>
+        </p>
+
+        <p class="built-using">
           Built using
-          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.28.0) for the
-          <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.30.6) for the
+
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
         </p>
       </footer>
     </div>

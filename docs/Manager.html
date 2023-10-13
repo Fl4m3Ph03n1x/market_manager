@@ -4,38 +4,45 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="ExDoc v0.28.0">
+    <meta name="generator" content="ExDoc v0.30.6">
     <meta name="project" content="Market Manager v2.1.5">
 
     <title>Manager — Market Manager v2.1.5</title>
-    <link rel="stylesheet" href="dist/elixir-a816d167216329cc463d.css" />
+    <link rel="stylesheet" href="dist/html-elixir-M3TQBNKO.css" />
 
-    <script src="dist/sidebar_items-a204c62895.js"></script>
+
+    <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
+    <script src="dist/handlebars.templates-KDPBTEPL.js"></script>
+    <script src="dist/sidebar_items-1C5C5552.js"></script>
 
       <script src="docs_config.js"></script>
 
-    <script async src="dist/app-80aa23c1d96b6dc3c064.js"></script>
+    <script async src="dist/html-CP2A7WXZ.js"></script>
 
 
   </head>
-  <body data-type="modules">
+  <body data-type="modules" class="page-module">
     <script>
 
       try {
-        if (localStorage.getItem('night-mode') === 'true') {
-          document.body.classList.add('night-mode');
+        var settings = JSON.parse(localStorage.getItem('ex_doc:settings') || '{}');
+
+        if (settings.theme === 'dark' ||
+           ((settings.theme === 'system' || settings.theme == null) &&
+             window.matchMedia('(prefers-color-scheme: dark)').matches)
+           ) {
+          document.body.classList.add('dark')
         }
       } catch (error) { }
     </script>
 
 <div class="main">
 
+<button class="sidebar-button sidebar-toggle" aria-label="toggle sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
 
 <section class="sidebar">
-  <button class="sidebar-button sidebar-toggle">
-    <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
-  </button>
-
   <form class="sidebar-search" action="search.html">
     <button type="submit" class="search-button" aria-label="Submit Search">
       <i class="ri-search-2-line" aria-hidden="true" title="Submit search"></i>
@@ -44,7 +51,8 @@
       <i class="ri-close-line ri-lg" aria-hidden="true" title="Cancel search"></i>
     </button>
     <label class="search-label">
-      <input name="q" type="text" class="search-input" placeholder="Search..." aria-label="Input your search terms" autocomplete="off" />
+      <p class="sr-only">Search</p>
+      <input name="q" type="text" class="search-input" placeholder="Search..." aria-label="Input your search terms" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
     </label>
   </form>
 
@@ -63,9 +71,9 @@
       <a href="https://fl4m3ph03n1x.github.io/market_manager/" class="sidebar-projectName" translate="no">
 Market Manager
       </a>
-      <strong class="sidebar-projectVersion" translate="no">
+      <div class="sidebar-projectVersion" translate="no">
         v2.1.5
-      </strong>
+      </div>
     </div>
     <ul class="sidebar-listNav">
       <li><a id="extras-list-link" href="#full-list">Pages</a></li>
@@ -76,22 +84,22 @@ Market Manager
     </ul>
   </div>
 
-  <div class="gradient"></div>
-  <ul id="full-list" class="sidebar-fullList"></ul>
+  <ul id="full-list"></ul>
 </section>
 
 <section class="content">
+  <output role="status" id="toast"></output>
   <div class="content-outer">
     <div id="content" class="content-inner">
 
 <h1>
-<button class="settings display-settings">
+<button class="icon-action display-settings">
   <i class="ri-settings-3-line"></i>
   <span class="sr-only">Settings</span>
 </button>
 
 
-    <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/manager/lib/manager.ex#L1" title="View Source" class="view-source" rel="help">
+    <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/manager/lib/manager.ex#L1" title="View Source" class="icon-action" rel="help">
       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
       <span class="sr-only">View Source</span>
     </a>
@@ -113,51 +121,85 @@ and you need to talk to MarketManager, this is who you call, the public API.</p>
     <h1 class="section-heading">
       <a class="hover-link" href="#summary">
         <i class="ri-link-m" aria-hidden="true"></i>
-        <span class="sr-only">Link to this section</span>
+        Summary
       </a>
-      Summary
     </h1>
+<div class="summary-functions summary">
+  <h2>
+    <a href="#functions">Functions</a>
+  </h2>
 
-  <div class="summary-functions summary">
-    <h2>
-      <a href="#functions">Functions</a>
-    </h2>
-
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#activate/2" translate="no">activate(syndicate, strategy)</a>
-
-        </div>
-
-          <div class="summary-synopsis"><p>Activates a syndicate in warframe.market. Activating a syndicate means you
-put on sell all the mods the syndicate has. The price of each mod will be calculated via a
-<code class="inline">PriceAnalyst</code> depending on which strategy you choose.</p></div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#activate/2" translate="no">activate(syndicate, strategy)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#authenticate/1" translate="no">authenticate(credentials)</a>
+        <div class="summary-synopsis"><p>Asynchronous operation.</p></div>
 
-        </div>
+    </div>
 
-          <div class="summary-synopsis"><p>Saves the login information used in all requests.
-Required parameters are</p></div>
-
-      </div>
-
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#deactivate/1" translate="no">deactivate(syndicate)</a>
-
-        </div>
-
-          <div class="summary-synopsis"><p>Deactivates a syndicate in warframe.market. Deactivating a syndicate means you
-delete all orders you have placed before that belong to the given syndicate.</p></div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#deactivate/1" translate="no">deactivate(syndicate)</a>
 
       </div>
 
-  </div>
+        <div class="summary-synopsis"><p>Asynchronous operation.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#login/2" translate="no">login(credentials, keep_logged_in)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Asynchronous operation.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#logout/0" translate="no">logout()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Synchronous operation.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#recover_login/0" translate="no">recover_login()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Synchronous operation.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#strategies/0" translate="no">strategies()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Synchronous operation.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#syndicates/0" translate="no">syndicates()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Synchronous operation.</p></div>
+
+    </div>
+
+</div>
 
   </section>
 
@@ -166,9 +208,8 @@ delete all orders you have placed before that belong to the given syndicate.</p>
     <h1 class="section-heading">
       <a class="hover-link" href="#functions">
         <i class="ri-link-m" aria-hidden="true"></i>
-        <span class="sr-only">Link to this section</span>
-      </a>
 Functions
+      </a>
     </h1>
     <div class="functions-list">
 <section class="detail" id="activate/2">
@@ -180,7 +221,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">activate(syndicate, strategy)</h1>
 
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/manager/lib/manager.ex#L49" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/manager/lib/manager.ex#L50" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -190,64 +231,26 @@ Functions
 
   <section class="docstring">
 
-      <h2>Specs</h2>
       <div class="specs">
 
-          <pre translate="no">activate(<a href="Manager.Type.html#t:syndicate/0">Manager.Type.syndicate</a>(), <a href="Manager.Type.html#t:strategy/0">Manager.Type.strategy</a>()) :: :ok</pre>
+          <pre translate="no"><span class="attribute">@spec</span> activate(<a href="Shared.Data.Syndicate.html#t:t/0">Shared.Data.Syndicate.t</a>(), <a href="Shared.Data.Strategy.html#t:t/0">Shared.Data.Strategy.t</a>()) :: :ok</pre>
 
       </div>
 
-<p>Activates a syndicate in warframe.market. Activating a syndicate means you
+<p>Asynchronous operation.</p><p>Activates a syndicate in warframe.market. Activating a syndicate means you
 put on sell all the mods the syndicate has. The price of each mod will be calculated via a
-<code class="inline">PriceAnalyst</code> depending on which strategy you choose.</p><p>This is an asynchronous operation, which will return <code class="inline">:ok</code> immediatly.
+<code class="inline">PriceAnalyst</code> depending on which strategy you choose.</p><p>This is an asynchronous operation, which will return <code class="inline">:ok</code> immediately.
 The caller must have implemented a <code class="inline">handle_info</code> in its Server to handle messages with the
 following format:</p><ul><li><p><code class="inline">{:activate, syndicate :: String.t(), {index :: pos_integer(), total :: pos_integer(), result :: any}}</code>:
 Each time a placement for an item is done. This message contains the current index, the total
 and the result of the operation. It also has the id of the syndicate this order placement
 belongs to.
-The <code class="inline">result</code> of an operation, will be a tagged tuple. Some common formats are:</p><ul><li><code class="inline">{:ok, order_id :: String.t()}</code>, when the placement was successfull</li><li><code class="inline">{:error, reason :: any(), item_id :: String.t()}</code>, when the placement failed</li></ul></li><li><p><code class="inline">{:activate, syndicate :: String.t(), :done}</code>: Once all orders have been placed (successfully
+The <code class="inline">result</code> of an operation, will be a tagged tuple. Some common formats are:</p><ul><li><code class="inline">{:ok, order_id :: String.t()}</code>, when the placement was successful</li><li><code class="inline">{:error, reason :: any(), item_id :: String.t()}</code>, when the placement failed</li></ul></li><li><p><code class="inline">{:activate, syndicate :: String.t(), :done}</code>: Once all orders have been placed (successfully
 or not). It is the end of the <code class="inline">:activate</code> operation. It also has the id of the syndicate for
 which this operation was completed for.</p></li><li><p><code class="inline">{:activate, syndicate :: String.t(), error :: any}</code>: If a critical error occurred while trying
 to perform the <code class="inline">:activate</code> operation and this cannot continue/succeed. It also signals the end
-of the operation. Contains the id of the syndicate for which the operation failed.</p></li></ul><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="nc">MarketManager</span><span class="o">.</span><span class="n">activate</span><span class="p" data-group-id="7468812856-1">(</span><span class="s">&quot;cephalon_simaris&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">:lowest_minus_one</span><span class="p" data-group-id="7468812856-1">)</span><span class="w">
+of the operation. Contains the id of the syndicate for which the operation failed.</p></li></ul><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="nc">Manager</span><span class="o">.</span><span class="n">activate</span><span class="p" data-group-id="7895950812-1">(</span><span class="s">&quot;cephalon_simaris&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">:lowest_minus_one</span><span class="p" data-group-id="7895950812-1">)</span><span class="w">
 </span><span class="ss">:ok</span></code></pre>
-  </section>
-</section>
-<section class="detail" id="authenticate/1">
-
-  <div class="detail-header">
-    <a href="#authenticate/1" class="detail-link" title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">authenticate(credentials)</h1>
-
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/manager/lib/manager.ex#L106" class="view-source" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-      <h2>Specs</h2>
-      <div class="specs">
-
-          <pre translate="no">authenticate(<a href="Manager.Type.html#t:credentials/0">Manager.Type.credentials</a>()) :: <a href="Manager.Type.html#t:authenticate_response/0">Manager.Type.authenticate_response</a>()</pre>
-
-      </div>
-
-<p>Saves the login information used in all requests.
-Required parameters are:</p><ul><li>token: the xrfc-token used to send requests</li><li>cookie: the cookie used to id the user</li></ul><p>Performs validation on the given information.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="nc">MarketManager</span><span class="o">.</span><span class="n">authenticate</span><span class="p" data-group-id="8029164909-1">(</span><span class="p" data-group-id="8029164909-2">%{</span><span class="s">&quot;token&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;abc&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;cookie&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;123&quot;</span><span class="p" data-group-id="8029164909-2">}</span><span class="p" data-group-id="8029164909-1">)</span><span class="w">
-</span><span class="p" data-group-id="8029164909-3">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="8029164909-4">%{</span><span class="s">&quot;token&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;abc&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;cookie&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;123&quot;</span><span class="p" data-group-id="8029164909-4">}</span><span class="p" data-group-id="8029164909-3">}</span><span class="w">
-
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">MarketManager</span><span class="o">.</span><span class="n">authenticate</span><span class="p" data-group-id="8029164909-5">(</span><span class="p" data-group-id="8029164909-6">%{</span><span class="s">&quot;token&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;abc&quot;</span><span class="p" data-group-id="8029164909-6">}</span><span class="p" data-group-id="8029164909-5">)</span><span class="w">
-</span><span class="p" data-group-id="8029164909-7">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:unable_to_save_authentication</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="8029164909-8">{</span><span class="ss">:missing_mandatory_keys</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="8029164909-9">[</span><span class="s">&quot;cookie&quot;</span><span class="p" data-group-id="8029164909-9">]</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="8029164909-10">%{</span><span class="s">&quot;token&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;abc&quot;</span><span class="p" data-group-id="8029164909-10">}</span><span class="p" data-group-id="8029164909-8">}</span><span class="p" data-group-id="8029164909-7">}</span><span class="w">
-
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">MarketManager</span><span class="o">.</span><span class="n">authenticate</span><span class="p" data-group-id="8029164909-11">(</span><span class="p" data-group-id="8029164909-12">%{</span><span class="s">&quot;token&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;abc&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;cookie&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;123&quot;</span><span class="p" data-group-id="8029164909-12">}</span><span class="p" data-group-id="8029164909-11">)</span><span class="w">
-</span><span class="p" data-group-id="8029164909-13">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:unable_to_save_authentication</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="8029164909-14">{</span><span class="ss">:enoent</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="8029164909-15">%{</span><span class="s">&quot;token&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;abc&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;cookie&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;123&quot;</span><span class="p" data-group-id="8029164909-15">}</span><span class="p" data-group-id="8029164909-14">}</span><span class="p" data-group-id="8029164909-13">}</span></code></pre>
   </section>
 </section>
 <section class="detail" id="deactivate/1">
@@ -259,7 +262,7 @@ Required parameters are:</p><ul><li>token: the xrfc-token used to send requests<
     </a>
     <h1 class="signature" translate="no">deactivate(syndicate)</h1>
 
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/manager/lib/manager.ex#L82" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/manager/lib/manager.ex#L85" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -269,26 +272,219 @@ Required parameters are:</p><ul><li>token: the xrfc-token used to send requests<
 
   <section class="docstring">
 
-      <h2>Specs</h2>
       <div class="specs">
 
-          <pre translate="no">deactivate(<a href="Manager.Type.html#t:syndicate/0">Manager.Type.syndicate</a>()) :: :ok</pre>
+          <pre translate="no"><span class="attribute">@spec</span> deactivate(<a href="Shared.Data.Syndicate.html#t:t/0">Shared.Data.Syndicate.t</a>()) :: :ok</pre>
 
       </div>
 
-<p>Deactivates a syndicate in warframe.market. Deactivating a syndicate means you
-delete all orders you have placed before that belong to the given syndicate.</p><p>This is an asynchronous operation, which will return <code class="inline">:ok</code> immediatly.
+<p>Asynchronous operation.</p><p>Deactivates a syndicate in warframe.market. Deactivating a syndicate means you
+delete all orders you have placed before that belong to the given syndicate.</p><p>This is an asynchronous operation, which will return <code class="inline">:ok</code> immediately.
 The caller must have implemented a <code class="inline">handle_info</code> in its Server to handle messages with the
 following format:</p><ul><li><p><code class="inline">{:deactivate, syndicate :: String.t(), {index :: pos_integer(), total :: pos_integer(), result :: any}}</code>:
 Each time a placement for an item is done. This message contains the current index, the total
 and the result of the operation. It also has the id of the syndicate this order placement
 belongs to.
-The <code class="inline">result</code> of an operation, will be a tagged tuple. Some common formats are:</p><ul><li><code class="inline">{:ok, order_id :: String.t()}</code>, when the deletion was successfull</li><li><code class="inline">{:error, reason :: any(), order_id :: String.t()}</code>, when the deletion failed</li></ul></li><li><p><code class="inline">{:deactivate, syndicate :: String.t(), :done}</code>: Once all orders have been deleted (successfully
+The <code class="inline">result</code> of an operation, will be a tagged tuple. Some common formats are:</p><ul><li><code class="inline">{:ok, order_id :: String.t()}</code>, when the deletion was successful</li><li><code class="inline">{:error, reason :: any(), order_id :: String.t()}</code>, when the deletion failed</li></ul></li><li><p><code class="inline">{:deactivate, syndicate :: String.t(), :done}</code>: Once all orders have been deleted (successfully
 or not). It is the end of the <code class="inline">:deactivate</code> operation. It also has the id of the syndicate for
 which this operation was completed for.</p></li><li><p><code class="inline">{:deactivate, syndicate :: String.t(), error :: any}</code>: If a critical error occurred while trying
 to perform the <code class="inline">:deactivate</code> operation and this cannot continue/succeed. It also signals the end
-of the operation. Contains the id of the syndicate for which the operation failed.</p></li></ul><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="nc">MarketManager</span><span class="o">.</span><span class="n">deactivate</span><span class="p" data-group-id="4965933510-1">(</span><span class="s">&quot;cephalon_simaris&quot;</span><span class="p" data-group-id="4965933510-1">)</span><span class="w">
+of the operation. Contains the id of the syndicate for which the operation failed.</p></li></ul><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="nc">Manager</span><span class="o">.</span><span class="n">deactivate</span><span class="p" data-group-id="2491038689-1">(</span><span class="s">&quot;cephalon_simaris&quot;</span><span class="p" data-group-id="2491038689-1">)</span><span class="w">
 </span><span class="ss">:ok</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="login/2">
+
+  <div class="detail-header">
+    <a href="#login/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">login(credentials, keep_logged_in)</h1>
+
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/manager/lib/manager.ex#L117" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> login(<a href="Shared.Data.Credentials.html#t:t/0">Shared.Data.Credentials.t</a>(), keep_logged_in :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()) ::
+  <a href="Manager.Type.html#t:login_response/0">Manager.Type.login_response</a>()</pre>
+
+      </div>
+
+<p>Asynchronous operation.</p><p>Saves the login information used in all requests. Can optionally keep user
+logged in for future sessions. Will first attempt to authenticate the user,
+and then, if successful and if <code class="inline">keep_logged_in</code> is <code class="inline">true</code>, will try to save
+the authentication parameters. Should it fail to save the authentication
+parameters, the login request is still done.</p><p>This is an asynchronous operation, which will return <code class="inline">:ok</code> immediately.
+The caller must have implemented a <code class="inline">handle_info</code> in its Server to handle messages with the
+following format:</p><ul><li><p><code class="inline">{:login, user_info :: Shared.Data.User.t(), :done}</code>: If the operation was successful.</p></li><li><p><code class="inline">{:login, credentials :: Shared.Data.Credentials.t(), error :: any}</code>: If the login operation failed.
+This can happen due to a network error, wrong password or any other cause.</p></li></ul><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="kn">alias</span><span class="w"> </span><span class="nc">Shared.Data.Credentials</span><span class="w">
+
+</span><span class="o">&gt;</span><span class="w"> </span><span class="n">credentials</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Credentials</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="7948647173-1">(</span><span class="s">&quot;username&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;password&quot;</span><span class="p" data-group-id="7948647173-1">)</span><span class="w">
+
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Manager</span><span class="o">.</span><span class="n">login</span><span class="p" data-group-id="7948647173-2">(</span><span class="n">credentials</span><span class="p">,</span><span class="w"> </span><span class="no">false</span><span class="p" data-group-id="7948647173-2">)</span><span class="w">
+</span><span class="ss">:ok</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="logout/0">
+
+  <div class="detail-header">
+    <a href="#logout/0" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">logout()</h1>
+
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/manager/lib/manager.ex#L163" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> logout() :: <a href="Manager.Type.html#t:logout_response/0">Manager.Type.logout_response</a>()</pre>
+
+      </div>
+
+<p>Synchronous operation.</p><p>Deletes the current active session. This only logs out the MarketManager application and does not affect the
+login session in the AuctionHouse. If a user is logged in the AuctionHouse, it will continue logged in there, but next
+time this application is launched, the user will have to login into the AuctionHouse from this application to be able
+to use it.</p><p>This operation deletes the sessions data from memory and from disk. Even if the second fails, the first will still
+be attempted.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="nc">Manager</span><span class="o">.</span><span class="n">logout</span><span class="p" data-group-id="1552166626-1">(</span><span class="p" data-group-id="1552166626-1">)</span><span class="w">
+</span><span class="ss">:ok</span><span class="w">
+
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Manager</span><span class="o">.</span><span class="n">logout</span><span class="p" data-group-id="1552166626-2">(</span><span class="p" data-group-id="1552166626-2">)</span><span class="w">
+</span><span class="p" data-group-id="1552166626-3">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:reason</span><span class="p" data-group-id="1552166626-3">}</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="recover_login/0">
+
+  <div class="detail-header">
+    <a href="#recover_login/0" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">recover_login()</h1>
+
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/manager/lib/manager.ex#L140" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> recover_login() :: <a href="Manager.Type.html#t:recover_login_response/0">Manager.Type.recover_login_response</a>()</pre>
+
+      </div>
+
+<p>Synchronous operation.</p><p>Login into the application using a previous session.
+If this operation is attempted and the user has not logged in yet, <code class="inline">nil</code> is returned instead of a User.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="kn">alias</span><span class="w"> </span><span class="nc">Shared.Data.User</span><span class="w">
+
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Manager</span><span class="o">.</span><span class="n">recover_login</span><span class="p" data-group-id="6981382007-1">(</span><span class="p" data-group-id="6981382007-1">)</span><span class="w">
+</span><span class="p" data-group-id="6981382007-2">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="6981382007-3">%</span><span class="nc" data-group-id="6981382007-3">User</span><span class="p" data-group-id="6981382007-3">{</span><span class="ss">ingame_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;user_1&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">patreon?</span><span class="p">:</span><span class="w"> </span><span class="no">false</span><span class="p" data-group-id="6981382007-3">}</span><span class="p" data-group-id="6981382007-2">}</span><span class="w">
+
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Manager</span><span class="o">.</span><span class="n">recover_login</span><span class="p" data-group-id="6981382007-4">(</span><span class="p" data-group-id="6981382007-4">)</span><span class="w">
+</span><span class="p" data-group-id="6981382007-5">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="no">nil</span><span class="p" data-group-id="6981382007-5">}</span><span class="w">
+
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Manager</span><span class="o">.</span><span class="n">recover_login</span><span class="p" data-group-id="6981382007-6">(</span><span class="p" data-group-id="6981382007-6">)</span><span class="w">
+</span><span class="p" data-group-id="6981382007-7">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:enoent</span><span class="p" data-group-id="6981382007-7">}</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="strategies/0">
+
+  <div class="detail-header">
+    <a href="#strategies/0" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">strategies()</h1>
+
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/manager/lib/manager.ex#L212" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> strategies() :: {:ok, [<a href="Shared.Data.Strategy.html#t:t/0">Shared.Data.Strategy.t</a>()]} | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+
+      </div>
+
+<p>Synchronous operation.</p><p>Returns the list of available strategies, or an error if it fails.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="kn">alias</span><span class="w"> </span><span class="nc">Shared.Data.Strategy</span><span class="w">
+
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Manager</span><span class="o">.</span><span class="n">strategies</span><span class="p" data-group-id="1116513827-1">(</span><span class="p" data-group-id="1116513827-1">)</span><span class="w">
+</span><span class="p" data-group-id="1116513827-2">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="1116513827-3">[</span><span class="w">
+  </span><span class="p" data-group-id="1116513827-4">%</span><span class="nc" data-group-id="1116513827-4">Strategy</span><span class="p" data-group-id="1116513827-4">{</span><span class="w">
+    </span><span class="ss">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Top 3 Average&quot;</span><span class="p">,</span><span class="w">
+    </span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="ss">:top_three_average</span><span class="p">,</span><span class="w">
+    </span><span class="ss">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Gets the 3 lowest prices for the given item and calculates the average.&quot;</span><span class="w">
+  </span><span class="p" data-group-id="1116513827-4">}</span><span class="p">,</span><span class="w">
+  </span><span class="p" data-group-id="1116513827-5">%</span><span class="nc" data-group-id="1116513827-5">Strategy</span><span class="p" data-group-id="1116513827-5">{</span><span class="w">
+    </span><span class="ss">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Top 5 Average&quot;</span><span class="p">,</span><span class="w">
+    </span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="ss">:top_five_average</span><span class="p">,</span><span class="w">
+    </span><span class="ss">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Gets the 5 lowest prices for the given item and calculates the average.&quot;</span><span class="w">
+  </span><span class="p" data-group-id="1116513827-5">}</span><span class="w">
+</span><span class="p" data-group-id="1116513827-3">]</span><span class="p" data-group-id="1116513827-2">}</span><span class="w">
+
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Manager</span><span class="o">.</span><span class="n">strategies</span><span class="p" data-group-id="1116513827-6">(</span><span class="p" data-group-id="1116513827-6">)</span><span class="w">
+</span><span class="p" data-group-id="1116513827-7">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:reason</span><span class="p" data-group-id="1116513827-7">}</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="syndicates/0">
+
+  <div class="detail-header">
+    <a href="#syndicates/0" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">syndicates()</h1>
+
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/manager/lib/manager.ex#L182" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> syndicates() :: <a href="Manager.Type.html#t:syndicates_response/0">Manager.Type.syndicates_response</a>()</pre>
+
+      </div>
+
+<p>Synchronous operation.</p><p>Returns the list of known syndicates, or an error if it fails.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="kn">alias</span><span class="w"> </span><span class="nc">Shared.Data.Syndicate</span><span class="w">
+
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">MarketManager</span><span class="o">.</span><span class="n">syndicates</span><span class="p" data-group-id="5797907290-1">(</span><span class="p" data-group-id="5797907290-1">)</span><span class="w">
+</span><span class="p" data-group-id="5797907290-2">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="5797907290-3">[</span><span class="p" data-group-id="5797907290-4">%</span><span class="nc" data-group-id="5797907290-4">Syndicate</span><span class="p" data-group-id="5797907290-4">{</span><span class="ss">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Red Veil&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="ss">:red_veil</span><span class="p" data-group-id="5797907290-4">}</span><span class="p" data-group-id="5797907290-3">]</span><span class="p" data-group-id="5797907290-2">}</span><span class="w">
+
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Manager</span><span class="o">.</span><span class="n">syndicates</span><span class="p" data-group-id="5797907290-5">(</span><span class="p" data-group-id="5797907290-5">)</span><span class="w">
+</span><span class="p" data-group-id="5797907290-6">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:enoent</span><span class="p" data-group-id="5797907290-6">}</span></code></pre>
   </section>
 </section>
 
@@ -296,11 +492,26 @@ of the operation. Contains the id of the syndicate for which the operation faile
   </section>
 
       <footer class="footer">
-
         <p>
+
+          <span class="line">
+            <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
+              Search HexDocs
+            </button>
+
+              <a href="Market Manager.epub" title="ePub version">
+                Download ePub version
+              </a>
+
+          </span>
+        </p>
+
+        <p class="built-using">
           Built using
-          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.28.0) for the
-          <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.30.6) for the
+
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
         </p>
       </footer>
     </div>
