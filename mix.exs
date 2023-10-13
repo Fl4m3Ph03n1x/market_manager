@@ -29,7 +29,6 @@ defmodule MarketManager.MixProject do
 
   defp deps,
     do: [
-      {:bakeware, "~> 0.2.4"},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:excoveralls, "~> 0.10", only: :test},
       {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
@@ -47,7 +46,6 @@ defmodule MarketManager.MixProject do
   defp releases,
     do: [
       market_manager: [
-        steps: [:assemble, &Bakeware.assemble/1],
         applications: [
           web_interface: :permanent,
           runtime_tools: :permanent
