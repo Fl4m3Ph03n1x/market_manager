@@ -4,42 +4,44 @@ defmodule WebInterface.DeactivateLive do
   require Logger
 
   alias Manager
-  alias WebInterface.Persistence.{Button, Syndicate, User}
+  alias Shared.Data.Syndicate
+  alias WebInterface.Persistence.Button, as: ButtonStore
+  alias WebInterface.Persistence.Syndicate, as: SyndicateStore
+  alias WebInterface.Persistence.User, as: UserStore
 
   @impl true
   def mount(_params, _session, socket) do
-    with  :ok <- Button.set_button(:deactivate),
-          {:ok, user} <- User.get_user(),
-          {:ok, syndicates} <- Syndicate.get_syndicates(),
-          {:ok, inactive_syndicates} <- Syndicate.get_inactive_syndicates(),
-          {:ok, selected_inactive_syndicates} <- Syndicate.get_selected_inactive_syndicates() do
-            updated_socket =
-              assign(
-                socket,
-                user: user,
-                syndicates: syndicates,
-                inactive_syndicates: inactive_syndicates,
-                selected_inactive_syndicates: selected_inactive_syndicates,
-                form: to_form(%{"deactivate_syndicates" => []}),
-                deactivation_in_progress: false,
-                deactivation_progress: 0,
-                deactivation_current_syndicate: nil
-              )
+    with :ok <- ButtonStore.set_button(:deactivate),
+         {:ok, user} <- UserStore.get_user(),
+         {:ok, syndicates} <- SyndicateStore.get_syndicates(),
+         {:ok, inactive_syndicates} <- SyndicateStore.get_inactive_syndicates(),
+         {:ok, selected_inactive_syndicates} <- SyndicateStore.get_selected_inactive_syndicates() do
+      updated_socket =
+        assign(
+          socket,
+          user: user,
+          syndicates: syndicates,
+          inactive_syndicates: inactive_syndicates,
+          selected_inactive_syndicates: selected_inactive_syndicates,
+          form: to_form(%{"deactivate_syndicates" => []}),
+          deactivation_in_progress: false,
+          deactivation_progress: 0,
+          deactivation_current_syndicate: nil
+        )
 
-            {:ok, updated_socket}
-            else
-              error ->
-                Logger.error("Unable to show deactivation page: #{inspect(error)}")
-                {:error, socket |> put_flash(:error, "Unable to show deactivation page!")}
-          end
+      {:ok, updated_socket}
+    else
+      error ->
+        Logger.error("Unable to show deactivation page: #{inspect(error)}")
+        {:error, socket |> put_flash(:error, "Unable to show deactivation page!")}
+    end
   end
 
   @impl true
   def handle_event("execute", %{"syndicates" => syndicate_ids}, socket) do
-
-    with {:ok, [syndicate | _rest] = syndicates} <- Syndicate.get_all_syndicates_by_id(syndicate_ids),
-      :ok <- Manager.deactivate(Atom.to_string(syndicate.id)) do
-
+    with {:ok, [syndicate | _rest] = syndicates} <-
+           SyndicateStore.get_all_syndicates_by_id(syndicate_ids),
+         :ok <- Manager.deactivate(syndicate) do
       updated_socket =
         socket
         |> assign(selected_inactive_syndicates: syndicates)
@@ -56,13 +58,12 @@ defmodule WebInterface.DeactivateLive do
   end
 
   def handle_event("change", %{"syndicates" => syndicate_ids}, socket) do
-    with {:ok, syndicates} <- Syndicate.get_all_syndicates_by_id(syndicate_ids),
-         {:ok, inactive_syndicates} <- Syndicate.get_inactive_syndicates(),
+    with {:ok, syndicates} <- SyndicateStore.get_all_syndicates_by_id(syndicate_ids),
+         {:ok, inactive_syndicates} <- SyndicateStore.get_inactive_syndicates(),
          new_selected_syndicates =
            Enum.uniq(syndicates ++ inactive_syndicates),
-         :ok <- Syndicate.set_selected_inactive_syndicates(new_selected_syndicates) do
-      {:noreply,
-       assign(socket, selected_inactive_syndicates: new_selected_syndicates)}
+         :ok <- SyndicateStore.set_selected_inactive_syndicates(new_selected_syndicates) do
+      {:noreply, assign(socket, selected_inactive_syndicates: new_selected_syndicates)}
     else
       err ->
         Logger.error("Unable to retrieve change data: #{inspect(err)}")
@@ -71,10 +72,9 @@ defmodule WebInterface.DeactivateLive do
   end
 
   def handle_event("change", _no_syndicates_selected, socket) do
-    with {:ok, inactive_syndicates} <- Syndicate.get_inactive_syndicates(),
-         :ok <- Syndicate.set_selected_inactive_syndicates(inactive_syndicates) do
-      {:noreply,
-       assign(socket, selected_inactive_syndicates: inactive_syndicates)}
+    with {:ok, inactive_syndicates} <- SyndicateStore.get_inactive_syndicates(),
+         :ok <- SyndicateStore.set_selected_inactive_syndicates(inactive_syndicates) do
+      {:noreply, assign(socket, selected_inactive_syndicates: inactive_syndicates)}
     else
       err ->
         Logger.error("Unable to retrieve change data: #{inspect(err)}")
@@ -126,13 +126,13 @@ defmodule WebInterface.DeactivateLive do
   def handle_info({:deactivate, syndicate_id_str, :done}, socket) do
     Logger.info("Deactivation of #{syndicate_id_str} complete.")
 
-    with {:ok, syndicate} <- Syndicate.get_syndicate_by_id(syndicate_id_str),
-         :ok <- Syndicate.deactivate_syndicate(syndicate),
-         {:ok, selected_syndicates} <- Syndicate.get_selected_inactive_syndicates(),
-         {:ok, inactive_syndicates} <- Syndicate.get_inactive_syndicates(),
+    with {:ok, syndicate} <- SyndicateStore.get_syndicate_by_id(syndicate_id_str),
+         :ok <- SyndicateStore.deactivate_syndicate(syndicate),
+         {:ok, selected_syndicates} <- SyndicateStore.get_selected_inactive_syndicates(),
+         {:ok, inactive_syndicates} <- SyndicateStore.get_inactive_syndicates(),
          new_selected_syndicates =
            Enum.uniq(selected_syndicates ++ inactive_syndicates),
-         :ok <- Syndicate.set_selected_inactive_syndicates(new_selected_syndicates) do
+         :ok <- SyndicateStore.set_selected_inactive_syndicates(new_selected_syndicates) do
       missing_syndicates =
         selected_syndicates
         |> MapSet.new()
@@ -145,7 +145,7 @@ defmodule WebInterface.DeactivateLive do
           [deactivation_current_syndicate: nil, deactivation_in_progress: false]
         else
           [next_syndicate | _rest] = missing_syndicates
-          :ok = Manager.deactivate(Atom.to_string(next_syndicate.id))
+          :ok = Manager.deactivate(next_syndicate)
           [deactivation_current_syndicate: next_syndicate, deactivation_progress: 0]
         end
 
@@ -173,11 +173,13 @@ defmodule WebInterface.DeactivateLive do
   # Helper Functions #
   ####################
 
-  @spec disable_button?([Syndicates.t()], [Syndicates.t()]) :: boolean
+  @spec disable_button?([Syndicate.t()], [Syndicate.t()]) :: boolean
   def disable_button?(selected_syndicates, inactive_syndicates),
-    do: Enum.empty?(selected_syndicates) or Enum.sort(selected_syndicates) == Enum.sort(inactive_syndicates)
+    do:
+      Enum.empty?(selected_syndicates) or
+        Enum.sort(selected_syndicates) == Enum.sort(inactive_syndicates)
 
-  @spec progress_bar_message(Syndicates.t() | nil) :: String.t()
+  @spec progress_bar_message(Syndicate.t() | nil) :: String.t()
   def progress_bar_message(nil), do: "Operation in progress ..."
 
   def progress_bar_message(deactivation_current_syndicate),

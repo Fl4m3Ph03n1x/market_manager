@@ -47,7 +47,7 @@ defmodule WebInterface.ActivateLive do
     with {:ok, strategy} <- StrategyStore.get_strategy_by_id(strategy_id),
          {:ok, [syndicate | _rest] = syndicates} <-
            SyndicateStore.get_all_syndicates_by_id(syndicate_ids) do
-      :ok = Manager.activate(Atom.to_string(syndicate.id), strategy.id)
+      :ok = Manager.activate(syndicate, strategy)
 
       updated_socket =
         socket
@@ -181,7 +181,7 @@ defmodule WebInterface.ActivateLive do
           [activation_current_syndicate: nil, activation_in_progress: false]
         else
           [next_syndicate | _rest] = missing_syndicates
-          :ok = Manager.activate(Atom.to_string(next_syndicate.id), strategy.id)
+          :ok = Manager.activate(next_syndicate, strategy)
           [activation_current_syndicate: next_syndicate, activation_progress: 0]
         end
 
@@ -216,7 +216,7 @@ defmodule WebInterface.ActivateLive do
       is_nil(strategy) or Enum.empty?(selected_syndicates) or
         Enum.sort(selected_syndicates) == Enum.sort(active_syndicates)
 
-  @spec progress_bar_message(Syndicates.t() | nil) :: String.t()
+  @spec progress_bar_message(Syndicate.t() | nil) :: String.t()
   def progress_bar_message(nil), do: "Operation in progress ..."
 
   def progress_bar_message(activation_current_syndicate),
