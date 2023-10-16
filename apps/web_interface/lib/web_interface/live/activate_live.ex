@@ -122,27 +122,36 @@ defmodule WebInterface.ActivateLive do
   end
 
   @impl true
-  def handle_info({:activate, syndicate_name, {:error, reason} = error}, socket) do
-    Logger.error("Unable to activate syndicate #{syndicate_name}: #{inspect(error)}")
+  def handle_info({:activate, syndicate, {:error, reason} = error}, socket) do
+    Logger.error("Unable to activate syndicate #{syndicate.name}: #{inspect(error)}")
 
-    {:noreply,
-     put_flash(
-       socket,
-       :error,
-       "Unable to activate syndicate #{syndicate_name} due to '#{reason}'."
-     )}
+    with {:ok, active_syndicates} <- SyndicateStore.get_active_syndicates(),
+         new_selected_syndicates = active_syndicates -- [syndicate],
+         :ok <- SyndicateStore.set_selected_active_syndicates(new_selected_syndicates) do
+      {:noreply,
+       put_flash(
+         socket,
+         :error,
+         "Unable to activate syndicate #{syndicate.name} due to '#{reason}'."
+       )}
+    else
+      err ->
+        Logger.error("Failed to retrieve persistence data: #{inspect(err)}")
+
+        {:noreply, put_flash(socket, :error, "Multiple errors ocurred, please check the logs.")}
+    end
   end
 
   def handle_info(
         {:activate, syndicate, {current_item, total_items, {:error, reason, _item} = error}},
         socket
       ) do
-    Logger.error("Order placement for item of #{syndicate} failed: #{inspect(error)}")
+    Logger.error("Order placement for item of #{syndicate.name} failed: #{inspect(error)}")
 
     updated_socket =
       socket
       |> assign(activation_progress: round(current_item / total_items * 100))
-      |> put_flash(:error, "Unable to place an order for #{syndicate} due to '#{reason}'.")
+      |> put_flash(:error, "Unable to place an order for #{syndicate.name} due to '#{reason}'.")
 
     {:noreply, updated_socket}
   end
@@ -152,16 +161,15 @@ defmodule WebInterface.ActivateLive do
          {current_item, total_items, {:ok, %Shared.Data.PlacedOrder{item_id: item_id}}}},
         socket
       ) do
-    Logger.info("Order placed for #{syndicate}: #{item_id}")
+    Logger.info("Order placed for #{syndicate.name}: #{item_id}")
 
     {:noreply, assign(socket, activation_progress: round(current_item / total_items * 100))}
   end
 
-  def handle_info({:activate, syndicate_id_str, :done}, socket) do
-    Logger.info("Activation of #{syndicate_id_str} complete.")
+  def handle_info({:activate, syndicate, :done}, socket) do
+    Logger.info("Activation of #{syndicate.name} complete.")
 
-    with {:ok, syndicate} <- SyndicateStore.get_syndicate_by_id(syndicate_id_str),
-         {:ok, strategy} <- StrategyStore.get_selected_strategy(),
+    with {:ok, strategy} <- StrategyStore.get_selected_strategy(),
          :ok <- SyndicateStore.activate_syndicate(syndicate),
          {:ok, all_syndicates_active?} <- SyndicateStore.all_syndicates_active?(),
          {:ok, selected_syndicates} <- SyndicateStore.get_selected_active_syndicates(),
