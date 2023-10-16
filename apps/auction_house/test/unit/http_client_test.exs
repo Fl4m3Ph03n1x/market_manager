@@ -66,7 +66,8 @@ defmodule AuctionHouse.HTTPClientTest do
             {:ok,
              %HTTPoison.Response{
                status_code: 400,
-               body: "{\"error\": {\"_form\": [\"app.post_order.already_created_no_duplicates\"]}}"
+               body:
+                 "{\"error\": {\"_form\": [\"app.post_order.already_created_no_duplicates\"]}}"
              }}
           end,
           run_fn: fn _queue_name, func -> func.() end,
@@ -296,7 +297,7 @@ defmodule AuctionHouse.HTTPClientTest do
             {:ok,
              %HTTPoison.Response{
                status_code: 400,
-               body: "{\"error\": {\"order_id\": [\"app.form.invalid\"]}}"
+               body: "{\"error\": {\"order_id\": [\"app.delete_order.order_not_exist\"]}}"
              }}
           end,
           run_fn: fn _queue_name, func -> func.() end,
