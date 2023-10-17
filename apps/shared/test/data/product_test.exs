@@ -32,7 +32,7 @@ defmodule Shared.Data.ProductTest do
              id: "54a74454e779892d5e5155a0",
              min_price: 14,
              default_price: 16,
-             quantity: 2,
+             quantity: 1,
              rank: 1
            }
 
