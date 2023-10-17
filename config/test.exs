@@ -5,7 +5,8 @@ import Config
 config :web_interface, WebInterface.Endpoint,
   http: [ip: {127, 0, 0, 1}, port: 4002],
   secret_key_base: "A6xbGasiCzawAwCjBQW6eO2ExEbRWykU57rU+NmdiP3qugMGTg7XqPIsmxveodFz",
-  server: false
+  server: true,
+  check_origin: false
 
 config :store,
   products: "products.json",
