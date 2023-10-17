@@ -9,41 +9,44 @@ defmodule WebInterface.Persistence.StrategyTest do
 
   describe "get_strategies" do
     test "returns all the strategies" do
-      expected_strategies = [
-        Strategy.new(
-          name: "Top 3 Average",
-          id: :top_three_average,
-          description: "Gets the 3 lowest prices for the given item and calculates the average."
-        ),
-        Strategy.new(
-          name: "Top 5 Average",
-          id: :top_five_average,
-          description: "Gets the 5 lowest prices for the given item and calculates the average."
-        ),
-        Strategy.new(
-          name: "Equal to lowest",
-          id: :equal_to_lowest,
-          description: "Gets the lowest price for the given item and uses it."
-        ),
-        Strategy.new(
-          name: "Lowest minus one",
-          id: :lowest_minus_one,
-          description: "Gets the lowest price for the given item and beats it by 1."
-        )
-      ]
+      expected_strategies =
+        Enum.sort([
+          Strategy.new(
+            name: "Top 3 Average",
+            id: :top_three_average,
+            description: "Gets the 3 lowest prices for the given item and calculates the average."
+          ),
+          Strategy.new(
+            name: "Top 5 Average",
+            id: :top_five_average,
+            description: "Gets the 5 lowest prices for the given item and calculates the average."
+          ),
+          Strategy.new(
+            name: "Equal to lowest",
+            id: :equal_to_lowest,
+            description: "Gets the lowest price for the given item and uses it."
+          ),
+          Strategy.new(
+            name: "Lowest minus one",
+            id: :lowest_minus_one,
+            description: "Gets the lowest price for the given item and beats it by 1."
+          )
+        ])
+
       {:ok, actual_strategies} = StrategyStore.get_strategies()
 
-      assert Enum.sort(actual_strategies) == (expected_strategies)
+      assert Enum.sort(actual_strategies) == expected_strategies
     end
   end
 
   describe "get_strategy_by_id" do
     test "returns the strategy with the given id" do
-      expected_strategy = Strategy.new(
-        name: "Top 3 Average",
-        id: :top_three_average,
-        description: "Gets the 3 lowest prices for the given item and calculates the average."
-      )
+      expected_strategy =
+        Strategy.new(
+          name: "Top 3 Average",
+          id: :top_three_average,
+          description: "Gets the 3 lowest prices for the given item and calculates the average."
+        )
 
       {:ok, actual_strategy} = StrategyStore.get_strategy_by_id("top_three_average")
 
@@ -62,11 +65,12 @@ defmodule WebInterface.Persistence.StrategyTest do
     end
 
     test "sets and returns strategy correctly" do
-      expected_strategy = Strategy.new(
-        name: "Top 3 Average",
-        id: :top_three_average,
-        description: "Gets the 3 lowest prices for the given item and calculates the average."
-      )
+      expected_strategy =
+        Strategy.new(
+          name: "Top 3 Average",
+          id: :top_three_average,
+          description: "Gets the 3 lowest prices for the given item and calculates the average."
+        )
 
       :ok = StrategyStore.set_selected_strategy(expected_strategy)
 
