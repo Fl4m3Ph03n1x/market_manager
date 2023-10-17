@@ -11,8 +11,9 @@ defmodule Shared.Data.Strategy do
           %{
             (name :: String.t()) => String.t(),
             (id :: String.t()) => atom(),
-            (description :: String.t()) => String.t(),
-          } | [name: String.t(), id: atom(), description: String.t()]
+            (description :: String.t()) => String.t()
+          }
+          | [name: String.t(), id: atom(), description: String.t()]
 
   @derive Jason.Encoder
   typedstruct enforce: true do
@@ -24,8 +25,11 @@ defmodule Shared.Data.Strategy do
   end
 
   @spec new(strategy()) :: __MODULE__.t()
-  def new(%{"name" => name, "id" => id, "description" =>  description} = strategy) when is_binary(name) and is_atom(id) and is_binary(description), do:
-    Structs.string_map_to_struct(strategy, __MODULE__)
+  def new(%{"name" => name, "id" => id, "description" => description} = strategy)
+      when is_binary(name) and is_atom(id) and is_binary(description),
+      do: Structs.string_map_to_struct(strategy, __MODULE__)
 
-  def new([name: name, id: id, description: description] = strategy) when is_binary(name) and is_atom(id) and is_binary(description), do: struct(__MODULE__, strategy)
+  def new([name: name, id: id, description: description] = strategy)
+      when is_binary(name) and is_atom(id) and is_binary(description),
+      do: struct(__MODULE__, strategy)
 end
