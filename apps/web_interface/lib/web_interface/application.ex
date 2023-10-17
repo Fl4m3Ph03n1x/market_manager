@@ -22,28 +22,33 @@ defmodule WebInterface.Application do
       Manager,
       %{
         id: Desktop.Window,
-        start: {Desktop.Window, :start_link, [[
-          app: :web_interface,
-          id: WebInterface,
-          title: "Market Manager",
-          size: WindowUtils.calculate_window_size(0.6, 0.8),
-          menubar: MenuBar,
-          icon: "static/images/resized_logo_5_32x32.png",
-          url: fn -> "#{WebInterface.Endpoint.url()}/" end
-        ]]},
+        start:
+          {Desktop.Window, :start_link,
+           [
+             [
+               app: :web_interface,
+               id: WebInterface,
+               title: "Market Manager",
+               size: WindowUtils.calculate_window_size(0.6, 0.8),
+               menubar: MenuBar,
+               icon: "static/images/resized_logo_5_32x32.png",
+               url: &WebInterface.Endpoint.url/0
+             ]
+           ]},
         restart: :transient,
         shutdown: 5_000
       }
     ]
+
     opts = [strategy: :one_for_one, name: WebInterface.Supervisor]
 
-    with  {:ok, _pid} = link <- Supervisor.start_link(children, opts),
-          {:ok, syndicates} <- Manager.syndicates(),
-          {:ok, strategies} <- Manager.strategies(),
-          {:ok, user} <- Manager.recover_login(),
-          :ok <- Persistence.init(strategies, syndicates, user),
-          :ok <- SyndicateStore.set_selected_inactive_syndicates(syndicates) do
-            link
+    with {:ok, _pid} = link <- Supervisor.start_link(children, opts),
+         {:ok, syndicates} <- Manager.syndicates(),
+         {:ok, strategies} <- Manager.strategies(),
+         {:ok, user} <- Manager.recover_login(),
+         :ok <- Persistence.init(strategies, syndicates, user),
+         :ok <- SyndicateStore.set_selected_inactive_syndicates(syndicates) do
+      link
     end
   end
 
