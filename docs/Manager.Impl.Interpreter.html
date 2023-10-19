@@ -4,38 +4,45 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="ExDoc v0.28.0">
+    <meta name="generator" content="ExDoc v0.30.6">
     <meta name="project" content="Market Manager v2.1.5">
 
     <title>Manager.Impl.Interpreter — Market Manager v2.1.5</title>
-    <link rel="stylesheet" href="dist/elixir-a816d167216329cc463d.css" />
+    <link rel="stylesheet" href="dist/html-elixir-M3TQBNKO.css" />
 
-    <script src="dist/sidebar_items-a204c62895.js"></script>
+
+    <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
+    <script src="dist/handlebars.templates-KDPBTEPL.js"></script>
+    <script src="dist/sidebar_items-1C5C5552.js"></script>
 
       <script src="docs_config.js"></script>
 
-    <script async src="dist/app-80aa23c1d96b6dc3c064.js"></script>
+    <script async src="dist/html-CP2A7WXZ.js"></script>
 
 
   </head>
-  <body data-type="modules">
+  <body data-type="modules" class="page-module">
     <script>
 
       try {
-        if (localStorage.getItem('night-mode') === 'true') {
-          document.body.classList.add('night-mode');
+        var settings = JSON.parse(localStorage.getItem('ex_doc:settings') || '{}');
+
+        if (settings.theme === 'dark' ||
+           ((settings.theme === 'system' || settings.theme == null) &&
+             window.matchMedia('(prefers-color-scheme: dark)').matches)
+           ) {
+          document.body.classList.add('dark')
         }
       } catch (error) { }
     </script>
 
 <div class="main">
 
+<button class="sidebar-button sidebar-toggle" aria-label="toggle sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
 
 <section class="sidebar">
-  <button class="sidebar-button sidebar-toggle">
-    <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
-  </button>
-
   <form class="sidebar-search" action="search.html">
     <button type="submit" class="search-button" aria-label="Submit Search">
       <i class="ri-search-2-line" aria-hidden="true" title="Submit search"></i>
@@ -44,7 +51,8 @@
       <i class="ri-close-line ri-lg" aria-hidden="true" title="Cancel search"></i>
     </button>
     <label class="search-label">
-      <input name="q" type="text" class="search-input" placeholder="Search..." aria-label="Input your search terms" autocomplete="off" />
+      <p class="sr-only">Search</p>
+      <input name="q" type="text" class="search-input" placeholder="Search..." aria-label="Input your search terms" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
     </label>
   </form>
 
@@ -63,9 +71,9 @@
       <a href="https://fl4m3ph03n1x.github.io/market_manager/" class="sidebar-projectName" translate="no">
 Market Manager
       </a>
-      <strong class="sidebar-projectVersion" translate="no">
+      <div class="sidebar-projectVersion" translate="no">
         v2.1.5
-      </strong>
+      </div>
     </div>
     <ul class="sidebar-listNav">
       <li><a id="extras-list-link" href="#full-list">Pages</a></li>
@@ -76,22 +84,22 @@ Market Manager
     </ul>
   </div>
 
-  <div class="gradient"></div>
-  <ul id="full-list" class="sidebar-fullList"></ul>
+  <ul id="full-list"></ul>
 </section>
 
 <section class="content">
+  <output role="status" id="toast"></output>
   <div class="content-outer">
     <div id="content" class="content-inner">
 
 <h1>
-<button class="settings display-settings">
+<button class="icon-action display-settings">
   <i class="ri-settings-3-line"></i>
   <span class="sr-only">Settings</span>
 </button>
 
 
-    <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/manager/lib/impl/interpreter.ex#L1" title="View Source" class="view-source" rel="help">
+    <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/manager/lib/impl/interpreter.ex#L1" title="View Source" class="icon-action" rel="help">
       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
       <span class="sr-only">View Source</span>
     </a>
@@ -113,194 +121,81 @@ of the application and manages data between them.</p>
     <h1 class="section-heading">
       <a class="hover-link" href="#summary">
         <i class="ri-link-m" aria-hidden="true"></i>
-        <span class="sr-only">Link to this section</span>
+        Summary
       </a>
-      Summary
     </h1>
+<div class="summary-functions summary">
+  <h2>
+    <a href="#functions">Functions</a>
+  </h2>
 
-  <div class="summary-types summary">
-    <h2>
-      <a href="#types">Types</a>
-    </h2>
-
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#t:dependencies/0" translate="no">dependencies()</a>
-
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#activate/4" translate="no">activate(syndicate, strategy, handle, deps \\ [store: Store, auction_house: AuctionHouse])</a>
 
       </div>
-
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#t:order_request/0" translate="no">order_request()</a>
-
-        </div>
-
-      </div>
-
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#t:order_request_without_rank/0" translate="no">order_request_without_rank()</a>
-
-        </div>
-
-      </div>
-
-  </div>
-
-  <div class="summary-functions summary">
-    <h2>
-      <a href="#functions">Functions</a>
-    </h2>
-
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#activate/4" translate="no">activate(syndicate, strategy, handle, deps \\ [store: Store, auction_house: AuctionHouse])</a>
-
-        </div>
-
-      </div>
-
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#authenticate/2" translate="no">authenticate(info, deps \\ [store: Store, auction_house: AuctionHouse])</a>
-
-        </div>
-
-      </div>
-
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#deactivate/3" translate="no">deactivate(syndicate, handle, deps \\ [store: Store, auction_house: AuctionHouse])</a>
-
-        </div>
-
-      </div>
-
-  </div>
-
-  </section>
-
-
-  <section id="types" class="details-list">
-    <h1 class="section-heading">
-      <a class="hover-link" href="#types">
-        <i class="ri-link-m" aria-hidden="true"></i>
-        <span class="sr-only">Link to this section</span>
-      </a>
-Types
-    </h1>
-    <div class="types-list">
-<section class="detail" id="t:dependencies/0">
-
-  <div class="detail-header">
-    <a href="#t:dependencies/0" class="detail-link" title="Link to this type">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this type</span>
-    </a>
-    <h1 class="signature" translate="no">dependencies()</h1>
-
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/manager/lib/impl/interpreter.ex#L27" class="view-source" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-      <h2>Specs</h2>
-      <div class="specs">
-
-          <pre translate="no">dependencies() :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">keyword</a>(<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">module</a>())</pre>
-
-      </div>
-
-
-  </section>
-</section>
-<section class="detail" id="t:order_request/0">
-
-  <div class="detail-header">
-    <a href="#t:order_request/0" class="detail-link" title="Link to this type">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this type</span>
-    </a>
-    <h1 class="signature" translate="no">order_request()</h1>
-
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/manager/lib/impl/interpreter.ex#L13" class="view-source" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-      <h2>Specs</h2>
-      <div class="specs">
-
-          <pre translate="no">order_request() :: %{
-  required(order_type :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
-  required(item_id :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
-  required(platinum :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>(),
-  required(quantity :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>(),
-  required(mod_rank :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>()
-}</pre>
-
-      </div>
-
-
-  </section>
-</section>
-<section class="detail" id="t:order_request_without_rank/0">
-
-  <div class="detail-header">
-    <a href="#t:order_request_without_rank/0" class="detail-link" title="Link to this type">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this type</span>
-    </a>
-    <h1 class="signature" translate="no">order_request_without_rank()</h1>
-
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/manager/lib/impl/interpreter.ex#L20" class="view-source" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-      <h2>Specs</h2>
-      <div class="specs">
-
-          <pre translate="no">order_request_without_rank() :: %{
-  required(order_type :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
-  required(item_id :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
-  required(platinum :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>(),
-  required(quantity :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>()
-}</pre>
-
-      </div>
-
-
-  </section>
-</section>
 
     </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#deactivate/3" translate="no">deactivate(syndicate, handle, deps \\ [store: Store, auction_house: AuctionHouse])</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#login/4" translate="no">login(credentials, keep_logged_in, handle, deps \\ [store: Store, auction_house: AuctionHouse])</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#logout/1" translate="no">logout(list \\ [store: Store, auction_house: AuctionHouse])</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#recover_login/1" translate="no">recover_login(deps \\ [store: Store, auction_house: AuctionHouse])</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#strategies/0" translate="no">strategies()</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#syndicates/1" translate="no">syndicates(list \\ [store: Store, auction_house: AuctionHouse])</a>
+
+      </div>
+
+    </div>
+
+</div>
+
   </section>
+
 
   <section id="functions" class="details-list">
     <h1 class="section-heading">
       <a class="hover-link" href="#functions">
         <i class="ri-link-m" aria-hidden="true"></i>
-        <span class="sr-only">Link to this section</span>
-      </a>
 Functions
+      </a>
     </h1>
     <div class="functions-list">
 <section class="detail" id="activate/4">
@@ -314,7 +209,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">activate(syndicate, strategy, handle, deps \\ [store: Store, auction_house: AuctionHouse])</h1>
 
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/manager/lib/impl/interpreter.ex#L41" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/manager/lib/impl/interpreter.ex#L37" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -324,50 +219,14 @@ Functions
 
   <section class="docstring">
 
-      <h2>Specs</h2>
       <div class="specs">
 
-          <pre translate="no">activate(
-  <a href="Manager.Type.html#t:syndicate/0">Manager.Type.syndicate</a>(),
-  <a href="Manager.Type.html#t:strategy/0">Manager.Type.strategy</a>(),
+          <pre translate="no"><span class="attribute">@spec</span> activate(
+  <a href="Shared.Data.Syndicate.html#t:t/0">Shared.Data.Syndicate.t</a>(),
+  <a href="Shared.Data.Strategy.html#t:t/0">Shared.Data.Strategy.t</a>(),
   <a href="Manager.Type.html#t:handle/0">Manager.Type.handle</a>(),
-  <a href="#t:dependencies/0">dependencies</a>()
-) ::
-  :ok</pre>
-
-      </div>
-
-
-  </section>
-</section>
-<section class="detail" id="authenticate/2">
-
-    <span id="authenticate/1"></span>
-
-  <div class="detail-header">
-    <a href="#authenticate/2" class="detail-link" title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">authenticate(info, deps \\ [store: Store, auction_house: AuctionHouse])</h1>
-
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/manager/lib/impl/interpreter.ex#L80" class="view-source" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-      <h2>Specs</h2>
-      <div class="specs">
-
-          <pre translate="no">authenticate(
-  <a href="Manager.Type.html#t:credentials/0">Manager.Type.credentials</a>(),
-  <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">keyword</a>(<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">module</a>())
-) :: <a href="Manager.Type.html#t:authenticate_response/0">Manager.Type.authenticate_response</a>()</pre>
+  <a href="Manager.Type.html#t:dependencies/0">Manager.Type.dependencies</a>()
+) :: <a href="Manager.Type.html#t:activate_response/0">Manager.Type.activate_response</a>()</pre>
 
       </div>
 
@@ -385,7 +244,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">deactivate(syndicate, handle, deps \\ [store: Store, auction_house: AuctionHouse])</h1>
 
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/manager/lib/impl/interpreter.ex#L61" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/manager/lib/impl/interpreter.ex#L63" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -395,11 +254,168 @@ Functions
 
   <section class="docstring">
 
-      <h2>Specs</h2>
       <div class="specs">
 
-          <pre translate="no">deactivate(<a href="Manager.Type.html#t:syndicate/0">Manager.Type.syndicate</a>(), <a href="Manager.Type.html#t:handle/0">Manager.Type.handle</a>(), <a href="#t:dependencies/0">dependencies</a>()) ::
+          <pre translate="no"><span class="attribute">@spec</span> deactivate(
+  <a href="Shared.Data.Syndicate.html#t:t/0">Shared.Data.Syndicate.t</a>(),
+  <a href="Manager.Type.html#t:handle/0">Manager.Type.handle</a>(),
+  <a href="Manager.Type.html#t:dependencies/0">Manager.Type.dependencies</a>()
+) ::
   <a href="Manager.Type.html#t:deactivate_response/0">Manager.Type.deactivate_response</a>()</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="login/4">
+
+    <span id="login/3"></span>
+
+  <div class="detail-header">
+    <a href="#login/4" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">login(credentials, keep_logged_in, handle, deps \\ [store: Store, auction_house: AuctionHouse])</h1>
+
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/manager/lib/impl/interpreter.ex#L87" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> login(
+  <a href="Shared.Data.Credentials.html#t:t/0">Shared.Data.Credentials.t</a>(),
+  keep_logged_in :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>(),
+  <a href="Manager.Type.html#t:handle/0">Manager.Type.handle</a>(),
+  <a href="Manager.Type.html#t:dependencies/0">Manager.Type.dependencies</a>()
+) :: <a href="Manager.Type.html#t:login_response/0">Manager.Type.login_response</a>()</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="logout/1">
+
+    <span id="logout/0"></span>
+
+  <div class="detail-header">
+    <a href="#logout/1" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">logout(list \\ [store: Store, auction_house: AuctionHouse])</h1>
+
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/manager/lib/impl/interpreter.ex#L98" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> logout(<a href="Manager.Type.html#t:dependencies/0">Manager.Type.dependencies</a>()) :: <a href="Manager.Type.html#t:logout_response/0">Manager.Type.logout_response</a>()</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="recover_login/1">
+
+    <span id="recover_login/0"></span>
+
+  <div class="detail-header">
+    <a href="#recover_login/1" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">recover_login(deps \\ [store: Store, auction_house: AuctionHouse])</h1>
+
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/manager/lib/impl/interpreter.ex#L95" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> recover_login(<a href="Manager.Type.html#t:dependencies/0">Manager.Type.dependencies</a>()) ::
+  <a href="Manager.Type.html#t:recover_login_response/0">Manager.Type.recover_login_response</a>()</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="strategies/0">
+
+  <div class="detail-header">
+    <a href="#strategies/0" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">strategies()</h1>
+
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/manager/lib/impl/interpreter.ex#L109" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> strategies() :: <a href="Manager.Type.html#t:strategies_response/0">Manager.Type.strategies_response</a>()</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="syndicates/1">
+
+    <span id="syndicates/0"></span>
+
+  <div class="detail-header">
+    <a href="#syndicates/1" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">syndicates(list \\ [store: Store, auction_house: AuctionHouse])</h1>
+
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/manager/lib/impl/interpreter.ex#L105" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> syndicates(<a href="Manager.Type.html#t:dependencies/0">Manager.Type.dependencies</a>()) :: <a href="Manager.Type.html#t:syndicates_response/0">Manager.Type.syndicates_response</a>()</pre>
 
       </div>
 
@@ -411,11 +427,26 @@ Functions
   </section>
 
       <footer class="footer">
-
         <p>
+
+          <span class="line">
+            <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
+              Search HexDocs
+            </button>
+
+              <a href="Market Manager.epub" title="ePub version">
+                Download ePub version
+              </a>
+
+          </span>
+        </p>
+
+        <p class="built-using">
           Built using
-          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.28.0) for the
-          <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.30.6) for the
+
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
         </p>
       </footer>
     </div>

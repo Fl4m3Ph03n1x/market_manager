@@ -5,13 +5,14 @@ import Config
 config :web_interface, WebInterface.Endpoint,
   http: [ip: {127, 0, 0, 1}, port: 4002],
   secret_key_base: "A6xbGasiCzawAwCjBQW6eO2ExEbRWykU57rU+NmdiP3qugMGTg7XqPIsmxveodFz",
-  server: false
+  server: true,
+  check_origin: false
 
 config :store,
-  products: "products.json",
-  current_orders: "current_orders.json",
-  setup: "setup.json",
-  syndicates: "syndicates.json"
+  products: "test_setup/products.json",
+  current_orders: "test_setup/current_orders.json",
+  setup: "test_setup/setup.json",
+  syndicates: "test_setup/syndicates.json"
 
 config :auction_house,
   api_base_url: "http://localhost:8082/v1/profile/orders",

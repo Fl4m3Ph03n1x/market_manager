@@ -4,38 +4,45 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="ExDoc v0.28.0">
+    <meta name="generator" content="ExDoc v0.30.6">
     <meta name="project" content="Market Manager v2.1.5">
 
     <title>WebInterface — Market Manager v2.1.5</title>
-    <link rel="stylesheet" href="dist/elixir-a816d167216329cc463d.css" />
+    <link rel="stylesheet" href="dist/html-elixir-M3TQBNKO.css" />
 
-    <script src="dist/sidebar_items-a204c62895.js"></script>
+
+    <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
+    <script src="dist/handlebars.templates-KDPBTEPL.js"></script>
+    <script src="dist/sidebar_items-1C5C5552.js"></script>
 
       <script src="docs_config.js"></script>
 
-    <script async src="dist/app-80aa23c1d96b6dc3c064.js"></script>
+    <script async src="dist/html-CP2A7WXZ.js"></script>
 
 
   </head>
-  <body data-type="modules">
+  <body data-type="modules" class="page-module">
     <script>
 
       try {
-        if (localStorage.getItem('night-mode') === 'true') {
-          document.body.classList.add('night-mode');
+        var settings = JSON.parse(localStorage.getItem('ex_doc:settings') || '{}');
+
+        if (settings.theme === 'dark' ||
+           ((settings.theme === 'system' || settings.theme == null) &&
+             window.matchMedia('(prefers-color-scheme: dark)').matches)
+           ) {
+          document.body.classList.add('dark')
         }
       } catch (error) { }
     </script>
 
 <div class="main">
 
+<button class="sidebar-button sidebar-toggle" aria-label="toggle sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
 
 <section class="sidebar">
-  <button class="sidebar-button sidebar-toggle">
-    <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
-  </button>
-
   <form class="sidebar-search" action="search.html">
     <button type="submit" class="search-button" aria-label="Submit Search">
       <i class="ri-search-2-line" aria-hidden="true" title="Submit search"></i>
@@ -44,7 +51,8 @@
       <i class="ri-close-line ri-lg" aria-hidden="true" title="Cancel search"></i>
     </button>
     <label class="search-label">
-      <input name="q" type="text" class="search-input" placeholder="Search..." aria-label="Input your search terms" autocomplete="off" />
+      <p class="sr-only">Search</p>
+      <input name="q" type="text" class="search-input" placeholder="Search..." aria-label="Input your search terms" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
     </label>
   </form>
 
@@ -63,9 +71,9 @@
       <a href="https://fl4m3ph03n1x.github.io/market_manager/" class="sidebar-projectName" translate="no">
 Market Manager
       </a>
-      <strong class="sidebar-projectVersion" translate="no">
+      <div class="sidebar-projectVersion" translate="no">
         v2.1.5
-      </strong>
+      </div>
     </div>
     <ul class="sidebar-listNav">
       <li><a id="extras-list-link" href="#full-list">Pages</a></li>
@@ -76,22 +84,22 @@ Market Manager
     </ul>
   </div>
 
-  <div class="gradient"></div>
-  <ul id="full-list" class="sidebar-fullList"></ul>
+  <ul id="full-list"></ul>
 </section>
 
 <section class="content">
+  <output role="status" id="toast"></output>
   <div class="content-outer">
     <div id="content" class="content-inner">
 
 <h1>
-<button class="settings display-settings">
+<button class="icon-action display-settings">
   <i class="ri-settings-3-line"></i>
   <span class="sr-only">Settings</span>
 </button>
 
 
-    <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface.ex#L1" title="View Source" class="view-source" rel="help">
+    <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface.ex#L1" title="View Source" class="icon-action" rel="help">
       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
       <span class="sr-only">View Source</span>
     </a>
@@ -104,12 +112,12 @@ Market Manager
 
   <section id="moduledoc">
 <p>The entrypoint for defining your web interface, such
-as controllers, views, channels and so on.</p><p>This can be used in your application as:</p><pre><code class="makeup elixir" translate="no"><span class="kn">use</span><span class="w"> </span><span class="nc">WebInterface</span><span class="p">,</span><span class="w"> </span><span class="ss">:controller</span><span class="w">
-</span><span class="kn">use</span><span class="w"> </span><span class="nc">WebInterface</span><span class="p">,</span><span class="w"> </span><span class="ss">:view</span></code></pre><p>The definitions below will be executed for every view,
-controller, etc, so keep them short and clean, focused
+as controllers, components, channels, and so on.</p><p>This can be used in your application as:</p><pre><code class="makeup elixir" translate="no"><span class="kn">use</span><span class="w"> </span><span class="nc">WebInterface</span><span class="p">,</span><span class="w"> </span><span class="ss">:controller</span><span class="w">
+</span><span class="kn">use</span><span class="w"> </span><span class="nc">WebInterface</span><span class="p">,</span><span class="w"> </span><span class="ss">:html</span></code></pre><p>The definitions below will be executed for every controller,
+component, etc, so keep them short and clean, focused
 on imports, uses and aliases.</p><p>Do NOT define functions inside the quoted expressions
-below. Instead, define any helper function in modules
-and import those modules here.</p>
+below. Instead, define additional modules and import
+those modules here.</p>
   </section>
 
 
@@ -117,83 +125,89 @@ and import those modules here.</p>
     <h1 class="section-heading">
       <a class="hover-link" href="#summary">
         <i class="ri-link-m" aria-hidden="true"></i>
-        <span class="sr-only">Link to this section</span>
+        Summary
       </a>
-      Summary
     </h1>
+<div class="summary-functions summary">
+  <h2>
+    <a href="#functions">Functions</a>
+  </h2>
 
-  <div class="summary-functions summary">
-    <h2>
-      <a href="#functions">Functions</a>
-    </h2>
-
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#__using__/1" translate="no">__using__(which)</a>
-
-        </div>
-
-          <div class="summary-synopsis"><p>When used, dispatch to the appropriate controller/view/etc.</p></div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#__using__/1" translate="no">__using__(which)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#channel/0" translate="no">channel()</a>
+        <div class="summary-synopsis"><p>When used, dispatch to the appropriate controller/view/etc.</p></div>
 
-        </div>
+    </div>
 
-      </div>
-
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#component/0" translate="no">component()</a>
-
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#channel/0" translate="no">channel()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#controller/0" translate="no">controller()</a>
+    </div>
 
-        </div>
-
-      </div>
-
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#live_component/0" translate="no">live_component()</a>
-
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#controller/0" translate="no">controller()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#live_view/0" translate="no">live_view()</a>
+    </div>
 
-        </div>
-
-      </div>
-
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#router/0" translate="no">router()</a>
-
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#html/0" translate="no">html()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#view/0" translate="no">view()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#live_component/0" translate="no">live_component()</a>
 
       </div>
 
-  </div>
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#live_view/0" translate="no">live_view()</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#router/0" translate="no">router()</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#static_paths/0" translate="no">static_paths()</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#verified_routes/0" translate="no">verified_routes()</a>
+
+      </div>
+
+    </div>
+
+</div>
 
   </section>
 
@@ -202,9 +216,8 @@ and import those modules here.</p>
     <h1 class="section-heading">
       <a class="hover-link" href="#functions">
         <i class="ri-link-m" aria-hidden="true"></i>
-        <span class="sr-only">Link to this section</span>
-      </a>
 Functions
+      </a>
     </h1>
     <div class="functions-list">
 <section class="detail" id="__using__/1">
@@ -216,7 +229,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">__using__(which)</h1>
 
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface.ex#L104" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface.ex#L108" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -240,29 +253,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">channel()</h1>
 
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface.ex#L79" class="view-source" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-
-  </section>
-</section>
-<section class="detail" id="component/0">
-
-  <div class="detail-header">
-    <a href="#component/0" class="detail-link" title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">component()</h1>
-
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface.ex#L61" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface.ex#L33" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -284,7 +275,29 @@ Functions
     </a>
     <h1 class="signature" translate="no">controller()</h1>
 
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface.ex#L20" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface.ex#L39" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="html/0">
+
+  <div class="detail-header">
+    <a href="#html/0" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">html()</h1>
+
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface.ex#L68" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -306,7 +319,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">live_component()</h1>
 
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface.ex#L53" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface.ex#L60" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -328,7 +341,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">live_view()</h1>
 
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface.ex#L44" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface.ex#L51" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -350,7 +363,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">router()</h1>
 
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface.ex#L69" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface.ex#L22" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -363,16 +376,38 @@ Functions
 
   </section>
 </section>
-<section class="detail" id="view/0">
+<section class="detail" id="static_paths/0">
 
   <div class="detail-header">
-    <a href="#view/0" class="detail-link" title="Link to this function">
+    <a href="#static_paths/0" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">view()</h1>
+    <h1 class="signature" translate="no">static_paths()</h1>
 
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface.ex#L29" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface.ex#L20" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="verified_routes/0">
+
+  <div class="detail-header">
+    <a href="#verified_routes/0" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">verified_routes()</h1>
+
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface.ex#L96" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -390,11 +425,26 @@ Functions
   </section>
 
       <footer class="footer">
-
         <p>
+
+          <span class="line">
+            <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
+              Search HexDocs
+            </button>
+
+              <a href="Market Manager.epub" title="ePub version">
+                Download ePub version
+              </a>
+
+          </span>
+        </p>
+
+        <p class="built-using">
           Built using
-          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.28.0) for the
-          <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.30.6) for the
+
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
         </p>
       </footer>
     </div>

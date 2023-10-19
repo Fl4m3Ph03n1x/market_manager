@@ -280,7 +280,7 @@ defmodule AuctionHouse.Impl.HTTPClient do
   defp map_error(~s({"error": {"_form": ["app.post_order.already_created_no_duplicates"]}})),
     do: {:error, :order_already_placed}
 
-  defp map_error(~s({"error": {"order_id": ["app.form.invalid"]}})),
+  defp map_error(~s({"error": {"order_id": ["app.delete_order.order_not_exist"]}})),
     do: {:error, :order_non_existent}
 
   defp map_error(~s({"error": {"rank": ["app.form.invalid"]}})),

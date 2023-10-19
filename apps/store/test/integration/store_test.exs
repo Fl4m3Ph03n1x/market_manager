@@ -266,11 +266,11 @@ defmodule StoreTest do
 
       {:ok, content} = File.read(@setup_file)
 
-      assert content ==
-               Jason.encode!(%{
-                 "authorization" => %{"cookie" => "new_cookie", "token" => "new_token"},
-                 "user" => %{"ingame_name" => "ph03n1x", "patreon?" => true}
-               })
+      assert Jason.decode!(content) ==
+               %{
+                 "user" => %{"ingame_name" => "ph03n1x", "patreon?" => true},
+                 "authorization" => %{"cookie" => "new_cookie", "token" => "new_token"}
+               }
     end
   end
 
@@ -319,7 +319,7 @@ defmodule StoreTest do
         {:ok,
          [
            Syndicate.new(name: "Red Veil", id: :red_veil),
-           Syndicate.new(name: "New Loka", id: :new_loka),
+           Syndicate.new(name: "New Loka", id: :new_loka)
          ]}
 
       # Assert

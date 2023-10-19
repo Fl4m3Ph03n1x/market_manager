@@ -32,7 +32,7 @@ defmodule MarketManager.MixProject do
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:excoveralls, "~> 0.10", only: :test},
       {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
-      {:ex_doc, "~> 0.22", only: :dev, runtime: false}
+      {:ex_doc, "~> 0.27", only: :dev, runtime: false}
     ]
 
   defp preferred_cli_env,

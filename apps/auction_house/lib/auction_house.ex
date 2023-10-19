@@ -146,6 +146,7 @@ defmodule AuctionHouse do
   ```
   > AuctionHouse.logout()
   :ok
+  ```
   """
   @spec logout :: Type.logout_response()
   defdelegate logout, to: Server

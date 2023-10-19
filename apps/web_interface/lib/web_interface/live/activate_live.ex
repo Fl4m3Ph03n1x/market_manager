@@ -4,46 +4,50 @@ defmodule WebInterface.ActivateLive do
   require Logger
 
   alias Manager
-  alias WebInterface.Persistence.{Button, Strategy, Syndicate, User}
+  alias Shared.Data.{Strategy, Syndicate}
+  alias WebInterface.Persistence.Button, as: ButtonStore
+  alias WebInterface.Persistence.Strategy, as: StrategyStore
+  alias WebInterface.Persistence.Syndicate, as: SyndicateStore
+  alias WebInterface.Persistence.User, as: UserStore
 
   @impl true
   def mount(_params, _session, socket) do
-    with  :ok <- Button.set_button(:activate),
-          {:ok, user} <- User.get_user(),
-          {:ok, syndicates} <- Syndicate.get_syndicates(),
-          {:ok, strategies} <- Strategy.get_strategies(),
-          {:ok, active_syndicates} <- Syndicate.get_active_syndicates(),
-          {:ok, selected_strategy} <- Strategy.get_selected_strategy(),
-          {:ok, selected_active_syndicates} <- Syndicate.get_selected_active_syndicates() do
-            updated_socket =
-              assign(
-                socket,
-                user: user,
-                syndicates: syndicates,
-                strategies: strategies,
-                active_syndicates: active_syndicates,
-                selected_strategy: selected_strategy,
-                selected_active_syndicates: selected_active_syndicates,
-                form: to_form(%{"activate_syndicates" => []}),
-                activation_in_progress: false,
-                activation_progress: 0,
-                activation_current_syndicate: nil
-              )
+    with :ok <- ButtonStore.set_button(:activate),
+         {:ok, user} <- UserStore.get_user(),
+         {:ok, syndicates} <- SyndicateStore.get_syndicates(),
+         {:ok, strategies} <- StrategyStore.get_strategies(),
+         {:ok, active_syndicates} <- SyndicateStore.get_active_syndicates(),
+         {:ok, selected_strategy} <- StrategyStore.get_selected_strategy(),
+         {:ok, selected_active_syndicates} <- SyndicateStore.get_selected_active_syndicates() do
+      updated_socket =
+        assign(
+          socket,
+          user: user,
+          syndicates: syndicates,
+          strategies: strategies,
+          active_syndicates: active_syndicates,
+          selected_strategy: selected_strategy,
+          selected_active_syndicates: selected_active_syndicates,
+          form: to_form(%{"activate_syndicates" => []}),
+          activation_in_progress: false,
+          activation_progress: 0,
+          activation_current_syndicate: nil
+        )
 
-            {:ok, updated_socket}
-          else
-            error ->
-              Logger.error("Unable to show deactivation page: #{inspect(error)}")
-              {:error, socket |> put_flash(:error, "Unable to show deactivation page!")}
-          end
+      {:ok, updated_socket}
+    else
+      error ->
+        Logger.error("Unable to show deactivation page: #{inspect(error)}")
+        {:error, socket |> put_flash(:error, "Unable to show deactivation page!")}
+    end
   end
 
   @impl true
   def handle_event("execute", %{"strategy" => strategy_id, "syndicates" => syndicate_ids}, socket) do
-    with {:ok, strategy} <- Strategy.get_strategy_by_id(strategy_id),
+    with {:ok, strategy} <- StrategyStore.get_strategy_by_id(strategy_id),
          {:ok, [syndicate | _rest] = syndicates} <-
-           Syndicate.get_all_syndicates_by_id(syndicate_ids) do
-      :ok = Manager.activate(Atom.to_string(syndicate.id), strategy.id)
+           SyndicateStore.get_all_syndicates_by_id(syndicate_ids) do
+      :ok = Manager.activate(syndicate, strategy)
 
       updated_socket =
         socket
@@ -64,10 +68,10 @@ defmodule WebInterface.ActivateLive do
   def handle_event("change", %{"_target" => ["syndicates"]} = change_data, socket) do
     syndicate_ids = Map.get(change_data, "syndicates", [])
 
-    with {:ok, syndicates} <- Syndicate.get_all_syndicates_by_id(syndicate_ids),
-         {:ok, active_syndicates} <- Syndicate.get_active_syndicates(),
+    with {:ok, syndicates} <- SyndicateStore.get_all_syndicates_by_id(syndicate_ids),
+         {:ok, active_syndicates} <- SyndicateStore.get_active_syndicates(),
          new_selected_syndicates = Enum.uniq(syndicates ++ active_syndicates),
-         :ok <- Syndicate.set_selected_active_syndicates(new_selected_syndicates) do
+         :ok <- SyndicateStore.set_selected_active_syndicates(new_selected_syndicates) do
       {:noreply, assign(socket, selected_active_syndicates: new_selected_syndicates)}
     else
       err ->
@@ -77,8 +81,8 @@ defmodule WebInterface.ActivateLive do
   end
 
   def handle_event("change", %{"strategy" => strategy_id}, socket) do
-    with {:ok, strategy} <- Strategy.get_strategy_by_id(strategy_id),
-         :ok <- Strategy.set_selected_strategy(strategy) do
+    with {:ok, strategy} <- StrategyStore.get_strategy_by_id(strategy_id),
+         :ok <- StrategyStore.set_selected_strategy(strategy) do
       {:noreply, assign(socket, selected_strategy: strategy)}
     else
       err ->
@@ -92,16 +96,19 @@ defmodule WebInterface.ActivateLive do
         %{"syndicates" => syndicate_ids, "strategies" => strategy_id},
         socket
       ) do
-    with {:ok, strategy} <- Strategy.get_strategy_by_id(strategy_id),
+    with {:ok, strategy} <- StrategyStore.get_strategy_by_id(strategy_id),
          {:ok, syndicates} <-
-           Syndicate.get_all_syndicates_by_id(syndicate_ids),
-         :ok <- Strategy.set_selected_strategy(strategy),
-         {:ok, active_syndicates} <- Syndicate.get_active_syndicates(),
+           SyndicateStore.get_all_syndicates_by_id(syndicate_ids),
+         :ok <- StrategyStore.set_selected_strategy(strategy),
+         {:ok, active_syndicates} <- SyndicateStore.get_active_syndicates(),
          new_selected_syndicates =
            Enum.uniq(syndicates ++ active_syndicates),
-         :ok <- Syndicate.set_selected_active_syndicates(new_selected_syndicates) do
+         :ok <- SyndicateStore.set_selected_active_syndicates(new_selected_syndicates) do
       {:noreply,
-       assign(socket, selected_strategy: strategy, selected_active_syndicates: new_selected_syndicates)}
+       assign(socket,
+         selected_strategy: strategy,
+         selected_active_syndicates: new_selected_syndicates
+       )}
     else
       err ->
         Logger.error("Unable to retrieve change data: #{inspect(err)}")
@@ -115,27 +122,36 @@ defmodule WebInterface.ActivateLive do
   end
 
   @impl true
-  def handle_info({:activate, syndicate_name, {:error, reason} = error}, socket) do
-    Logger.error("Unable to activate syndicate #{syndicate_name}: #{inspect(error)}")
+  def handle_info({:activate, syndicate, {:error, reason} = error}, socket) do
+    Logger.error("Unable to activate syndicate #{syndicate.name}: #{inspect(error)}")
 
-    {:noreply,
-     put_flash(
-       socket,
-       :error,
-       "Unable to activate syndicate #{syndicate_name} due to '#{reason}'."
-     )}
+    with {:ok, active_syndicates} <- SyndicateStore.get_active_syndicates(),
+         new_selected_syndicates = active_syndicates -- [syndicate],
+         :ok <- SyndicateStore.set_selected_active_syndicates(new_selected_syndicates) do
+      {:noreply,
+       put_flash(
+         socket,
+         :error,
+         "Unable to activate syndicate #{syndicate.name} due to '#{reason}'."
+       )}
+    else
+      err ->
+        Logger.error("Failed to retrieve persistence data: #{inspect(err)}")
+
+        {:noreply, put_flash(socket, :error, "Multiple errors ocurred, please check the logs.")}
+    end
   end
 
   def handle_info(
         {:activate, syndicate, {current_item, total_items, {:error, reason, _item} = error}},
         socket
       ) do
-    Logger.error("Order placement for item of #{syndicate} failed: #{inspect(error)}")
+    Logger.error("Order placement for item of #{syndicate.name} failed: #{inspect(error)}")
 
     updated_socket =
       socket
       |> assign(activation_progress: round(current_item / total_items * 100))
-      |> put_flash(:error, "Unable to place an order for #{syndicate} due to '#{reason}'.")
+      |> put_flash(:error, "Unable to place an order for #{syndicate.name} due to '#{reason}'.")
 
     {:noreply, updated_socket}
   end
@@ -145,23 +161,22 @@ defmodule WebInterface.ActivateLive do
          {current_item, total_items, {:ok, %Shared.Data.PlacedOrder{item_id: item_id}}}},
         socket
       ) do
-    Logger.info("Order placed for #{syndicate}: #{item_id}")
+    Logger.info("Order placed for #{syndicate.name}: #{item_id}")
 
     {:noreply, assign(socket, activation_progress: round(current_item / total_items * 100))}
   end
 
-  def handle_info({:activate, syndicate_id_str, :done}, socket) do
-    Logger.info("Activation of #{syndicate_id_str} complete.")
+  def handle_info({:activate, syndicate, :done}, socket) do
+    Logger.info("Activation of #{syndicate.name} complete.")
 
-    with {:ok, syndicate} <- Syndicate.get_syndicate_by_id(syndicate_id_str),
-         {:ok, strategy} <- Strategy.get_selected_strategy(),
-         :ok <- Syndicate.activate_syndicate(syndicate),
-         {:ok, all_syndicates_active?} <- Syndicate.all_syndicates_active?(),
-         {:ok, selected_syndicates} <- Syndicate.get_selected_active_syndicates(),
-         {:ok, active_syndicates} <- Syndicate.get_active_syndicates(),
+    with {:ok, strategy} <- StrategyStore.get_selected_strategy(),
+         :ok <- SyndicateStore.activate_syndicate(syndicate),
+         {:ok, all_syndicates_active?} <- SyndicateStore.all_syndicates_active?(),
+         {:ok, selected_syndicates} <- SyndicateStore.get_selected_active_syndicates(),
+         {:ok, active_syndicates} <- SyndicateStore.get_active_syndicates(),
          new_selected_syndicates =
            Enum.uniq(selected_syndicates ++ active_syndicates),
-         :ok <- Syndicate.set_selected_active_syndicates(new_selected_syndicates) do
+         :ok <- SyndicateStore.set_selected_active_syndicates(new_selected_syndicates) do
       missing_syndicates =
         selected_syndicates
         |> MapSet.new()
@@ -174,7 +189,7 @@ defmodule WebInterface.ActivateLive do
           [activation_current_syndicate: nil, activation_in_progress: false]
         else
           [next_syndicate | _rest] = missing_syndicates
-          :ok = Manager.activate(Atom.to_string(next_syndicate.id), strategy.id)
+          :ok = Manager.activate(next_syndicate, strategy)
           [activation_current_syndicate: next_syndicate, activation_progress: 0]
         end
 
@@ -203,13 +218,13 @@ defmodule WebInterface.ActivateLive do
   # Helper Functions #
   ####################
 
-  @spec disable_button?(Strategy.t() | nil, [Syndicates.t()], [Syndicates.t()]) :: boolean
+  @spec disable_button?(Strategy.t() | nil, [Syndicate.t()], [Syndicate.t()]) :: boolean
   def disable_button?(strategy, selected_syndicates, active_syndicates),
     do:
       is_nil(strategy) or Enum.empty?(selected_syndicates) or
         Enum.sort(selected_syndicates) == Enum.sort(active_syndicates)
 
-  @spec progress_bar_message(Syndicates.t() | nil) :: String.t()
+  @spec progress_bar_message(Syndicate.t() | nil) :: String.t()
   def progress_bar_message(nil), do: "Operation in progress ..."
 
   def progress_bar_message(activation_current_syndicate),

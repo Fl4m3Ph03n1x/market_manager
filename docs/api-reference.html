@@ -4,38 +4,45 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="ExDoc v0.28.0">
+    <meta name="generator" content="ExDoc v0.30.6">
     <meta name="project" content="Market Manager v2.1.5">
 
     <title>API Reference — Market Manager v2.1.5</title>
-    <link rel="stylesheet" href="dist/elixir-a816d167216329cc463d.css" />
+    <link rel="stylesheet" href="dist/html-elixir-M3TQBNKO.css" />
 
-    <script src="dist/sidebar_items-a204c62895.js"></script>
+
+    <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
+    <script src="dist/handlebars.templates-KDPBTEPL.js"></script>
+    <script src="dist/sidebar_items-1C5C5552.js"></script>
 
       <script src="docs_config.js"></script>
 
-    <script async src="dist/app-80aa23c1d96b6dc3c064.js"></script>
+    <script async src="dist/html-CP2A7WXZ.js"></script>
 
 
   </head>
-  <body data-type="extras">
+  <body data-type="extras" class="page-extra">
     <script>
 
       try {
-        if (localStorage.getItem('night-mode') === 'true') {
-          document.body.classList.add('night-mode');
+        var settings = JSON.parse(localStorage.getItem('ex_doc:settings') || '{}');
+
+        if (settings.theme === 'dark' ||
+           ((settings.theme === 'system' || settings.theme == null) &&
+             window.matchMedia('(prefers-color-scheme: dark)').matches)
+           ) {
+          document.body.classList.add('dark')
         }
       } catch (error) { }
     </script>
 
 <div class="main">
 
+<button class="sidebar-button sidebar-toggle" aria-label="toggle sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
 
 <section class="sidebar">
-  <button class="sidebar-button sidebar-toggle">
-    <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
-  </button>
-
   <form class="sidebar-search" action="search.html">
     <button type="submit" class="search-button" aria-label="Submit Search">
       <i class="ri-search-2-line" aria-hidden="true" title="Submit search"></i>
@@ -44,7 +51,8 @@
       <i class="ri-close-line ri-lg" aria-hidden="true" title="Cancel search"></i>
     </button>
     <label class="search-label">
-      <input name="q" type="text" class="search-input" placeholder="Search..." aria-label="Input your search terms" autocomplete="off" />
+      <p class="sr-only">Search</p>
+      <input name="q" type="text" class="search-input" placeholder="Search..." aria-label="Input your search terms" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
     </label>
   </form>
 
@@ -63,9 +71,9 @@
       <a href="https://fl4m3ph03n1x.github.io/market_manager/" class="sidebar-projectName" translate="no">
 Market Manager
       </a>
-      <strong class="sidebar-projectVersion" translate="no">
+      <div class="sidebar-projectVersion" translate="no">
         v2.1.5
-      </strong>
+      </div>
     </div>
     <ul class="sidebar-listNav">
       <li><a id="extras-list-link" href="#full-list">Pages</a></li>
@@ -76,19 +84,25 @@ Market Manager
     </ul>
   </div>
 
-  <div class="gradient"></div>
-  <ul id="full-list" class="sidebar-fullList"></ul>
+  <ul id="full-list"></ul>
 </section>
 
 <section class="content">
+  <output role="status" id="toast"></output>
   <div class="content-outer">
     <div id="content" class="content-inner">
 
 <h1>
-<button class="settings display-settings">
+<button class="icon-action display-settings">
   <i class="ri-settings-3-line"></i>
   <span class="sr-only">Settings</span>
 </button>
+
+
+    <a href="https://github.com/Fl4m3Ph03n1x/market_manager" title="View Source" class="icon-action" rel="help">
+      <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+      <span class="sr-only">View Source</span>
+    </a>
 
 
   <span>API Reference <small class="app-vsn">Market Manager v2.1.5</small></span>
@@ -97,8 +111,10 @@ Market Manager
 
   <section class="details-list">
     <h2 id="modules" class="section-heading">
-  <a href="#modules" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a>
-  Modules
+  <a href="#modules">
+    <i class="ri-link-m" aria-hidden="true"></i>
+    Modules
+  </a>
 </h2>
 
     <div class="summary">
@@ -108,7 +124,7 @@ Market Manager
 
   </div>
 
-    <div class="summary-synopsis"><p>Librabry representing the interface for the auction house.
+    <div class="summary-synopsis"><p>Library representing the interface for the auction house.
 Responsible for making calls and decoding the answers from the auction house
 into a format the manager understands.</p></div>
 
@@ -180,10 +196,53 @@ of the application and manages data between them.</p></div>
 
   </div>
 
-    <div class="summary-synopsis"><p>Contains the formulas and calculations for all the strategies.
-Strategies calculate the optimum price for you to sell an item.
-There are several stretagies, some focus more on selling fast, while others
-on getting more profit.</p></div>
+    <div class="summary-synopsis"><p>Strategies calculate the optimum price for you to sell an item.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Manager.Impl.Strategy.html" translate="no">Manager.Impl.Strategy</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Behaviour that specifies the functions any strategy must implement. It is mostly used to provide an implementation of
+the Strategy pattern from OO languages, but adapted to Elixir.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Manager.Impl.Strategy.EqualToLowest.html" translate="no">Manager.Impl.Strategy.EqualToLowest</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Gets the lowest price for the given item and uses it.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Manager.Impl.Strategy.LowestMinusOne.html" translate="no">Manager.Impl.Strategy.LowestMinusOne</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Gets the lowest price for the given item and beats it by 1.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Manager.Impl.Strategy.TopFiveAverage.html" translate="no">Manager.Impl.Strategy.TopFiveAverage</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Gets the 5 lowest prices for the given item and calculates the average.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Manager.Impl.Strategy.TopThreeAverage.html" translate="no">Manager.Impl.Strategy.TopThreeAverage</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Gets the 3 lowest prices for the given item and calculates the average.</p></div>
 
 </div>
 <div class="summary-row">
@@ -203,7 +262,7 @@ regenerated should something fail.</p></div>
 
   </div>
 
-    <div class="summary-synopsis"><p>Process responsible for doing asynchrnous tasks. The Worker is supervised by the <code class="inline">Server</code> and is
+    <div class="summary-synopsis"><p>Process responsible for doing asynchronous tasks. The Worker is supervised by the <code class="inline">Server</code> and is
 restarted should something fail. It communicates with the calling client via <a href="https://hexdocs.pm/elixir/Kernel.html#send/2"><code class="inline">send/2</code></a>, since we
 don't know if the client is a <a href="https://hexdocs.pm/elixir/GenServer.html"><code class="inline">GenServer</code></a> or not. Should this change (and we are sure the client
 is a <a href="https://hexdocs.pm/elixir/GenServer.html"><code class="inline">GenServer</code></a>) then <code class="inline">GenServer.cast</code> should be used instead.</p></div>
@@ -216,6 +275,169 @@ is a <a href="https://hexdocs.pm/elixir/GenServer.html"><code class="inline">Gen
   </div>
 
     <div class="summary-synopsis"><p>Holds the types for the Manager library.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Shared.html" translate="no">Shared</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Holds general utility functions used across all the project, as well as the
+DataStructures and Types used to represent the Domain.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Shared.Data.Authorization.html" translate="no">Shared.Data.Authorization</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Saves authorization details for a user.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Shared.Data.Credentials.html" translate="no">Shared.Data.Credentials</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Represents the credentials of an user. Credentials are used to get access
+to Authorization and User info, which is the used to makes requests to the
+market.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Shared.Data.Order.html" translate="no">Shared.Data.Order</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Represents an order to be made to warframe market. There are two types of
+orders thus far, RankedOrders and SimpleOrders. See respective files for more
+information.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Shared.Data.Order.RankedOrder.html" translate="no">Shared.Data.Order.RankedOrder</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Represents an order to be made to warframe market with a rank.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Shared.Data.Order.SimpleOrder.html" translate="no">Shared.Data.Order.SimpleOrder</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Represents an order to be made to warframe market without a rank.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Shared.Data.OrderInfo.html" translate="no">Shared.Data.OrderInfo</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Represents information about current orders from warframe market.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Shared.Data.OrderInfo.User.html" translate="no">Shared.Data.OrderInfo.User</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Represents the account information for a warframe.market User who has an order
+posted.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Shared.Data.PlacedOrder.html" translate="no">Shared.Data.PlacedOrder</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Represents an order that was placed by the User of this application. I could
+have used OrderInfo as well, but since the later one has a ton of information
+I don't really need/want to deal with, I opted for this instead.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Shared.Data.Product.html" translate="no">Shared.Data.Product</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>A Product is an item we can create a sell order for. Currently we only
+support mods. Products contain warframe.market information about the item, as
+well as default parameters to create sell orders.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Shared.Data.Strategy.html" translate="no">Shared.Data.Strategy</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>A strategy for selling a product.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Shared.Data.Syndicate.html" translate="no">Shared.Data.Syndicate</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>A syndicate is a party with tradable items.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Shared.Data.User.html" translate="no">Shared.Data.User</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Represents relevant User information for clients using this AuctionHouse.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Shared.Utils.ExtraGuards.html" translate="no">Shared.Utils.ExtraGuards</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Contains additional guards to use in functions.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Shared.Utils.Maps.html" translate="no">Shared.Utils.Maps</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Set of utility functions used across the app to help with Map operations.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Shared.Utils.Structs.html" translate="no">Shared.Utils.Structs</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Set of utility functions used across the app to help with Struct operations.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Shared.Utils.Tuples.html" translate="no">Shared.Utils.Tuples</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Set of utility functions used across the app to help with Tuple operations.</p></div>
 
 </div>
 <div class="summary-row">
@@ -255,114 +477,19 @@ a cyclical dependency between them.</p></div>
   </div>
 
     <div class="summary-synopsis"><p>The entrypoint for defining your web interface, such
-as controllers, views, channels and so on.</p></div>
+as controllers, components, channels, and so on.</p></div>
 
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="WebInterface.Commands.html" translate="no">WebInterface.Commands</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Contains information about the commands the web_interface understands.
-Works as a bridge between the web interface and the Manager application, which does the real work.</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="WebInterface.Endpoint.html" translate="no">WebInterface.Endpoint</a>
+    <a href="WebInterface.ActivateLive.html" translate="no">WebInterface.ActivateLive</a>
 
   </div>
 
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="WebInterface.ErrorHelpers.html" translate="no">WebInterface.ErrorHelpers</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Conveniences for translating and building error messages.</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="WebInterface.ErrorView.html" translate="no">WebInterface.ErrorView</a>
-
-  </div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="WebInterface.LayoutView.html" translate="no">WebInterface.LayoutView</a>
-
-  </div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="WebInterface.Live.MenuBar.html" translate="no">WebInterface.Live.MenuBar</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Menubar that is shown as part of the main Window on Windows/Linux. In
-MacOS this Menubar appears at the very top of the screen.</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="WebInterface.Live.Window.html" translate="no">WebInterface.Live.Window</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Rrepresents the full interface. This module is responsible for receiving
-messages from its LiveView subcomponents and to give them the information
-they need to perform adequatly.</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="WebInterface.Live.Window.Main.html" translate="no">WebInterface.Live.Window.Main</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>LiveView subcomponent for the Main Page. It is next to the sidebar and it
-renders a description of what the action is plus it have the options to and
-the button to perform said action.</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="WebInterface.Live.Window.Main.Activate.html" translate="no">WebInterface.Live.Window.Main.Activate</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>LiveView subcomponent for the Activate page as part of the Main subcomponent.
-This subcomponent has the options to activate a syndicate given a strategy.</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="WebInterface.Live.Window.Main.Authenticate.html" translate="no">WebInterface.Live.Window.Main.Authenticate</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>LiveView subcomponent for the Authenticate page as part of the Main subcomponent.
-This subcomponent has the forms for the user's authentication.</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="WebInterface.Live.Window.Main.Deactivate.html" translate="no">WebInterface.Live.Window.Main.Deactivate</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>LiveView subcomponent for the Deactivate page as part of the Main subcomponent.
-This subcomponent has the options to deactivate a previously activated syndicate.</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="WebInterface.Live.Window.OperationProgress.html" translate="no">WebInterface.Live.Window.OperationProgress</a>
+    <a href="WebInterface.Components.OperationProgress.html" translate="no">WebInterface.Components.OperationProgress</a>
 
   </div>
 
@@ -372,47 +499,132 @@ subcomponents and displays information about operations taking place.</p></div>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="WebInterface.Live.Window.Sidebar.html" translate="no">WebInterface.Live.Window.Sidebar</a>
+    <a href="WebInterface.CoreComponents.html" translate="no">WebInterface.CoreComponents</a>
 
   </div>
 
-    <div class="summary-synopsis"><p>LiveView subcomponent for the sidebar of the UI. The sidebar is basically a
-menu that has all the actions the user is able to perform.</p></div>
+    <div class="summary-synopsis"><p>Provides core UI components.</p></div>
 
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="WebInterface.Router.html" translate="no">WebInterface.Router</a>
+    <a href="WebInterface.DeactivateLive.html" translate="no">WebInterface.DeactivateLive</a>
 
   </div>
 
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="WebInterface.Router.Helpers.html" translate="no">WebInterface.Router.Helpers</a>
+    <a href="WebInterface.Desktop.MenuBar.html" translate="no">WebInterface.Desktop.MenuBar</a>
 
   </div>
 
-    <div class="summary-synopsis"><p>Module with named helpers generated from WebInterface.Router.</p></div>
+    <div class="summary-synopsis"><p>Menubar that is shown as part of the main Window on Windows/Linux. In
+MacOS this Menubar appears at the very top of the screen.</p></div>
 
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="WebInterface.Strategies.html" translate="no">WebInterface.Strategies</a>
+    <a href="WebInterface.Desktop.WindowUtils.html" translate="no">WebInterface.Desktop.WindowUtils</a>
 
   </div>
 
-    <div class="summary-synopsis"><p>Contains information about the strategies for price setting available to the user.</p></div>
+    <div class="summary-synopsis"><p>Contains utility functions to determine window attributes.</p></div>
 
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="WebInterface.Syndicates.html" translate="no">WebInterface.Syndicates</a>
+    <a href="WebInterface.ErrorHTML.html" translate="no">WebInterface.ErrorHTML</a>
 
   </div>
 
-    <div class="summary-synopsis"><p>Contains information about the available syndicates that Manager supports as well as utility functions
-to work with them.</p></div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="WebInterface.ErrorJSON.html" translate="no">WebInterface.ErrorJSON</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="WebInterface.LoginLive.html" translate="no">WebInterface.LoginLive</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="WebInterface.LogoutLive.html" translate="no">WebInterface.LogoutLive</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="WebInterface.PageController.html" translate="no">WebInterface.PageController</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="WebInterface.PageHTML.html" translate="no">WebInterface.PageHTML</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="WebInterface.Persistence.html" translate="no">WebInterface.Persistence</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Responsible for temporary persistence in WebInterface. Saves state that needs to be shared between LiveViews.
+Uses ETS beneath the scenes.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="WebInterface.Persistence.Button.html" translate="no">WebInterface.Persistence.Button</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Persistence module to know which buttons are selected.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="WebInterface.Persistence.Strategy.html" translate="no">WebInterface.Persistence.Strategy</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Persistence module for strategy data. Mostly to track which strategy is selected in the menu and access the list of strategies.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="WebInterface.Persistence.Syndicate.html" translate="no">WebInterface.Persistence.Syndicate</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Persistence module for syndicate data. Mostly to track selected options in the menu and access the list of syndicates.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="WebInterface.Persistence.User.html" translate="no">WebInterface.Persistence.User</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Persistence module for user related data.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="WebInterface.ProfileLive.html" translate="no">WebInterface.ProfileLive</a>
+
+  </div>
 
 </div>
 
@@ -437,13 +649,27 @@ README
 
   </div>
 </div>
-
       <footer class="footer">
-
         <p>
+
+          <span class="line">
+            <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
+              Search HexDocs
+            </button>
+
+              <a href="Market Manager.epub" title="ePub version">
+                Download ePub version
+              </a>
+
+          </span>
+        </p>
+
+        <p class="built-using">
           Built using
-          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.28.0) for the
-          <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.30.6) for the
+
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
         </p>
       </footer>
     </div>
