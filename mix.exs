@@ -30,7 +30,7 @@ defmodule MarketManager.MixProject do
   defp deps,
     do: [
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
-      {:excoveralls, "~> 0.10", only: :test},
+      {:excoveralls, "~> 0.18", only: :test},
       {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.27", only: :dev, runtime: false}
     ]
@@ -50,6 +50,7 @@ defmodule MarketManager.MixProject do
           web_interface: :permanent,
           runtime_tools: :permanent
         ],
+        steps: [:assemble, :tar],
         include_executables_for: [:windows]
       ]
     ]

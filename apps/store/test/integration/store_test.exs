@@ -10,8 +10,8 @@ defmodule StoreTest do
   # Setup  #
   ##########
 
-  @products_file Application.compile_env!(:store, :products)
   @current_orders_file Application.compile_env!(:store, :current_orders)
+  @products_file Application.compile_env!(:store, :products)
   @syndicates_file Application.compile_env!(:store, :syndicates)
   @setup_file Application.compile_env!(:store, :setup)
 

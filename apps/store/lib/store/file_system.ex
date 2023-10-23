@@ -7,13 +7,19 @@ defmodule Store.FileSystem do
   alias Shared.Utils.Tuples
   alias Store.Type
 
-  @orders_filename Application.compile_env!(:store, :current_orders)
+  @current_orders_filename Application.compile_env!(:store, :current_orders)
   @products_filename Application.compile_env!(:store, :products)
   @syndicates_filename Application.compile_env!(:store, :syndicates)
   @setup_filename Application.compile_env!(:store, :setup)
 
   @default_deps [
-    file: File
+    file: File,
+    paths: [
+      current_orders: @current_orders_filename,
+      products: @products_filename,
+      syndicates: @syndicates_filename,
+      setup: @setup_filename
+    ]
   ]
 
   ##########
@@ -22,7 +28,10 @@ defmodule Store.FileSystem do
 
   @spec list_products(Syndicate.t(), Type.dependencies()) :: Type.list_products_response()
   def list_products(syndicate, deps \\ @default_deps) do
-    case read_syndicate_data(@products_filename, syndicate, deps) do
+    deps = Keyword.merge(@default_deps, deps)
+    products_filename = deps[:paths][:products]
+
+    case read_syndicate_data(products_filename, syndicate, deps) do
       {:ok, products} ->
         {:ok, Enum.map(products, &Product.new/1)}
 
@@ -33,7 +42,10 @@ defmodule Store.FileSystem do
 
   @spec list_orders(Syndicate.t(), Type.dependencies()) :: Type.list_orders_response()
   def list_orders(syndicate, deps \\ @default_deps) do
-    case read_syndicate_data(@orders_filename, syndicate, deps) do
+    [file: _file, paths: paths] = Keyword.merge(@default_deps, deps)
+    current_orders_filename = paths[:current_orders]
+
+    case read_syndicate_data(current_orders_filename, syndicate, deps) do
       {:ok, data} ->
         {:ok, Enum.map(data, &PlacedOrder.new/1)}
 
@@ -45,42 +57,55 @@ defmodule Store.FileSystem do
   @spec save_order(PlacedOrder.t(), Syndicate.t(), Type.dependencies()) ::
           Type.save_order_response()
   def save_order(placed_order, syndicate, deps \\ @default_deps) do
-    with {:ok, content} <- read(@orders_filename, deps),
+    [file: file, paths: paths] = Keyword.merge(@default_deps, deps)
+    current_orders_filename = paths[:current_orders]
+
+    with {:ok, content} <- file.read(current_orders_filename),
          {:ok, orders} <- decode_orders(content),
          {:ok, updated_orders} <- add_order(orders, placed_order, syndicate),
          {:ok, json} <- Jason.encode(updated_orders) do
-      write(json, @orders_filename, deps)
+      file.write(current_orders_filename, json)
     end
   end
 
   @spec delete_order(PlacedOrder.t(), Syndicate.t(), Type.dependencies()) ::
           Type.delete_order_response()
   def delete_order(placed_order, syndicate, deps \\ @default_deps) do
-    with {:ok, content} <- read(@orders_filename, deps),
+    [file: file, paths: paths] = Keyword.merge(@default_deps, deps)
+    current_orders_filename = paths[:current_orders]
+
+    with {:ok, content} <- file.read(current_orders_filename),
          {:ok, orders} <- decode_orders(content),
          {:ok, updated_orders} <- remove_order(orders, placed_order, syndicate),
          {:ok, json} <- Jason.encode(updated_orders) do
-      write(json, @orders_filename, deps)
+      file.write(current_orders_filename, json)
     end
   end
 
   @spec save_login_data(Authorization.t(), User.t(), Type.dependencies()) ::
           Type.save_login_data_response()
   def save_login_data(auth, user, deps \\ @default_deps) do
+    [file: file, paths: paths] = Keyword.merge(@default_deps, deps)
+    setup_filename = paths[:setup]
+
     case Jason.encode(%{authorization: auth, user: user}) do
-      {:ok, data} -> write(data, @setup_filename, deps)
+      {:ok, data} -> file.write(setup_filename, data)
       error -> error
     end
   end
 
   @spec get_login_data(Type.dependencies()) :: Type.get_login_data_response()
   def get_login_data(deps \\ @default_deps) do
-    with {:ok, encoded_data} <- read(@setup_filename, deps),
+    [file: file, paths: paths] = Keyword.merge(@default_deps, deps)
+    setup_filename = paths[:setup]
+
+    with {:ok, encoded_data} <- file.read(setup_filename),
          {:ok, decoded_data} <- Jason.decode(encoded_data) do
       decoded_auth = Map.get(decoded_data, "authorization")
       decoded_user = Map.get(decoded_data, "user")
 
-      if valid_data?(decoded_auth, ["cookie", "token"]) and valid_data?(decoded_user, ["ingame_name", "patreon?"]) do
+      if valid_data?(decoded_auth, ["cookie", "token"]) and
+           valid_data?(decoded_user, ["ingame_name", "patreon?"]) do
         {:ok, {Authorization.new(decoded_auth), User.new(decoded_user)}}
       else
         {:ok, nil}
@@ -90,17 +115,21 @@ defmodule Store.FileSystem do
 
   @spec delete_login_data(Type.dependencies()) :: Type.delete_login_data_response()
   def delete_login_data(deps \\ @default_deps) do
+    [file: file, paths: paths] = Keyword.merge(@default_deps, deps)
+    setup_filename = paths[:setup]
+
     case Jason.encode(%{}) do
-      {:ok, data} -> write(data, @setup_filename, deps)
+      {:ok, data} -> file.write(setup_filename, data)
       error -> error
     end
   end
 
   @spec list_syndicates(Type.dependencies()) :: Type.list_syndicates_response()
-  def list_syndicates([file: file] \\ @default_deps) do
-    with {:ok, directory} <- file.cwd(),
-         path <- Path.join(directory, @syndicates_filename),
-         {:ok, content} <- file.read(path),
+  def list_syndicates(deps \\ @default_deps) do
+    [file: file, paths: paths] = Keyword.merge(@default_deps, deps)
+    syndicates_filename = paths[:syndicates]
+
+    with {:ok, content} <- file.read(syndicates_filename),
          {:ok, syndicates_data} <- Jason.decode(content) do
       {:ok, Enum.map(syndicates_data, &Syndicate.new/1)}
     end
@@ -117,10 +146,8 @@ defmodule Store.FileSystem do
         ) ::
           {:ok, [map()]}
           | {:error, :file.posix() | Jason.DecodeError.t() | :syndicate_not_found}
-  defp read_syndicate_data(filename, syndicate, file: file) do
-    with {:ok, directory} <- file.cwd(),
-         path <- Path.join(directory, filename),
-         {:ok, content} <- file.read(path),
+  defp read_syndicate_data(filename, syndicate, [file: file, paths: _path]) do
+    with{:ok, content} <- file.read(filename),
          {:ok, syndicates_data} <- Jason.decode(content) do
       find_syndicate(syndicates_data, syndicate)
     end
@@ -179,32 +206,4 @@ defmodule Store.FileSystem do
   @spec valid_data?(decoded_map :: map, fields :: [String.t()]) :: boolean()
   defp valid_data?(map, fields),
     do: not is_nil(map) and Enum.all?(fields, fn field -> not is_nil(Map.get(map, field)) end)
-
-  @spec write(data :: String.t(), filename :: String.t(), Type.dependencies()) ::
-          :ok | {:error, :file.posix()}
-  defp write(data, filename, file: file) do
-    case file.cwd() do
-      {:ok, path} ->
-        path
-        |> Path.join(filename)
-        |> file.write(data)
-
-      error ->
-        error
-    end
-  end
-
-  @spec read(filename :: String.t(), Type.dependencies()) ::
-          {:ok, String.t()} | {:error, :file.posix()}
-  defp read(filename, file: file) do
-    case file.cwd() do
-      {:ok, path} ->
-        path
-        |> Path.join(filename)
-        |> file.read()
-
-      error ->
-        error
-    end
-  end
 end
