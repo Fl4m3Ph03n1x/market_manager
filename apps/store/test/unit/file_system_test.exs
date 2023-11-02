@@ -422,7 +422,7 @@ defmodule MarketManager.Store.FileSystemTest do
     test_with_mock "returns the list of all known syndicates", File,
       read: fn _filename ->
         {:ok,
-        "[{\"id\":\"red_veil\",\"name\":\"Red Veil\"},{\"id\":\"perrin_sequence\",\"name\":\"Perrin Sequence\"}]"}
+         "[{\"id\":\"red_veil\",\"name\":\"Red Veil\"},{\"id\":\"perrin_sequence\",\"name\":\"Perrin Sequence\"}]"}
       end do
       # Act
       actual = FileSystem.list_syndicates()
@@ -441,7 +441,6 @@ defmodule MarketManager.Store.FileSystemTest do
 
     test_with_mock "returns error if it cannot read file", File,
       read: fn _file_name -> {:error, :enoent} end do
-
       # Act
       actual = FileSystem.list_syndicates()
       expected = {:error, :enoent}

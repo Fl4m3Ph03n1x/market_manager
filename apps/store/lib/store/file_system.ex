@@ -31,12 +31,8 @@ defmodule Store.FileSystem do
     deps = Keyword.merge(@default_deps, deps)
     products_filename = deps[:paths][:products]
 
-    case read_syndicate_data(products_filename, syndicate, deps) do
-      {:ok, products} ->
-        {:ok, Enum.map(products, &Product.new/1)}
-
-      err ->
-        err
+    with {:ok, products} <- read_syndicate_data(products_filename, syndicate, deps) do
+      {:ok, Enum.map(products, &Product.new/1)}
     end
   end
 
@@ -45,12 +41,8 @@ defmodule Store.FileSystem do
     [file: _file, paths: paths] = Keyword.merge(@default_deps, deps)
     current_orders_filename = paths[:current_orders]
 
-    case read_syndicate_data(current_orders_filename, syndicate, deps) do
-      {:ok, data} ->
-        {:ok, Enum.map(data, &PlacedOrder.new/1)}
-
-      err ->
-        err
+    with {:ok, data} <- read_syndicate_data(current_orders_filename, syndicate, deps) do
+      {:ok, Enum.map(data, &PlacedOrder.new/1)}
     end
   end
 
@@ -88,9 +80,8 @@ defmodule Store.FileSystem do
     [file: file, paths: paths] = Keyword.merge(@default_deps, deps)
     setup_filename = paths[:setup]
 
-    case Jason.encode(%{authorization: auth, user: user}) do
-      {:ok, data} -> file.write(setup_filename, data)
-      error -> error
+    with {:ok, data} <- Jason.encode(%{authorization: auth, user: user}) do
+      file.write(setup_filename, data)
     end
   end
 
@@ -118,9 +109,8 @@ defmodule Store.FileSystem do
     [file: file, paths: paths] = Keyword.merge(@default_deps, deps)
     setup_filename = paths[:setup]
 
-    case Jason.encode(%{}) do
-      {:ok, data} -> file.write(setup_filename, data)
-      error -> error
+    with {:ok, data} <- Jason.encode(%{}) do
+      file.write(setup_filename, data)
     end
   end
 
@@ -146,8 +136,8 @@ defmodule Store.FileSystem do
         ) ::
           {:ok, [map()]}
           | {:error, :file.posix() | Jason.DecodeError.t() | :syndicate_not_found}
-  defp read_syndicate_data(filename, syndicate, [file: file, paths: _path]) do
-    with{:ok, content} <- file.read(filename),
+  defp read_syndicate_data(filename, syndicate, file: file, paths: _path) do
+    with {:ok, content} <- file.read(filename),
          {:ok, syndicates_data} <- Jason.decode(content) do
       find_syndicate(syndicates_data, syndicate)
     end
