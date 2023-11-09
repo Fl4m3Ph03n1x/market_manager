@@ -9,8 +9,15 @@
 # move said applications out of the umbrella.
 import Config
 
+config :manager, env: config_env()
+
+config :auction_house, env: config_env()
+
+config :store, env: config_env()
+
 config :web_interface,
-  generators: [context_app: false]
+  generators: [context_app: false],
+  env: config_env()
 
 # Configures the endpoint
 config :web_interface, WebInterface.Endpoint,

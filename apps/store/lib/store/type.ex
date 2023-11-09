@@ -12,7 +12,7 @@ defmodule Store.Type do
   # Types  #
   ##########
 
-  @type dependencies :: keyword(module)
+  @type dependencies :: map()
   @type all_orders_store :: %{String.t() => [PlacedOrder.t()]}
 
   #############
@@ -30,7 +30,10 @@ defmodule Store.Type do
   @type list_orders_response ::
           {:ok, [PlacedOrder.t()]}
           | {:error, :file.posix() | Jason.DecodeError.t() | :syndicate_not_found}
-  @type save_order_response :: :ok | {:error, :file.posix() | Jason.DecodeError.t() | Jason.EncodeError.t()}
-  @type delete_order_response :: :ok | {:error, :file.posix() | Jason.DecodeError.t() | Jason.EncodeError.t()}
-  @type list_syndicates_response :: {:ok, [Syndicate.t()]} | {:error, :file.posix() | Jason.DecodeError.t()}
+  @type save_order_response ::
+          :ok | {:error, :file.posix() | Jason.DecodeError.t() | Jason.EncodeError.t()}
+  @type delete_order_response ::
+          :ok | {:error, :file.posix() | Jason.DecodeError.t() | Jason.EncodeError.t()}
+  @type list_syndicates_response ::
+          {:ok, [Syndicate.t()]} | {:error, :file.posix() | Jason.DecodeError.t()}
 end

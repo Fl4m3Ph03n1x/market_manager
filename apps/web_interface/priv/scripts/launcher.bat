@@ -1,0 +1,1 @@
+(application-data\bin\market_manager.bat stop) & (application-data\bin\market_manager.bat start)

@@ -50,8 +50,23 @@ defmodule MarketManager.MixProject do
           web_interface: :permanent,
           runtime_tools: :permanent
         ],
-        steps: [:assemble, :tar],
+        steps: [:assemble, :tar, &rename_tar/1],
         include_executables_for: [:windows]
       ]
     ]
+
+  defp rename_tar(release) do
+    tar_folder_path =
+      release.path
+      |> Path.join("../../")
+      |> Path.expand()
+
+    tar_path = Path.join(tar_folder_path, "#{release.name}-#{release.version}.tar.gz")
+    new_tar_path = Path.join(tar_folder_path, "application-data.tar.gz")
+
+    case File.rename(tar_path, new_tar_path) do
+      :ok -> release
+      err -> err
+    end
+  end
 end
