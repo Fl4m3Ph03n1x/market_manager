@@ -1,7 +1,7 @@
 defmodule StoreTest do
   @moduledoc false
 
-  use ExUnit.Case
+  use ExUnit.Case, async: false
 
   alias Shared.Data.{Authorization, PlacedOrder, Product, Syndicate, User}
   alias Store
@@ -10,38 +10,8 @@ defmodule StoreTest do
   # Setup  #
   ##########
 
-  @products_file Application.compile_env!(:store, :products)
-  @current_orders_file Application.compile_env!(:store, :current_orders)
-  @syndicates_file Application.compile_env!(:store, :syndicates)
-  @setup_file Application.compile_env!(:store, :setup)
-
-  defp create_products_file do
-    content =
-      Jason.encode!(%{
-        "cephalon_simaris" => [
-          Product.new(%{
-            "name" => "Looter",
-            "id" => "5740c1879d238d4a03d28518",
-            "min_price" => 50,
-            "default_price" => 60,
-            "quantity" => 1,
-            "rank" => 0
-          }),
-          Product.new(%{
-            "name" => "Astral Autopsy",
-            "id" => "588a789c3cf52c408a2f88dc",
-            "min_price" => 50,
-            "default_price" => 60,
-            "quantity" => 1,
-            "rank" => "n/a"
-          })
-        ]
-      })
-
-    File.write(@products_file, content)
-  end
-
-  defp delete_products_file, do: File.rm!(@products_file)
+  @current_orders_file :store |> Application.compile_env!(:current_orders) |> Path.join()
+  @setup_file :store |> Application.compile_env!(:setup) |> Path.join()
 
   defp create_current_orders_file do
     content =
@@ -49,6 +19,10 @@ defmodule StoreTest do
         "new_loka" => [],
         "perrin_sequence" => [],
         "red_veil" => [],
+        "arbiters_of_hexis" => [],
+        "cephalon_suda" => [],
+        "steel_meridian" => [],
+        "arbitrations" => [],
         "cephalon_simaris" => [
           PlacedOrder.new(%{
             "item_id" => "5740c1879d238d4a03d28518",
@@ -64,7 +38,21 @@ defmodule StoreTest do
     File.write(@current_orders_file, content)
   end
 
-  defp delete_current_orders_file, do: File.rm!(@current_orders_file)
+  defp reset_current_orders_file do
+    content =
+      Jason.encode!(%{
+        "new_loka" => [],
+        "perrin_sequence" => [],
+        "red_veil" => [],
+        "arbiters_of_hexis" => [],
+        "cephalon_suda" => [],
+        "steel_meridian" => [],
+        "arbitrations" => [],
+        "cephalon_simaris" => []
+      })
+
+    File.write(@current_orders_file, content)
+  end
 
   defp create_setup_file do
     content =
@@ -82,30 +70,21 @@ defmodule StoreTest do
     File.write(@setup_file, content)
   end
 
-  defp delete_setup_file, do: File.rm!(@setup_file)
-
-  defp create_syndicates_file do
+  defp reset_setup_file do
     content =
-      Jason.encode!([
-        Syndicate.new(name: "Red Veil", id: :red_veil),
-        Syndicate.new(name: "New Loka", id: :new_loka)
-      ])
+      Jason.encode!(%{
+        "authorization" => %{},
+        "user" => %{}
+      })
 
-    File.write(@syndicates_file, content)
+    File.write(@setup_file, content)
   end
-
-  defp delete_syndicates_file, do: File.rm!(@syndicates_file)
 
   ##########
   # Tests  #
   ##########
 
   describe "list_products/1" do
-    setup do
-      create_products_file()
-      on_exit(&delete_products_file/0)
-    end
-
     test "returns list of available products from given syndicate" do
       # Arrange
       syndicate = Syndicate.new(name: "Cephalon Simaris", id: :cephalon_simaris)
@@ -142,7 +121,7 @@ defmodule StoreTest do
   describe "list_orders/1" do
     setup do
       create_current_orders_file()
-      on_exit(&delete_current_orders_file/0)
+      on_exit(&reset_current_orders_file/0)
     end
 
     test "returns list of available orders from given syndicate" do
@@ -174,7 +153,7 @@ defmodule StoreTest do
   describe "save_order/2" do
     setup do
       create_current_orders_file()
-      on_exit(&delete_current_orders_file/0)
+      on_exit(&reset_current_orders_file/0)
     end
 
     test "returns order_id if order was saved successfully" do
@@ -201,6 +180,10 @@ defmodule StoreTest do
                    })
                  ],
                  "red_veil" => [],
+                 "arbiters_of_hexis" => [],
+                 "cephalon_suda" => [],
+                 "steel_meridian" => [],
+                 "arbitrations" => [],
                  "cephalon_simaris" => [
                    PlacedOrder.new(%{
                      "item_id" => "5740c1879d238d4a03d28518",
@@ -218,7 +201,7 @@ defmodule StoreTest do
   describe "delete_order/2" do
     setup do
       create_current_orders_file()
-      on_exit(&delete_current_orders_file/0)
+      on_exit(&reset_current_orders_file/0)
     end
 
     test "returns :ok if order was deleted successfully" do
@@ -240,6 +223,10 @@ defmodule StoreTest do
                  "new_loka" => [],
                  "perrin_sequence" => [],
                  "red_veil" => [],
+                 "arbiters_of_hexis" => [],
+                 "cephalon_suda" => [],
+                 "steel_meridian" => [],
+                 "arbitrations" => [],
                  "cephalon_simaris" => [
                    PlacedOrder.new(%{
                      "item_id" => "5b00231bac0f7e006fd6f7b4",
@@ -253,7 +240,7 @@ defmodule StoreTest do
   describe "save_login_data/2" do
     setup do
       create_setup_file()
-      on_exit(&delete_setup_file/0)
+      on_exit(&reset_setup_file/0)
     end
 
     test "returns :ok if login data was saved successfully" do
@@ -277,7 +264,7 @@ defmodule StoreTest do
   describe "delete_login_data/0" do
     setup do
       create_setup_file()
-      on_exit(&delete_setup_file/0)
+      on_exit(&reset_setup_file/0)
     end
 
     test "returns :ok if login data was deleted" do
@@ -292,7 +279,7 @@ defmodule StoreTest do
   describe "get_login_data/0" do
     setup do
       create_setup_file()
-      on_exit(&delete_setup_file/0)
+      on_exit(&reset_setup_file/0)
     end
 
     test "returns login data" do
@@ -306,11 +293,6 @@ defmodule StoreTest do
   end
 
   describe "list_syndicates/0" do
-    setup do
-      create_syndicates_file()
-      on_exit(&delete_syndicates_file/0)
-    end
-
     test "returns list of all syndicates" do
       # Act
       actual = Store.list_syndicates()
@@ -319,7 +301,13 @@ defmodule StoreTest do
         {:ok,
          [
            Syndicate.new(name: "Red Veil", id: :red_veil),
-           Syndicate.new(name: "New Loka", id: :new_loka)
+           Syndicate.new(name: "New Loka", id: :new_loka),
+           Syndicate.new(name: "Perrin Sequence", id: :perrin_sequence),
+           Syndicate.new(name: "Steel Meridian", id: :steel_meridian),
+           Syndicate.new(name: "Arbiters of Hexis", id: :arbiters_of_hexis),
+           Syndicate.new(name: "Cephalon Suda", id: :cephalon_suda),
+           Syndicate.new(name: "Cephalon Simaris", id: :cephalon_simaris),
+           Syndicate.new(name: "Arbitrations", id: :arbitrations)
          ]}
 
       # Assert

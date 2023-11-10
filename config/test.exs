@@ -9,10 +9,12 @@ config :web_interface, WebInterface.Endpoint,
   check_origin: false
 
 config :store,
-  products: "test_setup/products.json",
-  current_orders: "test_setup/current_orders.json",
-  setup: "test_setup/setup.json",
-  syndicates: "test_setup/syndicates.json"
+  products: Path.expand("#{__DIR__}/../apps/store/test/fixtures/products.json") |> Path.split(),
+  current_orders:
+    Path.expand("#{__DIR__}/../apps/store/test/fixtures/current_orders.json") |> Path.split(),
+  setup: Path.expand("#{__DIR__}/../apps/store/test/fixtures/setup.json") |> Path.split(),
+  syndicates:
+    Path.expand("#{__DIR__}/../apps/store/test/fixtures/syndicates.json") |> Path.split()
 
 config :auction_house,
   api_base_url: "http://localhost:8082/v1/profile/orders",

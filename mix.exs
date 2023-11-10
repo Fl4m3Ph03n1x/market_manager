@@ -30,7 +30,7 @@ defmodule MarketManager.MixProject do
   defp deps,
     do: [
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
-      {:excoveralls, "~> 0.10", only: :test},
+      {:excoveralls, "~> 0.18", only: :test},
       {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.27", only: :dev, runtime: false}
     ]
@@ -50,7 +50,23 @@ defmodule MarketManager.MixProject do
           web_interface: :permanent,
           runtime_tools: :permanent
         ],
+        steps: [:assemble, :tar, &rename_tar/1],
         include_executables_for: [:windows]
       ]
     ]
+
+  defp rename_tar(release) do
+    tar_folder_path =
+      release.path
+      |> Path.join("../../")
+      |> Path.expand()
+
+    tar_path = Path.join(tar_folder_path, "#{release.name}-#{release.version}.tar.gz")
+    new_tar_path = Path.join(tar_folder_path, "application-data.tar.gz")
+
+    case File.rename(tar_path, new_tar_path) do
+      :ok -> release
+      err -> err
+    end
+  end
 end

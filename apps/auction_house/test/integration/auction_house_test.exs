@@ -1,7 +1,7 @@
 defmodule AuctionHouseTest do
   @moduledoc false
 
-  use ExUnit.Case
+  use ExUnit.Case, async: false
 
   alias AuctionHouse
   alias AuctionHouse.Runtime.Server
