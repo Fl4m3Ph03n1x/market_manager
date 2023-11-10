@@ -429,7 +429,7 @@
 			"default_price": 16
 		},
 		{
-			"name": "Corroding barrage",
+			"name": "Viral tempest",
 			"id": "58446f502c2ada0042b6fc3d",
 			"min_price": 14,
 			"default_price": 16
@@ -441,7 +441,7 @@
 			"default_price": 16
 		},
 		{
-			"name": "Curative undertow",
+			"name": "Rousing plunder",
 			"id": "54a74455e779892d5e5156d7",
 			"min_price": 14,
 			"default_price": 16
