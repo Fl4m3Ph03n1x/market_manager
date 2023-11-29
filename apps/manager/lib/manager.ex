@@ -184,6 +184,24 @@ defmodule Manager do
   @doc """
   Synchronous operation.
 
+  Returns a list containing all currently active syndicates.
+
+  Example:
+  ```
+  > alias Shared.Data.Syndicate
+
+  > MarketManager.active_syndicates()
+  {:ok, [%Syndicate{name: "Red Veil", id: :red_veil}]}
+
+  > Manager.active_syndicates()
+  {:error, :enoent}
+  """
+  @spec active_syndicates :: Type.active_syndicates_response()
+  defdelegate active_syndicates, to: Worker
+
+  @doc """
+  Synchronous operation.
+
   Returns the list of available strategies, or an error if it fails.
 
   Example:
@@ -214,5 +232,4 @@ defmodule Manager do
   @doc false
   @spec child_spec(any) :: Supervisor.child_spec()
   defdelegate child_spec(args), to: Server
-
 end

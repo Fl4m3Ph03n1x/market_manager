@@ -7,16 +7,28 @@ defmodule Manager.InterpreterTest do
 
   alias Helpers
   alias Manager.Impl.Interpreter
-  alias Shared.Data.{Authorization, Credentials, OrderInfo, PlacedOrder, Strategy, Syndicate, User}
+
+  alias Shared.Data.{
+    Authorization,
+    Credentials,
+    OrderInfo,
+    PlacedOrder,
+    Strategy,
+    Syndicate,
+    User
+  }
 
   describe "activate/4" do
     setup do
       syndicate = Syndicate.new(name: "Red Veil", id: :red_veil)
-      strategy = Strategy.new(
-        name: "Top 5 Average",
-        id: :top_five_average,
-        description: "Gets the 5 lowest prices for the given item and calculates the average."
-      )
+
+      strategy =
+        Strategy.new(
+          name: "Top 5 Average",
+          id: :top_five_average,
+          description: "Gets the 5 lowest prices for the given item and calculates the average."
+        )
+
       id1 = "54a74454e779892d5e5155d5"
       id2 = "54a74454e779892d5e5155a0"
       product1_name = "Gleaming Blight"
@@ -739,12 +751,13 @@ defmodule Manager.InterpreterTest do
       }
     end
 
-    test "Returns ok if manual login  with `keep_logged_in == true` was successful and it saved data", %{
-      authorization: auth,
-      user: user,
-      credentials: credentials,
-      handle: handle
-    } do
+    test "Returns ok if manual login  with `keep_logged_in == true` was successful and it saved data",
+         %{
+           authorization: auth,
+           user: user,
+           credentials: credentials,
+           handle: handle
+         } do
       with_mocks([
         {
           Store,
@@ -780,12 +793,13 @@ defmodule Manager.InterpreterTest do
       end
     end
 
-    test "Returns error if manual login  with `keep_logged_in == true` was successful but failed to save data", %{
-      authorization: auth,
-      user: user,
-      credentials: credentials,
-      handle: handle
-    } do
+    test "Returns error if manual login  with `keep_logged_in == true` was successful but failed to save data",
+         %{
+           authorization: auth,
+           user: user,
+           credentials: credentials,
+           handle: handle
+         } do
       with_mocks([
         {
           Store,
@@ -821,12 +835,13 @@ defmodule Manager.InterpreterTest do
       end
     end
 
-    test "Returns ok if manual login  with `keep_logged_in == false` was successful and it deleted data", %{
-      authorization: auth,
-      user: user,
-      credentials: credentials,
-      handle: handle
-    } do
+    test "Returns ok if manual login  with `keep_logged_in == false` was successful and it deleted data",
+         %{
+           authorization: auth,
+           user: user,
+           credentials: credentials,
+           handle: handle
+         } do
       with_mocks([
         {
           Store,
@@ -865,12 +880,13 @@ defmodule Manager.InterpreterTest do
       end
     end
 
-    test "Returns error if manual login with `keep_logged_in == false` was successful but it failed to delete data", %{
-      authorization: auth,
-      user: user,
-      credentials: credentials,
-      handle: handle
-    } do
+    test "Returns error if manual login with `keep_logged_in == false` was successful but it failed to delete data",
+         %{
+           authorization: auth,
+           user: user,
+           credentials: credentials,
+           handle: handle
+         } do
       with_mocks([
         {
           Store,
@@ -1065,7 +1081,6 @@ defmodule Manager.InterpreterTest do
   end
 
   describe "logout/1" do
-
     test "returns OK if logout is successful" do
       with_mocks([
         {
@@ -1164,7 +1179,6 @@ defmodule Manager.InterpreterTest do
         assert_not_called(Store.delete_login_data())
       end
     end
-
   end
 
   describe "syndicates/1" do
@@ -1179,29 +1193,68 @@ defmodule Manager.InterpreterTest do
 
     test "returns the list of known syndicates", %{syndicates: syndicates} do
       with_mocks([
-        {Store, [], [list_syndicates: fn() -> {:ok, syndicates} end]}
+        {Store, [], [list_syndicates: fn -> {:ok, syndicates} end]}
       ]) do
-       # Act
-       actual = Interpreter.syndicates()
-       expected = {:ok, syndicates}
+        # Act
+        actual = Interpreter.syndicates()
+        expected = {:ok, syndicates}
 
-       # Assert
-       assert actual == expected
-       assert_called Store.list_syndicates()
+        # Assert
+        assert actual == expected
+        assert_called(Store.list_syndicates())
       end
     end
 
     test "returns error if it cannot return syndicate list" do
       with_mocks([
-        {Store, [], [list_syndicates: fn() -> {:error, :enoent} end]}
+        {Store, [], [list_syndicates: fn -> {:error, :enoent} end]}
       ]) do
-       # Act
-       actual = Interpreter.syndicates()
-       expected = {:error, :enoent}
+        # Act
+        actual = Interpreter.syndicates()
+        expected = {:error, :enoent}
 
-       # Assert
-       assert actual == expected
-       assert_called Store.list_syndicates()
+        # Assert
+        assert actual == expected
+        assert_called(Store.list_syndicates())
+      end
+    end
+  end
+
+  describe "active_syndicates/1" do
+    setup do
+      %{
+        active_syndicates: [
+          Syndicate.new(name: "Red Veil", id: :red_veil),
+          Syndicate.new(name: "New Loka", id: :new_loka)
+        ]
+      }
+    end
+
+    test "returns the list of currently active syndicates", %{active_syndicates: syndicates} do
+      with_mocks([
+        {Store, [], [list_active_syndicates: fn -> {:ok, syndicates} end]}
+      ]) do
+        # Act
+        actual = Interpreter.active_syndicates()
+        expected = {:ok, syndicates}
+
+        # Assert
+        assert actual == expected
+        assert_called(Store.list_active_syndicates())
+      end
+    end
+
+    test "returns error if it cannot return active syndicate list" do
+      with_mocks([
+        {Store, [], [list_active_syndicates: fn -> {:error, :enoent} end]}
+      ]) do
+        # Act
+        actual = Interpreter.active_syndicates()
+        expected = {:error, :enoent}
+
+        # Assert
+        assert actual == expected
+        assert_called(Store.list_active_syndicates())
       end
     end
   end

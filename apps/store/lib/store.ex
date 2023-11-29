@@ -15,7 +15,7 @@ defmodule Store do
   ```
   > alias Shared.Data.{Product, Syndicate}
 
-  > syndicate = Syndicate.new(name: "Red Veil", id: :red_veil)
+  > syndicate = Syndicate.new(name: "Red Veil", id: :red_veil, catalog: [])
   > Store.list_products(syndicate)
   {:ok, [
     %Product{
@@ -29,7 +29,7 @@ defmodule Store do
     ...
   ]}
 
-  > invalid_syndicate = Syndicate.new(name: "Bad Synd", id: :bad_syndicate)
+  > invalid_syndicate = Syndicate.new(name: "Bad Synd", id: :bad_syndicate, catalog: [])
   > Store.list_products(invalid_syndicate)
   {:error, :syndicate_not_found}
   ```
@@ -44,7 +44,7 @@ defmodule Store do
   ```
   > alias Shared.Data.{PlacedOrder, Syndicate}
 
-  > syndicate = Syndicate.new(name: "Red Veil", id: :red_veil)
+  > syndicate = Syndicate.new(name: "Red Veil", id: :red_veil, catalog: [])
   > Store.list_orders(syndicate)
   {:ok, [
     %PlacedOrder{item_name: "Exothermic", order_id: "5526aec1e779896af9418266"},
@@ -69,11 +69,11 @@ defmodule Store do
 
   > Store.save_order(
     %PlacedOrder{item_name: "Exothermic", order_id: "5526aec1e779896af9418266"},
-    Syndicate.new(name: "Red Veil", id: :red_veil)
+    Syndicate.new(name: "Red Veil", id: :red_veil, catalog: [])
   )
   :ok
 
-  > invalid_syndicate = Syndicate.new(name: "Bad Synd", id: :bad_syndicate)
+  > invalid_syndicate = Syndicate.new(name: "Bad Synd", id: :bad_syndicate, catalog: [])
   > Store.save_order(invalid_syndicate)
   {:error, :enoent}
   ```
@@ -90,11 +90,11 @@ defmodule Store do
 
   > Store.delete_order(
     %PlacedOrder{item_name: "Exothermic", order_id: "5526aec1e779896af9418266"},
-    Syndicate.new(name: "Red Veil", id: :red_veil)
+    Syndicate.new(name: "Red Veil", id: :red_veil, catalog: [])
   )
   :ok
 
-  > invalid_syndicate = Syndicate.new(name: "Bad Synd", id: :bad_syndicate)
+  > invalid_syndicate = Syndicate.new(name: "Bad Synd", id: :bad_syndicate, catalog: [])
   > Store.delete_order(invalid_syndicate)
   {:error, :enoent}
   ```
@@ -169,7 +169,7 @@ defmodule Store do
   > alias Shared.Data.Syndicate
 
   > Store.list_syndicates()
-  {:ok, [%Syndicate{name: "Red Veil", id: :red_veil}, %Syndicate{name: "New Loka", id: :new_loka}]}
+  {:ok, [%Syndicate{name: "Red Veil", id: :red_veil, catalog: []}, %Syndicate{name: "New Loka", id: :new_loka, catalog: []}]}
 
   > Store.list_syndicates()
   {:error, :enoent}
@@ -177,4 +177,21 @@ defmodule Store do
   """
   @spec list_syndicates :: Type.list_syndicates_response()
   defdelegate list_syndicates, to: FileSystem
+
+  @doc """
+  Returns the syndicates currently active. An active syndicate is a syndicate with orders in `current_orders`.
+
+  Example:
+  ```
+  > alias Shared.Data.Syndicate
+
+  > Store.list_active_syndicates()
+  {:ok, [%Syndicate{name: "Red Veil", id: :red_veil, catalog: []}, %Syndicate{name: "New Loka", id: :new_loka, catalog: []}]}
+
+  > Store.list_syndicates()
+  {:error, :enoent}
+  ```
+  """
+  @spec list_active_syndicates :: Type.list_active_syndicates_response()
+  defdelegate list_active_syndicates, to: FileSystem
 end

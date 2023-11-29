@@ -49,6 +49,9 @@ defmodule Manager.Runtime.Worker do
   @spec syndicates :: Type.syndicates_response()
   def syndicates, do: GenServer.call(__MODULE__, :syndicates)
 
+  @spec active_syndicates :: Type.active_syndicates_response()
+  def active_syndicates, do: GenServer.call(__MODULE__, :active_syndicates)
+
   @spec strategies :: Type.strategies_response()
   def strategies, do: GenServer.call(__MODULE__, :strategies)
 
@@ -93,6 +96,11 @@ defmodule Manager.Runtime.Worker do
   @spec handle_call(request :: any, GenServer.from(), state) :: {:reply, response :: any, state}
   def handle_call(:syndicates, _from, [interpreter: interpreter] = deps) do
     {:reply, interpreter.syndicates(), deps}
+  end
+
+  @spec handle_call(request :: any, GenServer.from(), state) :: {:reply, response :: any, state}
+  def handle_call(:active_syndicates, _from, [interpreter: interpreter] = deps) do
+    {:reply, interpreter.active_syndicates(), deps}
   end
 
   def handle_call(:strategies, _from, [interpreter: interpreter] = deps) do

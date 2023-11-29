@@ -25,15 +25,16 @@ defmodule Store.Type do
   @type save_login_data_response :: :ok | {:error, :file.posix() | Jason.EncodeError.t()}
   @type delete_login_data_response :: :ok | {:error, :file.posix() | Jason.EncodeError.t()}
   @type list_products_response ::
-          {:ok, [Product.t()]}
-          | {:error, :file.posix() | Jason.DecodeError.t() | :syndicate_not_found}
+          {:ok, [Product.t()]} | {:error, :file.posix() | Jason.DecodeError.t()}
   @type list_orders_response ::
           {:ok, [PlacedOrder.t()]}
-          | {:error, :file.posix() | Jason.DecodeError.t() | :syndicate_not_found}
+          | {:error, :file.posix() | Jason.DecodeError.t()}
   @type save_order_response ::
           :ok | {:error, :file.posix() | Jason.DecodeError.t() | Jason.EncodeError.t()}
   @type delete_order_response ::
           :ok | {:error, :file.posix() | Jason.DecodeError.t() | Jason.EncodeError.t()}
   @type list_syndicates_response ::
+          {:ok, [Syndicate.t()]} | {:error, :file.posix() | Jason.DecodeError.t()}
+  @type list_active_syndicates_response ::
           {:ok, [Syndicate.t()]} | {:error, :file.posix() | Jason.DecodeError.t()}
 end

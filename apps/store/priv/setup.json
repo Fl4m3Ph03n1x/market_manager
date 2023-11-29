@@ -1,4 +1,4 @@
 {
-    "cookie": "a_cookie",
-    "token": "a_token"
+    "authorization": {},
+    "user": {}
 }

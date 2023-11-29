@@ -105,6 +105,10 @@ defmodule Manager.Impl.Interpreter do
   def syndicates([store: store, auction_house: _auction_house] \\ @default_deps),
     do: store.list_syndicates()
 
+  @spec active_syndicates(Type.dependencies()) :: Type.active_syndicates_response()
+  def active_syndicates([store: store, auction_house: _auction_house] \\ @default_deps),
+    do: store.list_active_syndicates()
+
   @spec strategies :: Type.strategies_response()
   def strategies, do: PriceAnalyst.list_strategies()
 
