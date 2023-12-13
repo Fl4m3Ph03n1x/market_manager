@@ -188,7 +188,7 @@ defmodule Store do
   > Store.list_active_syndicates()
   {:ok, [%Syndicate{name: "Red Veil", id: :red_veil, catalog: []}, %Syndicate{name: "New Loka", id: :new_loka, catalog: []}]}
 
-  > Store.list_syndicates()
+  > Store.list_active_syndicates()
   {:error, :enoent}
   ```
   """
