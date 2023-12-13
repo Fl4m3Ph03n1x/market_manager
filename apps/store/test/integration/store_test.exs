@@ -87,7 +87,12 @@ defmodule StoreTest do
   describe "list_products/1" do
     test "returns list of available products from given syndicate" do
       # Arrange
-      syndicate = Syndicate.new(name: "Cephalon Simaris", id: :cephalon_simaris)
+      syndicate =
+        Syndicate.new(
+          name: "Cephalon Simaris",
+          id: :cephalon_simaris,
+          catalog: ["5740c1879d238d4a03d28518", "588a789c3cf52c408a2f88dc"]
+        )
 
       # Act
       actual = Store.list_products(syndicate)
@@ -126,7 +131,7 @@ defmodule StoreTest do
 
     test "returns list of available orders from given syndicate" do
       # Arrange
-      syndicate = Syndicate.new(name: "Cephalon Simaris", id: :cephalon_simaris)
+      syndicate = Syndicate.new(name: "Cephalon Simaris", id: :cephalon_simaris, catalog: [])
 
       # Act
       actual = Store.list_orders(syndicate)
@@ -158,7 +163,7 @@ defmodule StoreTest do
 
     test "returns order_id if order was saved successfully" do
       # Arrange
-      syndicate = Syndicate.new(name: "Perrin Sequence", id: :perrin_sequence)
+      syndicate = Syndicate.new(name: "Perrin Sequence", id: :perrin_sequence, catalog: [])
 
       placed_order =
         PlacedOrder.new(%{
@@ -206,7 +211,7 @@ defmodule StoreTest do
 
     test "returns :ok if order was deleted successfully" do
       # Arrange
-      syndicate = Syndicate.new(name: "Cephalon Simaris", id: :cephalon_simaris)
+      syndicate = Syndicate.new(name: "Cephalon Simaris", id: :cephalon_simaris, catalog: [])
 
       placed_order =
         PlacedOrder.new(%{
@@ -295,23 +300,64 @@ defmodule StoreTest do
   describe "list_syndicates/0" do
     test "returns list of all syndicates" do
       # Act
-      actual = Store.list_syndicates()
+      {:ok, syndicates} = Store.list_syndicates()
 
-      expected =
-        {:ok,
-         [
-           Syndicate.new(name: "Red Veil", id: :red_veil),
-           Syndicate.new(name: "New Loka", id: :new_loka),
-           Syndicate.new(name: "Perrin Sequence", id: :perrin_sequence),
-           Syndicate.new(name: "Steel Meridian", id: :steel_meridian),
-           Syndicate.new(name: "Arbiters of Hexis", id: :arbiters_of_hexis),
-           Syndicate.new(name: "Cephalon Suda", id: :cephalon_suda),
-           Syndicate.new(name: "Cephalon Simaris", id: :cephalon_simaris),
-           Syndicate.new(name: "Arbitrations", id: :arbitrations)
-         ]}
+      [arbiters, arbitrations, simaris, suda, new_loka, perrin_sequence, red_veil, steel_meridian] =
+        Enum.sort_by(syndicates, & &1.id)
 
       # Assert
-      assert actual == expected
+      assert arbiters.id == :arbiters_of_hexis
+      assert arbiters.name == "Arbiters of Hexis"
+
+      assert arbitrations.id == :arbitrations
+      assert arbitrations.name == "Arbitrations"
+
+      assert simaris.id == :cephalon_simaris
+      assert simaris.name == "Cephalon Simaris"
+
+      assert suda.id == :cephalon_suda
+      assert suda.name == "Cephalon Suda"
+
+      assert new_loka.id == :new_loka
+      assert new_loka.name == "New Loka"
+
+      assert perrin_sequence.id == :perrin_sequence
+      assert perrin_sequence.name == "Perrin Sequence"
+
+      assert red_veil.id == :red_veil
+      assert red_veil.name == "Red Veil"
+
+      assert steel_meridian.id == :steel_meridian
+      assert steel_meridian.name == "Steel Meridian"
+    end
+  end
+
+  describe "list_active_syndicates/0" do
+    # setup do
+    #   create_current_orders_file()
+    #   on_exit(&reset_current_orders_file/0)
+    # end
+
+    test "returns list of active syndicates" do
+      # Arrange
+      create_current_orders_file()
+
+      # Act
+      {:ok, [syndicate]} = Store.list_active_syndicates()
+
+      # Assert
+      assert syndicate.id == :cephalon_simaris
+
+      # Cleanup
+      reset_current_orders_file()
+    end
+
+    test "returns empty list if no syndicates are active" do
+      # Act
+      {:ok, syndicates} = Store.list_active_syndicates()
+
+      # Assert
+      assert syndicates == []
     end
   end
 end
