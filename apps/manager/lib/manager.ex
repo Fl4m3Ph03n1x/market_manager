@@ -172,7 +172,7 @@ defmodule Manager do
   > alias Shared.Data.Syndicate
 
   > MarketManager.syndicates()
-  {:ok, [%Syndicate{name: "Red Veil", id: :red_veil}]}
+  {:ok, [%Syndicate{name: "Red Veil", id: :red_veil, catalog: []}]}
 
   > Manager.syndicates()
   {:error, :enoent}
@@ -191,7 +191,7 @@ defmodule Manager do
   > alias Shared.Data.Syndicate
 
   > MarketManager.active_syndicates()
-  {:ok, [%Syndicate{name: "Red Veil", id: :red_veil}]}
+  {:ok, [%Syndicate{name: "Red Veil", id: :red_veil, catalog: []}]}
 
   > Manager.active_syndicates()
   {:error, :enoent}

@@ -13,7 +13,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-KDPBTEPL.js"></script>
-    <script src="dist/sidebar_items-0600E6BB.js"></script>
+    <script src="dist/sidebar_items-B51AED36.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -171,6 +171,14 @@ a cyclical dependency between them.</p>
 
     <div class="summary-row">
       <div class="summary-signature">
+        <a href="#t:list_active_syndicates_response/0" translate="no">list_active_syndicates_response()</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
         <a href="#t:list_orders_response/0" translate="no">list_orders_response()</a>
 
       </div>
@@ -288,7 +296,7 @@ Types
     </a>
     <h1 class="signature" translate="no">delete_order_response()</h1>
 
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/store/lib/store/type.ex#L35" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/store/lib/store/type.ex#L34" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -366,6 +374,36 @@ Types
 
   </section>
 </section>
+<section class="detail" id="t:list_active_syndicates_response/0">
+
+  <div class="detail-header">
+    <a href="#t:list_active_syndicates_response/0" class="detail-link" title="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature" translate="no">list_active_syndicates_response()</h1>
+
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/store/lib/store/type.ex#L38" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> list_active_syndicates_response() ::
+  {:ok, [<a href="Shared.Data.Syndicate.html#t:t/0">Shared.Data.Syndicate.t</a>()]}
+  | {:error, <a href="https://www.erlang.org/doc/man/file.html#type-posix">:file.posix</a>() | <a href="https://hexdocs.pm/jason/1.4.1/Jason.DecodeError.html#t:t/0">Jason.DecodeError.t</a>()}</pre>
+
+      </div>
+
+
+  </section>
+</section>
 <section class="detail" id="t:list_orders_response/0">
 
   <div class="detail-header">
@@ -375,7 +413,7 @@ Types
     </a>
     <h1 class="signature" translate="no">list_orders_response()</h1>
 
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/store/lib/store/type.ex#L30" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/store/lib/store/type.ex#L29" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -389,7 +427,7 @@ Types
 
           <pre translate="no"><span class="attribute">@type</span> list_orders_response() ::
   {:ok, [<a href="Shared.Data.PlacedOrder.html#t:t/0">Shared.Data.PlacedOrder.t</a>()]}
-  | {:error, <a href="https://www.erlang.org/doc/man/file.html#type-posix">:file.posix</a>() | <a href="https://hexdocs.pm/jason/1.4.1/Jason.DecodeError.html#t:t/0">Jason.DecodeError.t</a>() | :syndicate_not_found}</pre>
+  | {:error, <a href="https://www.erlang.org/doc/man/file.html#type-posix">:file.posix</a>() | <a href="https://hexdocs.pm/jason/1.4.1/Jason.DecodeError.html#t:t/0">Jason.DecodeError.t</a>()}</pre>
 
       </div>
 
@@ -419,7 +457,7 @@ Types
 
           <pre translate="no"><span class="attribute">@type</span> list_products_response() ::
   {:ok, [<a href="Shared.Data.Product.html#t:t/0">Shared.Data.Product.t</a>()]}
-  | {:error, <a href="https://www.erlang.org/doc/man/file.html#type-posix">:file.posix</a>() | <a href="https://hexdocs.pm/jason/1.4.1/Jason.DecodeError.html#t:t/0">Jason.DecodeError.t</a>() | :syndicate_not_found}</pre>
+  | {:error, <a href="https://www.erlang.org/doc/man/file.html#type-posix">:file.posix</a>() | <a href="https://hexdocs.pm/jason/1.4.1/Jason.DecodeError.html#t:t/0">Jason.DecodeError.t</a>()}</pre>
 
       </div>
 
@@ -435,7 +473,7 @@ Types
     </a>
     <h1 class="signature" translate="no">list_syndicates_response()</h1>
 
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/store/lib/store/type.ex#L37" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/store/lib/store/type.ex#L36" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -494,7 +532,7 @@ Types
     </a>
     <h1 class="signature" translate="no">save_order_response()</h1>
 
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/store/lib/store/type.ex#L33" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/store/lib/store/type.ex#L32" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
