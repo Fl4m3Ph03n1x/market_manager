@@ -1175,5 +1175,113 @@
 		"id": "60e5b8fd4794450053e99947",
 		"min_price": 15,
 		"default_price": 17
+	},
+	{
+		"name": "Gilded Truth",
+		"id": "54a74454e779892d5e515664",
+		"min_price": 14,
+		"default_price": 16
+	},
+	{
+		"name": "Blade of Truth",
+		"id": "54a74454e779892d5e515645",
+		"min_price": 14,
+		"default_price": 16
+	},
+	{
+		"name": "Avenging Truth",
+		"id": "5911f11d97a0add8e9d5da51",
+		"min_price": 14,
+		"default_price": 16
+	},
+	{
+		"name": "Stinging Truth",
+		"id": "54a74455e779892d5e5156d2",
+		"min_price": 14,
+		"default_price": 16
+	},
+	{
+		"name": "Surging Dash",
+		"id": "54e0c9eee7798903744178a8",
+		"min_price": 14,
+		"default_price": 16
+	},
+	{
+		"name": "Radiant Finish",
+		"id": "554d3af4e77989420d3de2a6",
+		"min_price": 14,
+		"default_price": 16
+	},
+	{
+		"name": "Furious Javelin",
+		"id": "54a74455e779892d5e5156cb",
+		"min_price": 14,
+		"default_price": 16
+	},
+	{
+		"name": "Chromatic Blade",
+		"id": "59385f6716efa3a742b15f60",
+		"min_price": 14,
+		"default_price": 16
+	},
+	{
+		"name": "Shattered Storm",
+		"id": "63ee00fc10125411da49e6e8",
+		"min_price": 14,
+		"default_price": 16
+	},
+	{
+		"name": "Cathode Current",
+		"id": "63ee00fd10125411da49e6e9",
+		"min_price": 14,
+		"default_price": 16
+	},
+	{
+		"name": "Rift Haven",
+		"id": "5ce7fd87d23a3b00908c420e",
+		"min_price": 14,
+		"default_price": 16
+	},
+	{
+		"name": "Rift Torrent",
+		"id": "54e0c9eee7798903744178ab",
+		"min_price": 14,
+		"default_price": 16
+	},
+	{
+		"name": "Cataclysmic Continuum",
+		"id": "5615432cb66f8371035bfa33",
+		"min_price": 14,
+		"default_price": 16
+	},
+	{
+		"name": "Hall of Malevolence",
+		"id": "54a74454e779892d5e5155e4",
+		"min_price": 14,
+		"default_price": 16
+	},
+	{
+		"name": "Explosive Legerdemain",
+		"id": "5526aec0e779896af9418258",
+		"min_price": 14,
+		"default_price": 16
+	},
+	{
+		"name": "Total Eclipse",
+		"id": "54e0c9eee7798903744178ac",
+		"min_price": 14,
+		"default_price": 16
+	},
+	{
+		"name": "Temporal Erosion",
+		"id": "64c2aa1566456704eba6ba43",
+		"min_price": 14,
+		"default_price": 16
+	},
+	{
+		"name": "Intrepid Stand",
+		"id": "64c2aa1566456704eba6ba3d",
+		"min_price": 14,
+		"default_price": 16
 	}
 ]
