@@ -43,6 +43,17 @@ defmodule WebInterface.Persistence.Syndicate do
     end
   end
 
+  @spec activate_syndicates([Syndicate.t()]) :: :ok | [{:error, any}]
+  def activate_syndicates(syndicates) do
+    syndicates
+    |> Enum.map(&activate_syndicate(&1))
+    |> Enum.filter(fn res -> res != :ok end)
+    |> case do
+      [] -> :ok
+      errors -> errors
+    end
+  end
+
   @spec activate_syndicate(Syndicate.t()) :: :ok | {:error, any}
   def activate_syndicate(syndicate), do: set_syndicate(syndicate, true)
 

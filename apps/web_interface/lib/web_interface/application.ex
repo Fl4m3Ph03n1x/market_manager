@@ -46,8 +46,10 @@ defmodule WebInterface.Application do
          {:ok, syndicates} <- Manager.syndicates(),
          {:ok, strategies} <- Manager.strategies(),
          {:ok, user} <- Manager.recover_login(),
+         {:ok, active_syndicates} <- Manager.active_syndicates(),
          :ok <- Persistence.init(strategies, syndicates, user),
-         :ok <- SyndicateStore.set_selected_inactive_syndicates(syndicates) do
+         :ok <- SyndicateStore.set_selected_inactive_syndicates(syndicates),
+         :ok <- SyndicateStore.activate_syndicates(active_syndicates) do
       link
     end
   end

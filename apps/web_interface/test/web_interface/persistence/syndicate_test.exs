@@ -7,27 +7,40 @@ defmodule WebInterface.Persistence.SyndicateTest do
   alias Shared.Data.Syndicate
   alias WebInterface.Persistence.Syndicate, as: SyndicateStore
 
+  defp by_id(%{id: id}), do: id
+
   setup_all do
     syndicates =
-      Enum.sort([
-        Syndicate.new(name: "Red Veil", id: :red_veil),
-        Syndicate.new(name: "Perrin Sequence", id: :perrin_sequence),
-        Syndicate.new(name: "New Loka", id: :new_loka),
-        Syndicate.new(name: "Arbiters of Hexis", id: :arbiters_of_hexis),
-        Syndicate.new(name: "Steel Meridian", id: :steel_meridian),
-        Syndicate.new(name: "Cephalon Suda", id: :cephalon_suda),
-        Syndicate.new(name: "Cephalon Simaris", id: :cephalon_simaris),
-        Syndicate.new(name: "Arbitrations", id: :arbitrations)
-      ])
+      [
+        Syndicate.new(name: "Red Veil", id: :red_veil, catalog: []),
+        Syndicate.new(name: "Perrin Sequence", id: :perrin_sequence, catalog: []),
+        Syndicate.new(name: "New Loka", id: :new_loka, catalog: []),
+        Syndicate.new(name: "Arbiters of Hexis", id: :arbiters_of_hexis, catalog: []),
+        Syndicate.new(name: "Steel Meridian", id: :steel_meridian, catalog: []),
+        Syndicate.new(name: "Cephalon Suda", id: :cephalon_suda, catalog: []),
+        Syndicate.new(name: "Cephalon Simaris", id: :cephalon_simaris, catalog: []),
+        Syndicate.new(name: "Arbitrations", id: :arbitrations, catalog: [])
+      ]
+      |> Enum.sort()
 
-    %{syndicates: syndicates}
+    syndicate_ids =
+      syndicates
+      |> Enum.map(&by_id/1)
+      |> Enum.sort()
+
+    %{syndicates: syndicates, syndicate_ids: syndicate_ids}
   end
 
   describe "get_syndicates" do
-    test "gets all syndicates", %{syndicates: syndicates} do
+    test "gets all syndicates", %{syndicate_ids: syndicate_ids} do
       {:ok, actual_syndicates} = SyndicateStore.get_syndicates()
 
-      assert Enum.sort(actual_syndicates) == syndicates
+      sorted_syndicates =
+        actual_syndicates
+        |> Enum.map(&by_id/1)
+        |> Enum.sort()
+
+      assert sorted_syndicates == syndicate_ids
     end
   end
 
@@ -35,17 +48,16 @@ defmodule WebInterface.Persistence.SyndicateTest do
     test "get all syndicates by its ids", _data do
       {:ok, syndicates} = SyndicateStore.get_all_syndicates_by_id(["red_veil", "new_loka"])
 
-      assert syndicates == [
-               Syndicate.new(name: "Red Veil", id: :red_veil),
-               Syndicate.new(name: "New Loka", id: :new_loka)
-             ]
+      sorted_syndicates = Enum.map(syndicates, &by_id/1)
+
+      assert sorted_syndicates == [:red_veil, :new_loka]
     end
   end
 
   describe "get_syndicate_by_id" do
     test "gets a syndicate by its id", _data do
       {:ok, syndicate} = SyndicateStore.get_syndicate_by_id("red_veil")
-      assert syndicate == Syndicate.new(name: "Red Veil", id: :red_veil)
+      assert syndicate.id == :red_veil
     end
 
     test "returns error if syndicate is not found" do
@@ -53,9 +65,24 @@ defmodule WebInterface.Persistence.SyndicateTest do
     end
   end
 
+  describe "activate_syndicates" do
+    test "activates the given syndicates", _data do
+      red_veil = Syndicate.new(name: "Red Veil", id: :red_veil, catalog: [])
+      new_loka = Syndicate.new(name: "New Loka", id: :new_loka, catalog: [])
+
+      :ok = SyndicateStore.activate_syndicates([red_veil, new_loka])
+      {:ok, active_syndicates} = SyndicateStore.get_active_syndicates()
+
+      assert active_syndicates |> Enum.sort() |> Enum.map(&by_id/1) == [:new_loka, :red_veil]
+
+      :ok = SyndicateStore.deactivate_syndicate(red_veil)
+      :ok = SyndicateStore.deactivate_syndicate(new_loka)
+    end
+  end
+
   describe "activate_syndicate" do
     test "activates the given syndicate", _data do
-      red_veil = Syndicate.new(name: "Red Veil", id: :red_veil)
+      red_veil = Syndicate.new(name: "Red Veil", id: :red_veil, catalog: [])
 
       :ok = SyndicateStore.activate_syndicate(red_veil)
       {:ok, active_syndicates} = SyndicateStore.get_active_syndicates()
@@ -68,7 +95,7 @@ defmodule WebInterface.Persistence.SyndicateTest do
 
   describe "deactivate_syndicate" do
     test "deactivates the given syndicate", _data do
-      red_veil = Syndicate.new(name: "Red Veil", id: :red_veil)
+      red_veil = Syndicate.new(name: "Red Veil", id: :red_veil, catalog: [])
       :ok = SyndicateStore.activate_syndicate(red_veil)
 
       :ok = SyndicateStore.deactivate_syndicate(red_veil)
@@ -80,7 +107,7 @@ defmodule WebInterface.Persistence.SyndicateTest do
 
   describe "syndicate_active?" do
     test "returns whether or not a syndicate is active", _data do
-      red_veil = Syndicate.new(name: "Red Veil", id: :red_veil)
+      red_veil = Syndicate.new(name: "Red Veil", id: :red_veil, catalog: [])
 
       :ok = SyndicateStore.activate_syndicate(red_veil)
 
@@ -116,7 +143,7 @@ defmodule WebInterface.Persistence.SyndicateTest do
       SyndicateStore.activate_syndicate(active_syndicate)
 
       {:ok, inactive_syndicates} = SyndicateStore.get_inactive_syndicates()
-      assert Enum.sort(inactive_syndicates) == Enum.sort(rest)
+      assert inactive_syndicates |> Enum.map(&by_id/1)  |> Enum.sort() == rest |> Enum.map(&by_id/1) |> Enum.sort()
 
       SyndicateStore.deactivate_syndicate(active_syndicate)
     end
