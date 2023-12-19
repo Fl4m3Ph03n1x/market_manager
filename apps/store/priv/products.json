@@ -24,73 +24,73 @@
 		"default_price": 16
 	},
 	{
-		"name": "Seeking shuriken",
+		"name": "Seeking Shuriken",
 		"id": "54e0c9eee7798903744178aa",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Smoke shadow",
+		"name": "Smoke Shadow",
 		"id": "54a74454e779892d5e515685",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Fatal teleport",
+		"name": "Fatal Teleport",
 		"id": "5740c1999d238d4a03d2851a",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Rising storm",
+		"name": "Rising Storm",
 		"id": "5526aec1e779896af9418264",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Path of statues",
+		"name": "Path of Statues",
 		"id": "57c20990022d3f62c0d81aa9",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Tectonic fracture",
+		"name": "Tectonic Fracture",
 		"id": "56b656d1ef0390c7e4006381",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Ore gaze",
+		"name": "Ore Gaze",
 		"id": "56b656cbef0390c7e4006380",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Titanic rumbler",
+		"name": "Titanic Rumbler",
 		"id": "56b656d9ef0390c7e4006382",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Rubble heap",
+		"name": "Rubble Heap",
 		"id": "5ecd08d804d55c0806f85350",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Fireball frenzy",
+		"name": "Fireball Frenzy",
 		"id": "54a74454e779892d5e515617",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Immolated radiance",
+		"name": "Immolated Radiance",
 		"id": "57c73be094b4b0f159ab5e15",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Healing flame",
+		"name": "Healing Flame",
 		"id": "54e0c9eee7798903744178ae",
 		"min_price": 14,
 		"default_price": 16
@@ -102,19 +102,19 @@
 		"default_price": 16
 	},
 	{
-		"name": "Dread ward",
+		"name": "Dread Ward",
 		"id": "5cb04868fc2db2068006980d",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Blood forge",
+		"name": "Blood Forge",
 		"id": "5e4145907b0275011bc5b7cd",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Blending talons",
+		"name": "Blending Talons",
 		"id": "5fb84767c34da3004797d543",
 		"min_price": 14,
 		"default_price": 16
@@ -126,7 +126,7 @@
 		"default_price": 16
 	},
 	{
-		"name": "Hearty nourishment",
+		"name": "Hearty Nourishment",
 		"id": "60cca19152f60b004dfea051",
 		"min_price": 14,
 		"default_price": 16
@@ -144,97 +144,97 @@
 		"default_price": 16
 	},
 	{
-		"name": "Warding thurible",
+		"name": "Warding Thurible",
 		"id": "5b50a3ad3a84fd02a782324c",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Lasting covenant",
+		"name": "Lasting Covenant",
 		"id": "5a6b495b7f2bca025fde2b57",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Accumulating whipclaw",
+		"name": "Accumulating Whipclaw",
 		"id": "5b91784d0566c80216658cea",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Venari bodyguard",
+		"name": "Venari Bodyguard",
 		"id": "5c3892672cc6ce00f238139e",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Pilfering strangledome",
+		"name": "Pilfering Strangledome",
 		"id": "5cb04868fc2db2068006980e",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Swift bite",
+		"name": "Swift Bite",
 		"id": "61a25ffa68fd79003fe3fd56",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Savior decoy",
+		"name": "Savior Decoy",
 		"id": "584470092c2ada00787e0888",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Hushed invisibility",
+		"name": "Hushed Invisibility",
 		"id": "5526aec1e779896af9418260",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Safeguard switch",
+		"name": "Safeguard Switch",
 		"id": "54a74455e779892d5e5156c3",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Irradiating disarm",
+		"name": "Irradiating Disarm",
 		"id": "54e0c9eee7798903744178b0",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Ballistic bullseye",
+		"name": "Ballistic Bullseye",
 		"id": "54e0c9eee7798903744178af",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Staggering shield",
+		"name": "Staggering Shield",
 		"id": "5615432bb66f8371035bfa2f",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Muzzle flash",
+		"name": "Muzzle Flash",
 		"id": "54e0c9eee7798903744178a5",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Mesas waltz",
+		"name": "Mesas Waltz",
 		"id": "56dac56a5cc639de0a45c51b",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Soul survivor",
+		"name": "Soul Survivor",
 		"id": "54a74454e779892d5e515604",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Creeping terrify",
+		"name": "Creeping Terrify",
 		"id": "576459bc3ae92d545fd1e7b9",
 		"min_price": 14,
 		"default_price": 16
@@ -246,73 +246,67 @@
 		"default_price": 16
 	},
 	{
-		"name": "Shield of shadows",
+		"name": "Shield of Shadows",
 		"id": "554d3d13e77989430b114cb1",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Venom dose",
+		"name": "Venom Dose",
 		"id": "54a74454e779892d5e5155eb",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Revealing spores",
+		"name": "Revealing Spores",
 		"id": "5ecd08d804d55c0806f8534c",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Regenerative molt",
+		"name": "Regenerative Molt",
 		"id": "54e644ffe779897594fa68cb",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Contagion cloud",
+		"name": "Contagion Cloud",
 		"id": "5615432bb66f8371035bfa22",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Spellbound harvest",
-		"id": "5ea087d3c160d001303f9eda",
-		"min_price": 14,
-		"default_price": 16
-	},
-	{
-		"name": "Beguiling lantern",
+		"name": "Beguiling Lantern",
 		"id": "58f0ee99aa4b70452a173072",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Razorwing blitz",
+		"name": "Razorwing Blitz",
 		"id": "5a6b495c7f2bca025fde2b59",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Ironclad flight",
+		"name": "Ironclad Flight",
 		"id": "5e7caa01267539063de48c3d",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Shock trooper",
+		"name": "Shock Trooper",
 		"id": "54a74454e779892d5e515658",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Shocking speed",
+		"name": "Shocking Speed",
 		"id": "54e644ffe779897594fa68d3",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Transistor shield",
+		"name": "Transistor Shield",
 		"id": "59385f6716efa3a742b15f62",
 		"min_price": 14,
 		"default_price": 16
@@ -324,67 +318,67 @@
 		"default_price": 16
 	},
 	{
-		"name": "Target fixation",
+		"name": "Target Fixation",
 		"id": "54a74454e779892d5e5155cd",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Airburst rounds",
+		"name": "Airburst Rounds",
 		"id": "60cca19052f60b004dfea04e",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Jet stream",
+		"name": "Jet Stream",
 		"id": "54e644ffe779897594fa68d1",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Funnel clouds",
+		"name": "Funnel Clouds",
 		"id": "554d3f0ce779894445a848fb",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Anchored glide",
+		"name": "Anchored Glide",
 		"id": "5e7caa02267539063de48c41",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Winds of purity",
+		"name": "Winds of Purity",
 		"id": "54a74455e779892d5e51569a",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Disarming purity",
+		"name": "Disarming Purity",
 		"id": "5911f11d97a0add8e9d5da4c",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Bright purity",
+		"name": "Bright Purity",
 		"id": "54a74454e779892d5e51568a",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Lasting purity",
+		"name": "Lasting Purity",
 		"id": "54a74454e779892d5e5155b8",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Endless lullaby",
+		"name": "Endless Lullaby",
 		"id": "5e4145917b0275011bc5b7d1",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Reactive storm",
+		"name": "Reactive Storm",
 		"id": "5e4145917b0275011bc5b7d2",
 		"min_price": 14,
 		"default_price": 16
@@ -396,25 +390,25 @@
 		"default_price": 16
 	},
 	{
-		"name": "Calm and frenzy",
+		"name": "Calm and Frenzy",
 		"id": "56b656e5ef0390c7e4006384",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Peaceful provocation",
+		"name": "Peaceful Provocation",
 		"id": "56b656edef0390c7e4006385",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Energy transfer",
+		"name": "Energy Transfer",
 		"id": "5ada1ab4b2b6a80bb33793f6",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Mending splinters",
+		"name": "Mending Splinters",
 		"id": "5b91784d0566c80216658ce7",
 		"min_price": 14,
 		"default_price": 16
@@ -426,73 +420,67 @@
 		"default_price": 16
 	},
 	{
-		"name": "Viral tempest",
+		"name": "Viral Tempest",
 		"id": "58446f502c2ada0042b6fc3d",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Tidal impunity",
+		"name": "Tidal Impunity",
 		"id": "54e0c9eee7798903744178ad",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Rousing plunder",
+		"name": "Rousing Plunder",
 		"id": "54a74455e779892d5e5156d7",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Pilfering swarm",
+		"name": "Pilfering Swarm",
 		"id": "5526aec1e779896af9418261",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Swift bite",
-		"id": "61a25ffa68fd79003fe3fd56",
-		"min_price": 14,
-		"default_price": 16
-	},
-	{
-		"name": "Greedy pull",
+		"name": "Greedy Pull",
 		"id": "54a74454e779892d5e5155c5",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Magnetized discharge",
+		"name": "Magnetized Discharge",
 		"id": "59385f6716efa3a742b15f5f",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Counter pulse",
+		"name": "Counter Pulse",
 		"id": "54e0c9eee7798903744178a7",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Fracturing crush",
+		"name": "Fracturing Crush",
 		"id": "5526aec0e779896af9418259",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Mind freak",
+		"name": "Mind Freak",
 		"id": "54e644ffe779897594fa68ce",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Pacifying bolts",
+		"name": "Pacifying Bolts",
 		"id": "54a74454e779892d5e5155b4",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Chaos sphere",
+		"name": "Chaos Sphere",
 		"id": "5615432bb66f8371035bfa26",
 		"min_price": 14,
 		"default_price": 16
@@ -504,31 +492,31 @@
 		"default_price": 16
 	},
 	{
-		"name": "Smite infusion",
+		"name": "Smite Infusion",
 		"id": "54a74455e779892d5e5156aa",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Hallowed eruption",
+		"name": "Hallowed Eruption",
 		"id": "54e64500e779897594fa68d4",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Phoenix renewal",
+		"name": "Phoenix Renewal",
 		"id": "5754a312e701ef5844257da9",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Hallowed reckoning",
+		"name": "Hallowed Reckoning",
 		"id": "5615432cb66f8371035bfa34",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Partitioned mallet",
+		"name": "Partitioned Mallet",
 		"id": "5b50a3b23a84fd02a7823252",
 		"min_price": 14,
 		"default_price": 16
@@ -540,74 +528,44 @@
 		"default_price": 16
 	},
 	{
-		"name": "Spellbound harvest",
+		"name": "Spellbound Harvest",
 		"id": "5ea087d3c160d001303f9eda",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Beguiling lantern",
-		"id": "58f0ee99aa4b70452a173072",
-		"min_price": 14,
-		"default_price": 16
-	},
-	{
-		"name": "Razorwing blitz",
-		"id": "5a6b495c7f2bca025fde2b59",
-		"min_price": 14,
-		"default_price": 16
-	},
-	{
-		"name": "Ironclad flight",
-		"id": "5e7caa01267539063de48c3d",
-		"min_price": 14,
-		"default_price": 16
-	},
-	{
-		"name": "Pool of life",
+		"name": "Pool of Life",
 		"id": "54a74454e779892d5e51564c",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Vampire leech",
+		"name": "Vampire Leech",
 		"id": "5526aec0e779896af941825b",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Abating link",
+		"name": "Abating Link",
 		"id": "54e644ffe779897594fa68d2",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Champions blessing",
+		"name": "Champions Blessing",
 		"id": "61a25ff968fd79003fe3fd54",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Swing line",
+		"name": "Swing Line",
 		"id": "54e644ffe779897594fa68d0",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Eternal war",
-		"id": "5526aec1e779896af9418263",
-		"min_price": 14,
-		"default_price": 16
-	},
-	{
-		"name": "Prolonged paralysis",
+		"name": "Prolonged Paralysis",
 		"id": "54a74454e779892d5e515662",
-		"min_price": 14,
-		"default_price": 16
-	},
-	{
-		"name": "Hysterical assault",
-		"id": "57c73be094b4b0f159ab5e13",
 		"min_price": 14,
 		"default_price": 16
 	},
@@ -618,97 +576,67 @@
 		"default_price": 16
 	},
 	{
-		"name": "Fused reservoir",
+		"name": "Fused Reservoir",
 		"id": "60cca19152f60b004dfea050",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Critical surge",
+		"name": "Critical Surge",
 		"id": "5fb84767c34da3004797d53a",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Target fixation",
-		"id": "54a74454e779892d5e5155cd",
-		"min_price": 14,
-		"default_price": 16
-	},
-	{
-		"name": "Airburst rounds",
-		"id": "60cca19052f60b004dfea04e",
-		"min_price": 14,
-		"default_price": 16
-	},
-	{
-		"name": "Jet stream",
-		"id": "54e644ffe779897594fa68d1",
-		"min_price": 14,
-		"default_price": 16
-	},
-	{
-		"name": "Funnel clouds",
-		"id": "554d3f0ce779894445a848fb",
-		"min_price": 14,
-		"default_price": 16
-	},
-	{
-		"name": "Anchored glide",
-		"id": "5e7caa02267539063de48c41",
-		"min_price": 14,
-		"default_price": 16
-	},
-	{
-		"name": "Celestial stomp",
+		"name": "Celestial Stomp",
 		"id": "576459b43ae92d545fd1e7b8",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Enveloping cloud",
+		"name": "Enveloping Cloud",
 		"id": "5b91784d0566c80216658ce9",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Primal rage",
+		"name": "Primal Rage",
 		"id": "576459af3ae92d545fd1e7b7",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Surging blades",
+		"name": "Surging Blades",
 		"id": "6214e890e3c4660048a8b982",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Toxic sequence",
+		"name": "Toxic Sequence",
 		"id": "54a74454e779892d5e5155e3",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Deadly sequence",
+		"name": "Deadly Sequence",
 		"id": "54a74454e779892d5e515666",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Voltage sequence",
+		"name": "Voltage Sequence",
 		"id": "5911f11d97a0add8e9d5da4e",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Sequence burn",
+		"name": "Sequence Burn",
 		"id": "54a74455e779892d5e515699",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Sonic fracture",
+		"name": "Sonic Fracture",
 		"id": "5615432bb66f8371035bfa2a",
 		"min_price": 14,
 		"default_price": 16
@@ -720,13 +648,13 @@
 		"default_price": 16
 	},
 	{
-		"name": "Savage silence",
+		"name": "Savage Silence",
 		"id": "54a74455e779892d5e515690",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Resonating quake",
+		"name": "Resonating Quake",
 		"id": "5754a307e701ef5844257da7",
 		"min_price": 14,
 		"default_price": 16
@@ -738,73 +666,73 @@
 		"default_price": 16
 	},
 	{
-		"name": "Everlasting ward",
+		"name": "Everlasting Ward",
 		"id": "5754a30de701ef5844257da8",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Vexing retaliation",
+		"name": "Vexing Retaliation",
 		"id": "554d3b75e77989423ccdf0da",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Guided effigy",
+		"name": "Guided Effigy",
 		"id": "59385f6716efa3a742b15f61",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Mach crash",
+		"name": "Mach Crash",
 		"id": "5fb84768c34da3004797d550",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Thermal transfer",
+		"name": "Thermal Transfer",
 		"id": "6214e88fe3c4660048a8b97e",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Balefire surge",
+		"name": "Balefire Surge",
 		"id": "5e4145907b0275011bc5b7ce",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Blazing pillage",
+		"name": "Blazing Pillage",
 		"id": "5ea087d2c160d001303f9ed9",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Desiccations curse",
+		"name": "Desiccations Curse",
 		"id": "5c3892672cc6ce00f238139c",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Elemental sandstorm",
+		"name": "Elemental Sandstorm",
 		"id": "57c73be094b4b0f159ab5e14",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Negation swarm",
+		"name": "Negation Swarm",
 		"id": "58f0ee99aa4b70452a173071",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Empowered quiver",
+		"name": "Empowered Quiver",
 		"id": "5b50a3aa3a84fd02a7823246",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Piercing navigator",
+		"name": "Piercing Navigator",
 		"id": "58f0ee99aa4b70452a173073",
 		"min_price": 14,
 		"default_price": 16
@@ -816,67 +744,19 @@
 		"default_price": 16
 	},
 	{
-		"name": "Concentrated arrow",
+		"name": "Concentrated Arrow",
 		"id": "5ada1ab4b2b6a80bb33793f5",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Greedy pull",
-		"id": "54a74454e779892d5e5155c5",
-		"min_price": 14,
-		"default_price": 16
-	},
-	{
-		"name": "Magnetized discharge",
-		"id": "59385f6716efa3a742b15f5f",
-		"min_price": 14,
-		"default_price": 16
-	},
-	{
-		"name": "Counter pulse",
-		"id": "54e0c9eee7798903744178a7",
-		"min_price": 14,
-		"default_price": 16
-	},
-	{
-		"name": "Fracturing crush",
-		"id": "5526aec0e779896af9418259",
-		"min_price": 14,
-		"default_price": 16
-	},
-	{
-		"name": "Soul survivor",
-		"id": "54a74454e779892d5e515604",
-		"min_price": 14,
-		"default_price": 16
-	},
-	{
-		"name": "Creeping terrify",
-		"id": "576459bc3ae92d545fd1e7b9",
-		"min_price": 14,
-		"default_price": 16
-	},
-	{
-		"name": "Despoil",
-		"id": "54e644ffe779897594fa68cd",
-		"min_price": 14,
-		"default_price": 16
-	},
-	{
-		"name": "Shield of shadows",
-		"id": "554d3d13e77989430b114cb1",
-		"min_price": 14,
-		"default_price": 16
-	},
-	{
-		"name": "Teeming virulence",
+		"name": "Teeming Virulence",
 		"id": "5cb04869fc2db2068006980f",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Larva burst",
+		"name": "Larva Burst",
 		"id": "5a6b495c7f2bca025fde2b58",
 		"min_price": 14,
 		"default_price": 16
@@ -888,121 +768,79 @@
 		"default_price": 16
 	},
 	{
-		"name": "Abundant mutation",
+		"name": "Abundant Mutation",
 		"id": "5ecd08d704d55c0806f85348",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Repair dispensary",
+		"name": "Repair Dispensary",
 		"id": "60cca19052f60b004dfea04b",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Thrall pact",
+		"name": "Thrall Pact",
 		"id": "5fb84767c34da3004797d539",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Blinding reave",
+		"name": "Blinding Reave",
 		"id": "5cb04868fc2db2068006980c",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Ironclad charge",
+		"name": "Ironclad Charge",
 		"id": "54a74454e779892d5e515615",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Iron shrapnel",
+		"name": "Iron Shrapnel",
 		"id": "54e64500e779897594fa68d5",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Piercing roar",
+		"name": "Piercing Roar",
 		"id": "5526aec1e779896af941825f",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Reinforcing stomp",
+		"name": "Reinforcing Stomp",
 		"id": "58446fd52c2ada006a40630c",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Pool of life",
-		"id": "54a74454e779892d5e51564c",
-		"min_price": 14,
-		"default_price": 16
-	},
-	{
-		"name": "Vampire leech",
-		"id": "5526aec0e779896af941825b",
-		"min_price": 14,
-		"default_price": 16
-	},
-	{
-		"name": "Abating link",
-		"id": "54e644ffe779897594fa68d2",
-		"min_price": 14,
-		"default_price": 16
-	},
-	{
-		"name": "Champions blessing",
-		"id": "61a25ff968fd79003fe3fd54",
-		"min_price": 14,
-		"default_price": 16
-	},
-	{
-		"name": "Swing line",
-		"id": "54e644ffe779897594fa68d0",
-		"min_price": 14,
-		"default_price": 16
-	},
-	{
-		"name": "Eternal war",
+		"name": "Eternal War",
 		"id": "5526aec1e779896af9418263",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Prolonged paralysis",
-		"id": "54a74454e779892d5e515662",
-		"min_price": 14,
-		"default_price": 16
-	},
-	{
-		"name": "Hysterical assault",
+		"name": "Hysterical Assault",
 		"id": "57c73be094b4b0f159ab5e13",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Enraged",
-		"id": "5ecd08d804d55c0806f8534f",
-		"min_price": 14,
-		"default_price": 16
-	},
-	{
-		"name": "Tesla bank",
+		"name": "Tesla Bank",
 		"id": "54a74454e779892d5e51562b",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Repelling bastille",
+		"name": "Repelling Bastille",
 		"id": "54e644ffe779897594fa68cc",
 		"min_price": 14,
 		"default_price": 16
 	},
 	{
-		"name": "Photon repeater",
+		"name": "Photon Repeater",
 		"id": "55397302e77989047f88411c",
 		"min_price": 14,
 		"default_price": 16
