@@ -13,7 +13,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-KDPBTEPL.js"></script>
-    <script src="dist/sidebar_items-B51AED36.js"></script>
+    <script src="dist/sidebar_items-A0D1098B.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -259,7 +259,7 @@ The <code class="inline">result</code> of an operation, will be a tagged tuple. 
 or not). It is the end of the <code class="inline">:activate</code> operation. It also has the id of the syndicate for
 which this operation was completed for.</p></li><li><p><code class="inline">{:activate, syndicate :: String.t(), error :: any}</code>: If a critical error occurred while trying
 to perform the <code class="inline">:activate</code> operation and this cannot continue/succeed. It also signals the end
-of the operation. Contains the id of the syndicate for which the operation failed.</p></li></ul><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="nc">Manager</span><span class="o">.</span><span class="n">activate</span><span class="p" data-group-id="0028862139-1">(</span><span class="s">&quot;cephalon_simaris&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">:lowest_minus_one</span><span class="p" data-group-id="0028862139-1">)</span><span class="w">
+of the operation. Contains the id of the syndicate for which the operation failed.</p></li></ul><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="nc">Manager</span><span class="o">.</span><span class="n">activate</span><span class="p" data-group-id="2511918496-1">(</span><span class="s">&quot;cephalon_simaris&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">:lowest_minus_one</span><span class="p" data-group-id="2511918496-1">)</span><span class="w">
 </span><span class="ss">:ok</span></code></pre>
   </section>
 </section>
@@ -290,11 +290,11 @@ of the operation. Contains the id of the syndicate for which the operation faile
 
 <p>Synchronous operation.</p><p>Returns a list containing all currently active syndicates.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="kn">alias</span><span class="w"> </span><span class="nc">Shared.Data.Syndicate</span><span class="w">
 
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">MarketManager</span><span class="o">.</span><span class="n">active_syndicates</span><span class="p" data-group-id="5994023146-1">(</span><span class="p" data-group-id="5994023146-1">)</span><span class="w">
-</span><span class="p" data-group-id="5994023146-2">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="5994023146-3">[</span><span class="p" data-group-id="5994023146-4">%</span><span class="nc" data-group-id="5994023146-4">Syndicate</span><span class="p" data-group-id="5994023146-4">{</span><span class="ss">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Red Veil&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="ss">:red_veil</span><span class="p">,</span><span class="w"> </span><span class="ss">catalog</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="5994023146-5">[</span><span class="p" data-group-id="5994023146-5">]</span><span class="p" data-group-id="5994023146-4">}</span><span class="p" data-group-id="5994023146-3">]</span><span class="p" data-group-id="5994023146-2">}</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">MarketManager</span><span class="o">.</span><span class="n">active_syndicates</span><span class="p" data-group-id="9727702354-1">(</span><span class="p" data-group-id="9727702354-1">)</span><span class="w">
+</span><span class="p" data-group-id="9727702354-2">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="9727702354-3">[</span><span class="p" data-group-id="9727702354-4">%</span><span class="nc" data-group-id="9727702354-4">Syndicate</span><span class="p" data-group-id="9727702354-4">{</span><span class="ss">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Red Veil&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="ss">:red_veil</span><span class="p">,</span><span class="w"> </span><span class="ss">catalog</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="9727702354-5">[</span><span class="p" data-group-id="9727702354-5">]</span><span class="p" data-group-id="9727702354-4">}</span><span class="p" data-group-id="9727702354-3">]</span><span class="p" data-group-id="9727702354-2">}</span><span class="w">
 
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Manager</span><span class="o">.</span><span class="n">active_syndicates</span><span class="p" data-group-id="5994023146-6">(</span><span class="p" data-group-id="5994023146-6">)</span><span class="w">
-</span><span class="p" data-group-id="5994023146-7">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:enoent</span><span class="p" data-group-id="5994023146-7">}</span></code></pre>
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Manager</span><span class="o">.</span><span class="n">active_syndicates</span><span class="p" data-group-id="9727702354-6">(</span><span class="p" data-group-id="9727702354-6">)</span><span class="w">
+</span><span class="p" data-group-id="9727702354-7">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:enoent</span><span class="p" data-group-id="9727702354-7">}</span></code></pre>
   </section>
 </section>
 <section class="detail" id="deactivate/1">
@@ -333,7 +333,7 @@ The <code class="inline">result</code> of an operation, will be a tagged tuple. 
 or not). It is the end of the <code class="inline">:deactivate</code> operation. It also has the id of the syndicate for
 which this operation was completed for.</p></li><li><p><code class="inline">{:deactivate, syndicate :: String.t(), error :: any}</code>: If a critical error occurred while trying
 to perform the <code class="inline">:deactivate</code> operation and this cannot continue/succeed. It also signals the end
-of the operation. Contains the id of the syndicate for which the operation failed.</p></li></ul><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="nc">Manager</span><span class="o">.</span><span class="n">deactivate</span><span class="p" data-group-id="1290873711-1">(</span><span class="s">&quot;cephalon_simaris&quot;</span><span class="p" data-group-id="1290873711-1">)</span><span class="w">
+of the operation. Contains the id of the syndicate for which the operation failed.</p></li></ul><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="nc">Manager</span><span class="o">.</span><span class="n">deactivate</span><span class="p" data-group-id="6232498560-1">(</span><span class="s">&quot;cephalon_simaris&quot;</span><span class="p" data-group-id="6232498560-1">)</span><span class="w">
 </span><span class="ss">:ok</span></code></pre>
   </section>
 </section>
@@ -372,9 +372,9 @@ The caller must have implemented a <code class="inline">handle_info</code> in it
 following format:</p><ul><li><p><code class="inline">{:login, user_info :: Shared.Data.User.t(), :done}</code>: If the operation was successful.</p></li><li><p><code class="inline">{:login, credentials :: Shared.Data.Credentials.t(), error :: any}</code>: If the login operation failed.
 This can happen due to a network error, wrong password or any other cause.</p></li></ul><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="kn">alias</span><span class="w"> </span><span class="nc">Shared.Data.Credentials</span><span class="w">
 
-</span><span class="o">&gt;</span><span class="w"> </span><span class="n">credentials</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Credentials</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="3621011147-1">(</span><span class="s">&quot;username&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;password&quot;</span><span class="p" data-group-id="3621011147-1">)</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="n">credentials</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Credentials</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="3801632118-1">(</span><span class="s">&quot;username&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;password&quot;</span><span class="p" data-group-id="3801632118-1">)</span><span class="w">
 
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Manager</span><span class="o">.</span><span class="n">login</span><span class="p" data-group-id="3621011147-2">(</span><span class="n">credentials</span><span class="p">,</span><span class="w"> </span><span class="no">false</span><span class="p" data-group-id="3621011147-2">)</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Manager</span><span class="o">.</span><span class="n">login</span><span class="p" data-group-id="3801632118-2">(</span><span class="n">credentials</span><span class="p">,</span><span class="w"> </span><span class="no">false</span><span class="p" data-group-id="3801632118-2">)</span><span class="w">
 </span><span class="ss">:ok</span></code></pre>
   </section>
 </section>
@@ -407,11 +407,11 @@ This can happen due to a network error, wrong password or any other cause.</p></
 login session in the AuctionHouse. If a user is logged in the AuctionHouse, it will continue logged in there, but next
 time this application is launched, the user will have to login into the AuctionHouse from this application to be able
 to use it.</p><p>This operation deletes the sessions data from memory and from disk. Even if the second fails, the first will still
-be attempted.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="nc">Manager</span><span class="o">.</span><span class="n">logout</span><span class="p" data-group-id="4962981579-1">(</span><span class="p" data-group-id="4962981579-1">)</span><span class="w">
+be attempted.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="nc">Manager</span><span class="o">.</span><span class="n">logout</span><span class="p" data-group-id="5084406540-1">(</span><span class="p" data-group-id="5084406540-1">)</span><span class="w">
 </span><span class="ss">:ok</span><span class="w">
 
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Manager</span><span class="o">.</span><span class="n">logout</span><span class="p" data-group-id="4962981579-2">(</span><span class="p" data-group-id="4962981579-2">)</span><span class="w">
-</span><span class="p" data-group-id="4962981579-3">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:reason</span><span class="p" data-group-id="4962981579-3">}</span></code></pre>
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Manager</span><span class="o">.</span><span class="n">logout</span><span class="p" data-group-id="5084406540-2">(</span><span class="p" data-group-id="5084406540-2">)</span><span class="w">
+</span><span class="p" data-group-id="5084406540-3">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:reason</span><span class="p" data-group-id="5084406540-3">}</span></code></pre>
   </section>
 </section>
 <section class="detail" id="recover_login/0">
@@ -442,14 +442,14 @@ be attempted.</p><p>Example:</p><pre><code class="makeup elixir" translate="no">
 <p>Synchronous operation.</p><p>Login into the application using a previous session.
 If this operation is attempted and the user has not logged in yet, <code class="inline">nil</code> is returned instead of a User.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="kn">alias</span><span class="w"> </span><span class="nc">Shared.Data.User</span><span class="w">
 
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Manager</span><span class="o">.</span><span class="n">recover_login</span><span class="p" data-group-id="6778663967-1">(</span><span class="p" data-group-id="6778663967-1">)</span><span class="w">
-</span><span class="p" data-group-id="6778663967-2">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="6778663967-3">%</span><span class="nc" data-group-id="6778663967-3">User</span><span class="p" data-group-id="6778663967-3">{</span><span class="ss">ingame_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;user_1&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">patreon?</span><span class="p">:</span><span class="w"> </span><span class="no">false</span><span class="p" data-group-id="6778663967-3">}</span><span class="p" data-group-id="6778663967-2">}</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Manager</span><span class="o">.</span><span class="n">recover_login</span><span class="p" data-group-id="2640724050-1">(</span><span class="p" data-group-id="2640724050-1">)</span><span class="w">
+</span><span class="p" data-group-id="2640724050-2">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="2640724050-3">%</span><span class="nc" data-group-id="2640724050-3">User</span><span class="p" data-group-id="2640724050-3">{</span><span class="ss">ingame_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;user_1&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">patreon?</span><span class="p">:</span><span class="w"> </span><span class="no">false</span><span class="p" data-group-id="2640724050-3">}</span><span class="p" data-group-id="2640724050-2">}</span><span class="w">
 
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Manager</span><span class="o">.</span><span class="n">recover_login</span><span class="p" data-group-id="6778663967-4">(</span><span class="p" data-group-id="6778663967-4">)</span><span class="w">
-</span><span class="p" data-group-id="6778663967-5">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="no">nil</span><span class="p" data-group-id="6778663967-5">}</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Manager</span><span class="o">.</span><span class="n">recover_login</span><span class="p" data-group-id="2640724050-4">(</span><span class="p" data-group-id="2640724050-4">)</span><span class="w">
+</span><span class="p" data-group-id="2640724050-5">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="no">nil</span><span class="p" data-group-id="2640724050-5">}</span><span class="w">
 
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Manager</span><span class="o">.</span><span class="n">recover_login</span><span class="p" data-group-id="6778663967-6">(</span><span class="p" data-group-id="6778663967-6">)</span><span class="w">
-</span><span class="p" data-group-id="6778663967-7">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:enoent</span><span class="p" data-group-id="6778663967-7">}</span></code></pre>
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Manager</span><span class="o">.</span><span class="n">recover_login</span><span class="p" data-group-id="2640724050-6">(</span><span class="p" data-group-id="2640724050-6">)</span><span class="w">
+</span><span class="p" data-group-id="2640724050-7">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:enoent</span><span class="p" data-group-id="2640724050-7">}</span></code></pre>
   </section>
 </section>
 <section class="detail" id="strategies/0">
@@ -479,22 +479,22 @@ If this operation is attempted and the user has not logged in yet, <code class="
 
 <p>Synchronous operation.</p><p>Returns the list of available strategies, or an error if it fails.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="kn">alias</span><span class="w"> </span><span class="nc">Shared.Data.Strategy</span><span class="w">
 
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Manager</span><span class="o">.</span><span class="n">strategies</span><span class="p" data-group-id="6291413980-1">(</span><span class="p" data-group-id="6291413980-1">)</span><span class="w">
-</span><span class="p" data-group-id="6291413980-2">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="6291413980-3">[</span><span class="w">
-  </span><span class="p" data-group-id="6291413980-4">%</span><span class="nc" data-group-id="6291413980-4">Strategy</span><span class="p" data-group-id="6291413980-4">{</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Manager</span><span class="o">.</span><span class="n">strategies</span><span class="p" data-group-id="9462591104-1">(</span><span class="p" data-group-id="9462591104-1">)</span><span class="w">
+</span><span class="p" data-group-id="9462591104-2">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="9462591104-3">[</span><span class="w">
+  </span><span class="p" data-group-id="9462591104-4">%</span><span class="nc" data-group-id="9462591104-4">Strategy</span><span class="p" data-group-id="9462591104-4">{</span><span class="w">
     </span><span class="ss">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Top 3 Average&quot;</span><span class="p">,</span><span class="w">
     </span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="ss">:top_three_average</span><span class="p">,</span><span class="w">
     </span><span class="ss">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Gets the 3 lowest prices for the given item and calculates the average.&quot;</span><span class="w">
-  </span><span class="p" data-group-id="6291413980-4">}</span><span class="p">,</span><span class="w">
-  </span><span class="p" data-group-id="6291413980-5">%</span><span class="nc" data-group-id="6291413980-5">Strategy</span><span class="p" data-group-id="6291413980-5">{</span><span class="w">
+  </span><span class="p" data-group-id="9462591104-4">}</span><span class="p">,</span><span class="w">
+  </span><span class="p" data-group-id="9462591104-5">%</span><span class="nc" data-group-id="9462591104-5">Strategy</span><span class="p" data-group-id="9462591104-5">{</span><span class="w">
     </span><span class="ss">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Top 5 Average&quot;</span><span class="p">,</span><span class="w">
     </span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="ss">:top_five_average</span><span class="p">,</span><span class="w">
     </span><span class="ss">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Gets the 5 lowest prices for the given item and calculates the average.&quot;</span><span class="w">
-  </span><span class="p" data-group-id="6291413980-5">}</span><span class="w">
-</span><span class="p" data-group-id="6291413980-3">]</span><span class="p" data-group-id="6291413980-2">}</span><span class="w">
+  </span><span class="p" data-group-id="9462591104-5">}</span><span class="w">
+</span><span class="p" data-group-id="9462591104-3">]</span><span class="p" data-group-id="9462591104-2">}</span><span class="w">
 
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Manager</span><span class="o">.</span><span class="n">strategies</span><span class="p" data-group-id="6291413980-6">(</span><span class="p" data-group-id="6291413980-6">)</span><span class="w">
-</span><span class="p" data-group-id="6291413980-7">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:reason</span><span class="p" data-group-id="6291413980-7">}</span></code></pre>
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Manager</span><span class="o">.</span><span class="n">strategies</span><span class="p" data-group-id="9462591104-6">(</span><span class="p" data-group-id="9462591104-6">)</span><span class="w">
+</span><span class="p" data-group-id="9462591104-7">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:reason</span><span class="p" data-group-id="9462591104-7">}</span></code></pre>
   </section>
 </section>
 <section class="detail" id="syndicates/0">
@@ -524,11 +524,11 @@ If this operation is attempted and the user has not logged in yet, <code class="
 
 <p>Synchronous operation.</p><p>Returns the list of known syndicates, or an error if it fails.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="kn">alias</span><span class="w"> </span><span class="nc">Shared.Data.Syndicate</span><span class="w">
 
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">MarketManager</span><span class="o">.</span><span class="n">syndicates</span><span class="p" data-group-id="7820667108-1">(</span><span class="p" data-group-id="7820667108-1">)</span><span class="w">
-</span><span class="p" data-group-id="7820667108-2">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="7820667108-3">[</span><span class="p" data-group-id="7820667108-4">%</span><span class="nc" data-group-id="7820667108-4">Syndicate</span><span class="p" data-group-id="7820667108-4">{</span><span class="ss">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Red Veil&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="ss">:red_veil</span><span class="p">,</span><span class="w"> </span><span class="ss">catalog</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="7820667108-5">[</span><span class="p" data-group-id="7820667108-5">]</span><span class="p" data-group-id="7820667108-4">}</span><span class="p" data-group-id="7820667108-3">]</span><span class="p" data-group-id="7820667108-2">}</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">MarketManager</span><span class="o">.</span><span class="n">syndicates</span><span class="p" data-group-id="5423439406-1">(</span><span class="p" data-group-id="5423439406-1">)</span><span class="w">
+</span><span class="p" data-group-id="5423439406-2">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="5423439406-3">[</span><span class="p" data-group-id="5423439406-4">%</span><span class="nc" data-group-id="5423439406-4">Syndicate</span><span class="p" data-group-id="5423439406-4">{</span><span class="ss">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Red Veil&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="ss">:red_veil</span><span class="p">,</span><span class="w"> </span><span class="ss">catalog</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="5423439406-5">[</span><span class="p" data-group-id="5423439406-5">]</span><span class="p" data-group-id="5423439406-4">}</span><span class="p" data-group-id="5423439406-3">]</span><span class="p" data-group-id="5423439406-2">}</span><span class="w">
 
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Manager</span><span class="o">.</span><span class="n">syndicates</span><span class="p" data-group-id="7820667108-6">(</span><span class="p" data-group-id="7820667108-6">)</span><span class="w">
-</span><span class="p" data-group-id="7820667108-7">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:enoent</span><span class="p" data-group-id="7820667108-7">}</span></code></pre>
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Manager</span><span class="o">.</span><span class="n">syndicates</span><span class="p" data-group-id="5423439406-6">(</span><span class="p" data-group-id="5423439406-6">)</span><span class="w">
+</span><span class="p" data-group-id="5423439406-7">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:enoent</span><span class="p" data-group-id="5423439406-7">}</span></code></pre>
   </section>
 </section>
 
