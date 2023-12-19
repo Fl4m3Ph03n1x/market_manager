@@ -1283,5 +1283,125 @@
 		"id": "64c2aa1566456704eba6ba3d",
 		"min_price": 14,
 		"default_price": 16
+	},
+	{
+		"name": "Scattered Justice",
+		"id": "54a74454e779892d5e5155f5",
+		"min_price": 14,
+		"default_price": 16
+	},
+	{
+		"name": "Justice Blades",
+		"id": "54a74455e779892d5e5156b9",
+		"min_price": 14,
+		"default_price": 16
+	},
+	{
+		"name": "Neutralizing Justice",
+		"id": "5911f11d97a0add8e9d5da4d",
+		"min_price": 14,
+		"default_price": 16
+	},
+	{
+		"name": "Shattering Justice",
+		"id": "54a74454e779892d5e5155a6",
+		"min_price": 14,
+		"default_price": 16
+	},
+	{
+		"name": "Freeze Force",
+		"id": "54a74454e779892d5e515652",
+		"min_price": 14,
+		"default_price": 16
+	},
+	{
+		"name": "Ice Wave Impedance",
+		"id": "54e0c9eee7798903744178a6",
+		"min_price": 14,
+		"default_price": 16
+	},
+	{
+		"name": "Chilling Globe",
+		"id": "5526aec1e779896af9418265",
+		"min_price": 14,
+		"default_price": 16
+	},
+	{
+		"name": "Icy Avalanche",
+		"id": "58446fc72c2ada0064aca003",
+		"min_price": 14,
+		"default_price": 16
+	},
+	{
+		"name": "Biting Frost",
+		"id": "6214e890e3c4660048a8b983",
+		"min_price": 14,
+		"default_price": 16
+	},
+	{
+		"name": "Pyroclastic Flow",
+		"id": "58f0ee99aa4b70452a173070",
+		"min_price": 14,
+		"default_price": 16
+	},
+	{
+		"name": "Reaping Chakram",
+		"id": "5ada1ab2b2b6a80bb33793f3",
+		"min_price": 14,
+		"default_price": 16
+	},
+	{
+		"name": "Safeguard",
+		"id": "57c20990022d3f62c0d81aa8",
+		"min_price": 14,
+		"default_price": 16
+	},
+	{
+		"name": "Controlled Slide",
+		"id": "5e7caa01267539063de48c3b",
+		"min_price": 14,
+		"default_price": 16
+	},
+	{
+		"name": "Neutron Star",
+		"id": "54a74454e779892d5e5155f3",
+		"min_price": 14,
+		"default_price": 16
+	},
+	{
+		"name": "Antimatter Absorb",
+		"id": "54e644ffe779897594fa68cf",
+		"min_price": 14,
+		"default_price": 16
+	},
+	{
+		"name": "Escape Velocity",
+		"id": "5526aec0e779896af941825a",
+		"min_price": 14,
+		"default_price": 16
+	},
+	{
+		"name": "Molecular Fission",
+		"id": "5c3892672cc6ce00f238139f",
+		"min_price": 14,
+		"default_price": 16
+	},
+	{
+		"name": "Ulfruns Endurance",
+		"id": "64c2aa1566456704eba6ba40",
+		"min_price": 14,
+		"default_price": 16
+	},
+	{
+		"name": "Vampiric Grasp",
+		"id": "61a25ff968fd79003fe3fd53",
+		"min_price": 14,
+		"default_price": 16
+	},
+	{
+		"name": "The Relentless Lost",
+		"id": "61a25ffa68fd79003fe3fd5c",
+		"min_price": 14,
+		"default_price": 16
 	}
 ]
