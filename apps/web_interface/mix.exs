@@ -4,7 +4,7 @@ defmodule WebInterface.MixProject do
   def project do
     [
       app: :web_interface,
-      version: "2.2.0",
+      version: "2.2.1",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
@@ -49,7 +49,6 @@ defmodule WebInterface.MixProject do
       {:telemetry_poller, "~> 1.0"},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
-
 
       # Project deps
       {:desktop, "~> 1.5"},
