@@ -126,9 +126,9 @@ defmodule WebInterface.DeactivateLive do
   def handle_info({:deactivate, syndicate, :done}, socket) do
     Logger.info("Deactivation of #{syndicate.name} complete.")
 
-    with :ok <- SyndicateStore.deactivate_syndicate(syndicate),
-         {:ok, selected_syndicates} <- SyndicateStore.get_selected_inactive_syndicates(),
+    with {:ok, selected_syndicates} <- SyndicateStore.get_selected_inactive_syndicates(),
          {:ok, inactive_syndicates} <- SyndicateStore.get_inactive_syndicates(),
+         {:ok, active_syndicates} <- Manager.active_syndicates(),
          new_selected_syndicates =
            Enum.uniq(selected_syndicates ++ inactive_syndicates),
          :ok <- SyndicateStore.set_selected_inactive_syndicates(new_selected_syndicates) do
@@ -154,11 +154,31 @@ defmodule WebInterface.DeactivateLive do
         |> assign(selected_inactive_syndicates: new_selected_syndicates)
         |> assign(to_assign)
 
+      # specially common in the case of timeouts from the auction house
+      partial_deactivation? =
+        Enum.find(active_syndicates, fn syn -> syn.id == syndicate.id end) != nil
+
+      updated_socket =
+        if partial_deactivation? do
+          Logger.info(
+            "Syndicate #{syndicate.name} was only partially deactivated. Try again later!"
+          )
+
+          put_flash(
+            updated_socket,
+            :info,
+            "Syndicate #{syndicate.name} was only partially deactivated. Try again later!"
+          )
+        else
+          :ok = SyndicateStore.deactivate_syndicate(syndicate)
+          updated_socket
+        end
+
       {:noreply, updated_socket}
     else
       error ->
-        Logger.error("Unable complete syndicate activation: #{inspect(error)}")
-        {:noreply, socket |> put_flash(:error, "Unable complete syndicate activation!")}
+        Logger.error("Unable complete syndicate deactivation: #{inspect(error)}")
+        {:noreply, socket |> put_flash(:error, "Unable complete syndicate deactivation!")}
     end
   end
 
