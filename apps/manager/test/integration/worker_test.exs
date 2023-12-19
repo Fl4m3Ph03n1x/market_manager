@@ -14,11 +14,14 @@ defmodule Manager.WorkerTest do
   describe "activate" do
     setup do
       syndicate = Syndicate.new(name: "Red Veil", id: :red_veil)
-      strategy = Strategy.new(
-        name: "Top 5 Average",
-        id: :top_five_average,
-        description: "Gets the 5 lowest prices for the given item and calculates the average."
-      )
+
+      strategy =
+        Strategy.new(
+          name: "Top 5 Average",
+          id: :top_five_average,
+          description: "Gets the 5 lowest prices for the given item and calculates the average."
+        )
+
       product1_name = "Gleaming Blight"
       product2_name = "Eroding Blight"
       invalid_id = "some_invalid_id"
@@ -378,7 +381,6 @@ defmodule Manager.WorkerTest do
         assert_called(AuctionHouse.login(credentials))
       end
     end
-
   end
 
   describe "recover_login" do
@@ -538,7 +540,6 @@ defmodule Manager.WorkerTest do
         assert_called(AuctionHouse.logout())
       end
     end
-
   end
 
   describe "syndicates" do
@@ -570,11 +571,41 @@ defmodule Manager.WorkerTest do
     end
   end
 
+  describe "active_syndicates" do
+    setup do
+      %{
+        active_syndicates: [
+          Syndicate.new(name: "Red Veil", id: :red_veil),
+          Syndicate.new(name: "New Loka", id: :new_loka)
+        ]
+      }
+    end
+
+    test "returns currently active syndicates", %{active_syndicates: syndicates} do
+      with_mocks([
+        {
+          Store,
+          [],
+          [
+            list_active_syndicates: fn -> {:ok, syndicates} end
+          ]
+        }
+      ]) do
+        # If the process is not started, start it now
+        start_supervised(Worker)
+
+        assert Worker.active_syndicates() == {:ok, syndicates}
+        assert_called(Store.list_active_syndicates())
+      end
+    end
+  end
+
   describe "strategies" do
     test "returns the strategies" do
       # Arrange
       # If the process is not started, start it now
       start_supervised(Worker)
+
       expected_strategies = [
         %Strategy{
           description: "Gets the 3 lowest prices for the given item and calculates the average.",

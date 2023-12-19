@@ -172,7 +172,7 @@ defmodule Manager do
   > alias Shared.Data.Syndicate
 
   > MarketManager.syndicates()
-  {:ok, [%Syndicate{name: "Red Veil", id: :red_veil}]}
+  {:ok, [%Syndicate{name: "Red Veil", id: :red_veil, catalog: []}]}
 
   > Manager.syndicates()
   {:error, :enoent}
@@ -180,6 +180,24 @@ defmodule Manager do
   """
   @spec syndicates :: Type.syndicates_response()
   defdelegate syndicates, to: Worker
+
+  @doc """
+  Synchronous operation.
+
+  Returns a list containing all currently active syndicates.
+
+  Example:
+  ```
+  > alias Shared.Data.Syndicate
+
+  > MarketManager.active_syndicates()
+  {:ok, [%Syndicate{name: "Red Veil", id: :red_veil, catalog: []}]}
+
+  > Manager.active_syndicates()
+  {:error, :enoent}
+  """
+  @spec active_syndicates :: Type.active_syndicates_response()
+  defdelegate active_syndicates, to: Worker
 
   @doc """
   Synchronous operation.
@@ -214,5 +232,4 @@ defmodule Manager do
   @doc false
   @spec child_spec(any) :: Supervisor.child_spec()
   defdelegate child_spec(args), to: Server
-
 end
