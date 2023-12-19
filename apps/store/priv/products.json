@@ -1403,5 +1403,47 @@
 		"id": "61a25ffa68fd79003fe3fd5c",
 		"min_price": 14,
 		"default_price": 16
+	},
+	{
+		"name": "Entropy Spike",
+		"id": "54a74454e779892d5e5155be",
+		"min_price": 14,
+		"default_price": 16
+	},
+	{
+		"name": "Entropy Flight",
+		"id": "54a74454e779892d5e5155ee",
+		"min_price": 14,
+		"default_price": 16
+	},
+	{
+		"name": "Entropy Detonation",
+		"id": "5911f11d97a0add8e9d5da50",
+		"min_price": 14,
+		"default_price": 16
+	},
+	{
+		"name": "Entropy Burst",
+		"id": "54a74455e779892d5e5156a3",
+		"min_price": 14,
+		"default_price": 16
+	},
+	{
+		"name": "Mesmer Shield",
+		"id": "63ee00ff10125411da49e6f8",
+		"min_price": 14,
+		"default_price": 16
+	},
+	{
+		"name": "Shadow Haze",
+		"id": "64c2aa1666456704eba6ba45",
+		"min_price": 14,
+		"default_price": 16
+	},
+	{
+		"name": "Merulina Guardian",
+		"id": "63ee00ff10125411da49e6f7",
+		"min_price": 14,
+		"default_price": 16
 	}
 ]
