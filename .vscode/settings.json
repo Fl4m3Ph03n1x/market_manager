@@ -65,5 +65,7 @@
             "column": 120,
             "color": "#00f7ff"
         }
-    ]
+    ],
+    "editor.fontFamily": "Fira Code",
+    "editor.fontLigatures": true,
 }

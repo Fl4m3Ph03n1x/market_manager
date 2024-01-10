@@ -7,12 +7,18 @@ It also holds the DataStructures and Types used to represent the Domain.
 
 As you can see from below, every app depends on this library.
 
-![dependencies-graph](./store_logic.svg)
+```mermaid
+  graph TD;
+      shared-->manager;
+      shared-->store;
+      shared-->web_interface;
+      shared-->auction_house;
+```
+
+This is admittedly not a great idea, as I am leaking core domains concepts to the `web_interface` (which acts as a 
+client) and is something that I should be tackled in the future once I have more time.
 
 ## Developer Guide
-
-This project uses Gradient as a static type checking tool. This means there 
-may be con conflicts with other tools, but this is being worked on. 
 
 ### Testing
 
