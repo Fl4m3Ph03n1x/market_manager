@@ -16,9 +16,8 @@
 # MarketManager
 
 Makes sell requests in batch to warframe market.
-Used when you want to sell a lot of things or remove them from your list all at
-once. Specially useful for syndicates because you don't have to buy everything
-in advance and then sell. You only need to do 3 things:
+Used when you want to sell a lot of things or remove them from your list all at once. Specially useful for syndicates 
+because you don't have to buy everything in advance and then sell. You only need to do 3 things:
 
 - Launch the manager
 - Activate a syndicate(s) you want
@@ -26,99 +25,67 @@ in advance and then sell. You only need to do 3 things:
 
 Then, when someone pings you to buy an item, you can go the syndicate, buy it and sell it on the spot.
 
-WarframeMarket (the website) does have a 100 items limit though, so you may want to keep this in mind as you won't be able to activate everything (unless you are a Patreon, in which case the limit does not apply).
+WarframeMarket (the website) does have a 100 items limit though, so you may want to keep this in mind as you won't be 
+able to activate everything (unless you are a Patreon, in which case the limit does not apply).
 
-# User guide
+# Requirements
 
-This section has some basic references and help for users that want to learn how to use the application.
-
-## Setup
-
-Before using this application you need to get access to two things:
-
-1. x-rfctoken from warframe.market
-2. a cookie from warframe.market
-
-To get both of them you can:
-
-1. Login with your account to warframe.market
-2. Set you status to "Invisible"
-3. Go to "My profile"
-4. Click "Place order" button and fill in the form, BUT DO NOT PRESS "POST"
-5. Using your favorite browser enter the developer's console (usually by pressing F12)
-6. Go to the network section of the developer's console, clear it (if it has previous logs) and start monitoring
-7. Press the "POST" button on the form
-8. The console should have logged a POST request to the website
-9. Inspect the request and look for "Request headers"
-10. Copy the cookie and the token to somewhere
-
-Once you have the cookie and the token, go to the `Authenticate` menu on the sidebar and save them.
-
-You are now ready to use the application.
-
-## Windowed mode
+This application has no requirements on the user side, as the entire erlang VM and context are bundled together with the 
+application in the zip file.
 
 By default the application will open a separate browser window and it will run there using your localhost.
 
-If however, you wish to run the application in windowed mode, you can do so by downloading and installing WebView2 support for Edge:
+If however, you wish to run the application in windowed mode, you can do so by downloading and installing WebView2 
+support for Edge:
 
-- <https://msedge.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/d1f50f11-2c31-4c24-8961-3dc1bb3b8ea3/MicrosoftEdgeWebview2Setup.exe>
+- <https://developer.microsoft.com/en-us/microsoft-edge/webview2/?form=MA13LH>
 
-After the installation, the application will default to the windowed mode. You can however still use the browser if you wish by going to **Extras -> Open in browser**.
+After the installation, the application will default to the windowed mode. You can however still use the browser if you 
+wish by going to **Extras -> Open in browser**.
 
-## Usage
+# User guide
 
-The inventory file is called `products.json`. This file contain a list of objects, each one with an array of things to sell alongside some additional information.
+As a user, you will see two windows opening. The **interface** (explained in the next subchapter) and the **terminal**.
+The terminal is there for mostly two things:
 
-It only supports mods currently.
+- transparency to the user: This way you can see what the application is really doing.
+- debugging: By seeing the logs, you can help contribute with errors. 
 
-```json
-{
-    "red_veil": [
-        {
-            "name": "Gleaming Blight",
-            "id": "54a74454e779892d5e5155d5",
-            "min_price": 14,
-            "default_price": 16
-        },
-        {
-            "name": "Eroding Blight",
-            "id": "54a74454e779892d5e5155a0",
-            "min_price": 14,
-            "default_price": 16
-        }
-    ],
-    "new_loka": [
-        {
-            "name": "Winds of purity",
-            "id": "54a74455e779892d5e51569a",
-            "min_price": 14,
-            "default_price": 16
-        },
-        {
-            "name": "Disarming purity",
-            "id": "5911f11d97a0add8e9d5da4c",
-            "min_price": 14,
-            "default_price": 16
-        }
-    ]
-}
-```
+For this reason, I won't be explaining anything about the terminal, although it is important to note that **if you kill
+the terminal (by closing it), you will also kill the application**. This can be useful, in case the apps bugs out, which 
+should be rare.
 
-The format of each item is the following:
+## Interface
 
-```javascript
-{
-  "name": "Disarming purity",       //name of the item. DON'T TOUCH THIS.
-  "id": "5911f11d97a0add8e9d5da4c", //warframe.market item id. DON'T TOUCH THIS.
-  "min_price": 14,                  //prices are calculated by the chosen strategy. This will override the strategy's price if the calculated price is inferior. A safety net, this is the minimum price you will sell this item for. 
-  "default_price":16,               //if no one is selling this item or if the strategy was unable to calculate a price for the item, this is the value you will sell it for.
-  "rank": 1,                        //rank of the mod, defaults to 0. If the mod has no rank use "n/a" instead
-  "quantity": 1                     //number of items to sell, defaults to 1
-}
-```
+This section has some basic references and help for users that want to learn how to use the application.
 
-I provide some basic defaults in the `products.json` based on my personal experience. Feel free to change the defaults to your liking. Once this is done, you are ready to go.
+Once you download and extract the contents of the zip file, you can launch the application via the shortcut. 
+(You need to give Windows the necessary permissions, which will pop up)
+
+With that out of the day you will be greeted with the login menu:
+
+<p align="center">    
+<img src="images/login.png" alt="Logo" width="600"/>
+</p>
+
+It is important to note that the application **does not save your credentials**. We only save an authentication token
+that expires after some time. 
+Furthermore, your credentials **are not transmitted anywhere**, so you don't have to worry about that.
+
+Once the login is done, you can either activate or deactivate a set of syndicates.
+
+<p align="center">    
+<img src="images/activate.png" alt="Logo" width="600"/>
+<img src="images/deactivate.png" alt="Logo" width="600"/>
+</p>
+
+Activating and deactivating are both operations that can take a long time, so you usually see a progress screen:
+
+<p align="center">    
+<img src="images/progress.png" alt="Logo" width="600"/>
+</p>
+
+You can also logout by clicking in your username at the top right corner if you wish.
 
 # Developer Guide
 
@@ -126,8 +93,8 @@ This guide describes a developer setup for Windows.
 
 ## Requirements
 
-- Erlang OTP >= 24: <https://www.erlang.org/downloads>
-- Elixir >= 1.13 (I recommend the installer): <https://elixir-lang.org/install.html#windows>
+- Erlang OTP >= 26: <https://www.erlang.org/downloads>
+- Elixir >= 1.16 (I recommend the installer): <https://elixir-lang.org/install.html#windows>
 - wxWidget: <https://www.wxwidgets.org/downloads/>
 - While it doesn't require a lot of memory to run, it does require a lot of memory to compile, at least 4GB.
 - If using powershell, you need to have permissions to run scripts: `Set-ExecutionPolicy -ExecutionPolicy Bypass`
@@ -135,7 +102,8 @@ This guide describes a developer setup for Windows.
 - Install bakeware dependencies: `choco install -y zstandard make mingw`
 - Setup powershell environment variables `$env:CC="gcc"` and `$env:MAKE="make"`
 - An editor of your choice. I use VScode with some plugins and the `Fira Code` font: <https://github.com/tonsky/FiraCode>
-- To test the application in Windowed mode, you also need to install WebView2 support for Edge. Refer to the **User Guide** section for more information.
+- To test the application in Windowed mode, you also need to install WebView2 support for Edge. Refer to the 
+**User Guide** section for more information.
 
 ## How to run it
 
@@ -151,12 +119,22 @@ After the initial setup, the following commands are used to get started:
 
 MarketManager is divided into multiple small applications/libraries, each one with a single purpose in mind:
 
-![dependencies-graph](./deps_graph.svg)
+```mermaid
+  graph TD;
+      web_interface-->manager;
+      manager-->auction_house;
+      manager-->store;
+      shared-->manager;
+      shared-->store;
+      shared-->web_interface;
+      shared-->auction_house;
+```
 
-- `web_interface` is a Phoenix application that holds all the code for the front-end.
+- `web_interface` is a Phoenix application that holds all the code for the front-end. Works as the client.
 - `manager` is the core of the application, the entry point for all user requests. It talks to the rest of the layers.
 - `auction_house` is the app responsible for understanding and making requests to the given auction house. In this case, warframe market.
 - `store` is the persistency layer. It saves your data and remembers what is being sold or not.
+- `shared` is a library that holds the domain model entities of the entire project. 
 
 For more information, feel free to read the README file of each application.
 

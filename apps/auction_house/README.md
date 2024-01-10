@@ -4,7 +4,8 @@ This is a Runtime Library (a library with GenServers) that manages the requests 
 
 ## How to use it?
 
-This project is **not** an OTP application, meaning that to use it you need to include it in the Supervision tree of your application as one of its children.
+This project is **not** an OTP application, meaning that to use it you need to include it in the Supervision tree of 
+your application as one of its children.
 
 ```elixir
 children = [
@@ -15,15 +16,22 @@ Supervisor.init(children, strategy: :one_for_one)
 ```
 
 Why is this not an OTP application? Well, because it doesn't need to.
-This Library is not supposed to handle the weight of the world. It is only supposed to Manage requests and responses to a website. That's it. 
-It just so happens that doing so creates some Non Functional requirements and that is why we have GenServer's to deal with them. 
+This Library is not supposed to handle the weight of the world. It is only supposed to Manage requests and responses to 
+a website. That's it. 
+It just so happens that doing so creates some Non Functional requirements and that is why we have GenServer's to deal 
+with them. 
 
-Because of this if you want to play around with this project you must first start the `GenServer` and then use the Public API to play around.
+Because of this if you want to play around with this project you must first start the `GenServer` and then use the 
+Public API to play around.
 
-This application is used by the `manager` library.
 The dependencies graph can be seen as follows:
 
-![dependencies-graph](./dependencies.svg)
+```mermaid
+  graph TD;
+      auction_house--uses-->shared
+      auction_house--delegates to -->id1([runtime/server.ex])
+      id1--uses-->id2([impl/http_client.ex])
+```
 
 ## Developer Guide
 

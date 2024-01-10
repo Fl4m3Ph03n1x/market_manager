@@ -1,7 +1,7 @@
 # Store
 
 Library responsible for persisting data. It is functional (barring some configurations).
-This library simply persist the data. No validations are done here. If incorrect data is given
+This library simply persists the data. No validations are done here. If incorrect data is given
 to this library, then incorrect data will be persisted. 
 
 ## How is data persisted?
@@ -9,8 +9,10 @@ to this library, then incorrect data will be persisted.
 Right now data is being persisted by the module `Store.FileSystem`. `Store` is the public API, while the 
 implementation currently under use is the `FileSystem`:
 
-
-![dependencies-graph](./store_logic.svg)
+```mermaid
+  graph TD;
+      store--implemented by-->id1([file_system.ex]);
+```
 
 `FileSystem` basically saves the data into disk files using JSON. It is not the most efficient approach, nor the fastest,
 because it's not meant to. The main objective of this library is to persist data in a very simple way that can be audited by
