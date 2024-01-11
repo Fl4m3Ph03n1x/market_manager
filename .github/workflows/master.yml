@@ -31,14 +31,14 @@ jobs:
       env:
         MIX_ENV: test
 
-    - name: Run Coverage
-      run: |
-        mix local.hex --force
-        mix local.rebar --force
-        mix deps.get  
-        mix coveralls.github
-      env:
-        MIX_ENV: test
+    # - name: Run Coverage
+    #   run: |
+    #     mix local.hex --force
+    #     mix local.rebar --force
+    #     mix deps.get  
+    #     mix coveralls.github
+    #   env:
+    #     MIX_ENV: test
     
     - name: Run Credo
       run: |
