@@ -5,9 +5,15 @@ defmodule Shared.MixProject do
     [
       app: :shared,
       version: "1.0.0",
+      build_path: "../../_build",
+      config_path: "../../config/config.exs",
+      deps_path: "../../deps",
+      lockfile: "../../mix.lock",
       elixir: "~> 1.16",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      test_coverage: [tool: ExCoveralls],
+      preferred_cli_env: preferred_cli_env()
     ]
   end
 
@@ -30,4 +36,11 @@ defmodule Shared.MixProject do
       {:gradient, github: "esl/gradient", only: [:dev, :test], runtime: false}
     ]
   end
+
+  defp preferred_cli_env,
+    do: [
+      "test.unit": :test,
+      "test.integration": :test,
+      "test.watch": :test
+    ]
 end
