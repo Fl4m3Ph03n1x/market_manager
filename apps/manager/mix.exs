@@ -45,7 +45,12 @@ defmodule Manager.MixProject do
     do: [
       "test.unit": :test,
       "test.integration": :test,
-      "test.watch": :test
+      "test.watch": :test,
+      coveralls: :test,
+      "coveralls.detail": :test,
+      "coveralls.post": :test,
+      "coveralls.html": :test,
+      "coveralls.github": :test
     ]
 
   defp aliases,

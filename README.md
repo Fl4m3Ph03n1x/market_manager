@@ -5,8 +5,8 @@
 </p>
 
 <p align="center">
-    <a href="https://github.com/Fl4m3Ph03n1x/market_manager/workflows/build/badge.svg?branch=master">
-        <img src="https://github.com/Fl4m3Ph03n1x/market_manager/workflows/build/badge.svg?branch=master" alt="Build Status"/>
+    <a href="https://github.com/Fl4m3Ph03n1x/market_manager/actions/workflows/master.yml">
+        <img src="https://github.com/Fl4m3Ph03n1x/market_manager/actions/workflows/master.yml/badge.svg" alt="Build Status"/>
     </a>
     <a href="https://coveralls.io/github/Fl4m3Ph03n1x/market_manager?branch=master">
         <img src="https://coveralls.io/repos/github/Fl4m3Ph03n1x/market_manager/badge.svg?branch=master" alt="Coverage Status"/>
