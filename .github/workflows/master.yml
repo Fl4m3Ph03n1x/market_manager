@@ -11,43 +11,65 @@ on:
 
 jobs:
 
-  build:
-    name: Build on Windows
+  test_checks:
+    name: Run test checks
     runs-on: windows-2022
+    env:
+      MIX_ENV: test
 
     steps:
     - uses: actions/checkout@v2
     - uses: erlef/setup-beam@v1
       with:
-        elixir-version: '1.16.x'  # Define the elixir version [required]
-        otp-version: '26.2.x'     # Define the OTP version [required]
+        elixir-version: '1.16.x'  
+        otp-version: '26.2.x'  
+
+    - name: Install dependencies
+      run: |
+        mix local.hex --force
+        mix local.rebar --force
+        mix deps.get
+
+    - name: Compile
+      run: mix compile
 
     - name: Run Tests
+      run: mix test
+
+    # - name: Run Coverage
+    #   run: mix coveralls.github
+    #   env:
+    #     MIX_ENV: test
+  
+  qa:
+    name: Run qa tools
+    runs-on: windows-2022
+    env:
+      MIX_ENV: dev
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: erlef/setup-beam@v1
+      with:
+        elixir-version: '1.16.x' 
+        otp-version: '26.2.x'    
+
+    - name: Install dependencies
       run: |
         mix local.hex --force
         mix local.rebar --force
         mix deps.get
         mix test
-      env:
-        MIX_ENV: test
 
-    # - name: Run Coverage
-    #   run: |
-    #     mix local.hex --force
-    #     mix local.rebar --force
-    #     mix deps.get  
-    #     mix coveralls.github
-    #   env:
-    #     MIX_ENV: test
-    
+    - name: Compile
+      run: mix compile
+
     - name: Run Credo
       run: |
         mix local.hex --force
         mix local.rebar --force
         mix deps.get  
         mix credo --strict
-      env:
-        MIX_ENV: dev
 
     - name: Run Dialyzer
       run: |
@@ -55,10 +77,29 @@ jobs:
         mix local.rebar --force
         mix deps.get  
         mix dialyzer
-      env:
-        MIX_ENV: dev
 
-    - name: Build executable
+  release:
+    name: Create Zip file contaiing release
+    runs-on: windows-2022
+    env:
+      MIX_ENV: prod
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: erlef/setup-beam@v1
+      with:
+        elixir-version: '1.16.x'  
+        otp-version: '26.2.x'    
+
+    - name: Install dependencies
+      run: |
+        mix local.hex --force
+        mix local.rebar --force
+        mix deps.get
+
+
+    - name: Compile
+      run: mix compile
+
+    - name: Build bat file
       run: mix release
-      env:
-        MIX_ENV: prod
