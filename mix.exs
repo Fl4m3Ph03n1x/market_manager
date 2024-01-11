@@ -13,6 +13,7 @@ defmodule MarketManager.MixProject do
       test_coverage: [tool: ExCoveralls],
       preferred_cli_env: preferred_cli_env(),
       releases: releases(),
+      aliases: aliases(),
 
       # Docs
       name: "Market Manager",
@@ -42,6 +43,15 @@ defmodule MarketManager.MixProject do
       "coveralls.post": :test,
       "coveralls.html": :test
     ]
+
+  defp aliases do
+    child_tests =
+      Path.wildcard("apps/*")
+      |> Enum.map(&String.replace(&1, "apps/", ""))
+      |> Enum.map(fn app -> "cmd --app #{app} mix test --color" end)
+
+    [test: child_tests]
+  end
 
   defp releases,
     do: [
