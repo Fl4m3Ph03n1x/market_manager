@@ -13,7 +13,7 @@ defmodule Manager.WorkerTest do
 
   describe "activate" do
     setup do
-      syndicate = Syndicate.new(name: "Red Veil", id: :red_veil)
+      syndicate = Syndicate.new(name: "Red Veil", id: :red_veil, catalog: [])
 
       strategy =
         Strategy.new(
@@ -546,8 +546,8 @@ defmodule Manager.WorkerTest do
     setup do
       %{
         syndicates: [
-          Syndicate.new(name: "Red Veil", id: :red_veil),
-          Syndicate.new(name: "New Loka", id: :new_loka)
+          Syndicate.new(name: "Red Veil", id: :red_veil, catalog: []),
+          Syndicate.new(name: "New Loka", id: :new_loka, catalog: [])
         ]
       }
     end
@@ -575,8 +575,8 @@ defmodule Manager.WorkerTest do
     setup do
       %{
         active_syndicates: [
-          Syndicate.new(name: "Red Veil", id: :red_veil),
-          Syndicate.new(name: "New Loka", id: :new_loka)
+          Syndicate.new(name: "Red Veil", id: :red_veil, catalog: []),
+          Syndicate.new(name: "New Loka", id: :new_loka, catalog: [])
         ]
       }
     end

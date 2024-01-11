@@ -20,7 +20,7 @@ defmodule Manager.InterpreterTest do
 
   describe "activate/4" do
     setup do
-      syndicate = Syndicate.new(name: "Red Veil", id: :red_veil)
+      syndicate = Syndicate.new(name: "Red Veil", id: :red_veil, catalog: [])
 
       strategy =
         Strategy.new(
@@ -525,7 +525,7 @@ defmodule Manager.InterpreterTest do
 
   describe "deactivate/3" do
     setup do
-      syndicate = Syndicate.new(name: "Red Veil", id: :red_veil)
+      syndicate = Syndicate.new(name: "Red Veil", id: :red_veil, catalog: [])
 
       placed_order1 =
         PlacedOrder.new(%{
@@ -1185,8 +1185,8 @@ defmodule Manager.InterpreterTest do
     setup do
       %{
         syndicates: [
-          Syndicate.new(name: "Red Veil", id: :red_veil),
-          Syndicate.new(name: "New Loka", id: :new_loka)
+          Syndicate.new(name: "Red Veil", id: :red_veil, catalog: []),
+          Syndicate.new(name: "New Loka", id: :new_loka, catalog: [])
         ]
       }
     end
@@ -1224,8 +1224,8 @@ defmodule Manager.InterpreterTest do
     setup do
       %{
         active_syndicates: [
-          Syndicate.new(name: "Red Veil", id: :red_veil),
-          Syndicate.new(name: "New Loka", id: :new_loka)
+          Syndicate.new(name: "Red Veil", id: :red_veil, catalog: []),
+          Syndicate.new(name: "New Loka", id: :new_loka, catalog: [])
         ]
       }
     end
