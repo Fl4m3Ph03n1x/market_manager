@@ -26,4 +26,4 @@ manager-*.tar
 /tmp/
 
 # Dialyzer
-/.elixir_ls/
+.elixir_ls/

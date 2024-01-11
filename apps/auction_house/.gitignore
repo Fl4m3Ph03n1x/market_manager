@@ -24,3 +24,6 @@ auction_house-*.tar
 
 # Temporary files, for example, from tests.
 /tmp/
+
+# Dialyzer
+.elixir_ls/
