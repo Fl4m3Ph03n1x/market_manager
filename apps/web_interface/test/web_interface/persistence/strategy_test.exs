@@ -60,6 +60,8 @@ defmodule WebInterface.Persistence.StrategyTest do
 
   describe "get_selected_strategy && set_selected_strategy" do
     test "returns nil if no strategy is selected" do
+      StrategyStore.set_selected_strategy(nil)
+
       {:ok, actual_strategy} = StrategyStore.get_selected_strategy()
       assert is_nil(actual_strategy)
     end
