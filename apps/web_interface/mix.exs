@@ -14,7 +14,9 @@ defmodule WebInterface.MixProject do
       compilers: Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      test_coverage: [tool: ExCoveralls],
+      preferred_cli_env: preferred_cli_env()
     ]
   end
 
@@ -59,6 +61,15 @@ defmodule WebInterface.MixProject do
       {:shared, in_umbrella: true}
     ]
   end
+
+  defp preferred_cli_env,
+    do: [
+      coveralls: :test,
+      "coveralls.detail": :test,
+      "coveralls.post": :test,
+      "coveralls.html": :test,
+      "coveralls.github": :test
+    ]
 
   # Aliases are shortcuts or tasks specific to the current project.
   #

@@ -39,8 +39,10 @@ defmodule Shared.MixProject do
 
   defp preferred_cli_env,
     do: [
-      "test.unit": :test,
-      "test.integration": :test,
-      "test.watch": :test
+      coveralls: :test,
+      "coveralls.detail": :test,
+      "coveralls.post": :test,
+      "coveralls.html": :test,
+      "coveralls.github": :test
     ]
 end
