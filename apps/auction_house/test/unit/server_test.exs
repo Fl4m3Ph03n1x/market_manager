@@ -71,7 +71,7 @@ defmodule AuctionHouse.ServerTest do
   test "returns child_spec correctly" do
     # Arrange
     expected = %{id: Server, start: {Server, :start_link, []}}
-    actual = AuctionHouse.child_spec(nil)
+    actual = AuctionHouse.child_spec([])
 
     # Assert
     assert actual == expected

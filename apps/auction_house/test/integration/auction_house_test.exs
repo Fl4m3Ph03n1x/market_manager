@@ -13,15 +13,21 @@ defmodule AuctionHouseTest do
   @test_port 8082
 
   setup do
-    {:ok, pid} = start_supervised(Server)
+    {:ok, pid} = start_supervised({Server, ["auction_house_integration_test", 0]})
     bypass = Bypass.open(port: @test_port)
-    %{bypass: bypass, server: pid}
+
+    %{
+      bypass: bypass,
+      server: pid,
+      server_name: AuctionHouse.Runtime.Server_auction_house_integration_test_0
+    }
   end
 
   describe "place_oder/1" do
     test "returns {:ok, placed_order} if order was placed correctly", %{
       bypass: bypass,
-      server: server
+      server: server,
+      server_name: server_name
     } do
       # Arrange
       Bypass.expect(bypass, "POST", "/v1/profile/orders", fn conn ->
@@ -78,7 +84,7 @@ defmodule AuctionHouseTest do
       :sys.replace_state(server, fn state -> Map.put(state, :authorization, login_info) end)
 
       # Act
-      actual = AuctionHouse.place_order(order)
+      actual = Server.place_order(order, server_name)
 
       expected =
         {:ok,
@@ -92,7 +98,8 @@ defmodule AuctionHouseTest do
   describe "delete_oder/1" do
     test "returns :ok if order was deleted correctly", %{
       bypass: bypass,
-      server: server
+      server: server,
+      server_name: server_name
     } do
       # Arrange
       Bypass.expect(bypass, "DELETE", "/v1/profile/orders/:id", fn conn ->
@@ -110,7 +117,7 @@ defmodule AuctionHouseTest do
       :sys.replace_state(server, fn state -> Map.put(state, :authorization, login_info) end)
 
       # Act
-      actual = AuctionHouse.delete_order(placed_order)
+      actual = Server.delete_order(placed_order, server_name)
       expected = :ok
 
       # Assert
@@ -120,7 +127,8 @@ defmodule AuctionHouseTest do
 
   describe "get_all_orders/2" do
     test "returns {:ok, [order_info]} if request for orders about item succeeded", %{
-      bypass: bypass
+      bypass: bypass,
+      server_name: server_name
     } do
       # Arrange
       Bypass.expect(bypass, "GET", "/v1/items/:item_name/orders", fn conn ->
@@ -180,7 +188,7 @@ defmodule AuctionHouseTest do
       item_name = "Gleaming Blight"
 
       # Act
-      actual = AuctionHouse.get_all_orders(item_name)
+      actual = Server.get_all_orders(item_name, server_name)
 
       expected =
         {:ok,
@@ -214,7 +222,8 @@ defmodule AuctionHouseTest do
 
   describe "login/1" do
     test "returns {:ok, Authorization} when the login is successful", %{
-      bypass: bypass
+      bypass: bypass,
+      server_name: server_name
     } do
       # Arrange
       Bypass.expect(bypass, "GET", "/auth/signin", fn conn ->
@@ -255,7 +264,7 @@ defmodule AuctionHouseTest do
       }
 
       # Act
-      actual = AuctionHouse.login(credentials)
+      actual = Server.login(credentials, server_name)
 
       expected =
         {:ok,
@@ -276,13 +285,13 @@ defmodule AuctionHouseTest do
   end
 
   describe "recover_login/2" do
-    test "updates server state correctly", %{server: server} do
+    test "updates server state correctly", %{server: server, server_name: server_name} do
       # Arrange
       auth = Authorization.new(%{"cookie" => "a_cookie", "token" => "a_token"})
       user = UserInfo.new(%{"ingame_name" => "fl4m3", "patreon?" => false})
 
       # Act
-      actual = AuctionHouse.recover_login(auth, user)
+      actual = Server.recover_login(auth, user, server_name)
       server_state = :sys.get_state(server)
 
       # Assert
@@ -293,7 +302,7 @@ defmodule AuctionHouseTest do
   end
 
   describe "logout/0" do
-    test "deletes session correctly", %{server: server, bypass: bypass} do
+    test "deletes session correctly", %{server: server, bypass: bypass, server_name: server_name} do
       # Arrange
       Bypass.expect(bypass, "GET", "/auth/signin", fn conn ->
         body = """
@@ -332,10 +341,10 @@ defmodule AuctionHouseTest do
         password: "password"
       }
 
-      AuctionHouse.login(credentials)
+      Server.login(credentials, server_name)
 
       # Act
-      actual = AuctionHouse.logout()
+      actual = Server.logout(server_name)
       server_state = :sys.get_state(server)
 
       # Assert

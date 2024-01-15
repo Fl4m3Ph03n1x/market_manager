@@ -13,7 +13,7 @@ defmodule MarketManager.MixProject do
       test_coverage: [tool: ExCoveralls],
       preferred_cli_env: preferred_cli_env(),
       releases: releases(),
-      aliases: aliases(),
+      # aliases: aliases(),
 
       # Docs
       name: "Market Manager",

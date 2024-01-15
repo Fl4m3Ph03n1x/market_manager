@@ -19,30 +19,35 @@ defmodule AuctionHouse.Runtime.Server do
   ##############
 
   @spec start_link :: :ignore | {:error, any} | {:ok, pid}
-  def start_link, do: GenServer.start_link(__MODULE__, nil, name: __MODULE__)
+  def start_link,
+    do: GenServer.start_link(__MODULE__, nil, name: __MODULE__)
 
-  @spec get_all_orders(Type.item_name()) :: Type.get_all_orders_response()
-  def get_all_orders(item_name),
-    do: GenServer.call(__MODULE__, {:get_all_orders, item_name}, @genserver_timeout)
+  @spec start_link(String.t(), pos_integer()) :: :ignore | {:error, any} | {:ok, pid}
+  def start_link(suffix, count) when is_binary(suffix) and is_integer(count) and count >= 0,
+    do: GenServer.start_link(__MODULE__, nil, name: :"#{__MODULE__}_#{suffix}_#{count}")
 
-  @spec place_order(Order.t()) :: Type.place_order_response()
-  def place_order(order),
-    do: GenServer.call(__MODULE__, {:place_order, order}, @genserver_timeout)
+  @spec get_all_orders(Type.item_name(), Type.server()) :: Type.get_all_orders_response()
+  def get_all_orders(item_name, server \\ __MODULE__),
+    do: GenServer.call(server, {:get_all_orders, item_name}, @genserver_timeout)
 
-  @spec delete_order(PlacedOrder.t()) :: Type.delete_order_response()
-  def delete_order(placed_order),
-    do: GenServer.call(__MODULE__, {:delete_order, placed_order}, @genserver_timeout)
+  @spec place_order(Order.t(), Type.server()) :: Type.place_order_response()
+  def place_order(order, server \\ __MODULE__),
+    do: GenServer.call(server, {:place_order, order}, @genserver_timeout)
 
-  @spec login(Credentials.t()) :: Type.login_response()
-  def login(credentials),
-    do: GenServer.call(__MODULE__, {:login, credentials}, @genserver_timeout)
+  @spec delete_order(PlacedOrder.t(), Type.server()) :: Type.delete_order_response()
+  def delete_order(placed_order, server \\ __MODULE__),
+    do: GenServer.call(server, {:delete_order, placed_order}, @genserver_timeout)
 
-  @spec recover_login(Authorization.t(), User.t()) :: Type.recover_login_response()
-  def recover_login(auth, user),
-    do: GenServer.call(__MODULE__, {:recover_login, auth, user}, @genserver_timeout)
+  @spec login(Credentials.t(), Type.server()) :: Type.login_response()
+  def login(credentials, server \\ __MODULE__),
+    do: GenServer.call(server, {:login, credentials}, @genserver_timeout)
 
-  @spec logout :: Type.logout_response()
-  def logout, do: GenServer.call(__MODULE__, :logout, @genserver_timeout)
+  @spec recover_login(Authorization.t(), User.t(), Type.server()) :: Type.recover_login_response()
+  def recover_login(auth, user, server \\ __MODULE__),
+    do: GenServer.call(server, {:recover_login, auth, user}, @genserver_timeout)
+
+  @spec logout(Type.server()) :: Type.logout_response()
+  def logout(server \\ __MODULE__), do: GenServer.call(server, :logout, @genserver_timeout)
 
   #############
   # Callbacks #
@@ -155,5 +160,5 @@ defmodule AuctionHouse.Runtime.Server do
   @impl GenServer
   def handle_info({:EXIT, _pid, :normal}, state), do: {:noreply, state}
 
-  def child_spec(_), do: %{id: __MODULE__, start: {__MODULE__, :start_link, []}}
+  def child_spec(args), do: %{id: __MODULE__, start: {__MODULE__, :start_link, args}}
 end

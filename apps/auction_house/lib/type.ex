@@ -9,6 +9,7 @@ defmodule AuctionHouse.Type do
   # Types  #
   ##########
 
+  @type server :: atom()
   @type item_id :: String.t()
   @type item_name :: String.t()
   @type reason :: atom()
