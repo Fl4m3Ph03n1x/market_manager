@@ -22,8 +22,6 @@ defmodule AuctionHouseTest do
         err -> err
       end
 
-    on_exit(fn -> GenServer.stop(server) end)
-
     %{
       bypass: bypass,
       server: server,
