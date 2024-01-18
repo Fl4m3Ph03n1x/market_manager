@@ -30,9 +30,7 @@ defmodule Store.MixProject do
       {:shared, in_umbrella: true},
 
       # Test and Dev
-      {:mix_test_watch, "~> 1.0", only: [:dev, :test], runtime: false},
-      {:mock, "~> 0.3.0", only: [:dev, :test]},
-      {:gradient, github: "esl/gradient", only: [:dev, :test], runtime: false}
+      {:mix_test_watch, "~> 1.0", only: [:dev, :test], runtime: false}
     ]
   end
 
