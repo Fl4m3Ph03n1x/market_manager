@@ -18,7 +18,7 @@ defmodule Shared.Utils.Tuples do
   @doc """
   Returns whether or not a tagged tuple is of type OK.
   """
-  @spec is_ok?({atom, any}) :: boolean
-  def is_ok?({:ok, _data}), do: true
-  def is_ok?({_tag, _data}), do: false
+  @spec ok?({atom, any}) :: boolean
+  def ok?({:ok, _data}), do: true
+  def ok?({_tag, _data}), do: false
 end
