@@ -195,6 +195,7 @@ defmodule Manager do
 
   > Manager.active_syndicates()
   {:error, :enoent}
+  ```
   """
   @spec active_syndicates :: Type.active_syndicates_response()
   defdelegate active_syndicates, to: Worker
