@@ -19,7 +19,8 @@ defmodule AuctionHouse.Runtime.Server do
   ##############
 
   @spec start_link :: :ignore | {:error, any} | {:ok, pid}
-  def start_link, do: GenServer.start_link(__MODULE__, nil, name: __MODULE__)
+  def start_link,
+    do: GenServer.start_link(__MODULE__, nil, name: __MODULE__)
 
   @spec get_all_orders(Type.item_name()) :: Type.get_all_orders_response()
   def get_all_orders(item_name),
@@ -155,5 +156,5 @@ defmodule AuctionHouse.Runtime.Server do
   @impl GenServer
   def handle_info({:EXIT, _pid, :normal}, state), do: {:noreply, state}
 
-  def child_spec(_), do: %{id: __MODULE__, start: {__MODULE__, :start_link, []}}
+  def child_spec(args), do: %{id: __MODULE__, start: {__MODULE__, :start_link, args}}
 end

@@ -4,20 +4,21 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="ExDoc v0.30.6">
-    <meta name="project" content="Market Manager v2.1.5">
+    <meta name="generator" content="ExDoc v0.31.1">
+    <meta name="project" content="Market Manager v2.1.7">
 
-    <title>README — Market Manager v2.1.5</title>
-    <link rel="stylesheet" href="dist/html-elixir-M3TQBNKO.css" />
+
+    <title>README — Market Manager v2.1.7</title>
+    <link rel="stylesheet" href="dist/html-elixir-FM2CSD74.css" />
 
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
-    <script src="dist/handlebars.templates-KDPBTEPL.js"></script>
-    <script src="dist/sidebar_items-A0D1098B.js"></script>
+    <script src="dist/handlebars.templates-43PMFBC7.js"></script>
+    <script src="dist/sidebar_items-13806971.js"></script>
 
       <script src="docs_config.js"></script>
 
-    <script async src="dist/html-CP2A7WXZ.js"></script>
+    <script async src="dist/html-L4O5OK2K.js"></script>
 
 
   </head>
@@ -38,66 +39,87 @@
 
 <div class="main">
 
-<button class="sidebar-button sidebar-toggle" aria-label="toggle sidebar">
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
   <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
 </button>
 
-<section class="sidebar">
-  <form class="sidebar-search" action="search.html">
-    <button type="submit" class="search-button" aria-label="Submit Search">
-      <i class="ri-search-2-line" aria-hidden="true" title="Submit search"></i>
-    </button>
-    <button type="button" tabindex="-1" class="search-close-button" aria-label="Cancel Search">
-      <i class="ri-close-line ri-lg" aria-hidden="true" title="Cancel search"></i>
-    </button>
-    <label class="search-label">
-      <p class="sr-only">Search</p>
-      <input name="q" type="text" class="search-input" placeholder="Search..." aria-label="Input your search terms" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
-    </label>
-  </form>
+<div class="background-layer"></div>
 
-  <div class="autocomplete">
-    <div class="autocomplete-results">
-    </div>
-  </div>
+<nav id="sidebar" class="sidebar">
 
   <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
 
-      <a href="https://fl4m3ph03n1x.github.io/market_manager/">
-        <img src="assets/logo.png" alt="Market Manager" class="sidebar-projectImage">
-      </a>
+        <a href="https://fl4m3ph03n1x.github.io/market_manager/" class="sidebar-projectImage">
+          <img src="assets/logo.png" alt="Market Manager" />
+        </a>
 
-    <div class="sidebar-projectDetails">
-      <a href="https://fl4m3ph03n1x.github.io/market_manager/" class="sidebar-projectName" translate="no">
+      <div>
+        <a href="https://fl4m3ph03n1x.github.io/market_manager/" class="sidebar-projectName" translate="no">
 Market Manager
-      </a>
-      <div class="sidebar-projectVersion" translate="no">
-        v2.1.5
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v2.1.7
+        </div>
       </div>
     </div>
-    <ul class="sidebar-listNav">
-      <li><a id="extras-list-link" href="#full-list">Pages</a></li>
+    <ul id="sidebar-listNav" class="sidebar-listNav" role="tablist">
+      <li>
+        <button id="extras-list-tab-button" role="tab" data-type="extras" aria-controls="extras-tab-panel" aria-selected="true" tabindex="0">
+Pages
+        </button>
+      </li>
 
-        <li><a id="modules-list-link" href="#full-list">Modules</a></li>
+        <li>
+          <button id="modules-list-tab-button" role="tab" data-type="modules" aria-controls="modules-tab-panel" aria-selected="false" tabindex="-1">
+            Modules
+          </button>
+        </li>
 
 
     </ul>
   </div>
 
-  <ul id="full-list"></ul>
-</section>
+  <div id="extras-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="extras-list-tab-button">
+    <ul id="extras-full-list" class="full-list"></ul>
+  </div>
 
-<section class="content">
+    <div id="modules-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="modules-list-tab-button" hidden>
+      <ul id="modules-full-list" class="full-list"></ul>
+    </div>
+
+
+</nav>
+
+<main class="content">
   <output role="status" id="toast"></output>
   <div class="content-outer">
     <div id="content" class="content-inner">
+      <div class="top-search">
+        <div class="search-settings">
+          <form class="search-bar" action="search.html">
+            <label class="search-label">
+              <span class="sr-only">Search documentation of Market Manager</span>
+              <input name="q" type="text" class="search-input" placeholder="Search Documentation (press /)" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+            </label>
+            <button type="submit" class="search-button" aria-label="Submit Search">
+              <i class="ri-search-2-line ri-lg" aria-hidden="true" title="Submit search"></i>
+            </button>
+            <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+              <i class="ri-close-line ri-lg" title="Cancel search"></i>
+            </button>
+          </form>
+          <div class="autocomplete">
+          </div>
+          <button class="icon-settings display-settings">
+            <i class="ri-settings-3-line"></i>
+            <span class="sr-only">Settings</span>
+          </button>
+        </div>
+
+      </div>
 
 <h1>
-<button class="icon-action display-settings">
-  <i class="ri-settings-3-line"></i>
-  <span class="sr-only">Settings</span>
-</button>
-
 
     <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/README.md#L1" title="View Source" class="icon-action" rel="help">
       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
@@ -110,87 +132,57 @@ Market Manager
 
 <p align="center">    <a href="https://fl4m3ph03n1x.github.io/market_manager/">
         <img src="images/logo.png" alt="Logo" width="400"/>
-    </a></p><p align="center">    <a href="https://github.com/Fl4m3Ph03n1x/market_manager/workflows/build/badge.svg?branch=master">
-        <img src="https://github.com/Fl4m3Ph03n1x/market_manager/workflows/build/badge.svg?branch=master" alt="Build Status"/>
+    </a></p><p align="center">    <a href="https://github.com/Fl4m3Ph03n1x/market_manager/actions/workflows/master.yml">
+        <img src="https://github.com/Fl4m3Ph03n1x/market_manager/actions/workflows/master.yml/badge.svg" alt="Build Status"/>
     </a>
     <a href="https://coveralls.io/github/Fl4m3Ph03n1x/market_manager?branch=master">
         <img src="https://coveralls.io/repos/github/Fl4m3Ph03n1x/market_manager/badge.svg?branch=master" alt="Coverage Status"/>
     </a></p><h1>MarketManager</h1><p>Makes sell requests in batch to warframe market.
-Used when you want to sell a lot of things or remove them from your list all at
-once. Specially useful for syndicates because you don't have to buy everything
-in advance and then sell. You only need to do 3 things:</p><ul><li>Launch the manager</li><li>Activate a syndicate(s) you want</li><li>Sit back and relax</li></ul><p>Then, when someone pings you to buy an item, you can go the syndicate, buy it and sell it on the spot.</p><p>WarframeMarket (the website) does have a 100 items limit though, so you may want to keep this in mind as you won't be able to activate everything (unless you are a Patreon, in which case the limit does not apply).</p><h1>User guide</h1><p>This section has some basic references and help for users that want to learn how to use the application.</p><h2 id="setup" class="section-heading">
-  <a href="#setup">
+Used when you want to sell a lot of things or remove them from your list all at once. Specially useful for syndicates 
+because you don't have to buy everything in advance and then sell. You only need to do 3 things:</p><ul><li>Launch the manager</li><li>Activate a syndicate(s) you want</li><li>Sit back and relax</li></ul><p>Then, when someone pings you to buy an item, you can go the syndicate, buy it and sell it on the spot.</p><p>WarframeMarket (the website) does have a 100 items limit though, so you may want to keep this in mind as you won't be 
+able to activate everything (unless you are a Patreon, in which case the limit does not apply).</p><h1>Requirements</h1><p>This application has no requirements on the user side, as the entire erlang VM and context are bundled together with the 
+application in the zip file.</p><p>By default the application will open a separate browser window and it will run there using your localhost.</p><p>If however, you wish to run the application in windowed mode, you can do so by downloading and installing WebView2 
+support for Edge:</p><ul><li><a href="https://developer.microsoft.com/en-us/microsoft-edge/webview2/?form=MA13LH">https://developer.microsoft.com/en-us/microsoft-edge/webview2/?form=MA13LH</a></li></ul><p>After the installation, the application will default to the windowed mode. You can however still use the browser if you 
+wish by going to <strong>Extras -&gt; Open in browser</strong>.</p><h1>User guide</h1><p>As a user, you will see two windows opening. The <strong>interface</strong> (explained in the next subchapter) and the <strong>terminal</strong>.
+The terminal is there for mostly two things:</p><ul><li>transparency to the user: This way you can see what the application is really doing.</li><li>debugging: By seeing the logs, you can help contribute with errors. </li></ul><p>For this reason, I won't be explaining anything about the terminal, although it is important to note that <strong>if you kill
+the terminal (by closing it), you will also kill the application</strong>. This can be useful, in case the apps bugs out, which 
+should be rare.</p><h2 id="interface" class="section-heading">
+  <a href="#interface" class="hover-link">
     <i class="ri-link-m" aria-hidden="true"></i>
-    Setup
   </a>
+  <span class="text">Interface</span>
 </h2>
-<p>Before using this application you need to get access to two things:</p><ol><li>x-rfctoken from warframe.market</li><li>a cookie from warframe.market</li></ol><p>To get both of them you can:</p><ol><li>Login with your account to warframe.market</li><li>Set you status to &quot;Invisible&quot;</li><li>Go to &quot;My profile&quot;</li><li>Click &quot;Place order&quot; button and fill in the form, BUT DO NOT PRESS &quot;POST&quot;</li><li>Using your favorite browser enter the developer's console (usually by pressing F12)</li><li>Go to the network section of the developer's console, clear it (if it has previous logs) and start monitoring</li><li>Press the &quot;POST&quot; button on the form</li><li>The console should have logged a POST request to the website</li><li>Inspect the request and look for &quot;Request headers&quot;</li><li>Copy the cookie and the token to somewhere</li></ol><p>Once you have the cookie and the token, go to the <code class="inline">Authenticate</code> menu on the sidebar and save them.</p><p>You are now ready to use the application.</p><h2 id="windowed-mode" class="section-heading">
-  <a href="#windowed-mode">
+<p>This section has some basic references and help for users that want to learn how to use the application.</p><p>Once you download and extract the contents of the zip file, you can launch the application via the shortcut. 
+(You need to give Windows the necessary permissions, which will pop up)</p><p>With that out of the day you will be greeted with the login menu:</p><p align="center"><img src="images/login.png" alt="Logo" width="600"/></p><p>It is important to note that the application <strong>does not save your credentials</strong>. We only save an authentication token
+that expires after some time. 
+Furthermore, your credentials <strong>are not transmitted anywhere</strong>, so you don't have to worry about that.</p><p>Once the login is done, you can either activate or deactivate a set of syndicates.</p><p align="center"><img src="images/activate.png" alt="Logo" width="600"/>
+<img src="images/deactivate.png" alt="Logo" width="600"/></p><p>Activating and deactivating are both operations that can take a long time, so you usually see a progress screen:</p><p align="center"><img src="images/progress.png" alt="Logo" width="600"/></p><p>You can also logout by clicking in your username at the top right corner if you wish.</p><h1>Developer Guide</h1><p>This guide describes a developer setup for Windows.</p><h2 id="requirements" class="section-heading">
+  <a href="#requirements" class="hover-link">
     <i class="ri-link-m" aria-hidden="true"></i>
-    Windowed mode
   </a>
+  <span class="text">Requirements</span>
 </h2>
-<p>By default the application will open a separate browser window and it will run there using your localhost.</p><p>If however, you wish to run the application in windowed mode, you can do so by downloading and installing WebView2 support for Edge:</p><ul><li><a href="https://msedge.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/d1f50f11-2c31-4c24-8961-3dc1bb3b8ea3/MicrosoftEdgeWebview2Setup.exe">https://msedge.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/d1f50f11-2c31-4c24-8961-3dc1bb3b8ea3/MicrosoftEdgeWebview2Setup.exe</a></li></ul><p>After the installation, the application will default to the windowed mode. You can however still use the browser if you wish by going to <strong>Extras -&gt; Open in browser</strong>.</p><h2 id="usage" class="section-heading">
-  <a href="#usage">
+<ul><li>Erlang OTP &gt;= 26: <a href="https://www.erlang.org/downloads">https://www.erlang.org/downloads</a></li><li>Elixir &gt;= 1.16 (I recommend the installer): <a href="https://elixir-lang.org/install.html#windows">https://elixir-lang.org/install.html#windows</a></li><li>wxWidget: <a href="https://www.wxwidgets.org/downloads/">https://www.wxwidgets.org/downloads/</a></li><li>While it doesn't require a lot of memory to run, it does require a lot of memory to compile, at least 4GB.</li><li>If using powershell, you need to have permissions to run scripts: <code class="inline">Set-ExecutionPolicy -ExecutionPolicy Bypass</code></li><li>Install chocolatey: <a href="https://chocolatey.org/install">https://chocolatey.org/install</a></li><li>Install bakeware dependencies: <code class="inline">choco install -y zstandard make mingw</code></li><li>Setup powershell environment variables <code class="inline">$env:CC=&quot;gcc&quot;</code> and <code class="inline">$env:MAKE=&quot;make&quot;</code></li><li>An editor of your choice. I use VScode with some plugins and the <code class="inline">Fira Code</code> font: <a href="https://github.com/tonsky/FiraCode">https://github.com/tonsky/FiraCode</a></li><li>To test the application in Windowed mode, you also need to install WebView2 support for Edge. Refer to the 
+<strong>User Guide</strong> section for more information.</li></ul><h2 id="how-to-run-it" class="section-heading">
+  <a href="#how-to-run-it" class="hover-link">
     <i class="ri-link-m" aria-hidden="true"></i>
-    Usage
   </a>
-</h2>
-<p>The inventory file is called <code class="inline">products.json</code>. This file contain a list of objects, each one with an array of things to sell alongside some additional information.</p><p>It only supports mods currently.</p><pre><code class="json">{
-    &quot;red_veil&quot;: [
-        {
-            &quot;name&quot;: &quot;Gleaming Blight&quot;,
-            &quot;id&quot;: &quot;54a74454e779892d5e5155d5&quot;,
-            &quot;min_price&quot;: 14,
-            &quot;default_price&quot;: 16
-        },
-        {
-            &quot;name&quot;: &quot;Eroding Blight&quot;,
-            &quot;id&quot;: &quot;54a74454e779892d5e5155a0&quot;,
-            &quot;min_price&quot;: 14,
-            &quot;default_price&quot;: 16
-        }
-    ],
-    &quot;new_loka&quot;: [
-        {
-            &quot;name&quot;: &quot;Winds of purity&quot;,
-            &quot;id&quot;: &quot;54a74455e779892d5e51569a&quot;,
-            &quot;min_price&quot;: 14,
-            &quot;default_price&quot;: 16
-        },
-        {
-            &quot;name&quot;: &quot;Disarming purity&quot;,
-            &quot;id&quot;: &quot;5911f11d97a0add8e9d5da4c&quot;,
-            &quot;min_price&quot;: 14,
-            &quot;default_price&quot;: 16
-        }
-    ]
-}</code></pre><p>The format of each item is the following:</p><pre><code class="javascript">{
-  &quot;name&quot;: &quot;Disarming purity&quot;,       //name of the item. DON'T TOUCH THIS.
-  &quot;id&quot;: &quot;5911f11d97a0add8e9d5da4c&quot;, //warframe.market item id. DON'T TOUCH THIS.
-  &quot;min_price&quot;: 14,                  //prices are calculated by the chosen strategy. This will override the strategy's price if the calculated price is inferior. A safety net, this is the minimum price you will sell this item for. 
-  &quot;default_price&quot;:16,               //if no one is selling this item or if the strategy was unable to calculate a price for the item, this is the value you will sell it for.
-  &quot;rank&quot;: 1,                        //rank of the mod, defaults to 0. If the mod has no rank use &quot;n/a&quot; instead
-  &quot;quantity&quot;: 1                     //number of items to sell, defaults to 1
-}</code></pre><p>I provide some basic defaults in the <code class="inline">products.json</code> based on my personal experience. Feel free to change the defaults to your liking. Once this is done, you are ready to go.</p><h1>Developer Guide</h1><p>This guide describes a developer setup for Windows.</p><h2 id="requirements" class="section-heading">
-  <a href="#requirements">
-    <i class="ri-link-m" aria-hidden="true"></i>
-    Requirements
-  </a>
-</h2>
-<ul><li>Erlang OTP &gt;= 24: <a href="https://www.erlang.org/downloads">https://www.erlang.org/downloads</a></li><li>Elixir &gt;= 1.13 (I recommend the installer): <a href="https://elixir-lang.org/install.html#windows">https://elixir-lang.org/install.html#windows</a></li><li>wxWidget: <a href="https://www.wxwidgets.org/downloads/">https://www.wxwidgets.org/downloads/</a></li><li>While it doesn't require a lot of memory to run, it does require a lot of memory to compile, at least 4GB.</li><li>If using powershell, you need to have permissions to run scripts: <code class="inline">Set-ExecutionPolicy -ExecutionPolicy Bypass</code></li><li>Install chocolatey: <a href="https://chocolatey.org/install">https://chocolatey.org/install</a></li><li>Install bakeware dependencies: <code class="inline">choco install -y zstandard make mingw</code></li><li>Setup powershell environment variables <code class="inline">$env:CC=&quot;gcc&quot;</code> and <code class="inline">$env:MAKE=&quot;make&quot;</code></li><li>An editor of your choice. I use VScode with some plugins and the <code class="inline">Fira Code</code> font: <a href="https://github.com/tonsky/FiraCode">https://github.com/tonsky/FiraCode</a></li><li>To test the application in Windowed mode, you also need to install WebView2 support for Edge. Refer to the <strong>User Guide</strong> section for more information.</li></ul><h2 id="how-to-run-it" class="section-heading">
-  <a href="#how-to-run-it">
-    <i class="ri-link-m" aria-hidden="true"></i>
-    How to run it
-  </a>
+  <span class="text">How to run it</span>
 </h2>
 <p>After the initial setup, the following commands are used to get started:</p><ul><li><a href="https://hexdocs.pm/mix/Mix.Tasks.Local.Hex.html"><code class="inline">mix local.hex</code></a> to install / update hex</li><li><code class="inline">mix archive.install hex phx_new</code> to install the Phoenix framework</li><li><a href="https://hexdocs.pm/mix/Mix.Tasks.Deps.Get.html"><code class="inline">mix deps.get</code></a> fetches and installs all the dependencies</li><li><a href="https://hexdocs.pm/mix/Mix.Tasks.Test.html"><code class="inline">mix test</code></a> run all tests</li><li><a href="https://hexdocs.pm/mix_test_watch/1.1.1/Mix.Tasks.Test.Watch.html"><code class="inline">mix test.watch</code></a> runs all tests continuously and re-runs them every time a file changes</li></ul><h2 id="architecture" class="section-heading">
-  <a href="#architecture">
+  <a href="#architecture" class="hover-link">
     <i class="ri-link-m" aria-hidden="true"></i>
-    Architecture
   </a>
+  <span class="text">Architecture</span>
 </h2>
-<p>MarketManager is divided into multiple small applications/libraries, each one with a single purpose in mind:</p><p><img src="./deps_graph.svg" alt="dependencies-graph"/></p><ul><li><code class="inline">web_interface</code> is a Phoenix application that holds all the code for the front-end.</li><li><code class="inline">manager</code> is the core of the application, the entry point for all user requests. It talks to the rest of the layers.</li><li><code class="inline">auction_house</code> is the app responsible for understanding and making requests to the given auction house. In this case, warframe market.</li><li><code class="inline">store</code> is the persistency layer. It saves your data and remembers what is being sold or not.</li></ul><p>For more information, feel free to read the README file of each application.</p><p>A previous version of MarketManager also had a <code class="inline">cli</code> application interfacing with <code class="inline">manager</code>. This can still be seen in the <code class="inline">v1</code> branch, which is being saved for posterity: <a href="https://github.com/Fl4m3Ph03n1x/market_manager/tree/v1">https://github.com/Fl4m3Ph03n1x/market_manager/tree/v1</a></p><p>Do note that <code class="inline">v1</code> was the alpha release and is no longer being supported. It is still a very good resource for applications with CLI interfaces though.</p>
+<p>MarketManager is divided into multiple small applications/libraries, each one with a single purpose in mind:</p><pre><code class="mermaid">  graph TD;
+      web_interface--&gt;manager;
+      manager--&gt;auction_house;
+      manager--&gt;store;
+      shared--&gt;manager;
+      shared--&gt;store;
+      shared--&gt;web_interface;
+      shared--&gt;auction_house;</code></pre><ul><li><code class="inline">web_interface</code> is a Phoenix application that holds all the code for the front-end. Works as the client.</li><li><code class="inline">manager</code> is the core of the application, the entry point for all user requests. It talks to the rest of the layers.</li><li><code class="inline">auction_house</code> is the app responsible for understanding and making requests to the given auction house. In this case, warframe market.</li><li><code class="inline">store</code> is the persistency layer. It saves your data and remembers what is being sold or not.</li><li><code class="inline">shared</code> is a library that holds the domain model entities of the entire project. </li></ul><p>For more information, feel free to read the README file of each application.</p><p>A previous version of MarketManager also had a <code class="inline">cli</code> application interfacing with <code class="inline">manager</code>. This can still be seen in the <code class="inline">v1</code> branch, which is being saved for posterity: <a href="https://github.com/Fl4m3Ph03n1x/market_manager/tree/v1">https://github.com/Fl4m3Ph03n1x/market_manager/tree/v1</a></p><p>Do note that <code class="inline">v1</code> was the alpha release and is no longer being supported. It is still a very good resource for applications with CLI interfaces though.</p>
 <div class="bottom-actions">
   <div class="bottom-actions-item">
 
@@ -225,7 +217,7 @@ API Reference
 
         <p class="built-using">
           Built using
-          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.30.6) for the
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.31.1) for the
 
             <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
 
@@ -233,7 +225,7 @@ API Reference
       </footer>
     </div>
   </div>
-</section>
+</main>
 </div>
 
 

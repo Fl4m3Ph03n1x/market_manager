@@ -34,7 +34,6 @@ defmodule AuctionHouse.MixProject do
 
       # Test and Dev
       {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
-      {:plug_cowboy, "~> 2.5", only: [:dev, :test]},
       {:bypass, "~> 2.1", only: [:dev, :test]}
     ]
 

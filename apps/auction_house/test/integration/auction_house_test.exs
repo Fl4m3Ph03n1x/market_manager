@@ -13,9 +13,20 @@ defmodule AuctionHouseTest do
   @test_port 8082
 
   setup do
-    {:ok, pid} = start_supervised(Server)
     bypass = Bypass.open(port: @test_port)
-    %{bypass: bypass, server: pid}
+
+    {:ok, server} =
+      case Server.start_link() do
+        {:ok, server} -> {:ok, server}
+        {:error, {:already_started, server}} -> {:ok, server}
+        err -> err
+      end
+
+    %{
+      bypass: bypass,
+      server: server,
+      server_name: AuctionHouse.Runtime.Server_auction_house_integration_test_0
+    }
   end
 
   describe "place_oder/1" do
@@ -78,7 +89,7 @@ defmodule AuctionHouseTest do
       :sys.replace_state(server, fn state -> Map.put(state, :authorization, login_info) end)
 
       # Act
-      actual = AuctionHouse.place_order(order)
+      actual = Server.place_order(order)
 
       expected =
         {:ok,
@@ -110,7 +121,7 @@ defmodule AuctionHouseTest do
       :sys.replace_state(server, fn state -> Map.put(state, :authorization, login_info) end)
 
       # Act
-      actual = AuctionHouse.delete_order(placed_order)
+      actual = Server.delete_order(placed_order)
       expected = :ok
 
       # Assert
@@ -180,7 +191,7 @@ defmodule AuctionHouseTest do
       item_name = "Gleaming Blight"
 
       # Act
-      actual = AuctionHouse.get_all_orders(item_name)
+      actual = Server.get_all_orders(item_name)
 
       expected =
         {:ok,
@@ -255,7 +266,7 @@ defmodule AuctionHouseTest do
       }
 
       # Act
-      actual = AuctionHouse.login(credentials)
+      actual = Server.login(credentials)
 
       expected =
         {:ok,
@@ -282,7 +293,7 @@ defmodule AuctionHouseTest do
       user = UserInfo.new(%{"ingame_name" => "fl4m3", "patreon?" => false})
 
       # Act
-      actual = AuctionHouse.recover_login(auth, user)
+      actual = Server.recover_login(auth, user)
       server_state = :sys.get_state(server)
 
       # Assert
@@ -332,10 +343,10 @@ defmodule AuctionHouseTest do
         password: "password"
       }
 
-      AuctionHouse.login(credentials)
+      Server.login(credentials)
 
       # Act
-      actual = AuctionHouse.logout()
+      actual = Server.logout()
       server_state = :sys.get_state(server)
 
       # Assert
