@@ -186,6 +186,40 @@ defmodule AuctionHouse.HTTPClientTest do
       assert actual == expected
     end
 
+    test "returns error if server experiences an unknown internal error" do
+      # Arrange
+      order =
+        Order.new(%{
+          "order_type" => "sell",
+          "item_id" => "54a74454e779892d5e5155d5",
+          "platinum" => 15,
+          "quantity" => 1,
+          "mod_rank" => 0
+        })
+
+      state = %{
+        dependencies: %{
+          post_fn: fn _url, _body, _headers, _opts ->
+            {:ok,
+             %HTTPoison.Response{
+               status_code: 520,
+               body: "error code: 520"
+             }}
+          end,
+          run_fn: fn _queue_name, func -> func.() end,
+          requests_queue: nil
+        },
+        authorization: %Authorization{cookie: "cookie", token: "token"}
+      }
+
+      # Act
+      actual = HTTPClient.place_order(order, state)
+      expected = {:error, :unknown_server_error, order}
+
+      # Assert
+      assert actual == expected
+    end
+
     test "returns error if a generic network error occurred while placing a request" do
       # Arrange
       order =
@@ -367,6 +401,37 @@ defmodule AuctionHouse.HTTPClientTest do
       # Act
       actual = HTTPClient.delete_order(placed_order, state)
       expected = {:error, :internal_server_error, placed_order}
+
+      # Assert
+      assert actual == expected
+    end
+
+    test "returns error if server experiences an unknown internal error" do
+      # Arrange
+      placed_order =
+        PlacedOrder.new(%{
+          "order_id" => "5ee71a2604d55c0a5cbdc3c2",
+          "item_id" => "57c73be094b4b0f159ab5e15"
+        })
+
+      state = %{
+        dependencies: %{
+          delete_fn: fn _url, _headers, _opts ->
+            {:ok,
+             %HTTPoison.Response{
+               status_code: 520,
+               body: "error code: 520"
+             }}
+          end,
+          run_fn: fn _queue_name, func -> func.() end,
+          requests_queue: nil
+        },
+        authorization: %Authorization{cookie: "cookie", token: "token"}
+      }
+
+      # Act
+      actual = HTTPClient.delete_order(placed_order, state)
+      expected = {:error, :unknown_server_error, placed_order}
 
       # Assert
       assert actual == expected
