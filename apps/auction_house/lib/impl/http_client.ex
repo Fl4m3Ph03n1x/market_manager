@@ -253,6 +253,15 @@ defmodule AuctionHouse.Impl.HTTPClient do
          |> build_error_response(data)
 
   defp to_auction_house_error(
+         {:ok, %HTTPoison.Response{status_code: 520, body: error_body}},
+         data
+       ),
+       do:
+         error_body
+         |> map_error()
+         |> build_error_response(data)
+
+  defp to_auction_house_error(
          {:error, %HTTPoison.Error{id: _id, reason: reason}},
          data
        ),
@@ -274,8 +283,7 @@ defmodule AuctionHouse.Impl.HTTPClient do
            | :order_already_placed
            | :order_non_existent
            | :rank_level_non_applicable}
-  defp map_error(~s({"error": {"item_id": ["app.form.invalid"]}})),
-    do: {:error, :invalid_item_id}
+  defp map_error(~s({"error": {"item_id": ["app.form.invalid"]}})), do: {:error, :invalid_item_id}
 
   defp map_error(~s({"error": {"_form": ["app.post_order.already_created_no_duplicates"]}})),
     do: {:error, :order_already_placed}
@@ -292,8 +300,9 @@ defmodule AuctionHouse.Impl.HTTPClient do
   defp map_error(~s({"error": {"email": ["app.account.email_not_exist"]}})),
     do: {:error, :wrong_email}
 
-  defp map_error(~s({"error": {"email": ["app.form.invalid"]}})),
-    do: {:error, :invalid_email}
+  defp map_error(~s({"error": {"email": ["app.form.invalid"]}})), do: {:error, :invalid_email}
+
+  defp map_error("error code: 520"), do: {:error, :unknown_server_error}
 
   defp map_error(html) when is_binary(html) do
     Logger.error("AuctionHouse.map_error/1 received an unknown error: #{html}")
