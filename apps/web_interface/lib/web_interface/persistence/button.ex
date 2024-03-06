@@ -3,27 +3,26 @@ defmodule WebInterface.Persistence.Button do
   Persistence module to know which buttons are selected.
   """
 
-  alias ETS
   alias WebInterface.Persistence
 
-  @spec set_button(atom) :: :ok | {:error, any}
-  def set_button(button) when is_atom(button) do
-    with {:ok, table} <- ETS.KeyValueSet.wrap_existing(Persistence.table()),
-         {:ok, _updated_table} <- ETS.KeyValueSet.put(table, :button, button) do
+  @spec set_button(atom(), Persistence.table()) :: :ok | {:error, any()}
+  def set_button(button, table \\ Persistence.default_table()) when is_atom(button) do
+    with {:ok, table_ref} <- table.recover.(table.name),
+         {:ok, _updated_table_ref} <- table.put.(table_ref, :button, button) do
       :ok
     end
   end
 
-  @spec get_button :: {:ok, atom | nil} | {:error, any}
-  def get_button do
-    with {:ok, table} <- ETS.KeyValueSet.wrap_existing(Persistence.table()) do
-      ETS.KeyValueSet.get(table, :button, nil)
+  @spec get_button(Persistence.table()) :: {:ok, atom()} | {:error, any()}
+  def get_button(table \\ Persistence.default_table()) do
+    with {:ok, table_ref} <- table.recover.(table.name) do
+      table.get.(table_ref, :button, nil)
     end
   end
 
-  @spec button_selected?(atom) :: boolean
-  def button_selected?(button) when is_atom(button) do
-    case get_button() do
+  @spec button_selected?(atom(), Persistence.table()) :: boolean()
+  def button_selected?(button, table \\ Persistence.default_table()) when is_atom(button) do
+    case get_button(table) do
       {:ok, nil} -> false
       {:ok, active_button} -> button == active_button
       _error -> false

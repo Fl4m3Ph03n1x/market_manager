@@ -3,169 +3,290 @@ defmodule WebInterface.Persistence.SyndicateTest do
 
   use ExUnit.Case
 
-  alias ETS
+  import ExUnit.CaptureLog
+
   alias Shared.Data.Syndicate
   alias WebInterface.Persistence.Syndicate, as: SyndicateStore
 
   defp by_id(%{id: id}), do: id
 
-  setup_all do
+  setup do
     syndicates =
       [
-        Syndicate.new(name: "Red Veil", id: :red_veil, catalog: []),
-        Syndicate.new(name: "Perrin Sequence", id: :perrin_sequence, catalog: []),
-        Syndicate.new(name: "New Loka", id: :new_loka, catalog: []),
         Syndicate.new(name: "Arbiters of Hexis", id: :arbiters_of_hexis, catalog: []),
-        Syndicate.new(name: "Steel Meridian", id: :steel_meridian, catalog: []),
-        Syndicate.new(name: "Cephalon Suda", id: :cephalon_suda, catalog: []),
+        Syndicate.new(name: "Arbitrations", id: :arbitrations, catalog: []),
         Syndicate.new(name: "Cephalon Simaris", id: :cephalon_simaris, catalog: []),
-        Syndicate.new(name: "Arbitrations", id: :arbitrations, catalog: [])
+        Syndicate.new(name: "Cephalon Suda", id: :cephalon_suda, catalog: []),
+        Syndicate.new(name: "New Loka", id: :new_loka, catalog: []),
+        Syndicate.new(name: "Perrin Sequence", id: :perrin_sequence, catalog: []),
+        Syndicate.new(name: "Red Veil", id: :red_veil, catalog: []),
+        Syndicate.new(name: "Steel Meridian", id: :steel_meridian, catalog: [])
       ]
-      |> Enum.sort()
 
-    syndicate_ids =
-      syndicates
-      |> Enum.map(&by_id/1)
-      |> Enum.sort()
+    syndicate_ids = Enum.map(syndicates, &by_id/1)
 
-    %{syndicates: syndicates, syndicate_ids: syndicate_ids}
+    %{
+      syndicates: syndicates,
+      syndicate_ids: syndicate_ids,
+      table: %{
+        name: :data,
+        recover: fn :data -> {:ok, :table_ref} end,
+        get: fn :table_ref, :syndicates, _default -> {:ok, syndicates} end,
+        put: fn :table_ref, _key, _val -> {:ok, :table_ref} end
+      }
+    }
   end
 
   describe "get_syndicates" do
-    test "gets all syndicates", %{syndicate_ids: syndicate_ids} do
-      {:ok, actual_syndicates} = SyndicateStore.get_syndicates()
-
-      sorted_syndicates =
-        actual_syndicates
-        |> Enum.map(&by_id/1)
-        |> Enum.sort()
-
-      assert sorted_syndicates == syndicate_ids
+    test "gets all syndicates", setup do
+      assert SyndicateStore.get_syndicates(setup.table) == {:ok, setup.syndicates}
     end
   end
 
   describe "get_all_syndicates_by_id" do
-    test "get all syndicates by its ids", _data do
-      {:ok, syndicates} = SyndicateStore.get_all_syndicates_by_id(["red_veil", "new_loka"])
-
-      sorted_syndicates = Enum.map(syndicates, &by_id/1)
-
-      assert sorted_syndicates == [:red_veil, :new_loka]
+    test "get all syndicates by its ids", setup do
+      {:ok, syndicates} = SyndicateStore.get_all_syndicates_by_id(["red_veil", "new_loka"], setup.table)
+      assert Enum.map(syndicates, &by_id/1) == [:new_loka, :red_veil]
     end
   end
 
   describe "get_syndicate_by_id" do
-    test "gets a syndicate by its id", _data do
-      {:ok, syndicate} = SyndicateStore.get_syndicate_by_id("red_veil")
+    test "gets a syndicate by its id", setup do
+      {:ok, syndicate} = SyndicateStore.get_syndicate_by_id("red_veil", setup.table)
       assert syndicate.id == :red_veil
     end
 
-    test "returns error if syndicate is not found" do
-      assert {:error, :not_found} == SyndicateStore.get_syndicate_by_id("error")
+    test "returns error if syndicate is not found", setup do
+      assert {:error, :not_found} == SyndicateStore.get_syndicate_by_id("error", setup.table)
     end
   end
 
   describe "activate_syndicates" do
-    test "activates the given syndicates", _data do
+    test "activates the given syndicates", setup do
+      table =
+        Map.merge(setup.table, %{
+          get: fn :table_ref, :active_syndicates, nil -> {:ok, nil} end,
+          put: fn
+            :table_ref, :active_syndicates, data ->
+              result =
+                cond do
+                  data == MapSet.new([%Syndicate{catalog: [], id: :new_loka, name: "New Loka"}]) -> true
+                  data == MapSet.new([%Syndicate{catalog: [], id: :red_veil, name: "Red Veil"}]) -> true
+                  true -> false
+                end
+
+              assert result
+
+              {:ok, :table_ref}
+          end
+        })
+
       red_veil = Syndicate.new(name: "Red Veil", id: :red_veil, catalog: [])
       new_loka = Syndicate.new(name: "New Loka", id: :new_loka, catalog: [])
 
-      :ok = SyndicateStore.activate_syndicates([red_veil, new_loka])
-      {:ok, active_syndicates} = SyndicateStore.get_active_syndicates()
-
-      assert active_syndicates |> Enum.sort() |> Enum.map(&by_id/1) == [:new_loka, :red_veil]
-
-      :ok = SyndicateStore.deactivate_syndicate(red_veil)
-      :ok = SyndicateStore.deactivate_syndicate(new_loka)
+      assert SyndicateStore.activate_syndicates([red_veil, new_loka], table) == :ok
     end
   end
 
   describe "activate_syndicate" do
-    test "activates the given syndicate", _data do
+    test "activates the given syndicate", setup do
+      table =
+        Map.merge(setup.table, %{
+          get: fn :table_ref, :active_syndicates, nil -> {:ok, nil} end,
+          put: fn
+            :table_ref, :active_syndicates, data ->
+              result =
+                if data == MapSet.new([%Syndicate{catalog: [], id: :red_veil, name: "Red Veil"}]) do
+                  true
+                else
+                  false
+                end
+
+              assert result
+
+              {:ok, :table_ref}
+          end
+        })
+
       red_veil = Syndicate.new(name: "Red Veil", id: :red_veil, catalog: [])
 
-      :ok = SyndicateStore.activate_syndicate(red_veil)
-      {:ok, active_syndicates} = SyndicateStore.get_active_syndicates()
-
-      assert active_syndicates == [red_veil]
-
-      :ok = SyndicateStore.deactivate_syndicate(red_veil)
+      assert SyndicateStore.activate_syndicate(red_veil, table) == :ok
     end
   end
 
   describe "deactivate_syndicate" do
-    test "deactivates the given syndicate", _data do
+    test "deactivates the given syndicate", setup do
+      table =
+        Map.merge(setup.table, %{
+          get: fn :table_ref, :active_syndicates, nil ->
+            {:ok, MapSet.new([%Syndicate{catalog: [], id: :red_veil, name: "Red Veil"}])}
+          end,
+          put: fn
+            :table_ref, :active_syndicates, data ->
+              assert data == MapSet.new()
+              {:ok, :table_ref}
+          end
+        })
+
       red_veil = Syndicate.new(name: "Red Veil", id: :red_veil, catalog: [])
-      :ok = SyndicateStore.activate_syndicate(red_veil)
-
-      :ok = SyndicateStore.deactivate_syndicate(red_veil)
-      {:ok, active_syndicates} = SyndicateStore.get_active_syndicates()
-
-      assert active_syndicates == []
+      assert SyndicateStore.deactivate_syndicate(red_veil, table) == :ok
     end
   end
 
   describe "syndicate_active?" do
-    test "returns whether or not a syndicate is active", _data do
+    test "returns whether or not a syndicate is active", setup do
+      table =
+        Map.merge(setup.table, %{
+          get: fn :table_ref, :active_syndicates, _mapset ->
+            {:ok, MapSet.new([%Syndicate{catalog: [], id: :red_veil, name: "Red Veil"}])}
+          end
+        })
+
       red_veil = Syndicate.new(name: "Red Veil", id: :red_veil, catalog: [])
 
-      :ok = SyndicateStore.activate_syndicate(red_veil)
+      assert SyndicateStore.syndicate_active?(red_veil, table)
+    end
 
-      assert SyndicateStore.syndicate_active?(red_veil)
+    test "logs error if access to memory fails", setup do
+      table =
+        Map.merge(setup.table, %{
+          get: fn :table_ref, :active_syndicates, _mapset ->
+            {:error, :invalid_table}
+          end
+        })
 
-      :ok = SyndicateStore.deactivate_syndicate(red_veil)
+      red_veil = Syndicate.new(name: "Red Veil", id: :red_veil, catalog: [])
+
+      assert capture_log(fn -> refute SyndicateStore.syndicate_active?(red_veil, table) end) =~
+               "Failed to run syndicate_active?"
     end
   end
 
   describe "all_syndicates_active?" do
-    test "returns whether or not all syndicates are active", %{syndicates: syndicates} do
-      Enum.each(syndicates, fn syndicate -> SyndicateStore.activate_syndicate(syndicate) end)
+    test "returns whether or not all syndicates are active", setup do
+      table =
+        Map.merge(setup.table, %{
+          get: fn
+            :table_ref, :syndicates, [] ->
+              {:ok, setup.syndicates}
 
-      assert SyndicateStore.all_syndicates_active?()
+            :table_ref, :active_syndicates, _mapset ->
+              {:ok,
+               MapSet.new([
+                 %Syndicate{name: "Red Veil", id: :red_veil, catalog: []},
+                 %Syndicate{name: "Perrin Sequence", id: :perrin_sequence, catalog: []},
+                 %Syndicate{name: "New Loka", id: :new_loka, catalog: []},
+                 %Syndicate{name: "Arbiters of Hexis", id: :arbiters_of_hexis, catalog: []},
+                 %Syndicate{name: "Steel Meridian", id: :steel_meridian, catalog: []},
+                 %Syndicate{name: "Cephalon Suda", id: :cephalon_suda, catalog: []},
+                 %Syndicate{name: "Cephalon Simaris", id: :cephalon_simaris, catalog: []},
+                 %Syndicate{name: "Arbitrations", id: :arbitrations, catalog: []}
+               ])}
+          end
+        })
 
-      Enum.each(syndicates, fn syndicate -> SyndicateStore.deactivate_syndicate(syndicate) end)
+      assert {:ok, true} == SyndicateStore.all_syndicates_active?(table)
     end
   end
 
   describe "get_active_syndicates" do
-    test "returns active syndicates", %{syndicates: syndicates} do
-      Enum.each(syndicates, fn syndicate -> SyndicateStore.activate_syndicate(syndicate) end)
+    test "returns active syndicates", setup do
+      table =
+        Map.merge(setup.table, %{
+          get: fn :table_ref, :active_syndicates, [] -> {:ok, MapSet.new(setup.syndicates)} end
+        })
 
-      {:ok, active_syndicates} = SyndicateStore.get_active_syndicates()
-      assert Enum.sort(active_syndicates) == Enum.sort(syndicates)
-
-      Enum.each(syndicates, fn syndicate -> SyndicateStore.deactivate_syndicate(syndicate) end)
+      {:ok, active_syndicates} = SyndicateStore.get_active_syndicates(table)
+      assert active_syndicates == setup.syndicates
     end
   end
 
   describe "get_inactive_syndicates" do
-    test "returns inactive syndicates", %{syndicates: [active_syndicate | rest]} do
-      SyndicateStore.activate_syndicate(active_syndicate)
+    test "returns inactive syndicates", setup do
+      table =
+        Map.merge(setup.table, %{
+          get: fn
+            :table_ref, :syndicates, [] ->
+              {:ok, setup.syndicates}
 
-      {:ok, inactive_syndicates} = SyndicateStore.get_inactive_syndicates()
-      assert inactive_syndicates |> Enum.map(&by_id/1)  |> Enum.sort() == rest |> Enum.map(&by_id/1) |> Enum.sort()
+            :table_ref, :active_syndicates, [] ->
+              {:ok,
+               MapSet.new([
+                 Syndicate.new(name: "Arbiters of Hexis", id: :arbiters_of_hexis, catalog: []),
+                 Syndicate.new(name: "Arbitrations", id: :arbitrations, catalog: []),
+                 Syndicate.new(name: "Cephalon Simaris", id: :cephalon_simaris, catalog: []),
+                 Syndicate.new(name: "Cephalon Suda", id: :cephalon_suda, catalog: []),
+                 Syndicate.new(name: "New Loka", id: :new_loka, catalog: []),
+                 Syndicate.new(name: "Perrin Sequence", id: :perrin_sequence, catalog: []),
+                 Syndicate.new(name: "Red Veil", id: :red_veil, catalog: [])
+               ])}
+          end
+        })
 
-      SyndicateStore.deactivate_syndicate(active_syndicate)
+      {:ok, inactive_syndicates} = SyndicateStore.get_inactive_syndicates(table)
+      assert Enum.map(inactive_syndicates, &by_id/1) == [:steel_meridian]
     end
   end
 
-  describe "set_selected_active_syndicates && get_selected_active_syndicates" do
-    test "sets and gets selected syndicates in Activate tab", %{syndicates: [syndicate | _rest]} do
-      :ok = SyndicateStore.set_selected_active_syndicates([syndicate])
-      {:ok, selected_syndicates} = SyndicateStore.get_selected_active_syndicates()
-      assert selected_syndicates == [syndicate]
+  describe "set_selected_active_syndicates" do
+    test "sets selected syndicates in Activate tab", setup do
+      syndicate =
+        Syndicate.new(name: "Red Veil", id: :red_veil, catalog: [])
 
-      :ok = SyndicateStore.set_selected_active_syndicates([])
+      table =
+        Map.merge(setup.table, %{
+          put: fn
+            :table_ref, :selected_active_syndicates, [^syndicate] -> {:ok, :table_ref}
+          end
+        })
+
+      assert :ok == SyndicateStore.set_selected_active_syndicates([syndicate], table)
     end
   end
 
-  describe "set_selected_inactive_syndicates && get_selected_inactive_syndicates" do
-    test "sets and gets selected syndicates in Deactivate tab", %{syndicates: [syndicate | _rest]} do
-      :ok = SyndicateStore.set_selected_inactive_syndicates([syndicate])
-      {:ok, selected_syndicates} = SyndicateStore.get_selected_inactive_syndicates()
-      assert selected_syndicates == [syndicate]
+  describe "get_selected_active_syndicates" do
+    test "gets selected syndicates in Activate tab", setup do
+      table =
+        Map.merge(setup.table, %{
+          get: fn
+            :table_ref, :selected_active_syndicates, [] -> {:ok, setup.syndicates}
+          end
+        })
 
-      :ok = SyndicateStore.set_selected_inactive_syndicates([])
+      {:ok, selected_syndicates} = SyndicateStore.get_selected_active_syndicates(table)
+
+      assert selected_syndicates == setup.syndicates
+    end
+  end
+
+  describe "set_selected_inactive_syndicates" do
+    test "sets selected syndicates in Deactivate tab", setup do
+      syndicate =
+        Syndicate.new(name: "Red Veil", id: :red_veil, catalog: [])
+
+      table =
+        Map.merge(setup.table, %{
+          put: fn
+            :table_ref, :selected_inactive_syndicates, [^syndicate] -> {:ok, :table_ref}
+          end
+        })
+
+      assert :ok == SyndicateStore.set_selected_inactive_syndicates([syndicate], table)
+    end
+  end
+
+  describe "get_selected_inactive_syndicates" do
+    test "gets selected syndicates in Deactivate tab", setup do
+      table =
+        Map.merge(setup.table, %{
+          get: fn
+            :table_ref, :selected_inactive_syndicates, [] -> {:ok, setup.syndicates}
+          end
+        })
+
+      {:ok, selected_syndicates} = SyndicateStore.get_selected_inactive_syndicates(table)
+
+      assert selected_syndicates == setup.syndicates
     end
   end
 end
