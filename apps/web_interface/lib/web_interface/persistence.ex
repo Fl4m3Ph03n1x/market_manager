@@ -7,18 +7,37 @@ defmodule WebInterface.Persistence do
   alias ETS
   alias Shared.Data.{Strategy, Syndicate, User}
 
-  @table_name :data
+  @type table :: %{
+          new: (ETS.KeyValueSet.set_options() -> {:error, any()} | {:ok, ETS.KeyValueSet.t()}),
+          put: (ETS.KeyValueSet.t(), any(), any() -> {:error, any()} | {:ok, ETS.KeyValueSet.t()}),
+          get: (ETS.KeyValueSet.t(), any(), any() -> {:error, any()} | {:ok, any()}),
+          recover: (ETS.table_identifier() -> {:error, any()} | {:ok, ETS.KeyValueSet.t()}),
+          name: atom()
+        }
 
-  @spec init([Strategy.t()], [Syndicate.t()], User.t()) :: :ok | {:error, any}
-  def init(strategies, syndicates, user) do
-    with {:ok, table} <- ETS.KeyValueSet.new(name: @table_name, protection: :public),
-         {:ok, table} <- ETS.KeyValueSet.put(table, :syndicates, syndicates),
-         {:ok, table} <- ETS.KeyValueSet.put(table, :strategies, strategies),
-         {:ok, _table} <- ETS.KeyValueSet.put(table, :user, user) do
+  @default_table %{
+    new: &ETS.KeyValueSet.new/1,
+    put: &ETS.KeyValueSet.put/3,
+    get: &ETS.KeyValueSet.get/3,
+    recover: &ETS.KeyValueSet.wrap_existing/1,
+    name: :data
+  }
+
+  @spec init([Strategy.t()], [Syndicate.t()], User.t(), table()) :: :ok | {:error, any}
+  def init(
+        strategies,
+        syndicates,
+        user,
+        %{name: name, new: new, put: put} = _table_data \\ @default_table
+      ) do
+    with {:ok, table} <- new.(name: name, protection: :public),
+         {:ok, table} <- put.(table, :syndicates, syndicates),
+         {:ok, table} <- put.(table, :strategies, strategies),
+         {:ok, _table} <- put.(table, :user, user) do
       :ok
     end
   end
 
-  @spec table :: atom
-  def table, do: @table_name
+  @spec default_table :: table()
+  def default_table, do: @default_table
 end
