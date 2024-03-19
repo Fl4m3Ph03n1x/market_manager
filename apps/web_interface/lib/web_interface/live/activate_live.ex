@@ -184,7 +184,7 @@ defmodule WebInterface.ActivateLive do
 
       to_assign =
         if Enum.empty?(missing_syndicates) do
-          [activation_current_syndicate: nil, activation_in_progress: false]
+          [activation_current_syndicate: nil, activation_in_progress: false, operation_in_progress?: false]
         else
           [next_syndicate | _rest] = missing_syndicates
           :ok = Manager.activate(next_syndicate, strategy)
@@ -196,7 +196,6 @@ defmodule WebInterface.ActivateLive do
         |> assign(active_syndicates: active_syndicates)
         |> assign(all_syndicates_active?: all_syndicates_active?)
         |> assign(selected_active_syndicates: new_selected_syndicates)
-        |> assign(operation_in_progress?: false)
         |> assign(to_assign)
 
       {:noreply, updated_socket}

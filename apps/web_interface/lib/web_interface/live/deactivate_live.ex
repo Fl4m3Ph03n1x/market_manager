@@ -150,7 +150,7 @@ defmodule WebInterface.DeactivateLive do
 
       to_assign =
         if Enum.empty?(missing_syndicates) do
-          [deactivation_current_syndicate: nil, deactivation_in_progress: false]
+          [deactivation_current_syndicate: nil, deactivation_in_progress: false, operation_in_progress?: false]
         else
           [next_syndicate | _rest] = missing_syndicates
           :ok = Manager.deactivate(next_syndicate)
@@ -161,7 +161,6 @@ defmodule WebInterface.DeactivateLive do
         socket
         |> assign(inactive_syndicates: inactive_syndicates)
         |> assign(selected_inactive_syndicates: new_selected_syndicates)
-        |> assign(operation_in_progress?: false)
         |> assign(to_assign)
 
       # specially common in the case of timeouts from the auction house
