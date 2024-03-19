@@ -5,14 +5,12 @@ defmodule WebInterface.DeactivateLive do
 
   alias Manager
   alias Shared.Data.Syndicate
-  alias WebInterface.Persistence.Button, as: ButtonStore
   alias WebInterface.Persistence.Syndicate, as: SyndicateStore
   alias WebInterface.Persistence.User, as: UserStore
 
   @impl true
   def mount(_params, _session, socket) do
-    with :ok <- ButtonStore.set_button(:deactivate),
-         {:ok, user} <- UserStore.get_user(),
+    with {:ok, user} <- UserStore.get_user(),
          {:ok, syndicates} <- SyndicateStore.get_syndicates(),
          {:ok, inactive_syndicates} <- SyndicateStore.get_inactive_syndicates(),
          {:ok, selected_inactive_syndicates} <- SyndicateStore.get_selected_inactive_syndicates() do
