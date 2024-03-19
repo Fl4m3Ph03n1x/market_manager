@@ -12,14 +12,14 @@ defmodule WebInterface.Persistence.Strategy do
   @spec get_strategies(Persistence.table()) :: {:ok, [Strategy.t()]} | {:error, any()}
   def get_strategies(table \\ Persistence.default_table()) do
     with {:ok, table_ref} <- table.recover.(table.name) do
-      table.get.(table_ref, :strategies)
+      table.get.(table_ref, :strategies, [])
     end
   end
 
   @spec get_strategy_by_id(strategy_id(), Persistence.table()) :: {:ok, Strategy.t()} | {:error, any()}
   def get_strategy_by_id(id, table \\ Persistence.default_table()) do
     with {:ok, table_ref} <- table.recover.(table.name),
-         {:ok, strategies} <- table.get.(table_ref, :strategies) do
+         {:ok, strategies} <- table.get.(table_ref, :strategies, []) do
       strategies
       |> Enum.find(fn strategy -> strategy.id == String.to_existing_atom(id) end)
       |> case do

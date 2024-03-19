@@ -31,7 +31,9 @@ defmodule WebInterface.ActivateLive do
           form: to_form(%{"activate_syndicates" => []}),
           activation_in_progress: false,
           activation_progress: 0,
-          activation_current_syndicate: nil
+          activation_current_syndicate: nil,
+          operation_in_progress?: false,
+          selected_button: :activate
         )
 
       {:ok, updated_socket}
@@ -45,15 +47,14 @@ defmodule WebInterface.ActivateLive do
   @impl true
   def handle_event("execute", %{"strategy" => strategy_id, "syndicates" => syndicate_ids}, socket) do
     with {:ok, strategy} <- StrategyStore.get_strategy_by_id(strategy_id),
-         {:ok, [syndicate | _rest] = syndicates} <-
-           SyndicateStore.get_all_syndicates_by_id(syndicate_ids) do
-      :ok = Manager.activate(syndicate, strategy)
-
+         {:ok, [syndicate | _rest] = syndicates} <- SyndicateStore.get_all_syndicates_by_id(syndicate_ids),
+         :ok <- Manager.activate(syndicate, strategy) do
       updated_socket =
         socket
         |> assign(selected_strategy: strategy)
         |> assign(selected_active_syndicates: syndicates)
         |> assign(activation_in_progress: true)
+        |> assign(operation_in_progress?: true)
         |> assign(activation_current_syndicate: syndicate)
         |> assign(activation_progress: 0)
 
@@ -130,7 +131,7 @@ defmodule WebInterface.ActivateLive do
          :ok <- SyndicateStore.set_selected_active_syndicates(new_selected_syndicates) do
       {:noreply,
        put_flash(
-         socket,
+         assign(socket, operation_in_progress?: false),
          :error,
          "Unable to activate syndicate #{syndicate.name} due to '#{reason}'."
        )}
@@ -157,8 +158,7 @@ defmodule WebInterface.ActivateLive do
   end
 
   def handle_info(
-        {:activate, syndicate,
-         {current_item, total_items, {:ok, %Shared.Data.PlacedOrder{item_id: item_id}}}},
+        {:activate, syndicate, {current_item, total_items, {:ok, %Shared.Data.PlacedOrder{item_id: item_id}}}},
         socket
       ) do
     Logger.info("Order placed for #{syndicate.name}: #{item_id}")
@@ -198,6 +198,7 @@ defmodule WebInterface.ActivateLive do
         |> assign(active_syndicates: active_syndicates)
         |> assign(all_syndicates_active?: all_syndicates_active?)
         |> assign(selected_active_syndicates: new_selected_syndicates)
+        |> assign(operation_in_progress?: false)
         |> assign(to_assign)
 
       {:noreply, updated_socket}
