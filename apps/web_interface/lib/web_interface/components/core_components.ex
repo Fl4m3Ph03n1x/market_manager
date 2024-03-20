@@ -48,34 +48,34 @@ defmodule WebInterface.CoreComponents do
       )
 
     ~H"""
-    <div class={@class} hidden={@hidden}>
-      <div class="flex items-center justify-center">
-        <p class="text-lg font-semibold"><%= @message %></p>
-      </div>
+    <div class={[
+      @class,
+      if @hidden do
+        "hidden"
+      end
+    ]}>
+      <div>
+        <div class="flex items-center justify-center">
+          <p class="text-lg font-semibold"><%= @message %></p>
+        </div>
 
-      <div class="flex items-center justify-center">
-        <svg class="transform -rotate-90 w-72 h-72">
-          <circle
-            cx="145"
-            cy="145"
-            r="120"
-            stroke-width="30"
-            fill="transparent"
-            class="stroke-gray-700"
-          />
+        <div class="flex items-center justify-center">
+          <svg class="transform -rotate-90 w-72 h-72">
+            <circle cx="145" cy="145" r="120" stroke-width="30" fill="transparent" class="stroke-gray-700" />
 
-          <circle
-            cx="145"
-            cy="145"
-            r="120"
-            stroke-width="30"
-            fill="transparent"
-            stroke-dasharray={@circumference}
-            stroke-dashoffset={@offset}
-            class="stroke-indigo-500"
-          />
-        </svg>
-        <span class="absolute text-5xl stroke-black"><%= @progress %></span>
+            <circle
+              cx="145"
+              cy="145"
+              r="120"
+              stroke-width="30"
+              fill="transparent"
+              stroke-dasharray={@circumference}
+              stroke-dashoffset={@offset}
+              class="stroke-indigo-500"
+            />
+          </svg>
+          <span class="absolute text-5xl stroke-black"><%= @progress %></span>
+        </div>
       </div>
     </div>
     """
@@ -346,8 +346,7 @@ defmodule WebInterface.CoreComponents do
   """
   attr :name, :any
 
-  attr :field, Phoenix.HTML.FormField,
-    doc: "a form field struct retrieved from the form, for example: @form[:genres]"
+  attr :field, Phoenix.HTML.FormField, doc: "a form field struct retrieved from the form, for example: @form[:genres]"
 
   attr :required, :boolean, default: false
 
@@ -423,8 +422,7 @@ defmodule WebInterface.CoreComponents do
   attr :name, :any
   attr :label, :string, default: nil
 
-  attr :field, Phoenix.HTML.FormField,
-    doc: "a form field struct retrieved from the form, for example: @form[:genres]"
+  attr :field, Phoenix.HTML.FormField, doc: "a form field struct retrieved from the form, for example: @form[:genres]"
 
   attr :errors, :list
   attr :required, :boolean, default: false
@@ -466,8 +464,7 @@ defmodule WebInterface.CoreComponents do
     values: ~w(checkbox color date datetime-local email file hidden month number password
                range radio search select tel text textarea time url week)
 
-  attr :field, Phoenix.HTML.FormField,
-    doc: "a form field struct retrieved from the form, for example: @form[:email]"
+  attr :field, Phoenix.HTML.FormField, doc: "a form field struct retrieved from the form, for example: @form[:email]"
 
   attr :errors, :list, default: []
   attr :checked, :boolean, doc: "the checked flag for checkbox inputs"
@@ -475,8 +472,7 @@ defmodule WebInterface.CoreComponents do
   attr :options, :list, doc: "the options to pass to Phoenix.HTML.Form.options_for_select/2"
   attr :multiple, :boolean, default: false, doc: "the multiple flag for select inputs"
 
-  attr :rest, :global,
-    include: ~w(autocomplete cols disabled form list max maxlength min minlength
+  attr :rest, :global, include: ~w(autocomplete cols disabled form list max maxlength min minlength
                 pattern placeholder readonly required rows size step)
 
   attr :selected, :any,
@@ -774,10 +770,7 @@ defmodule WebInterface.CoreComponents do
   def back(assigns) do
     ~H"""
     <div class="mt-16">
-      <.link
-        navigate={@navigate}
-        class="text-sm font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
-      >
+      <.link navigate={@navigate} class="text-sm font-semibold leading-6 text-zinc-900 hover:text-zinc-700">
         <.icon name="hero-arrow-left-solid" class="h-3 w-3" />
         <%= render_slot(@inner_block) %>
       </.link>
@@ -818,12 +811,8 @@ defmodule WebInterface.CoreComponents do
     do:
       JS.toggle(
         to: to,
-        in:
-          {"transition ease-out duration-100", "transform opacity-0 scale-95",
-           "transform opacity-100 scale-100"},
-        out:
-          {"transition ease-in duration-75", "transform opacity-100 scale-100",
-           "transform opacity-0 scale-95"}
+        in: {"transition ease-out duration-100", "transform opacity-0 scale-95", "transform opacity-100 scale-100"},
+        out: {"transition ease-in duration-75", "transform opacity-100 scale-100", "transform opacity-0 scale-95"}
       )
 
   def hide_dropdown(to),
@@ -831,16 +820,14 @@ defmodule WebInterface.CoreComponents do
       JS.hide(
         to: to,
         transition:
-          {"transition ease-in duration-75", "transform opacity-100 scale-100",
-           "transform opacity-0 scale-95"}
+          {"transition ease-in duration-75", "transform opacity-100 scale-100", "transform opacity-0 scale-95"}
       )
 
   def show(js \\ %JS{}, selector) do
     JS.show(js,
       to: selector,
       transition:
-        {"transition-all transform ease-out duration-300",
-         "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95",
+        {"transition-all transform ease-out duration-300", "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95",
          "opacity-100 translate-y-0 sm:scale-100"}
     )
   end
@@ -850,8 +837,7 @@ defmodule WebInterface.CoreComponents do
       to: selector,
       time: 200,
       transition:
-        {"transition-all transform ease-in duration-200",
-         "opacity-100 translate-y-0 sm:scale-100",
+        {"transition-all transform ease-in duration-200", "opacity-100 translate-y-0 sm:scale-100",
          "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"}
     )
   end

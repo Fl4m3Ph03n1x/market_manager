@@ -1,5 +1,6 @@
 <div class="container min-h-full mx-auto py-6 sm:px-6 lg:px-8">
   <.progress_bar
+    class="flex items-center justify-center h-screen"
     hidden={not @activation_in_progress}
     progress={@activation_progress}
     message={progress_bar_message(@activation_current_syndicate)}
@@ -11,7 +12,7 @@
         The prices of each item will be determined according to a strategy that you can define.
       </.description>
     </div>
-    
+
     <div>
       <.simple_form for={@form} phx-change="change" phx-submit="execute">
         <div class="mt-4">
@@ -27,7 +28,7 @@
             required
           />
         </div>
-        
+
         <div class="mt-4">
           <.section
             title="Syndicates"
@@ -41,13 +42,11 @@
             required
           />
         </div>
-        
+
         <div class="mt-4">
           <.button
             class="min-w-full"
-            disabled={
-              disable_button?(@selected_strategy, @selected_active_syndicates, @active_syndicates)
-            }
+            disabled={disable_button?(@selected_strategy, @selected_active_syndicates, @active_syndicates)}
           >
             Execute Command
           </.button>

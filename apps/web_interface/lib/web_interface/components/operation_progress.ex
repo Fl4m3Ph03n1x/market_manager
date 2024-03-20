@@ -13,8 +13,7 @@ defmodule WebInterface.Components.OperationProgress do
   @spec render(map) :: Rendered.t()
   def render(assigns) do
     ~H"""
-    <div class={display(@operation_in_progress)}>
-
+    <div class="main column column-100">
       <div class="wrap-circles">
         <p><%= progress_message(@current_syndicate) %></p>
 
@@ -25,10 +24,6 @@ defmodule WebInterface.Components.OperationProgress do
     </div>
     """
   end
-
-  @spec display(boolean()) :: String.t()
-  defp display(false), do: "hidden"
-  defp display(_), do: "main column column-100 show"
 
   @spec circle(progress :: non_neg_integer()) :: String.t()
   defp circle(progress), do: "circle per-#{progress}"
