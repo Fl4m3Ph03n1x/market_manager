@@ -48,12 +48,7 @@ defmodule WebInterface.CoreComponents do
       )
 
     ~H"""
-    <div class={[
-      @class,
-      if @hidden do
-        "hidden"
-      end
-    ]}>
+    <div class={[@class, @hidden && "hidden"]}>
       <div>
         <div class="flex items-center justify-center">
           <p class="text-lg font-semibold"><%= @message %></p>
