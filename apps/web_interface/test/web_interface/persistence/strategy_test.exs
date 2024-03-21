@@ -34,7 +34,7 @@ defmodule WebInterface.Persistence.StrategyTest do
     %{
       table: %{
         recover: fn :data -> {:ok, :table_ref} end,
-        get: fn :table_ref, :strategies -> {:ok, strategies} end,
+        get: fn :table_ref, :strategies, _default -> {:ok, strategies} end,
         name: :data
       },
       strategies: strategies
