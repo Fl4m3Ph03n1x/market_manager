@@ -5,16 +5,16 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.31.1">
-    <meta name="project" content="Market Manager v2.1.7">
+    <meta name="project" content="Market Manager v2.1.8">
 
 
-    <title>WebInterface.Persistence.Syndicate — Market Manager v2.1.7</title>
+    <title>WebInterface.Persistence.Syndicate — Market Manager v2.1.8</title>
     <link rel="stylesheet" href="dist/html-elixir-FM2CSD74.css" />
 
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-43PMFBC7.js"></script>
-    <script src="dist/sidebar_items-13806971.js"></script>
+    <script src="dist/sidebar_items-27AEC54F.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -59,7 +59,7 @@
 Market Manager
         </a>
         <div class="sidebar-projectVersion" translate="no">
-          v2.1.7
+          v2.1.8
         </div>
       </div>
     </div>
@@ -127,13 +127,14 @@ Pages
     </a>
 
   <span translate="no">WebInterface.Persistence.Syndicate</span> 
-  <small class="app-vsn" translate="no">(Market Manager v2.1.7)</small>
+  <small class="app-vsn" translate="no">(Market Manager v2.1.8)</small>
 
 </h1>
 
 
   <section id="moduledoc">
-<p>Persistence module for syndicate data. Mostly to track selected options in the menu and access the list of syndicates.</p>
+<p>Persistence module for syndicate data. Mostly to track selected options in the menu and access the list of 
+syndicates.</p>
   </section>
 
 
@@ -151,7 +152,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#activate_syndicate/1" translate="no">activate_syndicate(syndicate)</a>
+        <a href="#activate_syndicate/2" translate="no">activate_syndicate(syndicate, table \\ Persistence.default_table())</a>
 
       </div>
 
@@ -159,7 +160,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#activate_syndicates/1" translate="no">activate_syndicates(syndicates)</a>
+        <a href="#activate_syndicates/2" translate="no">activate_syndicates(syndicates, table \\ Persistence.default_table())</a>
 
       </div>
 
@@ -167,7 +168,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#all_syndicates_active?/0" translate="no">all_syndicates_active?()</a>
+        <a href="#all_syndicates_active?/1" translate="no">all_syndicates_active?(table \\ Persistence.default_table())</a>
 
       </div>
 
@@ -175,7 +176,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#deactivate_syndicate/1" translate="no">deactivate_syndicate(syndicate)</a>
+        <a href="#deactivate_syndicate/2" translate="no">deactivate_syndicate(syndicate, table \\ Persistence.default_table())</a>
 
       </div>
 
@@ -183,7 +184,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#get_active_syndicates/0" translate="no">get_active_syndicates()</a>
+        <a href="#get_active_syndicates/1" translate="no">get_active_syndicates(table \\ Persistence.default_table())</a>
 
       </div>
 
@@ -191,7 +192,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#get_all_syndicates_by_id/1" translate="no">get_all_syndicates_by_id(ids)</a>
+        <a href="#get_all_syndicates_by_id/2" translate="no">get_all_syndicates_by_id(ids, table \\ Persistence.default_table())</a>
 
       </div>
 
@@ -199,7 +200,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#get_inactive_syndicates/0" translate="no">get_inactive_syndicates()</a>
+        <a href="#get_inactive_syndicates/1" translate="no">get_inactive_syndicates(table \\ Persistence.default_table())</a>
 
       </div>
 
@@ -207,7 +208,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#get_selected_active_syndicates/0" translate="no">get_selected_active_syndicates()</a>
+        <a href="#get_selected_active_syndicates/1" translate="no">get_selected_active_syndicates(table \\ Persistence.default_table())</a>
 
       </div>
 
@@ -215,7 +216,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#get_selected_inactive_syndicates/0" translate="no">get_selected_inactive_syndicates()</a>
+        <a href="#get_selected_inactive_syndicates/1" translate="no">get_selected_inactive_syndicates(table \\ Persistence.default_table())</a>
 
       </div>
 
@@ -223,7 +224,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#get_syndicate_by_id/1" translate="no">get_syndicate_by_id(id)</a>
+        <a href="#get_syndicate_by_id/2" translate="no">get_syndicate_by_id(id, table \\ Persistence.default_table())</a>
 
       </div>
 
@@ -231,7 +232,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#get_syndicates/0" translate="no">get_syndicates()</a>
+        <a href="#get_syndicates/1" translate="no">get_syndicates(table \\ Persistence.default_table())</a>
 
       </div>
 
@@ -239,7 +240,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#set_selected_active_syndicates/1" translate="no">set_selected_active_syndicates(syndicates)</a>
+        <a href="#set_selected_active_syndicates/2" translate="no">set_selected_active_syndicates(syndicates, table \\ Persistence.default_table())</a>
 
       </div>
 
@@ -247,7 +248,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#set_selected_inactive_syndicates/1" translate="no">set_selected_inactive_syndicates(syndicates)</a>
+        <a href="#set_selected_inactive_syndicates/2" translate="no">set_selected_inactive_syndicates(syndicates, table \\ Persistence.default_table())</a>
 
       </div>
 
@@ -255,7 +256,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#syndicate_active?/1" translate="no">syndicate_active?(syndicate)</a>
+        <a href="#syndicate_active?/2" translate="no">syndicate_active?(syndicate, table \\ Persistence.default_table())</a>
 
       </div>
 
@@ -274,16 +275,18 @@ Pages
       <span class="text">Functions</span>
     </h1>
     <div class="functions-list">
-<section class="detail" id="activate_syndicate/1">
+<section class="detail" id="activate_syndicate/2">
+
+    <span id="activate_syndicate/1"></span>
 
   <div class="detail-header">
-    <a href="#activate_syndicate/1" class="detail-link" title="Link to this function">
+    <a href="#activate_syndicate/2" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">activate_syndicate(syndicate)</h1>
+    <h1 class="signature" translate="no">activate_syndicate(syndicate, table \\ Persistence.default_table())</h1>
 
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/persistence/syndicate.ex#L58" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/persistence/syndicate.ex#L63" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -295,23 +298,26 @@ Pages
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@spec</span> activate_syndicate(<a href="Shared.Data.Syndicate.html#t:t/0">Shared.Data.Syndicate.t</a>()) :: :ok | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+          <pre translate="no"><span class="attribute">@spec</span> activate_syndicate(<a href="Shared.Data.Syndicate.html#t:t/0">Shared.Data.Syndicate.t</a>(), <a href="WebInterface.Persistence.html#t:table/0">WebInterface.Persistence.table</a>()) ::
+  :ok | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
 
       </div>
 
 
   </section>
 </section>
-<section class="detail" id="activate_syndicates/1">
+<section class="detail" id="activate_syndicates/2">
+
+    <span id="activate_syndicates/1"></span>
 
   <div class="detail-header">
-    <a href="#activate_syndicates/1" class="detail-link" title="Link to this function">
+    <a href="#activate_syndicates/2" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">activate_syndicates(syndicates)</h1>
+    <h1 class="signature" translate="no">activate_syndicates(syndicates, table \\ Persistence.default_table())</h1>
 
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/persistence/syndicate.ex#L47" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/persistence/syndicate.ex#L52" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -323,23 +329,29 @@ Pages
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@spec</span> activate_syndicates([<a href="Shared.Data.Syndicate.html#t:t/0">Shared.Data.Syndicate.t</a>()]) :: :ok | [{:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}]</pre>
+          <pre translate="no"><span class="attribute">@spec</span> activate_syndicates(
+  [<a href="Shared.Data.Syndicate.html#t:t/0">Shared.Data.Syndicate.t</a>()],
+  <a href="WebInterface.Persistence.html#t:table/0">WebInterface.Persistence.table</a>()
+) ::
+  :ok | [{:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}]</pre>
 
       </div>
 
 
   </section>
 </section>
-<section class="detail" id="all_syndicates_active?/0">
+<section class="detail" id="all_syndicates_active?/1">
+
+    <span id="all_syndicates_active?/0"></span>
 
   <div class="detail-header">
-    <a href="#all_syndicates_active?/0" class="detail-link" title="Link to this function">
+    <a href="#all_syndicates_active?/1" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">all_syndicates_active?()</h1>
+    <h1 class="signature" translate="no">all_syndicates_active?(table \\ Persistence.default_table())</h1>
 
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/persistence/syndicate.ex#L96" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/persistence/syndicate.ex#L102" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -351,23 +363,26 @@ Pages
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@spec</span> all_syndicates_active?() :: {:ok, <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()} | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+          <pre translate="no"><span class="attribute">@spec</span> all_syndicates_active?(<a href="WebInterface.Persistence.html#t:table/0">WebInterface.Persistence.table</a>()) ::
+  {:ok, <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()} | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
 
       </div>
 
 
   </section>
 </section>
-<section class="detail" id="deactivate_syndicate/1">
+<section class="detail" id="deactivate_syndicate/2">
+
+    <span id="deactivate_syndicate/1"></span>
 
   <div class="detail-header">
-    <a href="#deactivate_syndicate/1" class="detail-link" title="Link to this function">
+    <a href="#deactivate_syndicate/2" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">deactivate_syndicate(syndicate)</h1>
+    <h1 class="signature" translate="no">deactivate_syndicate(syndicate, table \\ Persistence.default_table())</h1>
 
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/persistence/syndicate.ex#L61" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/persistence/syndicate.ex#L66" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -379,23 +394,29 @@ Pages
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@spec</span> deactivate_syndicate(<a href="Shared.Data.Syndicate.html#t:t/0">Shared.Data.Syndicate.t</a>()) :: :ok | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+          <pre translate="no"><span class="attribute">@spec</span> deactivate_syndicate(
+  <a href="Shared.Data.Syndicate.html#t:t/0">Shared.Data.Syndicate.t</a>(),
+  <a href="WebInterface.Persistence.html#t:table/0">WebInterface.Persistence.table</a>()
+) ::
+  :ok | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
 
       </div>
 
 
   </section>
 </section>
-<section class="detail" id="get_active_syndicates/0">
+<section class="detail" id="get_active_syndicates/1">
+
+    <span id="get_active_syndicates/0"></span>
 
   <div class="detail-header">
-    <a href="#get_active_syndicates/0" class="detail-link" title="Link to this function">
+    <a href="#get_active_syndicates/1" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">get_active_syndicates()</h1>
+    <h1 class="signature" translate="no">get_active_syndicates(table \\ Persistence.default_table())</h1>
 
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/persistence/syndicate.ex#L104" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/persistence/syndicate.ex#L110" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -407,35 +428,7 @@ Pages
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@spec</span> get_active_syndicates() :: {:ok, [<a href="Shared.Data.Syndicate.html#t:t/0">Shared.Data.Syndicate.t</a>()]} | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
-
-      </div>
-
-
-  </section>
-</section>
-<section class="detail" id="get_all_syndicates_by_id/1">
-
-  <div class="detail-header">
-    <a href="#get_all_syndicates_by_id/1" class="detail-link" title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">get_all_syndicates_by_id(ids)</h1>
-
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/persistence/syndicate.ex#L18" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-      <div class="specs">
-
-          <pre translate="no"><span class="attribute">@spec</span> get_all_syndicates_by_id([<a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()]) ::
+          <pre translate="no"><span class="attribute">@spec</span> get_active_syndicates(<a href="WebInterface.Persistence.html#t:table/0">WebInterface.Persistence.table</a>()) ::
   {:ok, [<a href="Shared.Data.Syndicate.html#t:t/0">Shared.Data.Syndicate.t</a>()]} | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
 
       </div>
@@ -443,16 +436,18 @@ Pages
 
   </section>
 </section>
-<section class="detail" id="get_inactive_syndicates/0">
+<section class="detail" id="get_all_syndicates_by_id/2">
+
+    <span id="get_all_syndicates_by_id/1"></span>
 
   <div class="detail-header">
-    <a href="#get_inactive_syndicates/0" class="detail-link" title="Link to this function">
+    <a href="#get_all_syndicates_by_id/2" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">get_inactive_syndicates()</h1>
+    <h1 class="signature" translate="no">get_all_syndicates_by_id(ids, table \\ Persistence.default_table())</h1>
 
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/persistence/syndicate.ex#L112" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/persistence/syndicate.ex#L23" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -464,7 +459,7 @@ Pages
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@spec</span> get_inactive_syndicates() ::
+          <pre translate="no"><span class="attribute">@spec</span> get_all_syndicates_by_id([syndicate_id()], <a href="WebInterface.Persistence.html#t:table/0">WebInterface.Persistence.table</a>()) ::
   {:ok, [<a href="Shared.Data.Syndicate.html#t:t/0">Shared.Data.Syndicate.t</a>()]} | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
 
       </div>
@@ -472,16 +467,18 @@ Pages
 
   </section>
 </section>
-<section class="detail" id="get_selected_active_syndicates/0">
+<section class="detail" id="get_inactive_syndicates/1">
+
+    <span id="get_inactive_syndicates/0"></span>
 
   <div class="detail-header">
-    <a href="#get_selected_active_syndicates/0" class="detail-link" title="Link to this function">
+    <a href="#get_inactive_syndicates/1" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">get_selected_active_syndicates()</h1>
+    <h1 class="signature" translate="no">get_inactive_syndicates(table \\ Persistence.default_table())</h1>
 
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/persistence/syndicate.ex#L126" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/persistence/syndicate.ex#L118" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -493,7 +490,7 @@ Pages
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@spec</span> get_selected_active_syndicates() ::
+          <pre translate="no"><span class="attribute">@spec</span> get_inactive_syndicates(<a href="WebInterface.Persistence.html#t:table/0">WebInterface.Persistence.table</a>()) ::
   {:ok, [<a href="Shared.Data.Syndicate.html#t:t/0">Shared.Data.Syndicate.t</a>()]} | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
 
       </div>
@@ -501,14 +498,174 @@ Pages
 
   </section>
 </section>
-<section class="detail" id="get_selected_inactive_syndicates/0">
+<section class="detail" id="get_selected_active_syndicates/1">
+
+    <span id="get_selected_active_syndicates/0"></span>
 
   <div class="detail-header">
-    <a href="#get_selected_inactive_syndicates/0" class="detail-link" title="Link to this function">
+    <a href="#get_selected_active_syndicates/1" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">get_selected_inactive_syndicates()</h1>
+    <h1 class="signature" translate="no">get_selected_active_syndicates(table \\ Persistence.default_table())</h1>
+
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/persistence/syndicate.ex#L131" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> get_selected_active_syndicates(<a href="WebInterface.Persistence.html#t:table/0">WebInterface.Persistence.table</a>()) ::
+  {:ok, [<a href="Shared.Data.Syndicate.html#t:t/0">Shared.Data.Syndicate.t</a>()]} | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="get_selected_inactive_syndicates/1">
+
+    <span id="get_selected_inactive_syndicates/0"></span>
+
+  <div class="detail-header">
+    <a href="#get_selected_inactive_syndicates/1" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">get_selected_inactive_syndicates(table \\ Persistence.default_table())</h1>
+
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/persistence/syndicate.ex#L138" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> get_selected_inactive_syndicates(<a href="WebInterface.Persistence.html#t:table/0">WebInterface.Persistence.table</a>()) ::
+  {:ok, [<a href="Shared.Data.Syndicate.html#t:t/0">Shared.Data.Syndicate.t</a>()]} | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="get_syndicate_by_id/2">
+
+    <span id="get_syndicate_by_id/1"></span>
+
+  <div class="detail-header">
+    <a href="#get_syndicate_by_id/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">get_syndicate_by_id(id, table \\ Persistence.default_table())</h1>
+
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/persistence/syndicate.ex#L39" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> get_syndicate_by_id(<a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(), <a href="WebInterface.Persistence.html#t:table/0">WebInterface.Persistence.table</a>()) ::
+  {:ok, <a href="Shared.Data.Syndicate.html#t:t/0">Shared.Data.Syndicate.t</a>()} | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="get_syndicates/1">
+
+    <span id="get_syndicates/0"></span>
+
+  <div class="detail-header">
+    <a href="#get_syndicates/1" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">get_syndicates(table \\ Persistence.default_table())</h1>
+
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/persistence/syndicate.ex#L16" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> get_syndicates(<a href="WebInterface.Persistence.html#t:table/0">WebInterface.Persistence.table</a>()) ::
+  {:ok, [<a href="Shared.Data.Syndicate.html#t:t/0">Shared.Data.Syndicate.t</a>()]} | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="set_selected_active_syndicates/2">
+
+    <span id="set_selected_active_syndicates/1"></span>
+
+  <div class="detail-header">
+    <a href="#set_selected_active_syndicates/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">set_selected_active_syndicates(syndicates, table \\ Persistence.default_table())</h1>
+
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/persistence/syndicate.ex#L127" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> set_selected_active_syndicates(
+  [<a href="Shared.Data.Syndicate.html#t:t/0">Shared.Data.Syndicate.t</a>()],
+  <a href="WebInterface.Persistence.html#t:table/0">WebInterface.Persistence.table</a>()
+) ::
+  :ok | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="set_selected_inactive_syndicates/2">
+
+    <span id="set_selected_inactive_syndicates/1"></span>
+
+  <div class="detail-header">
+    <a href="#set_selected_inactive_syndicates/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">set_selected_inactive_syndicates(syndicates, table \\ Persistence.default_table())</h1>
 
       <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/persistence/syndicate.ex#L134" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
@@ -522,93 +679,10 @@ Pages
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@spec</span> get_selected_inactive_syndicates() ::
-  {:ok, [<a href="Shared.Data.Syndicate.html#t:t/0">Shared.Data.Syndicate.t</a>()]} | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
-
-      </div>
-
-
-  </section>
-</section>
-<section class="detail" id="get_syndicate_by_id/1">
-
-  <div class="detail-header">
-    <a href="#get_syndicate_by_id/1" class="detail-link" title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">get_syndicate_by_id(id)</h1>
-
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/persistence/syndicate.ex#L34" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-      <div class="specs">
-
-          <pre translate="no"><span class="attribute">@spec</span> get_syndicate_by_id(<a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) ::
-  {:ok, <a href="Shared.Data.Syndicate.html#t:t/0">Shared.Data.Syndicate.t</a>()} | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
-
-      </div>
-
-
-  </section>
-</section>
-<section class="detail" id="get_syndicates/0">
-
-  <div class="detail-header">
-    <a href="#get_syndicates/0" class="detail-link" title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">get_syndicates()</h1>
-
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/persistence/syndicate.ex#L11" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-      <div class="specs">
-
-          <pre translate="no"><span class="attribute">@spec</span> get_syndicates() :: {:ok, [<a href="Shared.Data.Syndicate.html#t:t/0">Shared.Data.Syndicate.t</a>()]} | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
-
-      </div>
-
-
-  </section>
-</section>
-<section class="detail" id="set_selected_active_syndicates/1">
-
-  <div class="detail-header">
-    <a href="#set_selected_active_syndicates/1" class="detail-link" title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">set_selected_active_syndicates(syndicates)</h1>
-
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/persistence/syndicate.ex#L121" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-      <div class="specs">
-
-          <pre translate="no"><span class="attribute">@spec</span> set_selected_active_syndicates([<a href="Shared.Data.Syndicate.html#t:t/0">Shared.Data.Syndicate.t</a>()]) ::
+          <pre translate="no"><span class="attribute">@spec</span> set_selected_inactive_syndicates(
+  [<a href="Shared.Data.Syndicate.html#t:t/0">Shared.Data.Syndicate.t</a>()],
+  <a href="WebInterface.Persistence.html#t:table/0">WebInterface.Persistence.table</a>()
+) ::
   :ok | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
 
       </div>
@@ -616,16 +690,18 @@ Pages
 
   </section>
 </section>
-<section class="detail" id="set_selected_inactive_syndicates/1">
+<section class="detail" id="syndicate_active?/2">
+
+    <span id="syndicate_active?/1"></span>
 
   <div class="detail-header">
-    <a href="#set_selected_inactive_syndicates/1" class="detail-link" title="Link to this function">
+    <a href="#syndicate_active?/2" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">set_selected_inactive_syndicates(syndicates)</h1>
+    <h1 class="signature" translate="no">syndicate_active?(syndicate, table \\ Persistence.default_table())</h1>
 
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/persistence/syndicate.ex#L129" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/persistence/syndicate.ex#L89" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -637,36 +713,8 @@ Pages
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@spec</span> set_selected_inactive_syndicates([<a href="Shared.Data.Syndicate.html#t:t/0">Shared.Data.Syndicate.t</a>()]) ::
-  :ok | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
-
-      </div>
-
-
-  </section>
-</section>
-<section class="detail" id="syndicate_active?/1">
-
-  <div class="detail-header">
-    <a href="#syndicate_active?/1" class="detail-link" title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">syndicate_active?(syndicate)</h1>
-
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/persistence/syndicate.ex#L86" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-      <div class="specs">
-
-          <pre translate="no"><span class="attribute">@spec</span> syndicate_active?(<a href="Shared.Data.Syndicate.html#t:t/0">Shared.Data.Syndicate.t</a>()) :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()</pre>
+          <pre translate="no"><span class="attribute">@spec</span> syndicate_active?(<a href="Shared.Data.Syndicate.html#t:t/0">Shared.Data.Syndicate.t</a>(), <a href="WebInterface.Persistence.html#t:table/0">WebInterface.Persistence.table</a>()) ::
+  <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()</pre>
 
       </div>
 

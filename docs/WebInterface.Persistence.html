@@ -5,16 +5,16 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.31.1">
-    <meta name="project" content="Market Manager v2.1.7">
+    <meta name="project" content="Market Manager v2.1.8">
 
 
-    <title>WebInterface.Persistence — Market Manager v2.1.7</title>
+    <title>WebInterface.Persistence — Market Manager v2.1.8</title>
     <link rel="stylesheet" href="dist/html-elixir-FM2CSD74.css" />
 
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-43PMFBC7.js"></script>
-    <script src="dist/sidebar_items-13806971.js"></script>
+    <script src="dist/sidebar_items-27AEC54F.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -59,7 +59,7 @@
 Market Manager
         </a>
         <div class="sidebar-projectVersion" translate="no">
-          v2.1.7
+          v2.1.8
         </div>
       </div>
     </div>
@@ -127,7 +127,7 @@ Pages
     </a>
 
   <span translate="no">WebInterface.Persistence</span> 
-  <small class="app-vsn" translate="no">(Market Manager v2.1.7)</small>
+  <small class="app-vsn" translate="no">(Market Manager v2.1.8)</small>
 
 </h1>
 
@@ -145,6 +145,20 @@ Uses ETS beneath the scenes.</p>
       </a>
       <span class="text">Summary</span>
     </h1>
+<div class="summary-types summary">
+  <h2>
+    <a href="#types">Types</a>
+  </h2>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:table/0" translate="no">table()</a>
+
+      </div>
+
+    </div>
+
+</div>
 <div class="summary-functions summary">
   <h2>
     <a href="#functions">Functions</a>
@@ -152,7 +166,7 @@ Uses ETS beneath the scenes.</p>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#init/3" translate="no">init(strategies, syndicates, user)</a>
+        <a href="#default_table/0" translate="no">default_table()</a>
 
       </div>
 
@@ -160,7 +174,7 @@ Uses ETS beneath the scenes.</p>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#table/0" translate="no">table()</a>
+        <a href="#init/4" translate="no">init(strategies, syndicates, user, table_data \\ %{get: &amp;ETS.KeyValueSet.get/3, name: :data, new: &amp;ETS.KeyValueSet.new/1, put: &amp;ETS.KeyValueSet.put/3, recover: &amp;ETS.KeyValueSet.wrap_existing/1})</a>
 
       </div>
 
@@ -171,6 +185,57 @@ Uses ETS beneath the scenes.</p>
   </section>
 
 
+  <section id="types" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#types">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Types</span>
+    </h1>
+    <div class="types-list">
+<section class="detail" id="t:table/0">
+
+  <div class="detail-header">
+    <a href="#t:table/0" class="detail-link" title="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature" translate="no">table()</h1>
+
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/persistence.ex#L10" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> table() :: %{
+  new:
+    (<a href="https://hexdocs.pm/ets/0.9.0/ETS.KeyValueSet.html#t:set_options/0">ETS.KeyValueSet.set_options</a>() -&gt;
+       {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()} | {:ok, <a href="https://hexdocs.pm/ets/0.9.0/ETS.KeyValueSet.html#t:t/0">ETS.KeyValueSet.t</a>()}),
+  put:
+    (<a href="https://hexdocs.pm/ets/0.9.0/ETS.KeyValueSet.html#t:t/0">ETS.KeyValueSet.t</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>() -&gt;
+       {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()} | {:ok, <a href="https://hexdocs.pm/ets/0.9.0/ETS.KeyValueSet.html#t:t/0">ETS.KeyValueSet.t</a>()}),
+  get: (<a href="https://hexdocs.pm/ets/0.9.0/ETS.KeyValueSet.html#t:t/0">ETS.KeyValueSet.t</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>() -&gt; {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()} | {:ok, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}),
+  recover:
+    (<a href="https://hexdocs.pm/ets/0.9.0/ETS.html#t:table_identifier/0">ETS.table_identifier</a>() -&gt; {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()} | {:ok, <a href="https://hexdocs.pm/ets/0.9.0/ETS.KeyValueSet.html#t:t/0">ETS.KeyValueSet.t</a>()}),
+  name: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">atom</a>()
+}</pre>
+
+      </div>
+
+
+  </section>
+</section>
+
+    </div>
+  </section>
+
   <section id="functions" class="details-list">
     <h1 class="section-heading">
       <a class="hover-link" href="#functions">
@@ -179,16 +244,46 @@ Uses ETS beneath the scenes.</p>
       <span class="text">Functions</span>
     </h1>
     <div class="functions-list">
-<section class="detail" id="init/3">
+<section class="detail" id="default_table/0">
 
   <div class="detail-header">
-    <a href="#init/3" class="detail-link" title="Link to this function">
+    <a href="#default_table/0" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">init(strategies, syndicates, user)</h1>
+    <h1 class="signature" translate="no">default_table()</h1>
 
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/persistence.ex#L13" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/persistence.ex#L42" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> default_table() :: <a href="#t:table/0">table</a>()</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="init/4">
+
+    <span id="init/3"></span>
+
+  <div class="detail-header">
+    <a href="#init/4" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">init(strategies, syndicates, user, table_data \\ %{get: &amp;ETS.KeyValueSet.get/3, name: :data, new: &amp;ETS.KeyValueSet.new/1, put: &amp;ETS.KeyValueSet.put/3, recover: &amp;ETS.KeyValueSet.wrap_existing/1})</h1>
+
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/persistence.ex#L27" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -203,37 +298,10 @@ Uses ETS beneath the scenes.</p>
           <pre translate="no"><span class="attribute">@spec</span> init(
   [<a href="Shared.Data.Strategy.html#t:t/0">Shared.Data.Strategy.t</a>()],
   [<a href="Shared.Data.Syndicate.html#t:t/0">Shared.Data.Syndicate.t</a>()],
-  <a href="Shared.Data.User.html#t:t/0">Shared.Data.User.t</a>()
+  <a href="Shared.Data.User.html#t:t/0">Shared.Data.User.t</a>(),
+  <a href="#t:table/0">table</a>()
 ) ::
   :ok | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
-
-      </div>
-
-
-  </section>
-</section>
-<section class="detail" id="table/0">
-
-  <div class="detail-header">
-    <a href="#table/0" class="detail-link" title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">table()</h1>
-
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/persistence.ex#L23" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-      <div class="specs">
-
-          <pre translate="no"><span class="attribute">@spec</span> table() :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">atom</a>()</pre>
 
       </div>
 
