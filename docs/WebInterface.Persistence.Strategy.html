@@ -5,16 +5,16 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.31.1">
-    <meta name="project" content="Market Manager v2.1.7">
+    <meta name="project" content="Market Manager v2.1.8">
 
 
-    <title>WebInterface.Persistence.Strategy — Market Manager v2.1.7</title>
+    <title>WebInterface.Persistence.Strategy — Market Manager v2.1.8</title>
     <link rel="stylesheet" href="dist/html-elixir-FM2CSD74.css" />
 
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-43PMFBC7.js"></script>
-    <script src="dist/sidebar_items-13806971.js"></script>
+    <script src="dist/sidebar_items-27AEC54F.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -59,7 +59,7 @@
 Market Manager
         </a>
         <div class="sidebar-projectVersion" translate="no">
-          v2.1.7
+          v2.1.8
         </div>
       </div>
     </div>
@@ -127,13 +127,14 @@ Pages
     </a>
 
   <span translate="no">WebInterface.Persistence.Strategy</span> 
-  <small class="app-vsn" translate="no">(Market Manager v2.1.7)</small>
+  <small class="app-vsn" translate="no">(Market Manager v2.1.8)</small>
 
 </h1>
 
 
   <section id="moduledoc">
-<p>Persistence module for strategy data. Mostly to track which strategy is selected in the menu and access the list of strategies.</p>
+<p>Persistence module for strategy data. Mostly to track which strategy is selected in the menu and access the list of 
+strategies.</p>
   </section>
 
 
@@ -151,7 +152,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#get_selected_strategy/0" translate="no">get_selected_strategy()</a>
+        <a href="#get_selected_strategy/1" translate="no">get_selected_strategy(table \\ Persistence.default_table())</a>
 
       </div>
 
@@ -159,7 +160,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#get_strategies/0" translate="no">get_strategies()</a>
+        <a href="#get_strategies/1" translate="no">get_strategies(table \\ Persistence.default_table())</a>
 
       </div>
 
@@ -167,7 +168,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#get_strategy_by_id/1" translate="no">get_strategy_by_id(id)</a>
+        <a href="#get_strategy_by_id/2" translate="no">get_strategy_by_id(id, table \\ Persistence.default_table())</a>
 
       </div>
 
@@ -175,7 +176,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#set_selected_strategy/1" translate="no">set_selected_strategy(strategy)</a>
+        <a href="#set_selected_strategy/2" translate="no">set_selected_strategy(strategy, table \\ Persistence.default_table())</a>
 
       </div>
 
@@ -194,16 +195,18 @@ Pages
       <span class="text">Functions</span>
     </h1>
     <div class="functions-list">
-<section class="detail" id="get_selected_strategy/0">
+<section class="detail" id="get_selected_strategy/1">
+
+    <span id="get_selected_strategy/0"></span>
 
   <div class="detail-header">
-    <a href="#get_selected_strategy/0" class="detail-link" title="Link to this function">
+    <a href="#get_selected_strategy/1" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">get_selected_strategy()</h1>
+    <h1 class="signature" translate="no">get_selected_strategy(table \\ Persistence.default_table())</h1>
 
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/persistence/strategy.ex#L39" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/persistence/strategy.ex#L41" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -215,23 +218,26 @@ Pages
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@spec</span> get_selected_strategy() :: {:ok, <a href="Shared.Data.Strategy.html#t:t/0">Shared.Data.Strategy.t</a>()} | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+          <pre translate="no"><span class="attribute">@spec</span> get_selected_strategy(<a href="WebInterface.Persistence.html#t:table/0">WebInterface.Persistence.table</a>()) ::
+  {:ok, <a href="Shared.Data.Strategy.html#t:t/0">Shared.Data.Strategy.t</a>() | nil} | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
 
       </div>
 
 
   </section>
 </section>
-<section class="detail" id="get_strategies/0">
+<section class="detail" id="get_strategies/1">
+
+    <span id="get_strategies/0"></span>
 
   <div class="detail-header">
-    <a href="#get_strategies/0" class="detail-link" title="Link to this function">
+    <a href="#get_strategies/1" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">get_strategies()</h1>
+    <h1 class="signature" translate="no">get_strategies(table \\ Persistence.default_table())</h1>
 
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/persistence/strategy.ex#L11" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/persistence/strategy.ex#L13" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -243,23 +249,26 @@ Pages
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@spec</span> get_strategies() :: {:ok, [<a href="Shared.Data.Strategy.html#t:t/0">Shared.Data.Strategy.t</a>()]} | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+          <pre translate="no"><span class="attribute">@spec</span> get_strategies(<a href="WebInterface.Persistence.html#t:table/0">WebInterface.Persistence.table</a>()) ::
+  {:ok, [<a href="Shared.Data.Strategy.html#t:t/0">Shared.Data.Strategy.t</a>()]} | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
 
       </div>
 
 
   </section>
 </section>
-<section class="detail" id="get_strategy_by_id/1">
+<section class="detail" id="get_strategy_by_id/2">
+
+    <span id="get_strategy_by_id/1"></span>
 
   <div class="detail-header">
-    <a href="#get_strategy_by_id/1" class="detail-link" title="Link to this function">
+    <a href="#get_strategy_by_id/2" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">get_strategy_by_id(id)</h1>
+    <h1 class="signature" translate="no">get_strategy_by_id(id, table \\ Persistence.default_table())</h1>
 
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/persistence/strategy.ex#L18" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/persistence/strategy.ex#L20" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -271,7 +280,7 @@ Pages
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@spec</span> get_strategy_by_id(<a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) ::
+          <pre translate="no"><span class="attribute">@spec</span> get_strategy_by_id(strategy_id(), <a href="WebInterface.Persistence.html#t:table/0">WebInterface.Persistence.table</a>()) ::
   {:ok, <a href="Shared.Data.Strategy.html#t:t/0">Shared.Data.Strategy.t</a>()} | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
 
       </div>
@@ -279,16 +288,18 @@ Pages
 
   </section>
 </section>
-<section class="detail" id="set_selected_strategy/1">
+<section class="detail" id="set_selected_strategy/2">
+
+    <span id="set_selected_strategy/1"></span>
 
   <div class="detail-header">
-    <a href="#set_selected_strategy/1" class="detail-link" title="Link to this function">
+    <a href="#set_selected_strategy/2" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">set_selected_strategy(strategy)</h1>
+    <h1 class="signature" translate="no">set_selected_strategy(strategy, table \\ Persistence.default_table())</h1>
 
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/persistence/strategy.ex#L31" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/persistence/strategy.ex#L33" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -300,7 +311,11 @@ Pages
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@spec</span> set_selected_strategy(<a href="Shared.Data.Strategy.html#t:t/0">Shared.Data.Strategy.t</a>()) :: :ok | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+          <pre translate="no"><span class="attribute">@spec</span> set_selected_strategy(
+  <a href="Shared.Data.Strategy.html#t:t/0">Shared.Data.Strategy.t</a>(),
+  <a href="WebInterface.Persistence.html#t:table/0">WebInterface.Persistence.table</a>()
+) ::
+  :ok | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
 
       </div>
 

@@ -5,14 +5,12 @@ defmodule WebInterface.DeactivateLive do
 
   alias Manager
   alias Shared.Data.Syndicate
-  alias WebInterface.Persistence.Button, as: ButtonStore
   alias WebInterface.Persistence.Syndicate, as: SyndicateStore
   alias WebInterface.Persistence.User, as: UserStore
 
   @impl true
   def mount(_params, _session, socket) do
-    with :ok <- ButtonStore.set_button(:deactivate),
-         {:ok, user} <- UserStore.get_user(),
+    with {:ok, user} <- UserStore.get_user(),
          {:ok, syndicates} <- SyndicateStore.get_syndicates(),
          {:ok, inactive_syndicates} <- SyndicateStore.get_inactive_syndicates(),
          {:ok, selected_inactive_syndicates} <- SyndicateStore.get_selected_inactive_syndicates() do
@@ -26,7 +24,9 @@ defmodule WebInterface.DeactivateLive do
           form: to_form(%{"deactivate_syndicates" => []}),
           deactivation_in_progress: false,
           deactivation_progress: 0,
-          deactivation_current_syndicate: nil
+          deactivation_current_syndicate: nil,
+          operation_in_progress?: false,
+          selected_button: :deactivate
         )
 
       {:ok, updated_socket}
@@ -46,6 +46,7 @@ defmodule WebInterface.DeactivateLive do
         socket
         |> assign(selected_inactive_syndicates: syndicates)
         |> assign(deactivation_in_progress: true)
+        |> assign(operation_in_progress?: true)
         |> assign(deactivation_current_syndicate: syndicate)
         |> assign(deactivation_progress: 0)
 
@@ -91,12 +92,21 @@ defmodule WebInterface.DeactivateLive do
   def handle_info({:deactivate, syndicate, {:error, reason} = error}, socket) do
     Logger.error("Unable to deactivate syndicate #{syndicate.name}: #{inspect(error)}")
 
-    {:noreply,
-     put_flash(
-       socket,
-       :error,
-       "Unable to deactivate syndicate #{syndicate.name} due to '#{reason}'."
-     )}
+    with {:ok, inactive_syndicates} <- SyndicateStore.get_inactive_syndicates(),
+         new_selected_syndicates = inactive_syndicates -- [syndicate],
+         :ok <- SyndicateStore.set_selected_inactive_syndicates(new_selected_syndicates) do
+      {:noreply,
+       put_flash(
+         assign(socket, operation_in_progress?: true),
+         :error,
+         "Unable to deactivate syndicate #{syndicate.name} due to '#{reason}'."
+       )}
+    else
+      err ->
+        Logger.error("Failed to retrieve persistence data: #{inspect(err)}")
+
+        {:noreply, put_flash(socket, :error, "Multiple errors ocurred, please check the logs.")}
+    end
   end
 
   def handle_info(
@@ -114,8 +124,7 @@ defmodule WebInterface.DeactivateLive do
   end
 
   def handle_info(
-        {:deactivate, syndicate,
-         {current_item, total_items, {:ok, %Shared.Data.PlacedOrder{item_id: item_id}}}},
+        {:deactivate, syndicate, {current_item, total_items, {:ok, %Shared.Data.PlacedOrder{item_id: item_id}}}},
         socket
       ) do
     Logger.info("Order deleted for #{syndicate.name}: #{item_id}")
@@ -141,7 +150,7 @@ defmodule WebInterface.DeactivateLive do
 
       to_assign =
         if Enum.empty?(missing_syndicates) do
-          [deactivation_current_syndicate: nil, deactivation_in_progress: false]
+          [deactivation_current_syndicate: nil, deactivation_in_progress: false, operation_in_progress?: false]
         else
           [next_syndicate | _rest] = missing_syndicates
           :ok = Manager.deactivate(next_syndicate)
@@ -160,9 +169,7 @@ defmodule WebInterface.DeactivateLive do
 
       updated_socket =
         if partial_deactivation? do
-          Logger.info(
-            "Syndicate #{syndicate.name} was only partially deactivated. Try again later!"
-          )
+          Logger.info("Syndicate #{syndicate.name} was only partially deactivated. Try again later!")
 
           put_flash(
             updated_socket,

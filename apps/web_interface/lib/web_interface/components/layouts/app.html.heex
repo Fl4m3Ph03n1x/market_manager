@@ -1,23 +1,18 @@
 <header>
-  <%= if WebInterface.Persistence.User.has_user?() do %>
+  <%= if WebInterface.Persistence.User.has_user?() and not @operation_in_progress? do %>
     <nav class="bg-gray-800">
       <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="flex h-16 items-center justify-between">
           <div class="flex items-center">
             <div class="flex-shrink-0">
-              <img
-                class="h-8 w-auto"
-                src={~p"/images/resized_logo_5_32x32.png"}
-                style="border-radius: 45%;"
-                alt="Logo"
-              />
+              <img class="h-8 w-auto" src={~p"/images/resized_logo_5_32x32.png"} style="border-radius: 45%;" alt="Logo" />
             </div>
             <div class="hidden md:block">
               <div class="ml-10 flex items-baseline space-x-4">
                 <a
                   href={~p"/activate"}
                   class={
-                    if WebInterface.Persistence.Button.button_selected?(:activate) do
+                    if @selected_button == :activate do
                       "bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium"
                     else
                       "hover:bg-gray-700 text-white rounded-md px-3 py-2 text-sm font-medium"
@@ -30,7 +25,7 @@
                 <a
                   href={~p"/deactivate"}
                   class={
-                    if WebInterface.Persistence.Button.button_selected?(:deactivate) do
+                    if @selected_button == :deactivate do
                       "bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium"
                     else
                       "hover:bg-gray-700 text-white rounded-md px-3 py-2 text-sm font-medium"
@@ -118,11 +113,7 @@
                 stroke="currentColor"
                 aria-hidden="true"
               >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
-                />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
               </svg>
               <!-- Menu open: "block", Menu closed: "hidden" -->
               <svg

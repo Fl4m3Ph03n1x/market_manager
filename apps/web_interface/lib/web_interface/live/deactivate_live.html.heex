@@ -1,5 +1,6 @@
 <div class="container min-h-full mx-auto py-6 sm:px-6 lg:px-8">
   <.progress_bar
+    class="flex items-center justify-center h-screen"
     hidden={not @deactivation_in_progress}
     progress={@deactivation_progress}
     message={progress_bar_message(@deactivation_current_syndicate)}
@@ -10,14 +11,11 @@
         Deactivating a syndicate will cause the app to delete all of its orders on warframe.market.
       </.description>
     </div>
-    
+
     <div>
       <.simple_form for={@form} phx-change="change" phx-submit="execute">
         <div class="mt-4">
-          <.section
-            title="Syndicates"
-            description="Only the syndicates you have previously activated are shown."
-          />
+          <.section title="Syndicates" description="Only the syndicates you have previously activated are shown." />
           <.checkgroup
             field={@form[:syndicates]}
             options={@syndicates}
@@ -26,14 +24,9 @@
             required
           />
         </div>
-        
+
         <div class="mt-4">
-          <.button
-            class="min-w-full"
-            disabled={
-              disable_button?(@selected_inactive_syndicates, @inactive_syndicates)
-            }
-          >
+          <.button class="min-w-full" disabled={disable_button?(@selected_inactive_syndicates, @inactive_syndicates)}>
             Execute Command
           </.button>
         </div>

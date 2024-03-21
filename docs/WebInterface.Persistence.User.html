@@ -5,16 +5,16 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.31.1">
-    <meta name="project" content="Market Manager v2.1.7">
+    <meta name="project" content="Market Manager v2.1.8">
 
 
-    <title>WebInterface.Persistence.User — Market Manager v2.1.7</title>
+    <title>WebInterface.Persistence.User — Market Manager v2.1.8</title>
     <link rel="stylesheet" href="dist/html-elixir-FM2CSD74.css" />
 
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-43PMFBC7.js"></script>
-    <script src="dist/sidebar_items-13806971.js"></script>
+    <script src="dist/sidebar_items-27AEC54F.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -59,7 +59,7 @@
 Market Manager
         </a>
         <div class="sidebar-projectVersion" translate="no">
-          v2.1.7
+          v2.1.8
         </div>
       </div>
     </div>
@@ -127,7 +127,7 @@ Pages
     </a>
 
   <span translate="no">WebInterface.Persistence.User</span> 
-  <small class="app-vsn" translate="no">(Market Manager v2.1.7)</small>
+  <small class="app-vsn" translate="no">(Market Manager v2.1.8)</small>
 
 </h1>
 
@@ -151,7 +151,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#get_user/0" translate="no">get_user()</a>
+        <a href="#get_user/1" translate="no">get_user(table \\ Persistence.default_table())</a>
 
       </div>
 
@@ -159,7 +159,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#has_user?/0" translate="no">has_user?()</a>
+        <a href="#has_user?/1" translate="no">has_user?(table \\ Persistence.default_table())</a>
 
       </div>
 
@@ -167,7 +167,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#set_user/1" translate="no">set_user(user)</a>
+        <a href="#set_user/2" translate="no">set_user(user, table \\ Persistence.default_table())</a>
 
       </div>
 
@@ -186,16 +186,18 @@ Pages
       <span class="text">Functions</span>
     </h1>
     <div class="functions-list">
-<section class="detail" id="get_user/0">
+<section class="detail" id="get_user/1">
+
+    <span id="get_user/0"></span>
 
   <div class="detail-header">
-    <a href="#get_user/0" class="detail-link" title="Link to this function">
+    <a href="#get_user/1" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">get_user()</h1>
+    <h1 class="signature" translate="no">get_user(table \\ Persistence.default_table())</h1>
 
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/persistence/user.ex#L19" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/persistence/user.ex#L18" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -207,23 +209,26 @@ Pages
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@spec</span> get_user() :: {:ok, <a href="Shared.Data.User.html#t:t/0">Shared.Data.User.t</a>() | nil} | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+          <pre translate="no"><span class="attribute">@spec</span> get_user(<a href="WebInterface.Persistence.html#t:table/0">WebInterface.Persistence.table</a>()) ::
+  {:ok, <a href="Shared.Data.User.html#t:t/0">Shared.Data.User.t</a>() | nil} | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
 
       </div>
 
 
   </section>
 </section>
-<section class="detail" id="has_user?/0">
+<section class="detail" id="has_user?/1">
+
+    <span id="has_user?/0"></span>
 
   <div class="detail-header">
-    <a href="#has_user?/0" class="detail-link" title="Link to this function">
+    <a href="#has_user?/1" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">has_user?()</h1>
+    <h1 class="signature" translate="no">has_user?(table \\ Persistence.default_table())</h1>
 
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/persistence/user.ex#L26" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/persistence/user.ex#L25" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -235,23 +240,25 @@ Pages
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@spec</span> has_user?() :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()</pre>
+          <pre translate="no"><span class="attribute">@spec</span> has_user?(<a href="WebInterface.Persistence.html#t:table/0">WebInterface.Persistence.table</a>()) :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()</pre>
 
       </div>
 
 
   </section>
 </section>
-<section class="detail" id="set_user/1">
+<section class="detail" id="set_user/2">
+
+    <span id="set_user/1"></span>
 
   <div class="detail-header">
-    <a href="#set_user/1" class="detail-link" title="Link to this function">
+    <a href="#set_user/2" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">set_user(user)</h1>
+    <h1 class="signature" translate="no">set_user(user, table \\ Persistence.default_table())</h1>
 
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/persistence/user.ex#L11" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/web_interface/lib/web_interface/persistence/user.ex#L10" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -263,7 +270,8 @@ Pages
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@spec</span> set_user(<a href="Shared.Data.User.html#t:t/0">Shared.Data.User.t</a>() | nil) :: :ok | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+          <pre translate="no"><span class="attribute">@spec</span> set_user(<a href="Shared.Data.User.html#t:t/0">Shared.Data.User.t</a>() | nil, <a href="WebInterface.Persistence.html#t:table/0">WebInterface.Persistence.table</a>()) ::
+  :ok | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
 
       </div>
 

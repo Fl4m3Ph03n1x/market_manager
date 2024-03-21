@@ -1,23 +1,25 @@
 defmodule WebInterface.Persistence.Strategy do
   @moduledoc """
-  Persistence module for strategy data. Mostly to track which strategy is selected in the menu and access the list of strategies.
+  Persistence module for strategy data. Mostly to track which strategy is selected in the menu and access the list of 
+  strategies.
   """
 
-  alias ETS
   alias Shared.Data.Strategy
   alias WebInterface.Persistence
 
-  @spec get_strategies :: {:ok, [Strategy.t()]} | {:error, any}
-  def get_strategies do
-    with {:ok, table} <- ETS.KeyValueSet.wrap_existing(Persistence.table()) do
-      ETS.KeyValueSet.get(table, :strategies)
+  @typep strategy_id :: String.t()
+
+  @spec get_strategies(Persistence.table()) :: {:ok, [Strategy.t()]} | {:error, any()}
+  def get_strategies(table \\ Persistence.default_table()) do
+    with {:ok, table_ref} <- table.recover.(table.name) do
+      table.get.(table_ref, :strategies, [])
     end
   end
 
-  @spec get_strategy_by_id(String.t()) :: {:ok, Strategy.t()} | {:error, any}
-  def get_strategy_by_id(id) do
-    with {:ok, table} <- ETS.KeyValueSet.wrap_existing(Persistence.table()),
-         {:ok, strategies} <- ETS.KeyValueSet.get(table, :strategies) do
+  @spec get_strategy_by_id(strategy_id(), Persistence.table()) :: {:ok, Strategy.t()} | {:error, any()}
+  def get_strategy_by_id(id, table \\ Persistence.default_table()) do
+    with {:ok, table_ref} <- table.recover.(table.name),
+         {:ok, strategies} <- table.get.(table_ref, :strategies, []) do
       strategies
       |> Enum.find(fn strategy -> strategy.id == String.to_existing_atom(id) end)
       |> case do
@@ -27,18 +29,18 @@ defmodule WebInterface.Persistence.Strategy do
     end
   end
 
-  @spec set_selected_strategy(Strategy.t()) :: :ok | {:error, any()}
-  def set_selected_strategy(strategy) do
-    with {:ok, table} <- ETS.KeyValueSet.wrap_existing(Persistence.table()),
-         {:ok, _updated_table} <- ETS.KeyValueSet.put(table, :selected_strategy, strategy) do
+  @spec set_selected_strategy(Strategy.t(), Persistence.table()) :: :ok | {:error, any()}
+  def set_selected_strategy(strategy, table \\ Persistence.default_table()) do
+    with {:ok, table_ref} <- table.recover.(table.name),
+         {:ok, _updated_table} <- table.put.(table_ref, :selected_strategy, strategy) do
       :ok
     end
   end
 
-  @spec get_selected_strategy :: {:ok, Strategy.t()} | {:error, any()}
-  def get_selected_strategy do
-    case ETS.KeyValueSet.wrap_existing(Persistence.table()) do
-      {:ok, table} -> ETS.KeyValueSet.get(table, :selected_strategy, nil)
+  @spec get_selected_strategy(Persistence.table()) :: {:ok, Strategy.t() | nil} | {:error, any()}
+  def get_selected_strategy(table \\ Persistence.default_table()) do
+    case table.recover.(table.name) do
+      {:ok, table_ref} -> table.get.(table_ref, :selected_strategy, nil)
       err -> err
     end
   end

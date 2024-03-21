@@ -47,7 +47,6 @@ WebInterface.LoginLive.html
 WebInterface.LogoutLive.html
 WebInterface.PageController.html
 WebInterface.PageHTML.html
-WebInterface.Persistence.Button.html
 WebInterface.Persistence.Strategy.html
 WebInterface.Persistence.Syndicate.html
 WebInterface.Persistence.User.html
@@ -83,8 +82,8 @@ dist/merriweather-latin-ext-300-normal-K6L27CZ5.woff2
 dist/merriweather-vietnamese-300-italic-EHHNZPUO.woff2
 dist/merriweather-vietnamese-300-normal-U376L4Z4.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_data-E7D0DECB.js
-dist/sidebar_items-13806971.js
+dist/search_data-D7131EF7.js
+dist/sidebar_items-27AEC54F.js
 index.html
 readme.html
 search.html
