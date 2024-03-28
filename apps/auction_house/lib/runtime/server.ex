@@ -26,6 +26,10 @@ defmodule AuctionHouse.Runtime.Server do
   def get_all_orders(item_name),
     do: GenServer.call(__MODULE__, {:get_all_orders, item_name}, @genserver_timeout)
 
+  @spec get_user_orders(Type.username()) :: Type.get_user_orders_response()
+  def get_user_orders(username),
+    do: GenServer.call(__MODULE__, {:get_user_orders, username}, @genserver_timeout)
+
   @spec place_order(Order.t()) :: Type.place_order_response()
   def place_order(order),
     do: GenServer.call(__MODULE__, {:place_order, order}, @genserver_timeout)
@@ -103,6 +107,9 @@ defmodule AuctionHouse.Runtime.Server do
 
   def handle_call({:get_all_orders, item_name}, _from, state),
     do: {:reply, HTTPClient.get_all_orders(item_name, state), state}
+
+  def handle_call({:get_user_orders, username}, _from, state),
+    do: {:reply, HTTPClient.get_user_orders(username, state), state}
 
   def handle_call(
         {:login, credentials},

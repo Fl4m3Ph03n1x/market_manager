@@ -95,6 +95,34 @@ defmodule AuctionHouse do
   defdelegate get_all_orders(item_name), to: Server
 
   @doc """
+  Gets all warframe market sell orders for the given user.
+
+  Example:
+  ```
+  > username = "Fl4m3"
+
+  > AuctionHouse.get_user_orders(username)
+  {:ok,
+    [
+      %PlacedOrder{
+        order_id: "66058313a9630600302d4889",
+        item_id: "55108594e77989728d5100c6"
+      },
+      %PlacedOrder{
+        order_id: "6605832ea96306003657a90d",
+        item_id: "54e644ffe779897594fa68d2"
+      }
+    ]
+  }
+
+  > AuctionHouse.get_user_orders("NonExistingUser")
+  {:error, :reason, username}
+  ```
+  """
+  @spec get_user_orders(Type.username()) :: Type.get_user_orders_response()
+  defdelegate get_user_orders(username), to: Server
+
+  @doc """
   Stores the user's credentials and  authenticates with the auction house to
   make requests. Must be invoked every time the application is launched.
   It also performs the necessary steps for authorization. Returns user

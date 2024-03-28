@@ -11,6 +11,7 @@ defmodule AuctionHouse.Type do
 
   @type item_id :: String.t()
   @type item_name :: String.t()
+  @type username :: String.t()
   @type reason :: atom()
   @type state :: %{
           dependencies: map(),
@@ -22,10 +23,12 @@ defmodule AuctionHouse.Type do
   # Responses #
   #############
 
-  @type place_order_response :: {:ok, PlacedOrder.t()} | {:error, reason, Order.t()}
-  @type delete_order_response :: :ok | {:error, reason, PlacedOrder.t()}
-  @type get_all_orders_response :: {:ok, [OrderInfo.t()]} | {:error, reason, item_name}
-  @type login_response :: {:ok, {Authorization.t(), User.t()}} | {:error, reason, Credentials.t()}
+  @type place_order_response :: {:ok, PlacedOrder.t()} | {:error, reason(), Order.t()}
+  @type delete_order_response :: :ok | {:error, reason(), PlacedOrder.t()}
+  @type get_all_orders_response :: {:ok, [OrderInfo.t()]} | {:error, reason(), item_name()}
+  @type get_user_orders_response :: {:ok, [PlacedOrder.t()]} | {:error, reason(), username()}
+  @type login_response ::
+          {:ok, {Authorization.t(), User.t()}} | {:error, reason(), Credentials.t()}
   @type recover_login_response :: :ok
   @type logout_response :: :ok
 end

@@ -12,6 +12,10 @@ defmodule AuctionHouse.Impl.HTTPClient do
   @search_url Application.compile_env!(:auction_house, :api_search_url)
   @market_signin_url Application.compile_env!(:auction_house, :market_signin_url)
   @api_signin_url Application.compile_env!(:auction_house, :api_signin_url)
+
+  # "https://api.warframe.market/v1/profile/Fl4m3Ph03n1x/orders"
+  @api_profile_url Application.compile_env!(:auction_house, :api_profile_url)
+
   @http_response_timeout Application.compile_env!(:auction_house, :http_response_timeout)
 
   @static_headers [
