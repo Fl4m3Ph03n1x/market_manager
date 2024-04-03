@@ -531,6 +531,103 @@ defmodule AuctionHouse.HTTPClientTest do
     end
   end
 
+  describe "get_user_orders/2" do
+    test "returns {:ok, []} when requests for user orders succeed and there are no sell orders" do
+      # Arrange
+      username = "the_username"
+
+      state = %{
+        dependencies: %{
+          get_fn: fn _url, _headers, _opts ->
+            {:ok,
+             %HTTPoison.Response{
+               status_code: 200,
+               body: "{\"payload\":{\"buy_orders\":[],\"sell_orders\":[]}}"
+             }}
+          end,
+          run_fn: fn _queue_name, func -> func.() end,
+          requests_queue: nil
+        },
+        authorization: nil
+      }
+
+      # Act
+      actual = HTTPClient.get_user_orders(username, state)
+
+      expected = {:ok, []}
+
+      # Assert
+      assert actual == expected
+    end
+
+    test "returns {:ok, [placed_order]} when requests for user orders succeed" do
+      # Arrange
+      username = "the_username"
+
+      state = %{
+        dependencies: %{
+          get_fn: fn _url, _headers, _opts ->
+            {:ok,
+             %HTTPoison.Response{
+               status_code: 200,
+               body:
+                 "{\"payload\":{\"buy_orders\":[],\"sell_orders\":[{\"creation_date\":\"2024-03-28T14:47:47.875+00:00\",\"id\":\"66058313a9630600302d4889\",\"item\":{\"id\":\"55108594e77989728d5100c6\",\"mod_max_rank\":5,\"tags\":[\"uncommon\",\"arcane_enhancement\"],\"url_name\":\"arcane_agility\"},\"last_update\":\"2024-03-28T14:47:47.875+00:00\",\"mod_rank\":0,\"order_type\":\"sell\",\"platform\":\"pc\",\"platinum\":4,\"quantity\":21,\"region\":\"en\",\"visible\":true},{\"creation_date\":\"2024-03-28T14:48:14.281+00:00\",\"id\":\"6605832ea96306003657a90d\",\"item\":{\"id\":\"54e644ffe779897594fa68d2\",\"mod_max_rank\":3,\"tags\":[\"mod\",\"rare\",\"warframe\",\"trinity\"],\"url_name\":\"abating_link\"},\"last_update\":\"2024-03-28T14:48:14.281+00:00\",\"mod_rank\":0,\"order_type\":\"sell\",\"platform\":\"pc\",\"platinum\":23,\"quantity\":1,\"region\":\"en\",\"visible\":true}]}}"
+             }}
+          end,
+          run_fn: fn _queue_name, func -> func.() end,
+          requests_queue: nil
+        },
+        authorization: nil
+      }
+
+      # Act
+      actual = HTTPClient.get_user_orders(username, state)
+
+      expected =
+        {:ok,
+         [
+           %PlacedOrder{
+             order_id: "66058313a9630600302d4889",
+             item_id: "55108594e77989728d5100c6"
+           },
+           %PlacedOrder{
+             order_id: "6605832ea96306003657a90d",
+             item_id: "54e644ffe779897594fa68d2"
+           }
+         ]}
+
+      # Assert
+      assert actual == expected
+    end
+
+    test "returns error if request for user orders about item fails" do
+      # Arrange
+      username = "the_username"
+
+      state = %{
+        dependencies: %{
+          get_fn: fn _url, _headers, _opts ->
+            {:ok,
+             %HTTPoison.Response{
+               status_code: 500,
+               body: ""
+             }}
+          end,
+          run_fn: fn _queue_name, func -> func.() end,
+          requests_queue: nil
+        },
+        authorization: nil
+      }
+
+      # Act
+      actual = HTTPClient.get_user_orders(username, state)
+      expected = {:error, :internal_server_error, "the_username"}
+
+      # Assert
+      assert actual == expected
+    end
+  end
+
   describe "login/2" do
     test "returns UserInfo if login happens correctly" do
       # Arrange

@@ -12,8 +12,6 @@ defmodule AuctionHouse.Impl.HTTPClient do
   @search_url Application.compile_env!(:auction_house, :api_search_url)
   @market_signin_url Application.compile_env!(:auction_house, :market_signin_url)
   @api_signin_url Application.compile_env!(:auction_house, :api_signin_url)
-
-  # "https://api.warframe.market/v1/profile/Fl4m3Ph03n1x/orders"
   @api_profile_url Application.compile_env!(:auction_house, :api_profile_url)
 
   @http_response_timeout Application.compile_env!(:auction_house, :http_response_timeout)
@@ -22,6 +20,8 @@ defmodule AuctionHouse.Impl.HTTPClient do
     {"Accept", "application/json"},
     {"Content-Type", "application/json"}
   ]
+
+  @typep uri :: String.t()
 
   ##########
   # Public #
@@ -60,6 +60,17 @@ defmodule AuctionHouse.Impl.HTTPClient do
       {:ok, parse_order_info(content)}
     else
       error -> to_auction_house_error(error, item_name)
+    end
+  end
+
+  @spec get_user_orders(Type.username(), Type.state()) :: Type.get_user_orders_response()
+  def get_user_orders(username, state) do
+    with url <- build_user_orders_url(username),
+         {:ok, %HTTPoison.Response{status_code: 200, body: body}} <- http_get(url, state),
+         {:ok, content} <- Jason.decode(body) do
+      {:ok, parse_user_order_info(content)}
+    else
+      error -> to_auction_house_error(error, username)
     end
   end
 
@@ -274,11 +285,29 @@ defmodule AuctionHouse.Impl.HTTPClient do
   defp to_auction_house_error({:error, reason}, data),
     do: {:error, reason, data}
 
-  @spec parse_order_info(orders_json :: [map()]) :: [OrderInfo.t()]
+  @spec parse_order_info(orders_json :: map()) :: [OrderInfo.t()]
   defp parse_order_info(orders_json) do
     orders_json
     |> get_in(["payload", "orders"])
     |> Enum.map(&OrderInfo.new/1)
+  end
+
+  @spec parse_user_order_info(orders_json :: map()) :: [PlacedOrder.t()]
+  defp parse_user_order_info(orders_json) do
+    orders_json
+    |> get_in(["payload", "sell_orders"])
+    |> Enum.map(&to_placed_order/1)
+    |> Enum.map(&PlacedOrder.new/1)
+  end
+
+  @spec to_placed_order(map()) :: map()
+  defp to_placed_order(user_orders) do
+    order_id = Map.get(user_orders, "id")
+    item_id = get_in(user_orders, ["item", "id"])
+
+    user_orders
+    |> Map.put("order_id", order_id)
+    |> Map.put("item_id", item_id)
   end
 
   @spec map_error(error_response :: String.t()) ::
@@ -324,14 +353,18 @@ defmodule AuctionHouse.Impl.HTTPClient do
   defp build_error_response({:error, reason}, data),
     do: {:error, reason, data}
 
-  @spec build_delete_url(String.t()) :: uri :: String.t()
+  @spec build_delete_url(String.t()) :: uri()
   defp build_delete_url(id), do: URI.encode(@url <> "/" <> id)
 
   @spec build_headers(String.t(), String.t()) :: [{String.t(), String.t()}]
   defp build_headers(cookie, token),
     do: [{"x-csrftoken", token}, {"Cookie", cookie}] ++ @static_headers
 
-  @spec build_get_orders_url(item_name :: String.t()) :: uri :: String.t()
+  @spec build_get_orders_url(Type.item_name()) :: uri()
   defp build_get_orders_url(item_name),
     do: URI.encode(@search_url <> "/" <> Recase.to_snake(item_name) <> "/orders")
+
+  @spec build_user_orders_url(Type.username()) :: uri()
+  defp build_user_orders_url(username),
+    do: URI.encode(@api_profile_url <> "/" <> username <> "/orders")
 end

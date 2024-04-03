@@ -116,7 +116,7 @@ defmodule AuctionHouse do
   }
 
   > AuctionHouse.get_user_orders("NonExistingUser")
-  {:error, :reason, username}
+  {:error, :reason, "NonExistingUser"}
   ```
   """
   @spec get_user_orders(Type.username()) :: Type.get_user_orders_response()

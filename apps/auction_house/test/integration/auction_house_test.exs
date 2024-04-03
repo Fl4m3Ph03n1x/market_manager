@@ -357,7 +357,7 @@ defmodule AuctionHouseTest do
   end
 
   describe "get_user_orders/2" do
-    test "returns {:ok, [order_info]} if request for currently listed user orders succeeded", %{
+    test "returns {:ok, [placed_order]} if request for currently listed user orders succeeded", %{
       bypass: bypass
     } do
       # Arrange
