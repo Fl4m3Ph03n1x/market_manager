@@ -7,6 +7,10 @@ defmodule Shared.Data.Syndicate do
 
   alias Shared.Utils.Structs
 
+  @type id :: atom()
+  @type name :: String.t()
+  @type catalog :: [String.t()]
+
   @type syndicate ::
           %{
             (name :: String.t()) => String.t(),

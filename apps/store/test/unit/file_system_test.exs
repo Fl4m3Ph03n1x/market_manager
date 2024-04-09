@@ -73,56 +73,42 @@ defmodule MarketManager.Store.FileSystemTest do
     end
   end
 
-  describe "list_orders/2" do
-    test "returns list of available placed orders from given syndicate", %{paths: paths} = deps do
+  describe "list_sell_orders/2" do
+    test "returns list of placed orders", %{paths: paths} = deps do
       # Arrange
       read_fn = fn filename ->
         assert filename == Path.join(paths[:current_orders])
 
         {:ok,
-         "{\"new_loka\":[{\"item_id\":\"54e644ffe779897594fa68d2\",\"order_id\":\"5ee71a2604d55c0a5cbdc3c2\"},{\"item_id\":\"Vampire leech\",\"order_id\":\"5ee71a2604d55c0a5cbdc3e3\"}]}"}
+         "{\"manual\":[{\"item_id\":\"5740c1879d238d4a03d28518\",\"order_id\":\"5ee71a2604d55c0a5cbdc3c2\"}],\"automatic\":[{\"item_id\":\"5740c1879d238d4a03d28518\",\"order_id\":\"5ee71a2604d55c0a5cbdc3e3\"},{\"item_id\":\"54a74454e779892d5e5155be\",\"order_id\":\"5ee71a2604d55c0a5cbdc3d4\"}],\"active_syndicates\":[\"cephalon_simaris\",\"cephalon_suda\"]}"}
       end
 
       deps = Map.put(deps, :io, %{read: read_fn})
-      syndicate = Syndicate.new(name: "New Loka", id: :new_loka, catalog: [])
 
       # Act
-      actual = FileSystem.list_orders(syndicate, deps)
+      actual = FileSystem.list_sell_orders(deps)
 
       expected = {
         :ok,
-        [
-          PlacedOrder.new(%{
-            "item_id" => "54e644ffe779897594fa68d2",
-            "order_id" => "5ee71a2604d55c0a5cbdc3c2"
-          }),
-          PlacedOrder.new(%{
-            "item_id" => "Vampire leech",
-            "order_id" => "5ee71a2604d55c0a5cbdc3e3"
-          })
-        ]
+        %{
+          manual: [
+            %PlacedOrder{
+              item_id: "5740c1879d238d4a03d28518",
+              order_id: "5ee71a2604d55c0a5cbdc3c2"
+            }
+          ],
+          automatic: [
+            %PlacedOrder{
+              item_id: "5740c1879d238d4a03d28518",
+              order_id: "5ee71a2604d55c0a5cbdc3e3"
+            },
+            %PlacedOrder{
+              item_id: "54a74454e779892d5e5155be",
+              order_id: "5ee71a2604d55c0a5cbdc3d4"
+            }
+          ]
+        }
       }
-
-      # Assert
-      assert actual == expected
-    end
-
-    test "returns empty if syndicate is not found", %{paths: paths} = deps do
-      # Arrange
-
-      read_fn = fn filename ->
-        assert filename == Path.join(paths[:current_orders])
-
-        {:ok,
-         "{\"red_veil\":[{\"item_id\":\"54e644ffe779897594fa68d2\",\"order_id\":\"5ee71a2604d55c0a5cbdc3c2\"}]}"}
-      end
-
-      deps = Map.put(deps, :io, %{read: read_fn})
-      syndicate = Syndicate.new(name: "New Loka", id: :new_loka, catalog: [])
-
-      # Act
-      actual = FileSystem.list_orders(syndicate, deps)
-      expected = {:ok, []}
 
       # Assert
       assert actual == expected
@@ -137,10 +123,8 @@ defmodule MarketManager.Store.FileSystemTest do
 
       deps = Map.put(deps, :io, %{read: read_fn})
 
-      syndicate = Syndicate.new(name: "New Loka", id: :new_loka, catalog: [])
-
       # Act
-      actual = FileSystem.list_orders(syndicate, deps)
+      actual = FileSystem.list_sell_orders(deps)
       expected = {:error, :enoent}
 
       # Assert
@@ -149,30 +133,61 @@ defmodule MarketManager.Store.FileSystemTest do
   end
 
   describe "save_order/3" do
-    test "returns :ok if order was saved successfully", %{paths: paths} = deps do
+    test "returns :ok if automatic order was saved successfully", %{paths: paths} = deps do
       # Arrange
       read_fn = fn filename ->
         assert filename == Path.join(paths[:current_orders])
 
         {:ok,
-         "{\"perrin_sequence\":[{\"item_id\":\"54e644ffe779897594fa68d2\",\"order_id\":\"54a74454e779892d5e5155d5\"}]}"}
+         "{\"manual\":[{\"item_id\":\"5740c1879d238d4a03d28518\",\"order_id\":\"5ee71a2604d55c0a5cbdc3c2\"}],\"automatic\":[{\"item_id\":\"5740c1879d238d4a03d28518\",\"order_id\":\"5ee71a2604d55c0a5cbdc3e3\"},{\"item_id\":\"54a74454e779892d5e5155be\",\"order_id\":\"5ee71a2604d55c0a5cbdc3d4\"}],\"active_syndicates\":[\"cephalon_simaris\",\"cephalon_suda\"]}"}
       end
 
       write_fn = fn filename, content ->
         assert filename == Path.join(paths[:current_orders])
 
         assert content ==
-                 "{\"perrin_sequence\":[{\"item_id\":\"54e644ffe779897594fa68d2\",\"order_id\":\"54a74454e779892d5e5155d5\"},{\"item_id\":\"Vampire leech\",\"order_id\":\"5ee71a2604d55c0a5cbdc3e3\"}]}"
+                 "{\"manual\":[{\"item_id\":\"5740c1879d238d4a03d28518\",\"order_id\":\"5ee71a2604d55c0a5cbdc3c2\"}],\"automatic\":[{\"item_id\":\"5740c1879d238d4a03d28519\",\"order_id\":\"5ee71a2604d55c0a5cbdc3e3\"},{\"item_id\":\"5740c1879d238d4a03d28518\",\"order_id\":\"5ee71a2604d55c0a5cbdc3e3\"},{\"item_id\":\"54a74454e779892d5e5155be\",\"order_id\":\"5ee71a2604d55c0a5cbdc3d4\"}],\"active_syndicates\":[\"perrin_sequence\",\"cephalon_simaris\",\"cephalon_suda\"]}"
 
         :ok
       end
 
       deps = Map.put(deps, :io, %{read: read_fn, write: write_fn})
-      syndicate = Syndicate.new(name: "Perrin Sequence", id: :perrin_sequence, catalog: [])
+      syndicate = :perrin_sequence
 
       placed_order =
         PlacedOrder.new(%{
-          "item_id" => "Vampire leech",
+          "item_id" => "5740c1879d238d4a03d28519",
+          "order_id" => "5ee71a2604d55c0a5cbdc3e3"
+        })
+
+      # Act & Assert
+      assert FileSystem.save_order(placed_order, syndicate, deps) == :ok
+    end
+
+    test "returns :ok if manual order was saved successfully", %{paths: paths} = deps do
+      # Arrange
+      read_fn = fn filename ->
+        assert filename == Path.join(paths[:current_orders])
+
+        {:ok,
+         "{\"manual\":[{\"item_id\":\"5740c1879d238d4a03d28518\",\"order_id\":\"5ee71a2604d55c0a5cbdc3c2\"}],\"automatic\":[{\"item_id\":\"5740c1879d238d4a03d28518\",\"order_id\":\"5ee71a2604d55c0a5cbdc3e3\"},{\"item_id\":\"54a74454e779892d5e5155be\",\"order_id\":\"5ee71a2604d55c0a5cbdc3d4\"}],\"active_syndicates\":[\"cephalon_simaris\",\"cephalon_suda\"]}"}
+      end
+
+      write_fn = fn filename, content ->
+        assert filename == Path.join(paths[:current_orders])
+
+        assert content ==
+                 "{\"manual\":[{\"item_id\":\"5740c1879d238d4a03d28519\",\"order_id\":\"5ee71a2604d55c0a5cbdc3e3\"},{\"item_id\":\"5740c1879d238d4a03d28518\",\"order_id\":\"5ee71a2604d55c0a5cbdc3c2\"}],\"automatic\":[{\"item_id\":\"5740c1879d238d4a03d28518\",\"order_id\":\"5ee71a2604d55c0a5cbdc3e3\"},{\"item_id\":\"54a74454e779892d5e5155be\",\"order_id\":\"5ee71a2604d55c0a5cbdc3d4\"}],\"active_syndicates\":[\"cephalon_simaris\",\"cephalon_suda\"]}"
+
+        :ok
+      end
+
+      deps = Map.put(deps, :io, %{read: read_fn, write: write_fn})
+      syndicate = nil
+
+      placed_order =
+        PlacedOrder.new(%{
+          "item_id" => "5740c1879d238d4a03d28519",
           "order_id" => "5ee71a2604d55c0a5cbdc3e3"
         })
 
@@ -188,13 +203,13 @@ defmodule MarketManager.Store.FileSystemTest do
       end
 
       deps = Map.put(deps, :io, %{read: read_fn})
-      syndicate = Syndicate.new(name: "Perrin Sequence", id: :perrin_sequence, catalog: [])
+      syndicate = :perrin_sequence
 
       placed_order =
-        PlacedOrder.new(%{
-          "item_id" => "Vampire leech",
-          "order_id" => "5ee71a2604d55c0a5cbdc3e3"
-        })
+        %PlacedOrder{
+          item_id: "5740c1879d238d4a03d28519",
+          order_id: "5ee71a2604d55c0a5cbdc3e3"
+        }
 
       # Act & Assert
       assert FileSystem.save_order(placed_order, syndicate, deps) == {:error, :enoent}
@@ -206,7 +221,7 @@ defmodule MarketManager.Store.FileSystemTest do
         assert filename == Path.join(paths[:current_orders])
 
         {:ok,
-         "{\"perrin_sequence\":[{\"item_id\":\"54e644ffe779897594fa68d2\",\"order_id\":\"54a74454e779892d5e5155d5\"}]}"}
+         "{\"manual\":[{\"item_id\":\"5740c1879d238d4a03d28518\",\"order_id\":\"5ee71a2604d55c0a5cbdc3c2\"}],\"automatic\":[{\"item_id\":\"5740c1879d238d4a03d28518\",\"order_id\":\"5ee71a2604d55c0a5cbdc3e3\"},{\"item_id\":\"54a74454e779892d5e5155be\",\"order_id\":\"5ee71a2604d55c0a5cbdc3d4\"}],\"active_syndicates\":[\"cephalon_simaris\",\"cephalon_suda\"]}"}
       end
 
       write_fn = fn filename, _content ->
@@ -215,13 +230,13 @@ defmodule MarketManager.Store.FileSystemTest do
       end
 
       deps = Map.put(deps, :io, %{read: read_fn, write: write_fn})
-      syndicate = Syndicate.new(name: "Perrin Sequence", id: :perrin_sequence, catalog: [])
+      syndicate = :perrin_sequence
 
       placed_order =
-        PlacedOrder.new(%{
-          "item_id" => "Vampire leech",
-          "order_id" => "5ee71a2604d55c0a5cbdc3e3"
-        })
+        %PlacedOrder{
+          item_id: "5740c1879d238d4a03d28519",
+          order_id: "5ee71a2604d55c0a5cbdc3e3"
+        }
 
       # Act & Assert
       assert FileSystem.save_order(placed_order, syndicate, deps) == {:error, :enoent}
@@ -229,29 +244,63 @@ defmodule MarketManager.Store.FileSystemTest do
   end
 
   describe "delete_order/3" do
-    test "returns :ok if order was deleted successfully", %{paths: paths} = deps do
+    test "returns :ok if automatic order was deleted successfully", %{paths: paths} = deps do
       # Arrange
       read_fn = fn filename ->
         assert filename == Path.join(paths[:current_orders])
 
         {:ok,
-         "{\"perrin_sequence\":[{\"item_id\":\"54e644ffe779897594fa68d2\",\"order_id\":\"54a74454e779892d5e5155d5\"}]}"}
+         "{\"manual\":[{\"item_id\":\"5740c1879d238d4a03d28518\",\"order_id\":\"5ee71a2604d55c0a5cbdc3c2\"}],\"automatic\":[{\"item_id\":\"5740c1879d238d4a03d28518\",\"order_id\":\"5ee71a2604d55c0a5cbdc3e3\"},{\"item_id\":\"54a74454e779892d5e5155be\",\"order_id\":\"5ee71a2604d55c0a5cbdc3d4\"}],\"active_syndicates\":[\"cephalon_simaris\",\"cephalon_suda\"]}"}
       end
 
       write_fn = fn filename, content ->
         assert filename == Path.join(paths[:current_orders])
-        assert content == "{\"perrin_sequence\":[]}"
+
+        assert content ==
+                 "{\"manual\":[{\"item_id\":\"5740c1879d238d4a03d28518\",\"order_id\":\"5ee71a2604d55c0a5cbdc3c2\"}],\"automatic\":[{\"item_id\":\"54a74454e779892d5e5155be\",\"order_id\":\"5ee71a2604d55c0a5cbdc3d4\"}],\"active_syndicates\":[\"cephalon_suda\"]}"
+
         :ok
       end
 
       deps = Map.put(deps, :io, %{read: read_fn, write: write_fn})
-      syndicate = Syndicate.new(name: "Perrin Sequence", id: :perrin_sequence, catalog: [])
+      syndicate = :cephalon_simaris
 
       placed_order =
-        PlacedOrder.new(%{
-          "item_id" => "54e644ffe779897594fa68d2",
-          "order_id" => "54a74454e779892d5e5155d5"
-        })
+        %PlacedOrder{
+          item_id: "5740c1879d238d4a03d28518",
+          order_id: "5ee71a2604d55c0a5cbdc3e3"
+        }
+
+      # Act & Assert
+      assert FileSystem.delete_order(placed_order, syndicate, deps) == :ok
+    end
+
+    test "returns :ok if manual order was deleted successfully", %{paths: paths} = deps do
+      # Arrange
+      read_fn = fn filename ->
+        assert filename == Path.join(paths[:current_orders])
+
+        {:ok,
+         "{\"manual\":[{\"item_id\":\"5740c1879d238d4a03d28518\",\"order_id\":\"5ee71a2604d55c0a5cbdc3c2\"}],\"automatic\":[{\"item_id\":\"5740c1879d238d4a03d28518\",\"order_id\":\"5ee71a2604d55c0a5cbdc3e3\"},{\"item_id\":\"54a74454e779892d5e5155be\",\"order_id\":\"5ee71a2604d55c0a5cbdc3d4\"}],\"active_syndicates\":[\"cephalon_simaris\",\"cephalon_suda\"]}"}
+      end
+
+      write_fn = fn filename, content ->
+        assert filename == Path.join(paths[:current_orders])
+
+        assert content ==
+                 "{\"manual\":[],\"automatic\":[{\"item_id\":\"5740c1879d238d4a03d28518\",\"order_id\":\"5ee71a2604d55c0a5cbdc3e3\"},{\"item_id\":\"54a74454e779892d5e5155be\",\"order_id\":\"5ee71a2604d55c0a5cbdc3d4\"}],\"active_syndicates\":[\"cephalon_simaris\",\"cephalon_suda\"]}"
+
+        :ok
+      end
+
+      deps = Map.put(deps, :io, %{read: read_fn, write: write_fn})
+      syndicate = nil
+
+      placed_order =
+        %PlacedOrder{
+          item_id: "5740c1879d238d4a03d28518",
+          order_id: "5ee71a2604d55c0a5cbdc3c2"
+        }
 
       # Act & Assert
       assert FileSystem.delete_order(placed_order, syndicate, deps) == :ok
@@ -265,13 +314,13 @@ defmodule MarketManager.Store.FileSystemTest do
       end
 
       deps = Map.put(deps, :io, %{read: read_fn})
-      syndicate = Syndicate.new(name: "Perrin Sequence", id: :perrin_sequence, catalog: [])
+      syndicate = :perrin_sequence
 
       placed_order =
-        PlacedOrder.new(%{
-          "item_id" => "54e644ffe779897594fa68d2",
-          "order_id" => "54a74454e779892d5e5155d5"
-        })
+        %PlacedOrder{
+          item_id: "54e644ffe779897594fa68d2",
+          order_id: "54a74454e779892d5e5155d5"
+        }
 
       # Act & Assert
       assert FileSystem.delete_order(placed_order, syndicate, deps) == {:error, :enoent}
@@ -285,23 +334,26 @@ defmodule MarketManager.Store.FileSystemTest do
         assert filename == Path.join(paths[:current_orders])
 
         {:ok,
-         "{\"perrin_sequence\":[{\"item_id\":\"54e644ffe779897594fa68d2\",\"order_id\":\"54a74454e779892d5e5155d5\"}]}"}
+         "{\"manual\":[{\"item_id\":\"5740c1879d238d4a03d28518\",\"order_id\":\"5ee71a2604d55c0a5cbdc3c2\"}],\"automatic\":[{\"item_id\":\"5740c1879d238d4a03d28518\",\"order_id\":\"5ee71a2604d55c0a5cbdc3e3\"},{\"item_id\":\"54a74454e779892d5e5155be\",\"order_id\":\"5ee71a2604d55c0a5cbdc3d4\"}],\"active_syndicates\":[\"cephalon_simaris\",\"cephalon_suda\"]}"}
       end
 
       write_fn = fn filename, content ->
         assert filename == Path.join(paths[:current_orders])
-        assert content == "{\"perrin_sequence\":[]}"
+
+        assert content ==
+                 "{\"manual\":[{\"item_id\":\"5740c1879d238d4a03d28518\",\"order_id\":\"5ee71a2604d55c0a5cbdc3c2\"}],\"automatic\":[{\"item_id\":\"54a74454e779892d5e5155be\",\"order_id\":\"5ee71a2604d55c0a5cbdc3d4\"}],\"active_syndicates\":[\"cephalon_suda\"]}"
+
         {:error, :enoent}
       end
 
       deps = Map.put(deps, :io, %{read: read_fn, write: write_fn})
-      syndicate = Syndicate.new(name: "Perrin Sequence", id: :perrin_sequence, catalog: [])
+      syndicate = :cephalon_simaris
 
       placed_order =
-        PlacedOrder.new(%{
-          "item_id" => "54e644ffe779897594fa68d2",
-          "order_id" => "54a74454e779892d5e5155d5"
-        })
+        %PlacedOrder{
+          item_id: "5740c1879d238d4a03d28518",
+          order_id: "5ee71a2604d55c0a5cbdc3e3"
+        }
 
       # Act & Assert
       assert FileSystem.delete_order(placed_order, syndicate, deps) == {:error, :enoent}
@@ -526,18 +578,22 @@ defmodule MarketManager.Store.FileSystemTest do
       read_fn = fn
         "current_orders.json" ->
           {:ok,
-           "{\"new_loka\":[{\"item_id\":\"54e644ffe779897594fa68d2\",\"order_id\":\"5ee71a2604d55c0a5cbdc3c2\"},{\"item_id\":\"Vampire leech\",\"order_id\":\"5ee71a2604d55c0a5cbdc3e3\"}]}"}
+           "{\"manual\":[{\"item_id\":\"5740c1879d238d4a03d28518\",\"order_id\":\"5ee71a2604d55c0a5cbdc3c2\"}],\"automatic\":[{\"item_id\":\"5740c1879d238d4a03d28518\",\"order_id\":\"5ee71a2604d55c0a5cbdc3e3\"},{\"item_id\":\"54a74454e779892d5e5155be\",\"order_id\":\"5ee71a2604d55c0a5cbdc3d4\"}],\"active_syndicates\":[\"cephalon_simaris\",\"cephalon_suda\"]}"}
 
         "syndicates.json" ->
           {:ok,
-           "[{\"id\":\"new_loka\",\"name\":\"New Loka\",\"catalog\":[]},{\"id\":\"perrin_sequence\",\"name\":\"Perrin Sequence\",\"catalog\":[]}]"}
+           "[{\"id\":\"cephalon_simaris\",\"name\":\"Cephalon Simaris\",\"catalog\":[]},{\"id\":\"cephalon_suda\",\"name\":\"Cephalon Suda\",\"catalog\":[]}]"}
       end
 
       deps = Map.put(deps, :io, %{read: read_fn})
 
       # Act & Assert
       assert FileSystem.list_active_syndicates(deps) ==
-               {:ok, [%Syndicate{name: "New Loka", id: :new_loka, catalog: []}]}
+               {:ok,
+                [
+                  %Syndicate{name: "Cephalon Simaris", id: :cephalon_simaris, catalog: []},
+                  %Syndicate{name: "Cephalon Suda", id: :cephalon_suda, catalog: []}
+                ]}
     end
 
     test "returns the error if it fails to read current_orders.json", deps do
@@ -548,7 +604,7 @@ defmodule MarketManager.Store.FileSystemTest do
 
         "syndicates.json" ->
           {:ok,
-           "[{\"id\":\"new_loka\",\"name\":\"New Loka\",\"catalog\":[]},{\"id\":\"perrin_sequence\",\"name\":\"Perrin Sequence\",\"catalog\":[]}]"}
+           "[{\"id\":\"cephalon_simaris\",\"name\":\"Cephalon Simaris\",\"catalog\":[]},{\"id\":\"cephalon_suda\",\"name\":\"Cephalon Suda\",\"catalog\":[]}]"}
       end
 
       deps = Map.put(deps, :io, %{read: read_fn})
@@ -561,7 +617,7 @@ defmodule MarketManager.Store.FileSystemTest do
       read_fn = fn
         "current_orders.json" ->
           {:ok,
-           "{\"new_loka\":[{\"item_id\":\"54e644ffe779897594fa68d2\",\"order_id\":\"5ee71a2604d55c0a5cbdc3c2\"},{\"item_id\":\"Vampire leech\",\"order_id\":\"5ee71a2604d55c0a5cbdc3e3\"}]}"}
+           "{\"manual\":[{\"item_id\":\"5740c1879d238d4a03d28518\",\"order_id\":\"5ee71a2604d55c0a5cbdc3c2\"}],\"automatic\":[{\"item_id\":\"5740c1879d238d4a03d28518\",\"order_id\":\"5ee71a2604d55c0a5cbdc3e3\"},{\"item_id\":\"54a74454e779892d5e5155be\",\"order_id\":\"5ee71a2604d55c0a5cbdc3d4\"}],\"active_syndicates\":[\"cephalon_simaris\",\"cephalon_suda\"]}"}
 
         "syndicates.json" ->
           {:error, :enoent}

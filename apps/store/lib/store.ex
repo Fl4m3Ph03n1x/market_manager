@@ -15,7 +15,7 @@ defmodule Store do
   ```
   > alias Shared.Data.{Product, Syndicate}
 
-  > syndicate = Syndicate.new(name: "Red Veil", id: :red_veil, catalog: [])
+  > syndicate = Syndicate.new(name: "Red Veil", id: :red_veil, catalog: ["8ee5b3b0-fa43-4dbc-9363-a52930dc742e"])
   > Store.list_products(syndicate)
   {:ok, [
     %Product{
@@ -38,68 +38,67 @@ defmodule Store do
   defdelegate list_products(syndicate), to: FileSystem
 
   @doc """
-  Lists all placed orders from the given syndicate.
+  Lists all placed sell orders.
 
   Example:
   ```
-  > alias Shared.Data.{PlacedOrder, Syndicate}
+  > alias Shared.Data.PlacedOrder
 
-  > syndicate = Syndicate.new(name: "Red Veil", id: :red_veil, catalog: [])
-  > Store.list_orders(syndicate)
-  {:ok, [
-    %PlacedOrder{item_name: "Exothermic", order_id: "5526aec1e779896af9418266"},
-    %PlacedOrder{item_name: "Tribunal", order_id: "5ea087d1c160d001303f9ed7"},
-    ...
-  ]}
+  > Store.list_sell_orders()
+  {:ok, %{
+    manual: [
+      %PlacedOrder{item_id: "5740c1879d238d4a03d28518", order_id: "5ee71a2604d55c0a5cbdc3c2"}
+    ],
+    automatic: [
+      %PlacedOrder{item_id: "5b00231bac0f7e006fd6f7b4", order_id: "5ee71a2604d55c0a5cbdc3e3"},
+      %PlacedOrder{item_id: "54a74454e779892d5e5155d5", order_id: "5ee71a2604d55c0a5cbdc3d4"}
+    ]
+  }}
 
-  > invalid_syndicate = Syndicate.new(name: "Bad Synd", id: :bad_syndicate)
-  > Store.list_orders(invalid_syndicate)
-  {:error, :syndicate_not_found}
-  ```
-  """
-  @spec list_orders(Syndicate.t()) :: Type.list_orders_response()
-  defdelegate list_orders(syndicate), to: FileSystem
-
-  @doc """
-  Saves the given placed_order for the given syndicate in the storage system.
-
-  Example:
-  ```
-  > alias Shared.Data.{PlacedOrder, Syndicate}
-
-  > Store.save_order(
-    %PlacedOrder{item_name: "Exothermic", order_id: "5526aec1e779896af9418266"},
-    Syndicate.new(name: "Red Veil", id: :red_veil, catalog: [])
-  )
-  :ok
-
-  > invalid_syndicate = Syndicate.new(name: "Bad Synd", id: :bad_syndicate, catalog: [])
-  > Store.save_order(invalid_syndicate)
+  > Store.list_orders()
   {:error, :enoent}
   ```
   """
-  @spec save_order(PlacedOrder.t(), Syndicate.t()) :: Type.save_order_response()
+  @spec list_sell_orders :: Type.list_sell_orders_response()
+  defdelegate list_sell_orders, to: FileSystem
+
+  @doc """
+  Saves the given placed_order in the storage system.
+  If a syndicate is given, the order is considered automatic and the syndicate will be added to the list of active
+  syndicates.
+  If no syndicate is given, the order will be considered a manual one, ano no syndicate manipulation occurs.
+
+  Example:
+  ```
+  > alias Shared.Data.PlacedOrder 
+
+  > Store.save_order(%PlacedOrder{item_name: "Exothermic", order_id: "5526aec1e779896af9418266"}, :red_veil)
+  :ok
+
+  > Store.save_order(:some_syndicate)
+  {:error, :enoent}
+  ```
+  """
+  @spec save_order(PlacedOrder.t(), Syndicate.id() | nil) :: Type.save_order_response()
   defdelegate save_order(placed_order, syndicate), to: FileSystem
 
   @doc """
   Deletes the given placed_order from the given syndicate from the storage system.
+  If a syndicate is given, the order is considered automatic and the syndicate will be manipulated accordingly.
+  If no syndicate is given, the order will be considered a manual one, ano no syndicate manipulation occurs.
 
   Example:
   ```
-  > alias Shared.Data.{PlacedOrder, Syndicate}
+  > alias Shared.Data.PlacedOrder
 
-  > Store.delete_order(
-    %PlacedOrder{item_name: "Exothermic", order_id: "5526aec1e779896af9418266"},
-    Syndicate.new(name: "Red Veil", id: :red_veil, catalog: [])
-  )
+  > Store.delete_order(%PlacedOrder{item_name: "Exothermic", order_id: "5526aec1e779896af9418266"}, :red_veil)
   :ok
 
-  > invalid_syndicate = Syndicate.new(name: "Bad Synd", id: :bad_syndicate, catalog: [])
-  > Store.delete_order(invalid_syndicate)
+  > Store.delete_order(:some_syndicate)
   {:error, :enoent}
   ```
   """
-  @spec delete_order(PlacedOrder.t(), Syndicate.t()) :: Type.delete_order_response()
+  @spec delete_order(PlacedOrder.t(), Syndicate.id() | nil) :: Type.delete_order_response()
   defdelegate delete_order(placed_order, syndicate), to: FileSystem
 
   @doc """

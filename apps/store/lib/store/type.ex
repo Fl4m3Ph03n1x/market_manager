@@ -5,6 +5,7 @@ defmodule Store.Type do
   a cyclical dependency between them.
   """
 
+  alias WebInterface.Persistence.Syndicate
   alias Jason
   alias Shared.Data.{Authorization, PlacedOrder, Product, Syndicate, User}
 
@@ -13,7 +14,11 @@ defmodule Store.Type do
   ##########
 
   @type dependencies :: map()
-  @type all_orders_store :: %{String.t() => [PlacedOrder.t()]}
+  @type sell_orders_store :: %{
+          manual: [PlacedOrder.t()],
+          automatic: [PlacedOrder.t()],
+          active_syndicates: [Syndicate.id()]
+        }
 
   #############
   # Responses #
@@ -26,8 +31,8 @@ defmodule Store.Type do
   @type delete_login_data_response :: :ok | {:error, :file.posix() | Jason.EncodeError.t()}
   @type list_products_response ::
           {:ok, [Product.t()]} | {:error, :file.posix() | Jason.DecodeError.t()}
-  @type list_orders_response ::
-          {:ok, [PlacedOrder.t()]}
+  @type list_sell_orders_response ::
+          {:ok, %{manual: [PlacedOrder.t()], automatic: [PlacedOrder.t()]}}
           | {:error, :file.posix() | Jason.DecodeError.t()}
   @type save_order_response ::
           :ok | {:error, :file.posix() | Jason.DecodeError.t() | Jason.EncodeError.t()}
