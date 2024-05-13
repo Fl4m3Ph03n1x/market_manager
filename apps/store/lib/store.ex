@@ -66,7 +66,7 @@ defmodule Store do
   Saves the given placed_order in the storage system.
   If a syndicate is given, the order is considered automatic and the syndicate will be added to the list of active
   syndicates.
-  If no syndicate is given, the order will be considered a manual one, ano no syndicate manipulation occurs.
+  If no syndicate is given, the order will be considered a manual one, and no syndicate manipulation occurs.
 
   Example:
   ```
