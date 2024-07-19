@@ -50,7 +50,7 @@ defmodule Manager.Impl.Interpreter do
     # 6. order previous list in descending order
     # 7. create sell orders for the top items until we reach the order limit
 
-    with {:ok, user} <- recover_login(deps) do
+    with {:ok, user} <- recover_login(deps) |> IO.inspect(label: "USER DATA") do
       do_activate(
         user,
         syndicates,
@@ -77,14 +77,6 @@ defmodule Manager.Impl.Interpreter do
     #
     # handle.({:activate, syndicate, :done})
   end
-
-  defp do_activate(
-         user,
-         syndicates,
-         strategy,
-         handle,
-         deps \\ @default_deps
-       )
 
   defp do_activate(
          %User{patreon?: true},
@@ -151,6 +143,7 @@ defmodule Manager.Impl.Interpreter do
   @spec syncrhonize_orders([PlacedOrder.t()], store :: module()) ::
           {:ok, [PlacedOrder.t()]} | {:error, any()}
   defp syncrhonize_orders([], store) do
+    # TODO: Implement store.reset_orders. 
     case store.reset_orders() do
       :ok -> {:ok, []}
       err -> err
