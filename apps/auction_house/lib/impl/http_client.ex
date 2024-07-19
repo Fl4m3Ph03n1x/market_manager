@@ -148,7 +148,7 @@ defmodule AuctionHouse.Impl.HTTPClient do
           {:ok, String.t()}
           | {:error, {:no_cookie_found | :missing_jwt, headers :: [{String.t(), any}]}}
   defp parse_cookie(headers) do
-    with {_key, val} <- List.keyfind(headers, "set-cookie", 0),
+    with {_key, val} <- List.keyfind(headers, "Set-Cookie", 0),
          [cookie | _tail] <- String.split(val, ";"),
          true <- String.contains?(cookie, "JWT=") do
       {:ok, cookie}
