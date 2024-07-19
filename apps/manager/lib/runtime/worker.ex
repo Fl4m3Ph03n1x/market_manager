@@ -29,9 +29,9 @@ defmodule Manager.Runtime.Worker do
   def start_link(deps),
     do: GenServer.start_link(__MODULE__, deps, name: __MODULE__)
 
-  @spec activate(Syndicate.t(), Strategy.t()) :: :ok
-  def activate(syndicate, strategy),
-    do: GenServer.cast(__MODULE__, {:activate, syndicate, strategy, self()})
+  @spec activate([Syndicate.t()], Strategy.t()) :: :ok
+  def activate(syndicates, strategy),
+    do: GenServer.cast(__MODULE__, {:activate, syndicates, strategy, self()})
 
   @spec deactivate(Syndicate.t()) :: :ok
   def deactivate(syndicate), do: GenServer.cast(__MODULE__, {:deactivate, syndicate, self()})
@@ -65,8 +65,8 @@ defmodule Manager.Runtime.Worker do
 
   @impl GenServer
   @spec handle_cast(request :: any, state) :: {:noreply, state}
-  def handle_cast({:activate, syndicate, strategy, from_pid}, [interpreter: interpreter] = deps) do
-    interpreter.activate(syndicate, strategy, fn result ->
+  def handle_cast({:activate, syndicates, strategy, from_pid}, [interpreter: interpreter] = deps) do
+    interpreter.activate(syndicates, strategy, fn result ->
       send(from_pid, result)
     end)
 

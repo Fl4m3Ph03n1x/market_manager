@@ -28,34 +28,154 @@ defmodule Manager.Impl.Interpreter do
     auction_house: AuctionHouse
   ]
 
+  @non_patreon_order_limit 100
+
   ##########
   # Public #
   ##########
 
-  @spec activate(Syndicate.t(), Strategy.t(), Type.handle(), Type.dependencies()) ::
+  @spec activate([Syndicate.t()], Strategy.t(), Type.handle(), Type.dependencies()) ::
           Type.activate_response()
   def activate(
-        syndicate,
+        syndicates,
         strategy,
         handle,
-        [store: store, auction_house: _auction_house] = deps \\ @default_deps
+        deps \\ @default_deps
       ) do
-    with {:ok, products} <- store.list_products(syndicate),
-         {:ok, placed_orders} <- store.list_orders(syndicate),
-         total_products <- length(products),
-         indexed_products <- Enum.with_index(products) do
+    # 1. check if user is not Patreon
+    # 2. fetch current user sell orders
+    # 3. syncrhonize manual and automatic placed orders
+    # 4. calculate difference and find how many automatic orders I can place
+    # 5. given the strategy, calculate the sell price for each item
+    # 6. order previous list in descending order
+    # 7. create sell orders for the top items until we reach the order limit
+
+    with {:ok, user} <- recover_login(deps) do
+      do_activate(
+        user,
+        syndicates,
+        strategy,
+        handle,
+        deps
+      )
+    end
+
+    # with {:ok, products} <- store.list_products(syndicate),
+    #      {:ok, placed_orders} <- store.list_orders(syndicate),
+    #      total_products <- length(products),
+    #      indexed_products <- Enum.with_index(products) do
+    #   Enum.each(
+    #     indexed_products,
+    #     fn {product, index} ->
+    #       result = create_order(product, syndicate, strategy, placed_orders, deps)
+    #       handle.({:activate, syndicate, {index + 1, total_products, result}})
+    #     end
+    #   )
+    # else
+    #   error -> handle.({:activate, syndicate, error})
+    # end
+    #
+    # handle.({:activate, syndicate, :done})
+  end
+
+  defp do_activate(
+         user,
+         syndicates,
+         strategy,
+         handle,
+         deps \\ @default_deps
+       )
+
+  defp do_activate(
+         %User{patreon?: true},
+         _syndicate,
+         _strategy,
+         _handle,
+         [store: store, auction_house: _auction_house] = deps
+       ) do
+    throw("not implemented")
+  end
+
+  defp do_activate(
+         %User{ingame_name: username, patreon?: false},
+         syndicates,
+         strategy,
+         handle,
+         [store: store, auction_house: auction_house] = deps
+       ) do
+    # 1. check if user is not Patreon
+    # 2. fetch current user sell orders
+    # 3. syncrhonize manual and automatic placed orders
+    # 4. calculate difference and find how many automatic orders I can place
+    # 5. given the strategy, calculate the sell price for each item of all syndicates
+    # 6. order previous list in descending order
+    # 7. create sell orders for the top items until we reach the order limit
+    with {:ok, placed_orders} <- auction_house.get_user_orders(username),
+         {:ok, synchronized_orders} <- syncrhonize_orders(placed_orders, store),
+         order_number_limit <- @non_patreon_order_limit - length(synchronized_orders),
+         {:ok, products_with_syndicate} <-
+           Enum.flat_map(syndicates, fn syndicate ->
+             syndicate
+             |> store.list_products()
+             |> Shared.Utils.Tuples.from_tagged_tuple()
+             |> Enum.map(fn product -> {product, syndicate} end)
+           end),
+         top_products_with_prices <-
+           products_with_syndicate
+           |> Enum.map(fn {product, syndicate} ->
+             {product, calculate_product_price(product, strategy, auction_house), syndicate}
+           end)
+           |> Enum.sort(fn {_product_1, price_1, _synd_1}, {_product_2, price_2, _synd_2} ->
+             price_1 >= price_2
+           end)
+           |> Enum.take(order_number_limit),
+         indexed_products <-
+           Enum.with_index(top_products_with_prices, fn {product, price, syndicate}, index ->
+             {product, price, syndicate, index}
+           end) do
       Enum.each(
         indexed_products,
-        fn {product, index} ->
-          result = create_order(product, syndicate, strategy, placed_orders, deps)
+        fn {product, price, syndicate, index} ->
+          total_products = length(indexed_products)
+          result = create_order(product, syndicate, price, placed_orders, deps)
           handle.({:activate, syndicate, {index + 1, total_products, result}})
         end
       )
     else
-      error -> handle.({:activate, syndicate, error})
+      error -> handle.({:activate, syndicates, error})
     end
 
-    handle.({:activate, syndicate, :done})
+    handle.({:activate, syndicates, :done})
+  end
+
+  @spec syncrhonize_orders([PlacedOrder.t()], store :: module()) ::
+          {:ok, [PlacedOrder.t()]} | {:error, any()}
+  defp syncrhonize_orders([], store) do
+    case store.reset_orders() do
+      :ok -> {:ok, []}
+      err -> err
+    end
+  end
+
+  defp syncrhonize_orders(user_orders, store) do
+    with {:ok, %{manual: manual_orders, automatic: auto_orders}} <- store.list_sell_orders(),
+         all_orders <- manual_orders ++ auto_orders,
+         user_missing_orders <- user_orders -- all_orders,
+         user_deleted_orders <- manual_orders -- user_orders,
+         nil <-
+           user_missing_orders
+           |> Enum.uniq()
+           |> Enum.map(fn order -> store.save_order(order, nil) end)
+           |> Enum.find(fn result -> result != :ok end),
+         nil <-
+           user_deleted_orders
+           |> Enum.uniq()
+           |> Enum.map(fn order -> store.delete_order(order, nil) end)
+           |> Enum.find(fn result -> result != :ok end),
+         {:ok, %{manual: updated_manual_orders, automatic: updated_auto_orders}} <-
+           store.list_sell_orders() do
+      {:ok, updated_manual_orders ++ updated_auto_orders}
+    end
   end
 
   @spec deactivate(Syndicate.t(), Type.handle(), Type.dependencies()) ::
@@ -119,7 +239,7 @@ defmodule Manager.Impl.Interpreter do
   @spec create_order(
           Product.t(),
           Syndicate.t(),
-          Strategy.t(),
+          pos_integer(),
           [PlacedOrder.t()],
           Type.dependencies()
         ) ::
@@ -127,7 +247,7 @@ defmodule Manager.Impl.Interpreter do
   defp create_order(
          product,
          syndicate,
-         strategy,
+         price,
          placed_orders,
          store: store,
          auction_house: auction_house
@@ -136,8 +256,7 @@ defmodule Manager.Impl.Interpreter do
       Enum.find(placed_orders, fn %PlacedOrder{item_id: id} -> id == product.id end)
 
     if is_nil(already_placed_order) do
-      with price <- calculate_product_price(product, strategy, auction_house),
-           order <- build_order(product, price),
+      with order <- build_order(product, price),
            {:ok, placed_order} <- auction_house.place_order(order),
            :ok <- store.save_order(placed_order, syndicate) do
         {:ok, placed_order}
@@ -148,7 +267,7 @@ defmodule Manager.Impl.Interpreter do
   end
 
   @spec calculate_product_price(Product.t(), Strategy.t(), deps :: module) :: pos_integer()
-  defp calculate_product_price(product, strategy, auction_house_api),
+  def calculate_product_price(product, strategy, auction_house_api),
     do:
       product.name
       |> auction_house_api.get_all_orders()
@@ -162,7 +281,11 @@ defmodule Manager.Impl.Interpreter do
   defp calculate_price({:ok, all_orders}, strategy, product),
     do: PriceAnalyst.calculate_price(product, all_orders, strategy)
 
-  defp calculate_price(_error, _strategy, product), do: product.default_price
+  defp calculate_price(_error, _strategy, product) do
+    require Logger
+    Logger.warning("Failed to calculate price for product. Returning default.")
+    product.default_price
+  end
 
   @spec build_order(Product.t(), price :: pos_integer) :: Order.t()
   defp build_order(%Product{rank: "n/a"} = product, price),

@@ -46,8 +46,8 @@ defmodule Manager do
   :ok
   ```
   """
-  @spec activate(Syndicate.t(), Strategy.t()) :: :ok
-  defdelegate activate(syndicate, strategy), to: Worker
+  @spec activate([Syndicate.t()], Strategy.t()) :: :ok
+  defdelegate activate(syndicates, strategy), to: Worker
 
   @doc """
   Asynchronous operation.
