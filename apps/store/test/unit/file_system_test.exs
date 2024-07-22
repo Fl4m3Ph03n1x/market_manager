@@ -132,6 +132,38 @@ defmodule MarketManager.Store.FileSystemTest do
     end
   end
 
+  describe "reset_orders/1" do
+    test "returns :ok all orders were reset successfully", %{paths: paths} = deps do
+      # Arrange
+
+      write_fn = fn filename, content ->
+        assert filename == Path.join(paths[:current_orders])
+
+        assert content == "{\"manual\":[],\"automatic\":[],\"active_syndicates\":[]}"
+
+        :ok
+      end
+
+      deps = Map.put(deps, :io, %{write: write_fn})
+
+      # Act & Assert
+      assert FileSystem.reset_orders(deps) == :ok
+    end
+
+    test "returns error if it failed save the reset operation", %{paths: paths} = deps do
+      # Arrange
+      write_fn = fn filename, _content ->
+        assert filename == Path.join(paths[:current_orders])
+        {:error, :enoent}
+      end
+
+      deps = Map.put(deps, :io, %{write: write_fn})
+
+      # Act & Assert
+      assert FileSystem.reset_orders(deps) == {:error, :enoent}
+    end
+  end
+
   describe "save_order/3" do
     test "returns :ok if automatic order was saved successfully", %{paths: paths} = deps do
       # Arrange

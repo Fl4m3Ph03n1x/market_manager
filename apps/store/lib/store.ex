@@ -63,6 +63,22 @@ defmodule Store do
   defdelegate list_sell_orders, to: FileSystem
 
   @doc """
+  Resets all the manual and automatic orders by deleting everything.
+
+  Example: 
+
+  > Store.reset_orders()
+  :ok
+
+
+  > Store.reset_orders()
+  {:error, :enoent}
+
+  """
+  @spec reset_orders :: Type.reset_orders_response()
+  defdelegate reset_orders, to: FileSystem
+
+  @doc """
   Saves the given placed_order in the storage system.
   If a syndicate is given, the order is considered automatic and the syndicate will be added to the list of active
   syndicates.

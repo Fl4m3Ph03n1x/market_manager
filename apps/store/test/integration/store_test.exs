@@ -155,6 +155,26 @@ defmodule StoreTest do
     end
   end
 
+  describe "reset_orders/0" do
+    setup do
+      create_current_orders_file()
+      on_exit(&reset_current_orders_file/0)
+    end
+
+    test "returns OK if all orders were reset successfully" do
+      # Act
+      assert Store.reset_orders() == :ok
+
+      {:ok, content} =
+        @current_orders_file
+        |> File.read!()
+        |> Jason.decode()
+
+      # Assert
+      assert content == %{"manual" => [], "automatic" => [], "active_syndicates" => []}
+    end
+  end
+
   describe "save_order/2" do
     setup do
       create_current_orders_file()

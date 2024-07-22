@@ -34,6 +34,7 @@ defmodule Store.Type do
   @type list_sell_orders_response ::
           {:ok, %{manual: [PlacedOrder.t()], automatic: [PlacedOrder.t()]}}
           | {:error, :file.posix() | Jason.DecodeError.t()}
+  @type reset_orders_response :: :ok | {:error, :file.posix() | Jason.EncodeError.t()}
   @type save_order_response ::
           :ok | {:error, :file.posix() | Jason.DecodeError.t() | Jason.EncodeError.t()}
   @type delete_order_response ::

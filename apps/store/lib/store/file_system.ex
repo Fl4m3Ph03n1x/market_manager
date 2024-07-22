@@ -52,6 +52,16 @@ defmodule Store.FileSystem do
     end
   end
 
+  @spec reset_orders(Type.dependencies()) :: Type.reset_orders_response()
+  def reset_orders(deps \\ @default_deps) do
+    %{io: io, paths: paths, env: env} = Map.merge(@default_deps, deps)
+
+    with {:ok, path} <- build_absolute_path(paths[:current_orders], env),
+         {:ok, json} <- Jason.encode(%{manual: [], automatic: [], active_syndicates: []}) do
+      io.write.(path, json)
+    end
+  end
+
   @spec save_order(PlacedOrder.t(), Syndicate.id() | nil, Type.dependencies()) ::
           Type.save_order_response()
   def save_order(placed_order, syndicate, deps \\ @default_deps) do
