@@ -19,5 +19,5 @@ defmodule AuctionHouse.Impl.Settings do
   Returns how many requests per second the throttling queue will make.
   """
   @spec requests_per_second :: non_neg_integer
-  def requests_per_second, do: 2
+  def requests_per_second, do: 1
 end
