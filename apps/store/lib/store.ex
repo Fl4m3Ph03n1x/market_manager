@@ -55,7 +55,7 @@ defmodule Store do
     ]
   }}
 
-  > Store.list_orders()
+  > Store.list_sell_orders()
   {:error, :enoent}
   ```
   """
