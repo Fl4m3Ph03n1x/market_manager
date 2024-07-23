@@ -50,7 +50,7 @@ defmodule Manager.Impl.Interpreter do
     # 6. order previous list in descending order
     # 7. create sell orders for the top items until we reach the order limit
 
-    with {:ok, user} <- recover_login(deps) |> IO.inspect(label: "USER DATA") do
+    with {:ok, user} <- recover_login(deps) do
       do_activate(
         user,
         syndicates,
@@ -83,7 +83,7 @@ defmodule Manager.Impl.Interpreter do
          _syndicate,
          _strategy,
          _handle,
-         [store: store, auction_house: _auction_house] = deps
+         [store: _store, auction_house: _auction_house] = _deps
        ) do
     throw("not implemented")
   end
@@ -102,10 +102,13 @@ defmodule Manager.Impl.Interpreter do
     # 5. given the strategy, calculate the sell price for each item of all syndicates
     # 6. order previous list in descending order
     # 7. create sell orders for the top items until we reach the order limit
-    with {:ok, placed_orders} <- auction_house.get_user_orders(username),
-         {:ok, synchronized_orders} <- syncrhonize_orders(placed_orders, store),
-         order_number_limit <- @non_patreon_order_limit - length(synchronized_orders),
-         {:ok, products_with_syndicate} <-
+    with {:ok, placed_orders} <-
+           auction_house.get_user_orders(username),
+         # {:ok, synchronized_orders} <-
+         #   syncrhonize_orders(placed_orders, store),
+         # order_number_limit <- @non_patreon_order_limit - length(synchronized_orders),
+         order_number_limit <- @non_patreon_order_limit - length(placed_orders),
+         products_with_syndicate <-
            Enum.flat_map(syndicates, fn syndicate ->
              syndicate
              |> store.list_products()
@@ -129,7 +132,12 @@ defmodule Manager.Impl.Interpreter do
         indexed_products,
         fn {product, price, syndicate, index} ->
           total_products = length(indexed_products)
-          result = create_order(product, syndicate, price, placed_orders, deps)
+          IO.inspect("##{index} -> #{product.name}, #{price}")
+
+          result =
+            create_order(product, syndicate, price, placed_orders, deps)
+            |> IO.inspect(label: "#{index}")
+
           handle.({:activate, syndicate, {index + 1, total_products, result}})
         end
       )
@@ -140,37 +148,37 @@ defmodule Manager.Impl.Interpreter do
     handle.({:activate, syndicates, :done})
   end
 
-  @spec syncrhonize_orders([PlacedOrder.t()], store :: module()) ::
-          {:ok, [PlacedOrder.t()]} | {:error, any()}
-  defp syncrhonize_orders([], store) do
-    # TODO: Implement store.reset_orders. 
-    case store.reset_orders() do
-      :ok -> {:ok, []}
-      err -> err
-    end
-  end
+  # @spec syncrhonize_orders([PlacedOrder.t()], store :: module()) ::
+  #         {:ok, [PlacedOrder.t()]} | {:error, any()}
+  # defp syncrhonize_orders([], store) do
+  #   case store.reset_orders() do
+  #     :ok -> {:ok, []}
+  #     err -> err
+  #   end
+  # end
+  #
+  # defp syncrhonize_orders(user_orders, store) do
+  #   with {:ok, %{manual: manual_orders, automatic: auto_orders}} <- store.list_sell_orders(),
+  #        all_orders <- manual_orders ++ auto_orders,
+  #        user_missing_orders <- user_orders -- all_orders,
+  #        user_deleted_orders <- manual_orders -- user_orders,
+  #        nil <-
+  #          user_missing_orders
+  #          |> Enum.uniq()
+  #          |> Enum.map(fn order -> store.save_order(order, nil) end)
+  #          |> Enum.find(fn result -> result != :ok end),
+  #        nil <-
+  #          user_deleted_orders
+  #          |> Enum.uniq()
+  #          |> Enum.map(fn order -> store.delete_order(order, nil) end)
+  #          |> Enum.find(fn result -> result != :ok end),
+  #        {:ok, %{manual: updated_manual_orders, automatic: updated_auto_orders}} <-
+  #          store.list_sell_orders() do
+  #     {:ok, updated_manual_orders ++ updated_auto_orders}
+  #   end
+  # end
 
-  defp syncrhonize_orders(user_orders, store) do
-    with {:ok, %{manual: manual_orders, automatic: auto_orders}} <- store.list_sell_orders(),
-         all_orders <- manual_orders ++ auto_orders,
-         user_missing_orders <- user_orders -- all_orders,
-         user_deleted_orders <- manual_orders -- user_orders,
-         nil <-
-           user_missing_orders
-           |> Enum.uniq()
-           |> Enum.map(fn order -> store.save_order(order, nil) end)
-           |> Enum.find(fn result -> result != :ok end),
-         nil <-
-           user_deleted_orders
-           |> Enum.uniq()
-           |> Enum.map(fn order -> store.delete_order(order, nil) end)
-           |> Enum.find(fn result -> result != :ok end),
-         {:ok, %{manual: updated_manual_orders, automatic: updated_auto_orders}} <-
-           store.list_sell_orders() do
-      {:ok, updated_manual_orders ++ updated_auto_orders}
-    end
-  end
-
+  # TODO:  remake this to work with new activate()
   @spec deactivate(Syndicate.t(), Type.handle(), Type.dependencies()) ::
           Type.deactivate_response()
   def deactivate(
@@ -178,7 +186,7 @@ defmodule Manager.Impl.Interpreter do
         handle,
         [store: store, auction_house: _auction_house] = deps \\ @default_deps
       ) do
-    with {:ok, placed_orders} <- store.list_orders(syndicate),
+    with {:ok, placed_orders} <- store.list_sell_orders(),
          total_orders <- length(placed_orders),
          indexed_orders <- Enum.with_index(placed_orders) do
       Enum.each(
@@ -250,8 +258,8 @@ defmodule Manager.Impl.Interpreter do
 
     if is_nil(already_placed_order) do
       with order <- build_order(product, price),
-           {:ok, placed_order} <- auction_house.place_order(order),
-           :ok <- store.save_order(placed_order, syndicate) do
+           {:ok, placed_order} <- auction_house.place_order(order) do
+        # :ok <- store.save_order(placed_order, syndicate.id) do
         {:ok, placed_order}
       end
     else
@@ -265,6 +273,7 @@ defmodule Manager.Impl.Interpreter do
       product.name
       |> auction_house_api.get_all_orders()
       |> calculate_price(strategy, product)
+      |> IO.inspect(label: product.name)
 
   @spec calculate_price(
           {:ok, [OrderInfo.t()]} | {:error, any, product_name :: String.t()},
@@ -312,7 +321,7 @@ defmodule Manager.Impl.Interpreter do
       # use the manager to do it, even though we did place the order using the
       # manger. We simply try to update Storage by removing the placed_order.
       {:error, :order_non_existent, placed_order} ->
-        case store.delete_order(placed_order, syndicate) do
+        case store.delete_order(placed_order, syndicate.id) do
           {:error, reason} -> {:error, reason, placed_order}
           _result -> {:ok, placed_order}
         end

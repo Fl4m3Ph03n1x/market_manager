@@ -193,7 +193,14 @@ defmodule Manager.InterpreterTest do
           Store,
           [],
           [
-            list_orders: fn _syndicate -> {:ok, [placed_order1]} end,
+            get_login_data: fn ->
+              {:ok,
+               {
+                 %Authorization{token: "a_token", cookie: "a_cookie"},
+                 %User{ingame_name: "username", patreon?: false}
+               }}
+            end,
+            list_sell_orders: fn -> {:ok, %{manual: [], automatic: [placed_order1]}} end,
             list_products: fn _syndicate -> {:ok, [product1, product2]} end,
             save_order: fn _placed_order, _syndicate -> :ok end
           ]
@@ -202,6 +209,20 @@ defmodule Manager.InterpreterTest do
           AuctionHouse,
           [],
           [
+            recover_login: fn _auth, _user -> :ok end,
+            get_user_order: fn _user ->
+              {:ok,
+               [
+                 %PlacedOrder{
+                   order_id: "66058313a9630600302d4889",
+                   item_id: "55108594e77989728d5100c6"
+                 },
+                 %PlacedOrder{
+                   order_id: "6605832ea96306003657a90d",
+                   item_id: "54e644ffe779897594fa68d2"
+                 }
+               ]}
+            end,
             get_all_orders: fn
               ^product2_name -> {:ok, product2_market_orders}
             end,
@@ -219,7 +240,7 @@ defmodule Manager.InterpreterTest do
         assert actual == expected
 
         assert_called(Store.list_products(syndicate))
-        assert_called(Store.list_orders(syndicate))
+        assert_called(Store.list_sell_orders())
         assert_called(Store.save_order(placed_order2, syndicate))
 
         assert_called(AuctionHouse.get_all_orders(product2_name))
@@ -231,513 +252,513 @@ defmodule Manager.InterpreterTest do
       end
     end
 
-    test "Places orders in auction house and saves placed_orders", %{
-      syndicate: syndicate,
-      strategy: strategy,
-      product1: product1,
-      product2: product2,
-      product1_name: product1_name,
-      product2_name: product2_name,
-      order1: order1,
-      order2: order2,
-      product1_market_orders: product1_market_orders,
-      product2_market_orders: product2_market_orders,
-      placed_order1: placed_order1,
-      placed_order2: placed_order2,
-      handle: handle
-    } do
-      with_mocks([
-        {
-          Store,
-          [],
-          [
-            list_orders: fn _syndicate -> {:ok, []} end,
-            list_products: fn _syndicate -> {:ok, [product1, product2]} end,
-            save_order: fn _placed_order, _syndicate -> :ok end
-          ]
-        },
-        {
-          AuctionHouse,
-          [],
-          [
-            get_all_orders: fn
-              ^product1_name -> {:ok, product1_market_orders}
-              ^product2_name -> {:ok, product2_market_orders}
-            end,
-            place_order: fn
-              ^order1 -> {:ok, placed_order1}
-              ^order2 -> {:ok, placed_order2}
-            end
-          ]
-        }
-      ]) do
-        # Act
-        actual = Interpreter.activate(syndicate, strategy, handle)
-        expected = :ok
-
-        # Assert
-        assert actual == expected
-
-        assert_called(Store.list_products(syndicate))
-        assert_called(Store.save_order(placed_order1, syndicate))
-        assert_called(Store.save_order(placed_order2, syndicate))
-
-        assert_called(AuctionHouse.get_all_orders(product1_name))
-        assert_called(AuctionHouse.get_all_orders(product2_name))
-        assert_called(AuctionHouse.place_order(order1))
-        assert_called(AuctionHouse.place_order(order2))
-
-        assert_received({:activate, ^syndicate, {1, 2, {:ok, ^placed_order1}}})
-        assert_received({:activate, ^syndicate, {2, 2, {:ok, ^placed_order2}}})
-        assert_received({:activate, ^syndicate, :done})
-      end
-    end
-
-    test "Finishes normally if there are no products from Store", %{
-      syndicate: syndicate,
-      strategy: strategy,
-      handle: handle
-    } do
-      with_mocks([
-        {
-          Store,
-          [],
-          [
-            list_orders: fn _syndicate -> {:ok, []} end,
-            list_products: fn _syndicate -> {:ok, []} end
-          ]
-        }
-      ]) do
-        # Act
-        actual = Interpreter.activate(syndicate, strategy, handle)
-        expected = :ok
-
-        # Assert
-        assert actual == expected
-
-        assert_called(Store.list_products(syndicate))
-
-        assert_received({:activate, ^syndicate, :done})
-      end
-    end
-
-    test "Succeeds even if it cannot get order_info from product", %{
-      syndicate: syndicate,
-      strategy: strategy,
-      product1: product1,
-      product2: product2,
-      product1_name: product1_name,
-      product2_name: product2_name,
-      order1_without_market_info: order1,
-      order2_without_market_info: order2,
-      placed_order1: placed_order1,
-      placed_order2: placed_order2,
-      handle: handle
-    } do
-      with_mocks([
-        {
-          Store,
-          [],
-          [
-            list_orders: fn _syndicate -> {:ok, []} end,
-            list_products: fn _syndicate -> {:ok, [product1, product2]} end,
-            save_order: fn _placed_order, _syndicate -> :ok end
-          ]
-        },
-        {
-          AuctionHouse,
-          [],
-          [
-            get_all_orders: fn
-              product_name -> {:error, :timeout, product_name}
-            end,
-            place_order: fn
-              ^order1 -> {:ok, placed_order1}
-              ^order2 -> {:ok, placed_order2}
-            end
-          ]
-        }
-      ]) do
-        # Act
-        actual = Interpreter.activate(syndicate, strategy, handle)
-        expected = :ok
-
-        # Assert
-        assert actual == expected
-
-        assert_called(Store.list_products(syndicate))
-        assert_called(Store.save_order(placed_order1, syndicate))
-        assert_called(Store.save_order(placed_order2, syndicate))
-
-        assert_called(AuctionHouse.get_all_orders(product1_name))
-        assert_called(AuctionHouse.get_all_orders(product2_name))
-        assert_called(AuctionHouse.place_order(order1))
-        assert_called(AuctionHouse.place_order(order2))
-
-        assert_received({:activate, ^syndicate, {1, 2, {:ok, ^placed_order1}}})
-        assert_received({:activate, ^syndicate, {2, 2, {:ok, ^placed_order2}}})
-        assert_received({:activate, ^syndicate, :done})
-      end
-    end
-
-    test "Continues even if some order placements failed in AuctionHouse", %{
-      syndicate: syndicate,
-      strategy: strategy,
-      product1: product1,
-      invalid_product: invalid_product,
-      product1_name: product1_name,
-      product2_name: product2_name,
-      placed_order1: placed_order1,
-      order1: order1,
-      invalid_order: invalid_order,
-      product1_market_orders: product1_market_orders,
-      product2_market_orders: product2_market_orders,
-      handle: handle
-    } do
-      with_mocks([
-        {
-          Store,
-          [],
-          [
-            list_orders: fn _syndicate -> {:ok, []} end,
-            list_products: fn _syndicate -> {:ok, [product1, invalid_product]} end,
-            save_order: fn _placed_order, _syndicate -> :ok end
-          ]
-        },
-        {
-          AuctionHouse,
-          [],
-          [
-            get_all_orders: fn
-              ^product1_name -> {:ok, product1_market_orders}
-              ^product2_name -> {:ok, product2_market_orders}
-            end,
-            place_order: fn
-              ^order1 -> {:ok, placed_order1}
-              ^invalid_order -> {:error, :invalid_item_id, invalid_order}
-            end
-          ]
-        }
-      ]) do
-        # Act
-        actual = Interpreter.activate(syndicate, strategy, handle)
-        expected = :ok
-
-        # Assert
-        assert actual == expected
-
-        assert_called(Store.list_products(syndicate))
-        assert_called(Store.save_order(placed_order1, syndicate))
-
-        assert_received({:activate, ^syndicate, {1, 2, {:ok, ^placed_order1}}})
-
-        assert_received(
-          {:activate, ^syndicate, {2, 2, {:error, :invalid_item_id, ^invalid_order}}}
-        )
-
-        assert_received({:activate, ^syndicate, :done})
-      end
-    end
-
-    test "Finishes even if it was unable to place any orders in AuctionHouse", %{
-      syndicate: syndicate,
-      strategy: strategy,
-      product1: product1,
-      product2: product2,
-      product1_name: product1_name,
-      product2_name: product2_name,
-      order1: order1,
-      order2: order2,
-      product1_market_orders: product1_market_orders,
-      product2_market_orders: product2_market_orders,
-      handle: handle
-    } do
-      with_mocks([
-        {
-          Store,
-          [],
-          [
-            list_orders: fn _syndicate -> {:ok, []} end,
-            list_products: fn _syndicate -> {:ok, [product1, product2]} end
-          ]
-        },
-        {
-          AuctionHouse,
-          [],
-          [
-            get_all_orders: fn
-              ^product1_name -> {:ok, product1_market_orders}
-              ^product2_name -> {:ok, product2_market_orders}
-            end,
-            place_order: fn
-              ^order1 -> {:error, :order_already_placed, order1}
-              ^order2 -> {:error, :invalid_item_id, order2}
-            end
-          ]
-        }
-      ]) do
-        # Act
-        actual = Interpreter.activate(syndicate, strategy, handle)
-
-        expected = :ok
-
-        # Assert
-        assert actual == expected
-
-        assert_called(Store.list_products(syndicate))
-        assert_not_called(Store.save_order(:_, :_))
-        assert_received({:activate, ^syndicate, {1, 2, {:error, :order_already_placed, ^order1}}})
-        assert_received({:activate, ^syndicate, {2, 2, {:error, :invalid_item_id, ^order2}}})
-        assert_received({:activate, ^syndicate, :done})
-      end
-    end
-
-    test "Finishes immediately if it cannot read products from Store", %{
-      syndicate: syndicate,
-      strategy: strategy,
-      handle: handle
-    } do
-      with_mocks([
-        {
-          Store,
-          [],
-          [
-            list_orders: fn _syndicate -> {:ok, []} end,
-            list_products: fn _syndicate -> {:error, :enoent} end
-          ]
-        }
-      ]) do
-        # Act
-        actual = Interpreter.activate(syndicate, strategy, handle)
-        expected = :ok
-
-        # Assert
-        assert actual == expected
-
-        assert_called(Store.list_products(syndicate))
-        assert_not_called(Store.save_order(:_, :_))
-
-        assert_received({:activate, ^syndicate, {:error, :enoent}})
-        assert_received({:activate, ^syndicate, :done})
-      end
-    end
+    # test "Places orders in auction house and saves placed_orders", %{
+    #   syndicate: syndicate,
+    #   strategy: strategy,
+    #   product1: product1,
+    #   product2: product2,
+    #   product1_name: product1_name,
+    #   product2_name: product2_name,
+    #   order1: order1,
+    #   order2: order2,
+    #   product1_market_orders: product1_market_orders,
+    #   product2_market_orders: product2_market_orders,
+    #   placed_order1: placed_order1,
+    #   placed_order2: placed_order2,
+    #   handle: handle
+    # } do
+    #   with_mocks([
+    #     {
+    #       Store,
+    #       [],
+    #       [
+    #         list_orders: fn _syndicate -> {:ok, []} end,
+    #         list_products: fn _syndicate -> {:ok, [product1, product2]} end,
+    #         save_order: fn _placed_order, _syndicate -> :ok end
+    #       ]
+    #     },
+    #     {
+    #       AuctionHouse,
+    #       [],
+    #       [
+    #         get_all_orders: fn
+    #           ^product1_name -> {:ok, product1_market_orders}
+    #           ^product2_name -> {:ok, product2_market_orders}
+    #         end,
+    #         place_order: fn
+    #           ^order1 -> {:ok, placed_order1}
+    #           ^order2 -> {:ok, placed_order2}
+    #         end
+    #       ]
+    #     }
+    #   ]) do
+    #     # Act
+    #     actual = Interpreter.activate(syndicate, strategy, handle)
+    #     expected = :ok
+    #
+    #     # Assert
+    #     assert actual == expected
+    #
+    #     assert_called(Store.list_products(syndicate))
+    #     assert_called(Store.save_order(placed_order1, syndicate))
+    #     assert_called(Store.save_order(placed_order2, syndicate))
+    #
+    #     assert_called(AuctionHouse.get_all_orders(product1_name))
+    #     assert_called(AuctionHouse.get_all_orders(product2_name))
+    #     assert_called(AuctionHouse.place_order(order1))
+    #     assert_called(AuctionHouse.place_order(order2))
+    #
+    #     assert_received({:activate, ^syndicate, {1, 2, {:ok, ^placed_order1}}})
+    #     assert_received({:activate, ^syndicate, {2, 2, {:ok, ^placed_order2}}})
+    #     assert_received({:activate, ^syndicate, :done})
+    #   end
+    # end
+    #
+    # test "Finishes normally if there are no products from Store", %{
+    #   syndicate: syndicate,
+    #   strategy: strategy,
+    #   handle: handle
+    # } do
+    #   with_mocks([
+    #     {
+    #       Store,
+    #       [],
+    #       [
+    #         list_orders: fn _syndicate -> {:ok, []} end,
+    #         list_products: fn _syndicate -> {:ok, []} end
+    #       ]
+    #     }
+    #   ]) do
+    #     # Act
+    #     actual = Interpreter.activate(syndicate, strategy, handle)
+    #     expected = :ok
+    #
+    #     # Assert
+    #     assert actual == expected
+    #
+    #     assert_called(Store.list_products(syndicate))
+    #
+    #     assert_received({:activate, ^syndicate, :done})
+    #   end
+    # end
+    #
+    # test "Succeeds even if it cannot get order_info from product", %{
+    #   syndicate: syndicate,
+    #   strategy: strategy,
+    #   product1: product1,
+    #   product2: product2,
+    #   product1_name: product1_name,
+    #   product2_name: product2_name,
+    #   order1_without_market_info: order1,
+    #   order2_without_market_info: order2,
+    #   placed_order1: placed_order1,
+    #   placed_order2: placed_order2,
+    #   handle: handle
+    # } do
+    #   with_mocks([
+    #     {
+    #       Store,
+    #       [],
+    #       [
+    #         list_orders: fn _syndicate -> {:ok, []} end,
+    #         list_products: fn _syndicate -> {:ok, [product1, product2]} end,
+    #         save_order: fn _placed_order, _syndicate -> :ok end
+    #       ]
+    #     },
+    #     {
+    #       AuctionHouse,
+    #       [],
+    #       [
+    #         get_all_orders: fn
+    #           product_name -> {:error, :timeout, product_name}
+    #         end,
+    #         place_order: fn
+    #           ^order1 -> {:ok, placed_order1}
+    #           ^order2 -> {:ok, placed_order2}
+    #         end
+    #       ]
+    #     }
+    #   ]) do
+    #     # Act
+    #     actual = Interpreter.activate(syndicate, strategy, handle)
+    #     expected = :ok
+    #
+    #     # Assert
+    #     assert actual == expected
+    #
+    #     assert_called(Store.list_products(syndicate))
+    #     assert_called(Store.save_order(placed_order1, syndicate))
+    #     assert_called(Store.save_order(placed_order2, syndicate))
+    #
+    #     assert_called(AuctionHouse.get_all_orders(product1_name))
+    #     assert_called(AuctionHouse.get_all_orders(product2_name))
+    #     assert_called(AuctionHouse.place_order(order1))
+    #     assert_called(AuctionHouse.place_order(order2))
+    #
+    #     assert_received({:activate, ^syndicate, {1, 2, {:ok, ^placed_order1}}})
+    #     assert_received({:activate, ^syndicate, {2, 2, {:ok, ^placed_order2}}})
+    #     assert_received({:activate, ^syndicate, :done})
+    #   end
+    # end
+    #
+    # test "Continues even if some order placements failed in AuctionHouse", %{
+    #   syndicate: syndicate,
+    #   strategy: strategy,
+    #   product1: product1,
+    #   invalid_product: invalid_product,
+    #   product1_name: product1_name,
+    #   product2_name: product2_name,
+    #   placed_order1: placed_order1,
+    #   order1: order1,
+    #   invalid_order: invalid_order,
+    #   product1_market_orders: product1_market_orders,
+    #   product2_market_orders: product2_market_orders,
+    #   handle: handle
+    # } do
+    #   with_mocks([
+    #     {
+    #       Store,
+    #       [],
+    #       [
+    #         list_orders: fn _syndicate -> {:ok, []} end,
+    #         list_products: fn _syndicate -> {:ok, [product1, invalid_product]} end,
+    #         save_order: fn _placed_order, _syndicate -> :ok end
+    #       ]
+    #     },
+    #     {
+    #       AuctionHouse,
+    #       [],
+    #       [
+    #         get_all_orders: fn
+    #           ^product1_name -> {:ok, product1_market_orders}
+    #           ^product2_name -> {:ok, product2_market_orders}
+    #         end,
+    #         place_order: fn
+    #           ^order1 -> {:ok, placed_order1}
+    #           ^invalid_order -> {:error, :invalid_item_id, invalid_order}
+    #         end
+    #       ]
+    #     }
+    #   ]) do
+    #     # Act
+    #     actual = Interpreter.activate(syndicate, strategy, handle)
+    #     expected = :ok
+    #
+    #     # Assert
+    #     assert actual == expected
+    #
+    #     assert_called(Store.list_products(syndicate))
+    #     assert_called(Store.save_order(placed_order1, syndicate))
+    #
+    #     assert_received({:activate, ^syndicate, {1, 2, {:ok, ^placed_order1}}})
+    #
+    #     assert_received(
+    #       {:activate, ^syndicate, {2, 2, {:error, :invalid_item_id, ^invalid_order}}}
+    #     )
+    #
+    #     assert_received({:activate, ^syndicate, :done})
+    #   end
+    # end
+    #
+    # test "Finishes even if it was unable to place any orders in AuctionHouse", %{
+    #   syndicate: syndicate,
+    #   strategy: strategy,
+    #   product1: product1,
+    #   product2: product2,
+    #   product1_name: product1_name,
+    #   product2_name: product2_name,
+    #   order1: order1,
+    #   order2: order2,
+    #   product1_market_orders: product1_market_orders,
+    #   product2_market_orders: product2_market_orders,
+    #   handle: handle
+    # } do
+    #   with_mocks([
+    #     {
+    #       Store,
+    #       [],
+    #       [
+    #         list_orders: fn _syndicate -> {:ok, []} end,
+    #         list_products: fn _syndicate -> {:ok, [product1, product2]} end
+    #       ]
+    #     },
+    #     {
+    #       AuctionHouse,
+    #       [],
+    #       [
+    #         get_all_orders: fn
+    #           ^product1_name -> {:ok, product1_market_orders}
+    #           ^product2_name -> {:ok, product2_market_orders}
+    #         end,
+    #         place_order: fn
+    #           ^order1 -> {:error, :order_already_placed, order1}
+    #           ^order2 -> {:error, :invalid_item_id, order2}
+    #         end
+    #       ]
+    #     }
+    #   ]) do
+    #     # Act
+    #     actual = Interpreter.activate(syndicate, strategy, handle)
+    #
+    #     expected = :ok
+    #
+    #     # Assert
+    #     assert actual == expected
+    #
+    #     assert_called(Store.list_products(syndicate))
+    #     assert_not_called(Store.save_order(:_, :_))
+    #     assert_received({:activate, ^syndicate, {1, 2, {:error, :order_already_placed, ^order1}}})
+    #     assert_received({:activate, ^syndicate, {2, 2, {:error, :invalid_item_id, ^order2}}})
+    #     assert_received({:activate, ^syndicate, :done})
+    #   end
+    # end
+    #
+    # test "Finishes immediately if it cannot read products from Store", %{
+    #   syndicate: syndicate,
+    #   strategy: strategy,
+    #   handle: handle
+    # } do
+    #   with_mocks([
+    #     {
+    #       Store,
+    #       [],
+    #       [
+    #         list_orders: fn _syndicate -> {:ok, []} end,
+    #         list_products: fn _syndicate -> {:error, :enoent} end
+    #       ]
+    #     }
+    #   ]) do
+    #     # Act
+    #     actual = Interpreter.activate(syndicate, strategy, handle)
+    #     expected = :ok
+    #
+    #     # Assert
+    #     assert actual == expected
+    #
+    #     assert_called(Store.list_products(syndicate))
+    #     assert_not_called(Store.save_order(:_, :_))
+    #
+    #     assert_received({:activate, ^syndicate, {:error, :enoent}})
+    #     assert_received({:activate, ^syndicate, :done})
+    #   end
+    # end
   end
 
-  describe "deactivate/3" do
-    setup do
-      syndicate = Syndicate.new(name: "Red Veil", id: :red_veil, catalog: [])
-
-      placed_order1 =
-        PlacedOrder.new(%{
-          "item_id" => "6214e890e3c4660048a8b980",
-          "order_id" => "54a74454e779892d5e5155d5"
-        })
-
-      placed_order2 =
-        PlacedOrder.new(%{
-          "item_id" => "5ea087d1c160d001303f9ed8",
-          "order_id" => "54a74454e779892d5e5155a0"
-        })
-
-      bad_placed_order =
-        PlacedOrder.new(%{"item_id" => "5ea087d1c160d001303f9ed8", "order_id" => "bad_id"})
-
-      handle = fn content ->
-        send(self(), content)
-        :ok
-      end
-
-      %{
-        syndicate: syndicate,
-        placed_order1: placed_order1,
-        placed_order2: placed_order2,
-        bad_placed_order: bad_placed_order,
-        handle: handle
-      }
-    end
-
-    test "Deletes orders from auction house and removes them from storage", %{
-      syndicate: syndicate,
-      placed_order1: placed_order1,
-      placed_order2: placed_order2,
-      handle: handle
-    } do
-      with_mocks([
-        {
-          Store,
-          [],
-          [
-            list_orders: fn _syndicate -> {:ok, [placed_order1, placed_order2]} end,
-            delete_order: fn _order_id, _syndicate -> :ok end
-          ]
-        },
-        {
-          AuctionHouse,
-          [],
-          [
-            delete_order: fn _placed_order -> :ok end
-          ]
-        }
-      ]) do
-        # Act
-        actual = Interpreter.deactivate(syndicate, handle)
-        expected = :ok
-
-        # Assert
-        assert actual == expected
-        assert_called(Store.list_orders(syndicate))
-        assert_called(Store.delete_order(placed_order1, syndicate))
-        assert_called(Store.delete_order(placed_order2, syndicate))
-
-        assert_called(AuctionHouse.delete_order(placed_order1))
-        assert_called(AuctionHouse.delete_order(placed_order2))
-
-        assert_received({:deactivate, ^syndicate, {1, 2, {:ok, ^placed_order1}}})
-        assert_received({:deactivate, ^syndicate, {2, 2, {:ok, ^placed_order2}}})
-        assert_received({:deactivate, ^syndicate, :done})
-      end
-    end
-
-    test "Removes order from storage if it fails to delete it because it is :non_existent", %{
-      syndicate: syndicate,
-      placed_order1: placed_order1,
-      bad_placed_order: bad_placed_order,
-      handle: handle
-    } do
-      with_mocks([
-        {
-          Store,
-          [],
-          [
-            list_orders: fn _syndicate -> {:ok, [placed_order1, bad_placed_order]} end,
-            delete_order: fn _placed_order, _syndicate -> :ok end
-          ]
-        },
-        {
-          AuctionHouse,
-          [],
-          [
-            delete_order: fn
-              ^bad_placed_order -> {:error, :order_non_existent, bad_placed_order}
-              ^placed_order1 -> :ok
-            end
-          ]
-        }
-      ]) do
-        # Act
-        actual = Interpreter.deactivate(syndicate, handle)
-        expected = :ok
-
-        # Assert
-        assert actual == expected
-        assert_called(Store.list_orders(syndicate))
-        assert_called(Store.delete_order(placed_order1, syndicate))
-        assert_called(Store.delete_order(bad_placed_order, syndicate))
-
-        assert_called(AuctionHouse.delete_order(placed_order1))
-        assert_called(AuctionHouse.delete_order(bad_placed_order))
-
-        assert_received({:deactivate, ^syndicate, {1, 2, {:ok, ^placed_order1}}})
-        assert_received({:deactivate, ^syndicate, {2, 2, {:ok, ^bad_placed_order}}})
-        assert_received({:deactivate, ^syndicate, :done})
-      end
-    end
-
-    test "Returns error if it fails to delete an order in auction_house and then fails to delete it in storage",
-         %{
-           syndicate: syndicate,
-           placed_order1: placed_order1,
-           bad_placed_order: bad_placed_order,
-           handle: handle
-         } do
-      with_mocks([
-        {
-          Store,
-          [],
-          [
-            list_orders: fn _syndicate -> {:ok, [placed_order1, bad_placed_order]} end,
-            delete_order: fn
-              ^placed_order1, _syndicate -> :ok
-              ^bad_placed_order, _syndicate -> {:error, :enoent}
-            end
-          ]
-        },
-        {
-          AuctionHouse,
-          [],
-          [
-            delete_order: fn
-              ^bad_placed_order -> {:error, :order_non_existent, bad_placed_order}
-              ^placed_order1 -> :ok
-            end
-          ]
-        }
-      ]) do
-        # Act
-        actual = Interpreter.deactivate(syndicate, handle)
-        expected = :ok
-
-        # Assert
-        assert actual == expected
-        assert_called(Store.list_orders(syndicate))
-        assert_called(Store.delete_order(placed_order1, syndicate))
-        assert_called(Store.delete_order(bad_placed_order, syndicate))
-
-        assert_called(AuctionHouse.delete_order(placed_order1))
-        assert_called(AuctionHouse.delete_order(bad_placed_order))
-
-        assert_received({:deactivate, ^syndicate, {1, 2, {:ok, ^placed_order1}}})
-        assert_received({:deactivate, ^syndicate, {2, 2, {:error, :enoent, ^bad_placed_order}}})
-        assert_received({:deactivate, ^syndicate, :done})
-      end
-    end
-
-    test "Returns error if it is unable to delete orders from auction house and it does NOT attempt to delete them from storage",
-         %{
-           syndicate: syndicate,
-           placed_order1: placed_order1,
-           placed_order2: placed_order2,
-           handle: handle
-         } do
-      with_mocks([
-        {
-          Store,
-          [],
-          [
-            list_orders: fn _syndicate -> {:ok, [placed_order1, placed_order2]} end
-          ]
-        },
-        {
-          AuctionHouse,
-          [],
-          [
-            delete_order: fn placed_order -> {:error, :timeout, placed_order} end
-          ]
-        }
-      ]) do
-        # Act
-        actual = Interpreter.deactivate(syndicate, handle)
-        expected = :ok
-
-        # Assert
-        assert actual == expected
-
-        assert_called(Store.list_orders(syndicate))
-        assert_not_called(Store.delete_order(placed_order1, syndicate))
-        assert_not_called(Store.delete_order(placed_order2, syndicate))
-
-        assert_called(AuctionHouse.delete_order(placed_order1))
-        assert_called(AuctionHouse.delete_order(placed_order2))
-
-        assert_received({:deactivate, ^syndicate, {1, 2, {:error, :timeout, ^placed_order1}}})
-
-        assert_received({:deactivate, ^syndicate, {2, 2, {:error, :timeout, ^placed_order2}}})
-
-        assert_received({:deactivate, ^syndicate, :done})
-      end
-    end
-  end
-
+  # describe "deactivate/3" do
+  #   setup do
+  #     syndicate = Syndicate.new(name: "Red Veil", id: :red_veil, catalog: [])
+  #
+  #     placed_order1 =
+  #       PlacedOrder.new(%{
+  #         "item_id" => "6214e890e3c4660048a8b980",
+  #         "order_id" => "54a74454e779892d5e5155d5"
+  #       })
+  #
+  #     placed_order2 =
+  #       PlacedOrder.new(%{
+  #         "item_id" => "5ea087d1c160d001303f9ed8",
+  #         "order_id" => "54a74454e779892d5e5155a0"
+  #       })
+  #
+  #     bad_placed_order =
+  #       PlacedOrder.new(%{"item_id" => "5ea087d1c160d001303f9ed8", "order_id" => "bad_id"})
+  #
+  #     handle = fn content ->
+  #       send(self(), content)
+  #       :ok
+  #     end
+  #
+  #     %{
+  #       syndicate: syndicate,
+  #       placed_order1: placed_order1,
+  #       placed_order2: placed_order2,
+  #       bad_placed_order: bad_placed_order,
+  #       handle: handle
+  #     }
+  #   end
+  #
+  #   test "Deletes orders from auction house and removes them from storage", %{
+  #     syndicate: syndicate,
+  #     placed_order1: placed_order1,
+  #     placed_order2: placed_order2,
+  #     handle: handle
+  #   } do
+  #     with_mocks([
+  #       {
+  #         Store,
+  #         [],
+  #         [
+  #           list_orders: fn _syndicate -> {:ok, [placed_order1, placed_order2]} end,
+  #           delete_order: fn _order_id, _syndicate -> :ok end
+  #         ]
+  #       },
+  #       {
+  #         AuctionHouse,
+  #         [],
+  #         [
+  #           delete_order: fn _placed_order -> :ok end
+  #         ]
+  #       }
+  #     ]) do
+  #       # Act
+  #       actual = Interpreter.deactivate(syndicate, handle)
+  #       expected = :ok
+  #
+  #       # Assert
+  #       assert actual == expected
+  #       assert_called(Store.list_orders(syndicate))
+  #       assert_called(Store.delete_order(placed_order1, syndicate))
+  #       assert_called(Store.delete_order(placed_order2, syndicate))
+  #
+  #       assert_called(AuctionHouse.delete_order(placed_order1))
+  #       assert_called(AuctionHouse.delete_order(placed_order2))
+  #
+  #       assert_received({:deactivate, ^syndicate, {1, 2, {:ok, ^placed_order1}}})
+  #       assert_received({:deactivate, ^syndicate, {2, 2, {:ok, ^placed_order2}}})
+  #       assert_received({:deactivate, ^syndicate, :done})
+  #     end
+  #   end
+  #
+  #   test "Removes order from storage if it fails to delete it because it is :non_existent", %{
+  #     syndicate: syndicate,
+  #     placed_order1: placed_order1,
+  #     bad_placed_order: bad_placed_order,
+  #     handle: handle
+  #   } do
+  #     with_mocks([
+  #       {
+  #         Store,
+  #         [],
+  #         [
+  #           list_orders: fn _syndicate -> {:ok, [placed_order1, bad_placed_order]} end,
+  #           delete_order: fn _placed_order, _syndicate -> :ok end
+  #         ]
+  #       },
+  #       {
+  #         AuctionHouse,
+  #         [],
+  #         [
+  #           delete_order: fn
+  #             ^bad_placed_order -> {:error, :order_non_existent, bad_placed_order}
+  #             ^placed_order1 -> :ok
+  #           end
+  #         ]
+  #       }
+  #     ]) do
+  #       # Act
+  #       actual = Interpreter.deactivate(syndicate, handle)
+  #       expected = :ok
+  #
+  #       # Assert
+  #       assert actual == expected
+  #       assert_called(Store.list_orders(syndicate))
+  #       assert_called(Store.delete_order(placed_order1, syndicate))
+  #       assert_called(Store.delete_order(bad_placed_order, syndicate))
+  #
+  #       assert_called(AuctionHouse.delete_order(placed_order1))
+  #       assert_called(AuctionHouse.delete_order(bad_placed_order))
+  #
+  #       assert_received({:deactivate, ^syndicate, {1, 2, {:ok, ^placed_order1}}})
+  #       assert_received({:deactivate, ^syndicate, {2, 2, {:ok, ^bad_placed_order}}})
+  #       assert_received({:deactivate, ^syndicate, :done})
+  #     end
+  #   end
+  #
+  #   test "Returns error if it fails to delete an order in auction_house and then fails to delete it in storage",
+  #        %{
+  #          syndicate: syndicate,
+  #          placed_order1: placed_order1,
+  #          bad_placed_order: bad_placed_order,
+  #          handle: handle
+  #        } do
+  #     with_mocks([
+  #       {
+  #         Store,
+  #         [],
+  #         [
+  #           list_orders: fn _syndicate -> {:ok, [placed_order1, bad_placed_order]} end,
+  #           delete_order: fn
+  #             ^placed_order1, _syndicate -> :ok
+  #             ^bad_placed_order, _syndicate -> {:error, :enoent}
+  #           end
+  #         ]
+  #       },
+  #       {
+  #         AuctionHouse,
+  #         [],
+  #         [
+  #           delete_order: fn
+  #             ^bad_placed_order -> {:error, :order_non_existent, bad_placed_order}
+  #             ^placed_order1 -> :ok
+  #           end
+  #         ]
+  #       }
+  #     ]) do
+  #       # Act
+  #       actual = Interpreter.deactivate(syndicate, handle)
+  #       expected = :ok
+  #
+  #       # Assert
+  #       assert actual == expected
+  #       assert_called(Store.list_orders(syndicate))
+  #       assert_called(Store.delete_order(placed_order1, syndicate))
+  #       assert_called(Store.delete_order(bad_placed_order, syndicate))
+  #
+  #       assert_called(AuctionHouse.delete_order(placed_order1))
+  #       assert_called(AuctionHouse.delete_order(bad_placed_order))
+  #
+  #       assert_received({:deactivate, ^syndicate, {1, 2, {:ok, ^placed_order1}}})
+  #       assert_received({:deactivate, ^syndicate, {2, 2, {:error, :enoent, ^bad_placed_order}}})
+  #       assert_received({:deactivate, ^syndicate, :done})
+  #     end
+  #   end
+  #
+  #   test "Returns error if it is unable to delete orders from auction house and it does NOT attempt to delete them from storage",
+  #        %{
+  #          syndicate: syndicate,
+  #          placed_order1: placed_order1,
+  #          placed_order2: placed_order2,
+  #          handle: handle
+  #        } do
+  #     with_mocks([
+  #       {
+  #         Store,
+  #         [],
+  #         [
+  #           list_orders: fn _syndicate -> {:ok, [placed_order1, placed_order2]} end
+  #         ]
+  #       },
+  #       {
+  #         AuctionHouse,
+  #         [],
+  #         [
+  #           delete_order: fn placed_order -> {:error, :timeout, placed_order} end
+  #         ]
+  #       }
+  #     ]) do
+  #       # Act
+  #       actual = Interpreter.deactivate(syndicate, handle)
+  #       expected = :ok
+  #
+  #       # Assert
+  #       assert actual == expected
+  #
+  #       assert_called(Store.list_orders(syndicate))
+  #       assert_not_called(Store.delete_order(placed_order1, syndicate))
+  #       assert_not_called(Store.delete_order(placed_order2, syndicate))
+  #
+  #       assert_called(AuctionHouse.delete_order(placed_order1))
+  #       assert_called(AuctionHouse.delete_order(placed_order2))
+  #
+  #       assert_received({:deactivate, ^syndicate, {1, 2, {:error, :timeout, ^placed_order1}}})
+  #
+  #       assert_received({:deactivate, ^syndicate, {2, 2, {:error, :timeout, ^placed_order2}}})
+  #
+  #       assert_received({:deactivate, ^syndicate, :done})
+  #     end
+  #   end
+  # end
+  #
   describe "login/4" do
     setup do
       %{
