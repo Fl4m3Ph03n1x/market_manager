@@ -44,3 +44,7 @@ config :auction_house,
   api_profile_url: "http://localhost:8082/v1/profile",
   http_response_timeout: 9_000,
   genserver_timeout: 20_000
+
+config :rate_limiter,
+  algorithm: RateLimiter.LeakyBucket,
+  requests_per_second: 1

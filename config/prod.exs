@@ -30,3 +30,7 @@ config :auction_house,
   api_profile_url: "https://api.warframe.market/v1/profile",
   http_response_timeout: 9_000,
   genserver_timeout: 20_000
+
+config :rate_limiter,
+  algorithm: RateLimiter.LeakyBucket,
+  requests_per_second: 1
