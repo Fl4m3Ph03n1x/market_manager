@@ -56,8 +56,7 @@ defmodule AuctionHouseTest do
                 "sub_icon" => nil,
                 "sv" => %{"item_name" => "Toxic Sequence"},
                 "tags" => ["mod", "weapons", "rare"],
-                "thumb" =>
-                  "icons/en/thumbs/Toxic_Sequence.bab0370da343ca58b4b92fca65b1da6a.128x128.png",
+                "thumb" => "icons/en/thumbs/Toxic_Sequence.bab0370da343ca58b4b92fca65b1da6a.128x128.png",
                 "url_name" => "toxic_sequence",
                 "zh" => %{"item_name" => "Toxic Sequence"}
               },
@@ -92,8 +91,7 @@ defmodule AuctionHouseTest do
       actual = Server.place_order(order)
 
       expected =
-        {:ok,
-         PlacedOrder.new(%{"item_id" => order.item_id, "order_id" => "5ee71a2604d55c0a5cbdc3c2"})}
+        {:ok, PlacedOrder.new(%{"item_id" => order.item_id, "order_id" => "5ee71a2604d55c0a5cbdc3c2"})}
 
       # Assert
       assert actual == expected
@@ -169,8 +167,7 @@ defmodule AuctionHouseTest do
                 "quantity" => 2,
                 "region" => "en",
                 "user" => %{
-                  "avatar" =>
-                    "user/avatar/55d77904e779893a9827aee2.png?9b0eed7b4885f4ec4275240b3035aa55",
+                  "avatar" => "user/avatar/55d77904e779893a9827aee2.png?9b0eed7b4885f4ec4275240b3035aa55",
                   "id" => "55d77904e779893a9827aee2",
                   "ingame_name" => "porottaja",
                   "last_seen" => "2020-07-18T13:58:49.665+00:00",
@@ -386,8 +383,7 @@ defmodule AuctionHouseTest do
                   "sub_icon" => nil,
                   "sv" => %{"item_name" => "Arcane Agility"},
                   "tags" => ["uncommon", "arcane_enhancement"],
-                  "thumb" =>
-                    "items/images/en/thumbs/arcane_agility.2274fd115d389b990a55f5a4ff864773.128x128.png",
+                  "thumb" => "items/images/en/thumbs/arcane_agility.2274fd115d389b990a55f5a4ff864773.128x128.png",
                   "uk" => %{"item_name" => "Містична Жвавість"},
                   "url_name" => "arcane_agility",
                   "zh-hans" => %{"item_name" => "赋能·灵敏"},
@@ -422,8 +418,7 @@ defmodule AuctionHouseTest do
                   "sub_icon" => nil,
                   "sv" => %{"item_name" => "Abating Link"},
                   "tags" => ["mod", "rare", "warframe", "trinity"],
-                  "thumb" =>
-                    "items/images/en/thumbs/abating_link.c547fa09315093a5ba6c609a9b195580.128x128.png",
+                  "thumb" => "items/images/en/thumbs/abating_link.c547fa09315093a5ba6c609a9b195580.128x128.png",
                   "uk" => %{"item_name" => "Вгамовний Зв’язок"},
                   "url_name" => "abating_link",
                   "zh-hans" => %{"item_name" => "耗弱链接"},

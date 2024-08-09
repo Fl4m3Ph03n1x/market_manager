@@ -6,137 +6,118 @@ defmodule AuctionHouse.Runtime.Server do
 
   use GenServer
 
-  alias AuctionHouse.Impl.{HTTPClient, Settings}
+  require Logger
+
   alias AuctionHouse.Type
   alias Floki
   alias HTTPoison
+  alias RateLimiter
   alias Shared.Data.{Authorization, Credentials, Order, PlacedOrder, User}
-
-  @genserver_timeout Application.compile_env!(:auction_house, :genserver_timeout)
+  alias AuctionHouse.Impl.{DeleteOrder, GetItemOrders, GetUserOrders, Login, PlaceOrder}
 
   ##############
   # Public API #
   ##############
 
   @spec start_link :: :ignore | {:error, any} | {:ok, pid}
-  def start_link,
-    do: GenServer.start_link(__MODULE__, nil, name: __MODULE__)
+  def start_link, do: GenServer.start_link(__MODULE__, nil, name: __MODULE__)
 
-  @spec get_all_orders(Type.item_name()) :: Type.get_all_orders_response()
-  def get_all_orders(item_name),
-    do: GenServer.call(__MODULE__, {:get_all_orders, item_name}, @genserver_timeout)
+  @spec get_item_orders(Type.item_name()) :: :ok
+  def get_item_orders(item_name),
+    do: GenServer.cast(__MODULE__, {:get_item_orders, item_name, self()})
 
-  @spec get_user_orders(Type.username()) :: Type.get_user_orders_response()
+  @spec get_user_orders(Type.username()) :: :ok
   def get_user_orders(username),
-    do: GenServer.call(__MODULE__, {:get_user_orders, username}, @genserver_timeout)
+    do: GenServer.cast(__MODULE__, {:get_user_orders, username, self()})
 
-  @spec place_order(Order.t()) :: Type.place_order_response()
-  def place_order(order),
-    do: GenServer.call(__MODULE__, {:place_order, order}, @genserver_timeout)
+  @spec place_order(Order.t()) :: :ok
+  def place_order(order), do: GenServer.cast(__MODULE__, {:place_order, order, self()})
 
-  @spec delete_order(PlacedOrder.t()) :: Type.delete_order_response()
+  @spec delete_order(PlacedOrder.t()) :: :ok
   def delete_order(placed_order),
-    do: GenServer.call(__MODULE__, {:delete_order, placed_order}, @genserver_timeout)
+    do: GenServer.cast(__MODULE__, {:delete_order, placed_order, self()})
 
-  @spec login(Credentials.t()) :: Type.login_response()
-  def login(credentials),
-    do: GenServer.call(__MODULE__, {:login, credentials}, @genserver_timeout)
+  @spec login(Credentials.t()) :: :ok
+  def login(credentials), do: GenServer.cast(__MODULE__, {:login, credentials, self()})
 
-  @spec recover_login(Authorization.t(), User.t()) :: Type.recover_login_response()
-  def recover_login(auth, user),
-    do: GenServer.call(__MODULE__, {:recover_login, auth, user}, @genserver_timeout)
+  @spec update_login(Authorization.t(), User.t()) :: Type.recover_login_response()
+  def update_login(auth, user),
+    do: GenServer.call(__MODULE__, {:update_login, auth, user})
 
   @spec logout :: Type.logout_response()
-  def logout, do: GenServer.call(__MODULE__, :logout, @genserver_timeout)
+  def logout, do: GenServer.call(__MODULE__, :logout)
 
   #############
   # Callbacks #
   #############
 
   @impl GenServer
-  @spec init(nil) :: {:ok, Type.state(), {:continue, :setup_queue}}
+  @spec init(nil) :: {:ok, Type.state()}
   def init(nil) do
     Process.flag(:trap_exit, true)
-
-    {
-      :ok,
-      %{
-        dependencies: %{
-          parse_document_fn: &Floki.parse_document/1,
-          find_in_document_fn: &Floki.find/2,
-          get_fn: &HTTPoison.get/3,
-          post_fn: &HTTPoison.post/4,
-          delete_fn: &HTTPoison.delete/3,
-          run_fn: &:jobs.run/2,
-          create_queue_fn: &:jobs.add_queue/2,
-          delete_queue_fn: &:jobs.delete_queue/1,
-          requests_queue: Settings.requests_queue(),
-          requests_per_second: Settings.requests_per_second()
-        },
-        user: nil,
-        authorization: nil
-      },
-      {:continue, :setup_queue}
-    }
+    {:ok, %{user: nil, authorization: nil}}
   end
 
   @impl GenServer
-  @spec handle_continue(:setup_queue, Type.state()) :: {:noreply, Type.state()}
-  def handle_continue(
-        :setup_queue,
-        %{
-          dependencies: %{
-            requests_queue: queue,
-            requests_per_second: rps,
-            create_queue_fn: create_queue
-          }
-        } = state
-      ) do
-    create_queue.(queue, [{:standard_rate, rps}])
+  def handle_cast({:place_order, order, from}, state) do
+    PlaceOrder.run(%{
+      from: [from, self()],
+      operation: :place_order,
+      order: order,
+      authorization: state.authorization,
+      send?: false
+    })
+
+    {:noreply, state}
+  end
+
+  def handle_cast({:delete_order, placed_order, from}, state) do
+    DeleteOrder.run(%{
+      from: [from, self()],
+      operation: :delete_order,
+      placed_order: placed_order,
+      authorization: state.authorization,
+      send?: false
+    })
+
+    {:noreply, state}
+  end
+
+  def handle_cast({:get_item_orders, item_name, from}, state) do
+    GetItemOrders.run(%{
+      from: [from, self()],
+      operation: :get_item_orders,
+      item_name: item_name,
+      send?: false
+    })
+
+    {:noreply, state}
+  end
+
+  def handle_cast({:get_user_orders, username, from}, state) do
+    GetUserOrders.run(%{
+      from: [from, self()],
+      operation: :get_user_orders,
+      username: username,
+      send?: false
+    })
+
+    {:noreply, state}
+  end
+
+  def handle_cast({:login, credentials, from}, state) do
+    Login.run(%{
+      from: [from, self()],
+      operation: :login,
+      credentials: credentials,
+      send?: false
+    })
+
     {:noreply, state}
   end
 
   @impl GenServer
-  @spec handle_call(request :: {atom, any}, GenServer.from(), Type.state()) ::
-          {:reply, reply :: any, new_state :: Type.state()}
-  def handle_call({:place_order, order}, _from, state),
-    do: {:reply, HTTPClient.place_order(order, state), state}
-
-  def handle_call({:delete_order, placed_order}, _from, state),
-    do: {:reply, HTTPClient.delete_order(placed_order, state), state}
-
-  def handle_call({:get_all_orders, item_name}, _from, state),
-    do: {:reply, HTTPClient.get_all_orders(item_name, state), state}
-
-  def handle_call({:get_user_orders, username}, _from, state),
-    do: {:reply, HTTPClient.get_user_orders(username, state), state}
-
-  def handle_call(
-        {:login, credentials},
-        _from,
-        state
-      ) do
-    case HTTPClient.login(credentials, state) do
-      {:ok, {%Authorization{} = authorization, %User{} = user}} = response ->
-        updated_state =
-          state
-          |> Map.put(:authorization, authorization)
-          |> Map.put(:user, user)
-
-        {:reply, response, updated_state}
-
-      error ->
-        # in case we have successfully logged in the past, but failed now
-        updated_state =
-          state
-          |> Map.put(:authorization, nil)
-          |> Map.put(:user, nil)
-
-        {:reply, error, updated_state}
-    end
-  end
-
-  def handle_call({:recover_login, auth, user}, _from, state) do
+  def handle_call({:update_login, auth, user}, _from, state) do
     updated_state =
       state
       |> Map.put(:authorization, auth)
@@ -154,14 +135,37 @@ defmodule AuctionHouse.Runtime.Server do
     {:reply, :ok, updated_state}
   end
 
-  @impl GenServer
-  @spec terminate(atom, any) :: any
-  def terminate(_reason, %{dependencies: %{requests_queue: queue, delete_queue_fn: delete_queue}}),
-    do: delete_queue.(queue)
-
   # If a process leaves normally, we ignore it.
   @impl GenServer
   def handle_info({:EXIT, _pid, :normal}, state), do: {:noreply, state}
+
+  def handle_info({:login, {:ok, {authorization, user}}}, state) do
+    updated_state =
+      state
+      |> Map.put(:authorization, authorization)
+      |> Map.put(:user, user)
+
+    {:noreply, updated_state}
+  end
+
+  def handle_info({:login, _error}, state) do
+    # in case we have successfully logged in the past, but failed now
+    updated_state =
+      state
+      |> Map.put(:authorization, nil)
+      |> Map.put(:user, nil)
+
+    {:noreply, updated_state}
+  end
+
+  def handle_info({op, {:ok, _response}} = result, state) do
+    {:noreply, state}
+  end
+
+  def handle_info({op, {:error, _} = error}, state) do
+    Logger.error("Error for operation: #{op} - #{inspect(error)}")
+    {:noreply, state}
+  end
 
   def child_spec(args), do: %{id: __MODULE__, start: {__MODULE__, :start_link, args}}
 end

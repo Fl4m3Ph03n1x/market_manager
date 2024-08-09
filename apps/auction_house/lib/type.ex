@@ -23,12 +23,12 @@ defmodule AuctionHouse.Type do
   # Responses #
   #############
 
-  @type place_order_response :: {:ok, PlacedOrder.t()} | {:error, reason(), Order.t()}
+  @type place_order_response :: {:ok, PlacedOrder.t()} | {:error, any()}
   @type delete_order_response :: :ok | {:error, reason(), PlacedOrder.t()}
-  @type get_all_orders_response :: {:ok, [OrderInfo.t()]} | {:error, reason(), item_name()}
-  @type get_user_orders_response :: {:ok, [PlacedOrder.t()]} | {:error, reason(), username()}
+  @type get_item_orders_response :: {:ok, [OrderInfo.t()]} | {:error, any()}
+  @type get_user_orders_response :: {:ok, [PlacedOrder.t()]} | {:error, any()}
   @type login_response ::
-          {:ok, {Authorization.t(), User.t()}} | {:error, reason(), Credentials.t()}
+          {:ok, {Authorization.t(), User.t()}} | {:error, any()}
   @type recover_login_response :: :ok
   @type logout_response :: :ok
 end

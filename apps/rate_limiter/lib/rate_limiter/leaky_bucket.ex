@@ -58,11 +58,11 @@ defmodule RateLimiter.LeakyBucket do
     start_message = "Request started #{NaiveDateTime.utc_now()}"
 
     Task.Supervisor.async_nolink(RateLimiter.TaskSupervisor, fn ->
-      {req_module, req_fun, args} = request_handler
-      {resp_module, resp_fun} = response_handler
+      {req_fun, args} = request_handler
+      {resp_fun, metadata} = response_handler
 
-      response = apply(req_module, req_fun, args)
-      apply(resp_module, resp_fun, [response])
+      response = apply(req_fun, args)
+      resp_fun.(response, metadata)
 
       Logger.info("#{start_message}\nRequest completed #{NaiveDateTime.utc_now()}")
     end)

@@ -91,8 +91,8 @@ defmodule AuctionHouse do
   {:error, :reason, item_name}
   ```
   """
-  @spec get_all_orders(Type.item_name()) :: Type.get_all_orders_response()
-  defdelegate get_all_orders(item_name), to: Server
+  @spec get_item_orders(Type.item_name()) :: Type.get_item_orders_response()
+  defdelegate get_item_orders(item_name), to: Server
 
   @doc """
   Gets all warframe market sell orders for the given user.

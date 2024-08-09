@@ -9,7 +9,7 @@ defmodule AuctionHouse.MixProject do
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
-      elixir: "~> 1.16",
+      elixir: "~> 1.17",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -20,7 +20,7 @@ defmodule AuctionHouse.MixProject do
   end
 
   # Run "mix help compile.app" to learn about applications.
-  def application, do: [extra_applications: [:logger]]
+  def application, do: [extra_applications: [:logger, :observer, :wx]]
 
   # Run "mix help deps" to learn about dependencies.
   defp deps,
@@ -31,6 +31,7 @@ defmodule AuctionHouse.MixProject do
       {:jobs, "~> 0.10.0"},
       {:floki, "~> 0.34.0"},
       {:shared, in_umbrella: true},
+      {:rate_limiter, in_umbrella: true},
 
       # Test and Dev
       {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},

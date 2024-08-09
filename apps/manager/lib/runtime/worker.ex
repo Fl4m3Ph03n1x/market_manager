@@ -11,6 +11,7 @@ defmodule Manager.Runtime.Worker do
   alias Manager.Impl.Interpreter
   alias Manager.Type
   alias Shared.Data.{Credentials, Strategy, Syndicate}
+  alias Manager.Impl.Login
 
   @type state :: keyword(module)
 
@@ -81,15 +82,23 @@ defmodule Manager.Runtime.Worker do
     {:noreply, deps}
   end
 
-  def handle_cast(
-        {:login, {credentials, keep_logged_in}, from_pid},
-        [interpreter: interpreter] = deps
-      ) do
-    interpreter.login(credentials, keep_logged_in, fn result ->
-      send(from_pid, result)
-    end)
+  def handle_cast({:login, {credentials, keep_logged_in}, from_pid}, state) do
+    Login.request_user_login(credentials, %{
+      keep_logged_in: keep_logged_in,
+      from_pid: from_pid
+    })
 
-    {:noreply, deps}
+    {:noreply, state}
+  end
+
+  @impl GenServer
+  def handle_info({:request_user_login, result, %{from_pid: from_pid} = metadata}, state) do
+    case Login.acknowledge_login(result, metadata) do
+      :ok -> send(from_pid, {:login, {:ok, metadata.user}})
+      err -> send(from_pid, {:login, {:error, err}})
+    end
+
+    {:noreply, state}
   end
 
   @impl GenServer
