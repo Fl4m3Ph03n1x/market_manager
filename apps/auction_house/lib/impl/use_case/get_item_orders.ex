@@ -1,12 +1,15 @@
-defmodule AuctionHouse.Impl.GetItemOrders do
+defmodule AuctionHouse.Impl.UseCase.GetItemOrders do
   @moduledoc """
   Requests all the sell orders for the item with the given name.
   """
 
   alias AuctionHouse.Type
-  alias AuctionHouse.Impl.HttpAsyncClient
+  alias AuctionHouse.Impl.{HttpAsyncClient, UseCase}
+  alias AuctionHouse.Impl.UseCase.Data.{Request, Response}
   alias Shared.Data.OrderInfo
   alias Jason
+
+  @behaviour UseCase
 
   @search_url Application.compile_env!(:auction_house, :api_search_url)
 
@@ -14,24 +17,22 @@ defmodule AuctionHouse.Impl.GetItemOrders do
     get: &HttpAsyncClient.get/4
   }
 
-  @typep deps :: %{get: function()}
-  @typep metadata :: map()
   @typep url :: String.t()
 
   ##########
   # Public #
   ##########
 
-  @spec run(metadata(), deps()) :: :ok
-  def run(%{item_name: item_name} = metadata, %{get: async_get} \\ @default_deps) do
+  @impl UseCase
+  def start(%Request{args: %{item_name: item_name}} = req, %{get: async_get} \\ @default_deps) do
     item_name
     |> build_get_orders_url()
-    |> async_get.(nil, %{metadata | send?: true}, &parse_item_orders/2)
+    |> async_get.(nil, Request.finish(req), &finish/1)
   end
 
-  @spec parse_item_orders({HttpAsyncClient.body(), HttpAsyncClient.headers()}, metadata()) ::
-          Type.get_item_orders_response()
-  def parse_item_orders({body, _headers}, _metadata) do
+  @impl UseCase
+  @spec finish(Response.t()) :: Type.get_item_orders_response()
+  def finish(%Response{body: body}) do
     case Jason.decode(body) do
       {:ok, content} ->
         {:ok, parse_order_info(content)}

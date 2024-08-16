@@ -3,7 +3,7 @@ defmodule AuctionHouse.Type do
   Holds the types for this library.
   """
 
-  alias Shared.Data.{Authorization, Credentials, Order, OrderInfo, PlacedOrder, User}
+  alias Shared.Data.{Authorization, OrderInfo, PlacedOrder, User}
 
   ##########
   # Types  #

@@ -1,11 +1,14 @@
-defmodule AuctionHouse.Impl.DeleteOrder do
+defmodule AuctionHouse.Impl.UseCase.DeleteOrder do
   @moduledoc """
-
+  Sends a delete request to the given PlacedOrder. Returns the deleted PlacedOrder if successful.
   """
 
   alias AuctionHouse.Type
-  alias AuctionHouse.Impl.HttpAsyncClient
-  alias Shared.Data.{Authorization, PlacedOrder}
+  alias AuctionHouse.Impl.{HttpAsyncClient, UseCase}
+  alias AuctionHouse.Impl.UseCase.Data.{Request, Response}
+  alias Shared.Data.Authorization
+
+  @behaviour UseCase
 
   @url Application.compile_env!(:auction_house, :api_base_url)
 
@@ -13,17 +16,15 @@ defmodule AuctionHouse.Impl.DeleteOrder do
     delete: &HttpAsyncClient.delete/4
   }
 
-  @typep deps :: %{post: function()}
-  @typep metadata :: map()
   @typep url :: String.t()
 
   ##########
   # Public #
   ##########
 
-  @spec run(metadata(), deps()) :: :ok
-  def run(
-        %{placed_order: placed_order, authorization: auth} = metadata,
+  @impl UseCase
+  def start(
+        %Request{args: %{placed_order: placed_order, authorization: auth}} = req,
         %{delete: async_delete} \\ @default_deps
       ) do
     with :ok <- check_authorization(auth),
@@ -31,15 +32,15 @@ defmodule AuctionHouse.Impl.DeleteOrder do
       async_delete.(
         url,
         auth,
-        %{metadata | send?: true},
-        &order_deleted/2
+        Request.finish(req),
+        &finish/1
       )
     end
   end
 
-  @spec order_deleted({HttpAsyncClient.body(), HttpAsyncClient.headers()}, metadata()) ::
-          {:ok, PlacedOrder.t()}
-  def order_deleted(_response, %{placed_order: po} = _metadata), do: {:ok, po}
+  @impl UseCase
+  @spec finish(Response.t()) :: Type.delete_order_response()
+  def finish(%Response{request_args: %{placed_order: po}}), do: {:ok, po}
 
   ###########
   # Private #

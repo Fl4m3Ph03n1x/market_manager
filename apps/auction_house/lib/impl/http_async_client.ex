@@ -1,11 +1,14 @@
 defmodule AuctionHouse.Impl.HttpAsyncClient do
   @moduledoc """
-
+  Asynchronous HTTP client for the auction house. Makes requests to the auction house's API and converts errors into a
+  format friendly to the application.
+  Uses a rate limiter to avoid overloading the external API.
   """
 
   require Logger
 
-  alias Shared.Data.{Authorization, Credentials}
+  alias Shared.Data.Authorization
+  alias AuctionHouse.Impl.UseCase.Data.{Request, Response}
   alias RateLimiter
 
   @http_response_timeout Application.compile_env!(:auction_house, :http_response_timeout)
@@ -51,7 +54,8 @@ defmodule AuctionHouse.Impl.HttpAsyncClient do
         %{rate_limiter: rate_limiter, client: client} \\ @default_deps
       ) do
     rate_limiter.make_request(
-      {&client.post/4, [url, data, build_headers(cookie, token), [recv_timeout: @http_response_timeout]]},
+      {&client.post/4,
+       [url, data, build_headers(cookie, token), [recv_timeout: @http_response_timeout]]},
       {&handle_response/2, {response_fun, metadata}}
     )
   end
@@ -71,7 +75,8 @@ defmodule AuctionHouse.Impl.HttpAsyncClient do
         %{rate_limiter: rate_limiter, client: client} \\ @default_deps
       ) do
     rate_limiter.make_request(
-      {&client.delete/3, [url, build_headers(cookie, token), [recv_timeout: @http_response_timeout]]},
+      {&client.delete/3,
+       [url, build_headers(cookie, token), [recv_timeout: @http_response_timeout]]},
       {&handle_response/2, {response_fun, metadata}}
     )
   end
@@ -79,7 +84,7 @@ defmodule AuctionHouse.Impl.HttpAsyncClient do
   @spec get(
           url(),
           Authorization.t() | nil,
-          RateLimite.metadata(),
+          RateLimiter.metadata(),
           RateLimiter.response_fun(),
           deps()
         ) :: :ok
@@ -93,7 +98,8 @@ defmodule AuctionHouse.Impl.HttpAsyncClient do
         %{rate_limiter: rate_limiter, client: client}
       ) do
     rate_limiter.make_request(
-      {&client.get/3, [url, build_headers(cookie, token), [recv_timeout: @http_response_timeout]]},
+      {&client.get/3,
+       [url, build_headers(cookie, token), [recv_timeout: @http_response_timeout]]},
       {&handle_response/2, {response_fun, metadata}}
     )
   end
@@ -111,27 +117,28 @@ defmodule AuctionHouse.Impl.HttpAsyncClient do
     )
   end
 
-  def handle_response(response, {response_fun, metadata}) do
-    %{from: from, send?: send?, operation: op} = metadata
+  @spec handle_response(
+          {:ok, HTTPoison.Response.t() | {:error, HTTPoison.Error.t()}},
+          {(... -> any()), Request.t()}
+        ) :: :ok
+  def handle_response(response, {response_fun, %Request{metadata: meta, args: args}}) do
     parsed_response = parse(response)
 
     case elem(parsed_response, 0) do
       :ok ->
         {:ok, body, headers} = parsed_response
 
-        if send? do
-          result = response_fun.({body, headers}, metadata)
-          Enum.each(from, &send(&1, {op, result}))
-        else
-          result = response_fun.({body, headers}, metadata)
+        headers_map = Enum.reduce(headers, %{}, fn {key, val}, acc -> Map.put(acc, key, val) end)
 
-          if is_tuple(result) and elem(result, 0) == :error do
-            Enum.each(from, &send(&1, {op, result}))
-          end
+        response = Response.new(meta, body, headers_map, args)
+        result = response_fun.(response)
+
+        if meta.send? or (is_tuple(result) and elem(result, 0) == :error) do
+          Enum.each(meta.notify, &send(&1, {meta.operation, result}))
         end
 
-      error ->
-        Enum.each(from, &send(&1, {op, parsed_response}))
+      :error ->
+        Enum.each(meta.notify, &send(&1, {meta.operation, parsed_response}))
     end
   end
 
@@ -143,7 +150,7 @@ defmodule AuctionHouse.Impl.HttpAsyncClient do
   defp build_headers(cookie, token),
     do: [{"x-csrftoken", token}, {"Cookie", cookie}] ++ @static_headers
 
-  @spec parse({:ok, HTTPoison.Reponse.t() | {:error, HTTPoison.Error.t()}}) ::
+  @spec parse({:ok, HTTPoison.Response.t() | {:error, HTTPoison.Error.t()}}) ::
           {:ok, body(), headers()} | {:error, reason :: any()}
   defp parse({:ok, %HTTPoison.Response{status_code: 200, body: body, headers: headers}}),
     do: {:ok, body, headers}
@@ -153,19 +160,16 @@ defmodule AuctionHouse.Impl.HttpAsyncClient do
     {:error, map_error(error_body)}
   end
 
-  defp parse({:ok, %HTTPoison.Response{status_code: 500}}) do
-    {:error, :internal_server_error}
-  end
+  defp parse({:ok, %HTTPoison.Response{status_code: 500}}), do: {:error, :internal_server_error}
 
-  defp parse({:error, %HTTPoison.Error{id: _id, reason: reason}}),
-    do: {:error, reason}
+  defp parse({:error, %HTTPoison.Error{id: _id, reason: reason}}), do: {:error, reason}
 
-  @spec map_error(error_body :: String.t()) ::
+  @spec map_error(body()) ::
           :invalid_item_id
           | :order_already_placed
           | :order_non_existent
           | :rank_level_non_applicable
-          | :wrong_passwork
+          | :wrong_password
           | :wrong_email
           | :invalid_email
           | :unknown_server_error

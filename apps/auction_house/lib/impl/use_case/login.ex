@@ -1,12 +1,15 @@
-defmodule AuctionHouse.Impl.Login do
+defmodule AuctionHouse.Impl.UseCase.Login do
   @moduledoc """
   Contains all the logic to parse and login a user asyncronously.
   """
 
   alias AuctionHouse.Type
-  alias AuctionHouse.Impl.HttpAsyncClient
+  alias AuctionHouse.Impl.{HttpAsyncClient, UseCase}
+  alias AuctionHouse.Impl.UseCase.Data.{Metadata, Request, Response}
   alias Jason
   alias Shared.Data.{Authorization, User}
+
+  @behaviour UseCase
 
   @market_signin_url Application.compile_env!(:auction_house, :market_signin_url)
   @api_signin_url Application.compile_env!(:auction_house, :api_signin_url)
@@ -18,28 +21,22 @@ defmodule AuctionHouse.Impl.Login do
     finder: &Floki.find/2
   }
 
-  @typep deps :: %{
-           get: function(),
-           post: function(),
-           parser: function(),
-           finder: function()
-         }
-
-  @typep metadata :: map()
-
   ##########
   # Public #
   ##########
 
-  @spec run(metadata(), deps()) :: :ok
-  def run(metadata, %{get: async_get} \\ @default_deps),
-    do: async_get.(@market_signin_url, nil, metadata, &sign_in/2)
+  @impl UseCase
+  def start(request, %{get: async_get} \\ @default_deps),
+    do: async_get.(@market_signin_url, nil, request, &sign_in/1)
 
-  @spec sign_in({HttpAsyncClient.body(), HttpAsyncClient.headers()}, metadata(), deps()) ::
-          :ok | {:error, any()}
+  @spec sign_in(Response.t(), map()) :: :ok | {:error, any()}
   def sign_in(
-        {body, headers},
-        %{credentials: credentials} = metadata,
+        %Response{
+          metadata: meta,
+          body: body,
+          headers: headers,
+          request_args: %{credentials: credentials}
+        },
         %{post: async_post, parser: parse_document} = deps \\ @default_deps
       ) do
     with {:ok, json_credentials} <- Jason.encode(credentials),
@@ -47,24 +44,29 @@ defmodule AuctionHouse.Impl.Login do
          {:ok, token} <- find_xrfc_token(doc, deps),
          {:ok, cookie} <- parse_cookie(headers),
          auth <- %Authorization{cookie: cookie, token: token} do
+      request =
+        meta
+        |> Metadata.mark_to_send()
+        |> Request.new()
+        |> Request.put_arg(:authorization, auth)
+
       async_post.(
         @api_signin_url,
         json_credentials,
         auth,
-        metadata |> Map.put(:authorization, auth) |> Map.put(:send?, true),
-        &parse_authorization/2
+        request,
+        &finish/1
       )
     end
   end
 
-  @spec parse_authorization({HttpAsyncClient.body(), HttpAsyncClient.headers()}, metadata()) ::
-          Type.login_response()
-  def parse_authorization(
-        {body, headers},
-        %{
-          authorization: %Authorization{token: token}
-        } = _metadata
-      ) do
+  @impl UseCase
+  @spec finish(Response.t()) :: Type.login_response()
+  def finish(%Response{
+        body: body,
+        headers: headers,
+        request_args: %{authorization: %Authorization{token: token}}
+      }) do
     with {:ok, decoded_body} <- validate_body(body),
          {:ok, updated_cookie} <- parse_cookie(headers),
          {:ok, ingame_name} <- parse_ingame_name(decoded_body),
@@ -105,20 +107,19 @@ defmodule AuctionHouse.Impl.Login do
     end
   end
 
-  @spec parse_cookie(HttpAsyncClient.headers()) ::
-          {:ok, String.t()}
-          | {:error, {:no_cookie_found | :missing_jwt, headers :: [{String.t(), any}]}}
-  defp parse_cookie(headers) do
-    with {_key, val} <- List.keyfind(headers, "Set-Cookie", 0),
-         [cookie | _tail] <- String.split(val, ";"),
+  @spec parse_cookie(Response.headers()) ::
+          {:ok, String.t()} | {:error, {:no_cookie_found | :missing_jwt, Reponse.headers()}}
+  defp parse_cookie(%{"Set-Cookie" => val} = headers) do
+    with [cookie | _tail] <- String.split(val, ";"),
          true <- String.contains?(cookie, "JWT=") do
       {:ok, cookie}
     else
-      nil -> {:error, {:no_cookie_found, headers}}
       false -> {:error, {:missing_jwt, headers}}
       [] -> {:error, {:missing_jwt, headers}}
     end
   end
+
+  defp parse_cookie(headers), do: {:error, {:no_cookie_found, headers}}
 
   @spec parse_patreon(body :: map) :: {:ok, boolean} | {:error, :missing_patreon, map()}
   defp parse_patreon(body) do

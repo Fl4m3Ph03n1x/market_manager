@@ -9,11 +9,9 @@ defmodule AuctionHouse.Runtime.Server do
   require Logger
 
   alias AuctionHouse.Type
-  alias Floki
-  alias HTTPoison
-  alias RateLimiter
   alias Shared.Data.{Authorization, Credentials, Order, PlacedOrder, User}
-  alias AuctionHouse.Impl.{DeleteOrder, GetItemOrders, GetUserOrders, Login, PlaceOrder}
+  alias AuctionHouse.Impl.UseCase.{DeleteOrder, GetItemOrders, GetUserOrders, Login, PlaceOrder}
+  alias AuctionHouse.Impl.UseCase.Data.{Metadata, Request}
 
   ##############
   # Public API #
@@ -60,8 +58,8 @@ defmodule AuctionHouse.Runtime.Server do
 
   @impl GenServer
   def handle_cast({:place_order, order, from}, state) do
-    PlaceOrder.run(%{
-      from: [from, self()],
+    PlaceOrder.start(%{
+      from: [from],
       operation: :place_order,
       order: order,
       authorization: state.authorization,
@@ -72,8 +70,8 @@ defmodule AuctionHouse.Runtime.Server do
   end
 
   def handle_cast({:delete_order, placed_order, from}, state) do
-    DeleteOrder.run(%{
-      from: [from, self()],
+    DeleteOrder.start(%{
+      from: [from],
       operation: :delete_order,
       placed_order: placed_order,
       authorization: state.authorization,
@@ -84,8 +82,8 @@ defmodule AuctionHouse.Runtime.Server do
   end
 
   def handle_cast({:get_item_orders, item_name, from}, state) do
-    GetItemOrders.run(%{
-      from: [from, self()],
+    GetItemOrders.start(%{
+      from: [from],
       operation: :get_item_orders,
       item_name: item_name,
       send?: false
@@ -95,8 +93,8 @@ defmodule AuctionHouse.Runtime.Server do
   end
 
   def handle_cast({:get_user_orders, username, from}, state) do
-    GetUserOrders.run(%{
-      from: [from, self()],
+    GetUserOrders.start(%{
+      from: [from],
       operation: :get_user_orders,
       username: username,
       send?: false
@@ -106,12 +104,10 @@ defmodule AuctionHouse.Runtime.Server do
   end
 
   def handle_cast({:login, credentials, from}, state) do
-    Login.run(%{
-      from: [from, self()],
-      operation: :login,
-      credentials: credentials,
-      send?: false
-    })
+    :login
+    |> Metadata.new([from, self()])
+    |> Request.new(%{credentials: credentials})
+    |> Login.start()
 
     {:noreply, state}
   end
@@ -158,7 +154,7 @@ defmodule AuctionHouse.Runtime.Server do
     {:noreply, updated_state}
   end
 
-  def handle_info({op, {:ok, _response}} = result, state) do
+  def handle_info({_op, {:ok, _response}}, state) do
     {:noreply, state}
   end
 
