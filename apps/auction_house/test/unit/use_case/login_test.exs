@@ -26,9 +26,8 @@ defmodule AuctionHouse.Impl.UseCase.LoginTest do
 
       deps =
         %{
-          get: fn url, auth, req, _next ->
+          get: fn url, req, _next ->
             assert url == @market_signin_url
-            assert is_nil(auth)
             assert req.args.credentials == request.args.credentials
             refute req.metadata.send?
             :ok
@@ -47,7 +46,7 @@ defmodule AuctionHouse.Impl.UseCase.LoginTest do
           email: "test@email.com"
         }
 
-      authorizatoin =
+      authorization =
         %Authorization{
           token:
             "##2263dcc167c732ca1b54566e0c1ffb66d8e13e2ed59d113967f7fb5e119fed0f813bf7b98c9777c2f5eafd0ab5f6fdc9ad5a3a44d8b585c07ebdf0af1be310b1",
@@ -57,11 +56,11 @@ defmodule AuctionHouse.Impl.UseCase.LoginTest do
 
       deps =
         %{
-          post: fn url, creds, auth, req, _next ->
+          post: fn url, creds, req, _next, auth ->
             assert url == @api_signin_url
             assert creds == Jason.encode!(credentials)
-            assert auth == authorizatoin
-            assert req.args.authorization == authorizatoin
+            assert auth == authorization
+            assert req.args.authorization == authorization
             assert req.metadata.send?
             :ok
           end,

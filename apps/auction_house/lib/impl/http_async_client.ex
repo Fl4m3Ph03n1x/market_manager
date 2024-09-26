@@ -11,8 +11,6 @@ defmodule AuctionHouse.Impl.HttpAsyncClient do
   alias AuctionHouse.Impl.UseCase.Data.{Request, Response}
   alias RateLimiter
 
-  @http_response_timeout Application.compile_env!(:auction_house, :http_response_timeout)
-
   @static_headers [
     {"Accept", "application/json"},
     {"Content-Type", "application/json"}
@@ -40,80 +38,77 @@ defmodule AuctionHouse.Impl.HttpAsyncClient do
   @spec post(
           url(),
           data(),
-          Authorization.t(),
-          RateLimiter.metadata(),
+          Request.t(),
           RateLimiter.response_function(),
+          Authorization.t(),
           deps()
         ) :: :ok
   def post(
         url,
         data,
-        %Authorization{cookie: cookie, token: token} = _auth,
-        metadata,
+        request,
         response_fun,
+        %Authorization{cookie: cookie, token: token},
         %{rate_limiter: rate_limiter, client: client} \\ @default_deps
       ) do
     rate_limiter.make_request(
-      {&client.post/4,
-       [url, data, build_headers(cookie, token), [recv_timeout: @http_response_timeout]]},
-      {&handle_response/2, {response_fun, metadata}}
+      {&client.post/3, [url, data, build_headers(cookie, token)]},
+      {&handle_response/2, {response_fun, request}}
     )
   end
 
   @spec delete(
           url(),
-          Authorization.t(),
-          RateLimiter.metadata(),
+          Request.t(),
           RateLimiter.response_function(),
+          Authorization.t(),
           deps()
         ) :: :ok
   def delete(
         url,
-        %Authorization{cookie: cookie, token: token} = _auth,
-        metadata,
+        request,
         response_fun,
+        %Authorization{cookie: cookie, token: token},
         %{rate_limiter: rate_limiter, client: client} \\ @default_deps
       ) do
     rate_limiter.make_request(
-      {&client.delete/3,
-       [url, build_headers(cookie, token), [recv_timeout: @http_response_timeout]]},
-      {&handle_response/2, {response_fun, metadata}}
+      {&client.delete/2, [url, build_headers(cookie, token)]},
+      {&handle_response/2, {response_fun, request}}
     )
   end
 
   @spec get(
           url(),
-          Authorization.t() | nil,
-          RateLimiter.metadata(),
+          Request.t(),
           RateLimiter.response_fun(),
+          Authorization.t() | nil,
           deps()
         ) :: :ok
-  def get(url, auth, metadata, response_fun, deps \\ @default_deps)
+  def get(url, request, response_fun, auth \\ nil, deps \\ @default_deps)
 
   def get(
         url,
-        %Authorization{cookie: cookie, token: token} = _auth,
-        metadata,
+        request,
         response_fun,
+        %Authorization{cookie: cookie, token: token},
         %{rate_limiter: rate_limiter, client: client}
       ) do
     rate_limiter.make_request(
-      {&client.get/3,
-       [url, build_headers(cookie, token), [recv_timeout: @http_response_timeout]]},
-      {&handle_response/2, {response_fun, metadata}}
+      {&client.get/2, [url, build_headers(cookie, token)]},
+      {&handle_response/2, {response_fun, request}}
     )
   end
 
   def get(
         url,
-        nil,
-        metadata,
+        request,
         response_fun,
+        nil,
         %{rate_limiter: rate_limiter, client: client}
       ) do
     rate_limiter.make_request(
-      {&client.get/3, [url, @static_headers, [recv_timeout: @http_response_timeout]]},
-      {&handle_response/2, {response_fun, metadata}}
+      {&client.get/2, [url, @static_headers]},
+      {&handle_response/2, {response_fun, request}}
     )
   end
 
@@ -140,6 +135,8 @@ defmodule AuctionHouse.Impl.HttpAsyncClient do
       :error ->
         Enum.each(meta.notify, &send(&1, {meta.operation, parsed_response}))
     end
+
+    :ok
   end
 
   ###########

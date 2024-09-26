@@ -14,7 +14,7 @@ defmodule AuctionHouse.Impl.UseCase.GetUserOrders do
   @api_profile_url Application.compile_env!(:auction_house, :api_profile_url)
 
   @default_deps %{
-    get: &HttpAsyncClient.get/4
+    get: &HttpAsyncClient.get/3
   }
 
   @typep url :: String.t()
@@ -27,7 +27,7 @@ defmodule AuctionHouse.Impl.UseCase.GetUserOrders do
   def start(%Request{args: %{username: username}} = request, %{get: async_get} \\ @default_deps) do
     username
     |> build_user_orders_url()
-    |> async_get.(nil, Request.finish(request), &finish/1)
+    |> async_get.(Request.finish(request), &finish/1)
   end
 
   @impl UseCase

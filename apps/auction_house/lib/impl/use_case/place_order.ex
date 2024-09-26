@@ -31,9 +31,9 @@ defmodule AuctionHouse.Impl.UseCase.PlaceOrder do
       async_post.(
         @url,
         order_json,
-        auth,
         Request.finish(req),
-        &finish/1
+        &finish/1,
+        auth
       )
     end
   end

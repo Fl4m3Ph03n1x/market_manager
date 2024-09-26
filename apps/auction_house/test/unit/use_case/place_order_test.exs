@@ -42,7 +42,7 @@ defmodule AuctionHouse.Impl.UseCase.PlaceOrderTest do
 
       deps =
         %{
-          post: fn url, data, auth, req, _next ->
+          post: fn url, data, req, _next, auth ->
             assert url == @url
             assert data == Jason.encode!(order)
 

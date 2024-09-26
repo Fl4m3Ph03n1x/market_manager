@@ -1,6 +1,6 @@
 defmodule AuctionHouse.Impl.UseCase.Login do
   @moduledoc """
-  Contains all the logic to parse and login a user asyncronously.
+  Contains all the logic to parse and login a user asynchronously.
   """
 
   alias AuctionHouse.Type
@@ -15,7 +15,7 @@ defmodule AuctionHouse.Impl.UseCase.Login do
   @api_signin_url Application.compile_env!(:auction_house, :api_signin_url)
 
   @default_deps %{
-    get: &HttpAsyncClient.get/4,
+    get: &HttpAsyncClient.get/3,
     post: &HttpAsyncClient.post/5,
     parser: &Floki.parse_document/1,
     finder: &Floki.find/2
@@ -26,8 +26,9 @@ defmodule AuctionHouse.Impl.UseCase.Login do
   ##########
 
   @impl UseCase
-  def start(request, %{get: async_get} \\ @default_deps),
-    do: async_get.(@market_signin_url, nil, request, &sign_in/1)
+  def start(request, %{get: async_get} \\ @default_deps) do
+    async_get.(@market_signin_url, request, &sign_in/1)
+  end
 
   @spec sign_in(Response.t(), map()) :: :ok | {:error, any()}
   def sign_in(
@@ -53,9 +54,9 @@ defmodule AuctionHouse.Impl.UseCase.Login do
       async_post.(
         @api_signin_url,
         json_credentials,
-        auth,
         request,
-        &finish/1
+        &finish/1,
+        auth
       )
     end
   end

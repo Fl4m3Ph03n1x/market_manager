@@ -14,7 +14,7 @@ defmodule AuctionHouse.Impl.UseCase.GetItemOrders do
   @search_url Application.compile_env!(:auction_house, :api_search_url)
 
   @default_deps %{
-    get: &HttpAsyncClient.get/4
+    get: &HttpAsyncClient.get/3
   }
 
   @typep url :: String.t()
@@ -27,7 +27,7 @@ defmodule AuctionHouse.Impl.UseCase.GetItemOrders do
   def start(%Request{args: %{item_name: item_name}} = req, %{get: async_get} \\ @default_deps) do
     item_name
     |> build_get_orders_url()
-    |> async_get.(nil, Request.finish(req), &finish/1)
+    |> async_get.(Request.finish(req), &finish/1)
   end
 
   @impl UseCase

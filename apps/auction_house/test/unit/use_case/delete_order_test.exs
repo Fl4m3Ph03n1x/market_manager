@@ -38,7 +38,7 @@ defmodule AuctionHouse.Impl.UseCase.DeleteOrderTest do
       }
 
       deps = %{
-        delete: fn url, auth, req, _next ->
+        delete: fn url, req, _next, auth ->
           assert url == "#{@url}/66b9d5cf6b17410a639e2284"
           assert req.args.authorization == auth
           assert req.args.placed_order == placed_order

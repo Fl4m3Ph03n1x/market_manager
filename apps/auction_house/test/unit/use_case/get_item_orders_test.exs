@@ -26,9 +26,8 @@ defmodule AuctionHouse.Impl.UseCase.GetItemOrdersTest do
 
       deps =
         %{
-          get: fn url, auth, req, _next ->
+          get: fn url, req, _next ->
             assert url == "#{@search_url}/despoil/orders"
-            assert is_nil(auth)
 
             assert req.metadata == %Metadata{
                      notify: [self()],

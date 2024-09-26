@@ -31,9 +31,9 @@ defmodule AuctionHouse.Impl.UseCase.DeleteOrder do
          url <- build_delete_url(placed_order.order_id) do
       async_delete.(
         url,
-        auth,
         Request.finish(req),
-        &finish/1
+        &finish/1,
+        auth
       )
     end
   end

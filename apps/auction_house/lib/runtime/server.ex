@@ -58,47 +58,37 @@ defmodule AuctionHouse.Runtime.Server do
 
   @impl GenServer
   def handle_cast({:place_order, order, from}, state) do
-    PlaceOrder.start(%{
-      from: [from],
-      operation: :place_order,
-      order: order,
-      authorization: state.authorization,
-      send?: false
-    })
+    :place_order
+    |> Metadata.new([from])
+    |> Request.new(%{order: order, authorization: state.authorization})
+    |> PlaceOrder.start()
 
     {:noreply, state}
   end
 
   def handle_cast({:delete_order, placed_order, from}, state) do
-    DeleteOrder.start(%{
-      from: [from],
-      operation: :delete_order,
-      placed_order: placed_order,
-      authorization: state.authorization,
-      send?: false
-    })
+    :delete_order
+    |> Metadata.new([from])
+    |> Request.new(%{placed_order: placed_order, authorization: state.authorization})
+    |> DeleteOrder.start()
 
     {:noreply, state}
   end
 
   def handle_cast({:get_item_orders, item_name, from}, state) do
-    GetItemOrders.start(%{
-      from: [from],
-      operation: :get_item_orders,
-      item_name: item_name,
-      send?: false
-    })
+    :get_item_orders
+    |> Metadata.new([from])
+    |> Request.new(%{item_name: item_name})
+    |> GetItemOrders.start()
 
     {:noreply, state}
   end
 
   def handle_cast({:get_user_orders, username, from}, state) do
-    GetUserOrders.start(%{
-      from: [from],
-      operation: :get_user_orders,
-      username: username,
-      send?: false
-    })
+    :get_user_orders
+    |> Metadata.new([from])
+    |> Request.new(%{username: username})
+    |> GetUserOrders.start()
 
     {:noreply, state}
   end
