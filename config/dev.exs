@@ -41,9 +41,7 @@ config :auction_house,
   api_base_url: "http://localhost:8082/v1/profile/orders",
   market_signin_url: "http://localhost:8082/auth/signin",
   api_signin_url: "http://localhost:8082/v1/auth/signin",
-  api_profile_url: "http://localhost:8082/v1/profile",
-  http_response_timeout: 9_000,
-  genserver_timeout: 20_000
+  api_profile_url: "http://localhost:8082/v1/profile"
 
 config :rate_limiter,
   algorithm: RateLimiter.LeakyBucket,
