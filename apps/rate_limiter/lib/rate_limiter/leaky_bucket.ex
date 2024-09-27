@@ -4,7 +4,15 @@ defmodule RateLimiter.LeakyBucket do
   at a consistent rate and within the configured limits:
   https://akoutmos.com/post/rate-limiting-with-genservers/
 
-  The application using this Limiter, must itself launch the Task.Supervisor that is used.
+  The application using this Limiter, must itself launch the Task.Supervisor that is used:application
+
+  ```
+  children = [
+    {Task.Supervisor, name: RateLimiter.TaskSupervisor}
+  ]
+
+  Supervisor.init(children, strategy: :one_for_one)
+  ```
   """
 
   use GenServer
