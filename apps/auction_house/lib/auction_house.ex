@@ -5,7 +5,7 @@ defmodule AuctionHouse do
   into a format the manager understands.
   """
 
-  alias AuctionHouse.Runtime.Server
+  alias AuctionHouse.Runtime.{AuctionSupervisor, Server}
   alias AuctionHouse.Type
   alias Shared.Data.{Authorization, Credentials, Order, PlacedOrder, User}
   alias Supervisor
@@ -176,5 +176,5 @@ defmodule AuctionHouse do
 
   @doc false
   @spec child_spec(any) :: Supervisor.child_spec()
-  defdelegate child_spec(args), to: Server
+  defdelegate child_spec(args), to: AuctionSupervisor
 end
