@@ -3,6 +3,8 @@ defmodule RateLimiter.LeakyBucket do
   A leaky bucket rate limiter is one where the input into it may be variable and can fluctuate, but the output will be
   at a consistent rate and within the configured limits:
   https://akoutmos.com/post/rate-limiting-with-genservers/
+
+  The application using this Limiter, must itself launch the Task.Supervisor that is used.
   """
 
   use GenServer
