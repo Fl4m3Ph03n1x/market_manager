@@ -1,6 +1,8 @@
 defmodule RateLimiter.LeakyBucket do
   @moduledoc """
-
+  A leaky bucket rate limiter is one where the input into it may be variable and can fluctuate, but the output will be
+  at a consistent rate and within the configured limits:
+  https://akoutmos.com/post/rate-limiting-with-genservers/
   """
 
   use GenServer
@@ -22,7 +24,7 @@ defmodule RateLimiter.LeakyBucket do
     do: GenServer.cast(__MODULE__, {:enqueue_request, request_handler, response_handler})
 
   #############
-  # Callbakcs #
+  # Callbacks #
   #############
 
   @impl GenServer
@@ -55,7 +57,6 @@ defmodule RateLimiter.LeakyBucket do
 
   def handle_info(:tick, state) do
     {{:value, {request_handler, response_handler}}, poped_queue} = Qex.pop(state.request_queue)
-    start_message = "Request started #{NaiveDateTime.utc_now()}"
 
     Task.Supervisor.async_nolink(RateLimiter.TaskSupervisor, fn ->
       {req_fun, args} = request_handler
@@ -63,8 +64,6 @@ defmodule RateLimiter.LeakyBucket do
 
       response = apply(req_fun, args)
       resp_fun.(response, metadata)
-
-      Logger.info("#{start_message}\nRequest completed #{NaiveDateTime.utc_now()}")
     end)
 
     {:noreply,
@@ -84,12 +83,12 @@ defmodule RateLimiter.LeakyBucket do
   end
 
   def handle_info({:DOWN, _ref, :process, _pid, :normal}, state) do
-    # Task dies after successfull completion
+    # Task dies after successful completion
     {:noreply, state}
   end
 
   def handle_info({:DOWN, _ref, :process, _pid, reason}, state) do
-    # Taslk failed and died
+    # Task failed and died
     # TODO: find a way to enqueue request again
     Logger.error("Task failed with reason: #{reason}")
     {:noreply, state}
