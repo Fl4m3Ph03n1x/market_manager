@@ -153,7 +153,7 @@ defmodule AuctionHouse.Impl.HttpAsyncClient do
     do: {:ok, body, headers}
 
   defp parse({:ok, %HTTPoison.Response{status_code: status, body: error_body}})
-       when status in [400, 503, 520] do
+       when status in [400, 429, 503, 520] do
     {:error, map_error(error_body)}
   end
 
@@ -170,6 +170,7 @@ defmodule AuctionHouse.Impl.HttpAsyncClient do
           | :wrong_email
           | :invalid_email
           | :unknown_server_error
+          | :slow_down
   defp map_error(~s({"error": {"item_id": ["app.form.invalid"]}})), do: :invalid_item_id
 
   defp map_error(~s({"error": {"_form": ["app.post_order.already_created_no_duplicates"]}})),
@@ -190,6 +191,10 @@ defmodule AuctionHouse.Impl.HttpAsyncClient do
   defp map_error(~s({"error": {"email": ["app.form.invalid"]}})), do: :invalid_email
 
   defp map_error("error code: 520"), do: :unknown_server_error
+
+  # warframe.market is behind CloudFlare, which will emit this error if we are making too many requests and effectively
+  # block us, in order to force us to slow down.
+  defp map_error("error code: 1015"), do: :slow_down
 
   defp map_error(html) when is_binary(html) do
     Logger.error("AuctionHouse.map_error/1 received an unknown error: #{html}")
