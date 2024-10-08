@@ -145,7 +145,7 @@ defmodule AuctionHouse do
   @doc """
   Feeds the authorization information directly to the AuctionHouse. Used when
   the login data is being recovered from a past login to update the this service's state.
-  Will only fail if this service is down.
+  Synchronous call, will only fail if this service is down.
 
   Example:
   ```
@@ -159,6 +159,26 @@ defmodule AuctionHouse do
   """
   @spec update_login(Authorization.t(), User.t()) :: Type.update_login_response()
   defdelegate update_login(auth, user), to: Server
+
+  @doc """
+  Returns the authorization and user directly from state.
+  Synchronous call, will only fail if this service is down.
+
+  Example:
+  ```
+  > alias Shared.Data.{Authorization, User}
+  > auth = Authorization.new("a_cookie", "a_token")
+  > user = User.new("fl4m3", false)
+
+  > AuctionHouse.get_saved_login()
+  {:ok, {%Authorization{}, %User{}}}
+
+  > AuctionHouse.get_saved_login()
+  {:error, :reason}
+  ```
+  """
+  @spec get_saved_login :: Type.get_saved_login()
+  defdelegate get_saved_login, to: Server
 
   @doc """
   Deletes the current session and user data from the this application.

@@ -38,6 +38,9 @@ defmodule AuctionHouse.Runtime.Server do
   @spec login(Credentials.t()) :: :ok
   def login(credentials), do: GenServer.cast(__MODULE__, {:login, credentials, self()})
 
+  @spec get_saved_login :: Type.get_saved_login()
+  def get_saved_login, do: GenServer.call(__MODULE__, {:get_saved_login})
+
   @spec update_login(Authorization.t(), User.t()) :: Type.recover_login_response()
   def update_login(auth, user),
     do: GenServer.call(__MODULE__, {:update_login, auth, user})
@@ -110,6 +113,10 @@ defmodule AuctionHouse.Runtime.Server do
       |> Map.put(:user, user)
 
     {:reply, :ok, updated_state}
+  end
+
+  def handle_call({:get_saved_login}, _from, state) do
+    {:reply, {:ok, {state.authorization, state.user}}, state}
   end
 
   def handle_call(:logout, _from, state) do

@@ -390,6 +390,17 @@ defmodule AuctionHouseTest do
     end
   end
 
+  describe "get_saved_login/0" do
+    test "returns server state correctly" do
+      # Arrange
+      auth = Authorization.new(%{"cookie" => "a_cookie", "token" => "a_token"})
+      user = UserInfo.new(%{"ingame_name" => "fl4m3", "patreon?" => false})
+
+      assert :ok == AuctionHouse.update_login(auth, user)
+      assert AuctionHouse.get_saved_login() == {:ok, {auth, user}}
+    end
+  end
+
   describe "logout/0" do
     test "deletes session correctly" do
       assert AuctionHouse.logout() == :ok
