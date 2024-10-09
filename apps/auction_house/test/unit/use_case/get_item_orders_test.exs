@@ -121,7 +121,7 @@ defmodule AuctionHouse.Impl.UseCase.GetItemOrdersTest do
       }
 
       assert GetItemOrders.finish(response) ==
-               {:ok,
+               {:ok, "Despoil",
                 [
                   %OrderInfo{
                     user: %User{status: "offline", ingame_name: "nellone"},
@@ -150,7 +150,7 @@ defmodule AuctionHouse.Impl.UseCase.GetItemOrdersTest do
         """
       }
 
-      assert GetItemOrders.finish(response) == {:ok, []}
+      assert GetItemOrders.finish(response) == {:ok, "Despoil", []}
     end
 
     test "returns error if it fails to decode", %{request: request} do
@@ -162,7 +162,7 @@ defmodule AuctionHouse.Impl.UseCase.GetItemOrdersTest do
       }
 
       assert GetItemOrders.finish(response) ==
-               {:error, %Jason.DecodeError{position: 0, token: nil, data: ""}}
+               {:error, "Despoil", %Jason.DecodeError{position: 0, token: nil, data: ""}}
     end
   end
 end

@@ -32,13 +32,13 @@ defmodule AuctionHouse.Impl.UseCase.GetItemOrders do
 
   @impl UseCase
   @spec finish(Response.t()) :: Type.get_item_orders_response()
-  def finish(%Response{body: body}) do
+  def finish(%Response{body: body, request_args: %{item_name: item_name}}) do
     case Jason.decode(body) do
       {:ok, content} ->
-        {:ok, parse_order_info(content)}
+        {:ok, item_name, parse_order_info(content)}
 
-      err ->
-        err
+      {:error, reason} ->
+        {:error, item_name, reason}
     end
   end
 

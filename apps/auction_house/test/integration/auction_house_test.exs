@@ -241,11 +241,12 @@ defmodule AuctionHouseTest do
         Plug.Conn.resp(conn, 200, Jason.encode!(response))
       end)
 
-      :ok = AuctionHouse.get_item_orders("Gleaming Blight")
+      item_name = "Gleaming Blight"
+      :ok = AuctionHouse.get_item_orders(item_name)
 
       assert_receive(
         {:get_item_orders,
-         {:ok,
+         {:ok, ^item_name,
           [
             %OrderInfo{
               order_type: "sell",
