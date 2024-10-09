@@ -24,8 +24,7 @@ defmodule AuctionHouse.Runtime.AuctionSupervisor do
   def init(nil) do
     children = [
       {Task.Supervisor, name: RateLimiter.TaskSupervisor},
-      {RateLimiter.get_rate_limiter(),
-       %{requests_per_second: RateLimiter.get_requests_per_second()}},
+      {RateLimiter.get_rate_limiter(), %{requests_per_second: RateLimiter.get_requests_per_second()}},
       AuctionHouse.Runtime.Server
     ]
 

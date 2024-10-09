@@ -193,9 +193,7 @@ defmodule AuctionHouse.Impl.UseCase.LoginTest do
                       {"head", [],
                        [
                          {"meta", [{"charset", "UTF-8"}], []},
-                         {"link",
-                          [{"rel", "canonical"}, {"href", "https://warframe.market/auth/signin"}],
-                          []},
+                         {"link", [{"rel", "canonical"}, {"href", "https://warframe.market/auth/signin"}], []},
                          {"link",
                           [
                             {"rel", "alternate"},
@@ -329,9 +327,7 @@ defmodule AuctionHouse.Impl.UseCase.LoginTest do
       }
 
       assert Login.finish(response) ==
-               {:error,
-                {:unable_to_decode_body,
-                 %Jason.DecodeError{position: 1, token: nil, data: "{hello: world}\n"}}}
+               {:error, {:unable_to_decode_body, %Jason.DecodeError{position: 1, token: nil, data: "{hello: world}\n"}}}
     end
 
     test "returns error if it fails to payload is missing from body" do
