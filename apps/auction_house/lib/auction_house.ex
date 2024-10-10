@@ -81,9 +81,9 @@ defmodule AuctionHouse do
 
   The received messages will one of the following formats:
 
-  - {:get_item_orders,  {:ok, [%OrderInfo{"visible" => true, "order_type" => "sell", "platform" => "pc",
+  - {:get_item_orders,  {:ok, "Despoil", [%OrderInfo{"visible" => true, "order_type" => "sell", "platform" => "pc",
     "platinum" => 20, "user" => %OrderInfo.User{"ingame_name" => "user_name_1", "status" => "ingame"}}]}
-  - {:get_item_orders, {:error, {reason, err}}}
+  - {:get_item_orders, {:error, "Despoil", {reason, err}}}
   ```
   """
   @spec get_item_orders(Type.item_name()) :: Type.get_item_orders_response()
