@@ -59,11 +59,11 @@ defmodule AuctionHouse do
   The received messages will one of the following formats:
 
   - {:delete_order, {:ok, %PlacedOrder{item_id: "54e644ffe779897594fa68cd", order_id: "626127cbc984ac033cd2bbd2"}}}
-  - {:place_order, {:error, {reason, err}}}
+  - {:delete_order, {:error, {reason, err}}}
   ```
   """
   @spec delete_order(PlacedOrder.t()) :: Type.delete_order_response()
-  defdelegate delete_order(order_id), to: Server
+  defdelegate delete_order(order), to: Server
 
   @doc """
   Gets all warframe market orders for the item with the given name.
