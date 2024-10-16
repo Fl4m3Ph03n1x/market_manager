@@ -3,50 +3,31 @@ defmodule StoreTest do
 
   use ExUnit.Case, async: false
 
-  alias Shared.Data.{Authorization, PlacedOrder, Product, Syndicate, User}
+  alias Shared.Data.{Authorization, Product, Syndicate, User}
   alias Store
 
   ##########
   # Setup  #
   ##########
 
-  @current_orders_file :store |> Application.compile_env!(:current_orders) |> Path.join()
+  @watch_list_file :store |> Application.compile_env!(:watch_list) |> Path.join()
   @setup_file :store |> Application.compile_env!(:setup) |> Path.join()
 
-  defp create_current_orders_file do
+  defp create_watch_list_file do
     content =
       Jason.encode!(%{
-        manual: [
-          %PlacedOrder{
-            item_id: "5740c1879d238d4a03d28518",
-            order_id: "5ee71a2604d55c0a5cbdc3c2"
-          }
-        ],
-        automatic: [
-          %PlacedOrder{
-            item_id: "5740c1879d238d4a03d28518",
-            order_id: "5ee71a2604d55c0a5cbdc3e3"
-          },
-          %PlacedOrder{
-            item_id: "54a74454e779892d5e5155be",
-            order_id: "5ee71a2604d55c0a5cbdc3d4"
-          }
-        ],
-        active_syndicates: [:cephalon_simaris, :cephalon_suda]
+        active_syndicates: [
+          %Syndicate{name: "Cephalon Simaris", id: :cephalon_simaris, catalog: []},
+          %Syndicate{name: "Cephalon Suda", id: :cephalon_suda, catalog: []}
+        ]
       })
 
-    File.write(@current_orders_file, content)
+    File.write(@watch_list_file, content)
   end
 
-  defp reset_current_orders_file do
-    content =
-      Jason.encode!(%{
-        "manual" => [],
-        "automatic" => [],
-        "active_syndicates" => []
-      })
-
-    File.write(@current_orders_file, content)
+  defp reset_watch_list_file do
+    content = Jason.encode!(%{"active_syndicates" => []})
+    File.write(@watch_list_file, content)
   end
 
   defp create_setup_file do
@@ -115,236 +96,6 @@ defmodule StoreTest do
 
       # Assert
       assert actual == expected
-    end
-  end
-
-  describe "list_orders/1" do
-    setup do
-      create_current_orders_file()
-      on_exit(&reset_current_orders_file/0)
-    end
-
-    test "returns list of available orders from given syndicate" do
-      # Act
-      actual = Store.list_sell_orders()
-
-      expected = {
-        :ok,
-        %{
-          manual: [
-            %PlacedOrder{
-              item_id: "5740c1879d238d4a03d28518",
-              order_id: "5ee71a2604d55c0a5cbdc3c2"
-            }
-          ],
-          automatic: [
-            %PlacedOrder{
-              item_id: "5740c1879d238d4a03d28518",
-              order_id: "5ee71a2604d55c0a5cbdc3e3"
-            },
-            %PlacedOrder{
-              item_id: "54a74454e779892d5e5155be",
-              order_id: "5ee71a2604d55c0a5cbdc3d4"
-            }
-          ]
-        }
-      }
-
-      # Assert
-      assert actual == expected
-    end
-  end
-
-  describe "reset_orders/0" do
-    setup do
-      create_current_orders_file()
-      on_exit(&reset_current_orders_file/0)
-    end
-
-    test "returns OK if all orders were reset successfully" do
-      # Act
-      assert Store.reset_orders() == :ok
-
-      {:ok, content} =
-        @current_orders_file
-        |> File.read!()
-        |> Jason.decode()
-
-      # Assert
-      assert content == %{"manual" => [], "automatic" => [], "active_syndicates" => []}
-    end
-  end
-
-  describe "save_order/2" do
-    setup do
-      create_current_orders_file()
-      on_exit(&reset_current_orders_file/0)
-    end
-
-    test "returns order_id if manual order was saved successfully" do
-      # Arrange
-      syndicate = nil
-
-      placed_order =
-        %PlacedOrder{
-          item_id: "6604a66edbdd5c1673781db9",
-          order_id: "5ee71a2604d55c0a5cbdc4d3"
-        }
-
-      # Act & Assert
-      assert Store.save_order(placed_order, syndicate) == :ok
-
-      {:ok, content} =
-        @current_orders_file
-        |> File.read!()
-        |> Jason.decode()
-
-      assert content ==
-               %{
-                 "manual" => [
-                   %{
-                     "item_id" => "6604a66edbdd5c1673781db9",
-                     "order_id" => "5ee71a2604d55c0a5cbdc4d3"
-                   },
-                   %{
-                     "item_id" => "5740c1879d238d4a03d28518",
-                     "order_id" => "5ee71a2604d55c0a5cbdc3c2"
-                   }
-                 ],
-                 "automatic" => [
-                   %{
-                     "item_id" => "5740c1879d238d4a03d28518",
-                     "order_id" => "5ee71a2604d55c0a5cbdc3e3"
-                   },
-                   %{
-                     "item_id" => "54a74454e779892d5e5155be",
-                     "order_id" => "5ee71a2604d55c0a5cbdc3d4"
-                   }
-                 ],
-                 "active_syndicates" => ["cephalon_simaris", "cephalon_suda"]
-               }
-    end
-
-    test "returns order_id if automatic order was saved successfully" do
-      # Arrange
-      syndicate = :perrin_sequence
-
-      placed_order =
-        PlacedOrder.new(%{
-          "item_id" => "6604a66edbdd5c1673781db9",
-          "order_id" => "5ee71a2604d55c0a5cbdc4d3"
-        })
-
-      # Act & Assert
-      assert Store.save_order(placed_order, syndicate) == :ok
-
-      {:ok, content} =
-        @current_orders_file
-        |> File.read!()
-        |> Jason.decode()
-
-      assert content ==
-               %{
-                 "manual" => [
-                   %{
-                     "item_id" => "5740c1879d238d4a03d28518",
-                     "order_id" => "5ee71a2604d55c0a5cbdc3c2"
-                   }
-                 ],
-                 "automatic" => [
-                   %{
-                     "item_id" => "6604a66edbdd5c1673781db9",
-                     "order_id" => "5ee71a2604d55c0a5cbdc4d3"
-                   },
-                   %{
-                     "item_id" => "5740c1879d238d4a03d28518",
-                     "order_id" => "5ee71a2604d55c0a5cbdc3e3"
-                   },
-                   %{
-                     "item_id" => "54a74454e779892d5e5155be",
-                     "order_id" => "5ee71a2604d55c0a5cbdc3d4"
-                   }
-                 ],
-                 "active_syndicates" => ["perrin_sequence", "cephalon_simaris", "cephalon_suda"]
-               }
-    end
-  end
-
-  describe "delete_order/2" do
-    setup do
-      create_current_orders_file()
-      on_exit(&reset_current_orders_file/0)
-    end
-
-    test "returns :ok if manual order was deleted successfully" do
-      # Arrange
-      syndicate = nil
-
-      placed_order =
-        %PlacedOrder{
-          item_id: "5740c1879d238d4a03d28518",
-          order_id: "5ee71a2604d55c0a5cbdc3c2"
-        }
-
-      # Act & Assert
-      assert Store.delete_order(placed_order, syndicate) == :ok
-
-      {:ok, content} =
-        @current_orders_file
-        |> File.read!()
-        |> Jason.decode()
-
-      assert content ==
-               %{
-                 "manual" => [],
-                 "automatic" => [
-                   %{
-                     "item_id" => "5740c1879d238d4a03d28518",
-                     "order_id" => "5ee71a2604d55c0a5cbdc3e3"
-                   },
-                   %{
-                     "item_id" => "54a74454e779892d5e5155be",
-                     "order_id" => "5ee71a2604d55c0a5cbdc3d4"
-                   }
-                 ],
-                 "active_syndicates" => ["cephalon_simaris", "cephalon_suda"]
-               }
-    end
-
-    test "returns :ok if automatic order was deleted successfully" do
-      # Arrange
-      syndicate = :cephalon_simaris
-
-      placed_order =
-        %PlacedOrder{
-          item_id: "5740c1879d238d4a03d28518",
-          order_id: "5ee71a2604d55c0a5cbdc3e3"
-        }
-
-      # Act & Assert
-      assert Store.delete_order(placed_order, syndicate) == :ok
-
-      {:ok, content} =
-        @current_orders_file
-        |> File.read!()
-        |> Jason.decode()
-
-      assert content ==
-               %{
-                 "manual" => [
-                   %{
-                     "item_id" => "5740c1879d238d4a03d28518",
-                     "order_id" => "5ee71a2604d55c0a5cbdc3c2"
-                   }
-                 ],
-                 "automatic" => [
-                   %{
-                     "item_id" => "54a74454e779892d5e5155be",
-                     "order_id" => "5ee71a2604d55c0a5cbdc3d4"
-                   }
-                 ],
-                 "active_syndicates" => ["cephalon_suda"]
-               }
     end
   end
 
@@ -438,10 +189,30 @@ defmodule StoreTest do
     end
   end
 
+  describe "set_active_syndicates/1" do
+    setup do
+      create_watch_list_file()
+      on_exit(&reset_watch_list_file/0)
+    end
+
+    test "returns list of active syndicates" do
+      # Act
+
+      assert Store.set_active_syndicates([
+               %Syndicate{name: "New Loka", id: :new_loka, catalog: []}
+             ]) == :ok
+
+      # Assert
+      {:ok, [syndicate]} = Store.list_active_syndicates()
+
+      assert syndicate.id == :new_loka
+    end
+  end
+
   describe "list_active_syndicates/0" do
     setup do
-      create_current_orders_file()
-      on_exit(&reset_current_orders_file/0)
+      create_watch_list_file()
+      on_exit(&reset_watch_list_file/0)
     end
 
     test "returns list of active syndicates" do
@@ -455,7 +226,7 @@ defmodule StoreTest do
 
     test "returns empty list if no syndicates are active" do
       # Arrange
-      reset_current_orders_file()
+      reset_watch_list_file()
 
       # Act
       {:ok, syndicates} = Store.list_active_syndicates()

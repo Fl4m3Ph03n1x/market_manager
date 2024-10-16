@@ -30,8 +30,8 @@ config :web_interface, WebInterface.Endpoint,
 
 config :store,
   products: Path.expand("#{__DIR__}/../apps/store/test/fixtures/products.json") |> Path.split(),
-  current_orders:
-    Path.expand("#{__DIR__}/../apps/store/test/fixtures/current_orders.json") |> Path.split(),
+  watch_list:
+    Path.expand("#{__DIR__}/../apps/store/test/fixtures/watch_list.json") |> Path.split(),
   setup: Path.expand("#{__DIR__}/../apps/store/test/fixtures/setup.json") |> Path.split(),
   syndicates:
     Path.expand("#{__DIR__}/../apps/store/test/fixtures/syndicates.json") |> Path.split()

@@ -18,7 +18,7 @@ config :web_interface, WebInterface.Endpoint,
 
 config :store,
   products: ["priv", "products.json"],
-  current_orders: ["priv", "current_orders.json"],
+  watch_list: ["priv", "watch_list.json"],
   setup: ["priv", "setup.json"],
   syndicates: ["priv", "syndicates.json"]
 
