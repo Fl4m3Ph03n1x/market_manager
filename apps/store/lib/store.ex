@@ -38,6 +38,35 @@ defmodule Store do
   defdelegate list_products(syndicate), to: FileSystem
 
   @doc """
+  Returns the product with the given id.
+
+  Example:
+  ```
+  > alias Shared.Data.{Product}
+
+  > Store.get_product_by_id("8ee5b3b0-fa43-4dbc-9363-a52930dc742e")
+  {:ok,
+    %Product{
+      name: "Eternal War",
+      id: "8ee5b3b0-fa43-4dbc-9363-a52930dc742e",
+      min_price: 14,
+      default_price: 15,
+      quantity: 1,
+      rank: 0
+    }
+  }
+
+  > Store.get_product_by_id("non-existent-id")
+  {:error, :product_not_found}
+
+  > Store.get_product_by_id("8ee5b3b0-fa43-4dbc-9363-a52930dc742e")
+  {:error, :enoent}
+  ```
+  """
+  @spec get_product_by_id(Product.id()) :: Type.get_product_by_id_response()
+  defdelegate get_product_by_id(id), to: FileSystem
+
+  @doc """
   Saves the login information from the user into the storage system.
   Does not perform validation.
 

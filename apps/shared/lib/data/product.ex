@@ -11,33 +11,36 @@ defmodule Shared.Data.Product do
 
   alias Shared.Utils.Structs
 
+  @type id :: String.t()
+  @type name :: String.t()
+
   @type product ::
           %{
-            (name :: String.t()) => String.t(),
-            (id :: String.t()) => String.t(),
-            (min_price :: String.t()) => pos_integer,
-            (default_price :: String.t()) => pos_integer,
-            (quantity :: String.t()) => pos_integer,
-            (rank :: String.t()) => non_neg_integer | String.t()
+            (name :: String.t()) => name(),
+            (id :: String.t()) => id(),
+            (min_price :: String.t()) => pos_integer(),
+            (default_price :: String.t()) => pos_integer(),
+            (quantity :: String.t()) => pos_integer(),
+            (rank :: String.t()) => non_neg_integer() | String.t()
           }
           | %{
-              (name :: String.t()) => String.t(),
-              (id :: String.t()) => String.t(),
-              (min_price :: String.t()) => pos_integer,
-              (default_price :: String.t()) => pos_integer
+              (name :: String.t()) => name(),
+              (id :: String.t()) => id(),
+              (min_price :: String.t()) => pos_integer(),
+              (default_price :: String.t()) => pos_integer()
             }
-          | [name: String.t(), id: String.t(), min_price: pos_integer, default_price: pos_integer]
+          | [name: name(), id: id(), min_price: pos_integer(), default_price: pos_integer()]
 
   @derive Jason.Encoder
   typedstruct enforce: true do
     @typedoc "Product details"
 
-    field(:name, String.t())
-    field(:id, String.t())
-    field(:min_price, pos_integer)
-    field(:default_price, pos_integer)
-    field(:quantity, pos_integer)
-    field(:rank, non_neg_integer | String.t())
+    field(:name, name())
+    field(:id, id())
+    field(:min_price, pos_integer())
+    field(:default_price, pos_integer())
+    field(:quantity, pos_integer())
+    field(:rank, non_neg_integer() | String.t())
   end
 
   @spec new(product()) :: __MODULE__.t()
@@ -63,7 +66,8 @@ defmodule Shared.Data.Product do
         "min_price" => min_price,
         "default_price" => default_price
       })
-      when is_binary(name) and is_binary(id) and is_pos_integer(min_price) and is_pos_integer(default_price) do
+      when is_binary(name) and is_binary(id) and is_pos_integer(min_price) and
+             is_pos_integer(default_price) do
     __MODULE__.new(%{
       "name" => name,
       "id" => id,

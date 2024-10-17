@@ -31,6 +31,9 @@ defmodule Store.Type do
   @type delete_login_data_response :: :ok | {:error, :file.posix() | Jason.EncodeError.t()}
   @type list_products_response ::
           {:ok, [Product.t()]} | {:error, :file.posix() | Jason.DecodeError.t()}
+  @type get_product_by_id_response ::
+          {:ok, Product.t()}
+          | {:error, :product_not_found | :file.posix() | Jason.DecodeError.t()}
   @type list_syndicates_response ::
           {:ok, [Syndicate.t()]} | {:error, :file.posix() | Jason.DecodeError.t()}
   @type set_active_syndicates_response :: :ok | {:error, :file.posix() | Jason.DecodeError.t()}

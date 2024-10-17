@@ -73,6 +73,77 @@ defmodule MarketManager.Store.FileSystemTest do
     end
   end
 
+  describe "get_product_by_id/2" do
+    test "returns the product with the given id", %{paths: paths} = deps do
+      # Arrange
+      read_fn = fn filename ->
+        assert filename == Path.join(paths[:products])
+
+        {:ok,
+         "[{\"name\": \"Gleaming Blight\",\"id\": \"54a74454e779892d5e5155d5\",\"min_price\": 14,\"default_price\": 16,\"quantity\": 1, \"rank\": 0}]"}
+      end
+
+      deps = Map.put(deps, :io, %{read: read_fn})
+
+      product_id = "54a74454e779892d5e5155d5"
+
+      # Act
+      actual = FileSystem.get_product_by_id(product_id, deps)
+
+      expected =
+        {:ok,
+         Product.new(%{
+           "id" => "54a74454e779892d5e5155d5",
+           "name" => "Gleaming Blight",
+           "min_price" => 14,
+           "default_price" => 16,
+           "quantity" => 1,
+           "rank" => 0
+         })}
+
+      # Assert
+      assert actual == expected
+    end
+
+    test "returns error if product is not found", %{paths: paths} = deps do
+      # Arrange
+      deps =
+        Map.put(deps, :io, %{
+          read: fn filename ->
+            assert filename == Path.join(paths[:products])
+            {:ok, "[]"}
+          end
+        })
+
+      product_id = "54a74454e779892d5e5155d5"
+
+      # Act
+      actual = FileSystem.get_product_by_id(product_id, deps)
+      expected = {:error, :product_not_found}
+
+      # Assert
+      assert actual == expected
+    end
+
+    test "returns error if it cannot read file", %{paths: paths} = deps do
+      # Arrange
+      read_fn = fn filename ->
+        assert filename == Path.join(paths[:products])
+        {:error, :enoent}
+      end
+
+      deps = Map.put(deps, :io, %{read: read_fn})
+      product_id = "54a74454e779892d5e5155d5"
+
+      # Act
+      actual = FileSystem.get_product_by_id(product_id, deps)
+      expected = {:error, :enoent}
+
+      # Assert
+      assert actual == expected
+    end
+  end
+
   describe "save_login_data/3" do
     test "returns :ok if write was successful", %{paths: paths} = deps do
       # Arrange

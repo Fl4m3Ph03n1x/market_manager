@@ -99,6 +99,30 @@ defmodule StoreTest do
     end
   end
 
+  describe "get_product_by_id/1" do
+    test "returns product with given id" do
+      # Arrange
+      product_id = "5740c1879d238d4a03d28518"
+
+      # Act
+      actual = Store.get_product_by_id(product_id)
+
+      expected =
+        {:ok,
+         Product.new(%{
+           "name" => "Looter",
+           "id" => "5740c1879d238d4a03d28518",
+           "min_price" => 50,
+           "default_price" => 60,
+           "quantity" => 1,
+           "rank" => 0
+         })}
+
+      # Assert
+      assert actual == expected
+    end
+  end
+
   describe "save_login_data/2" do
     setup do
       create_setup_file()

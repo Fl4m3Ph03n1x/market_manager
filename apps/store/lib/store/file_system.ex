@@ -38,6 +38,19 @@ defmodule Store.FileSystem do
     end
   end
 
+  @spec get_product_by_id(Product.id(), Type.dependencies()) :: Type.get_product_by_id_response()
+  def get_product_by_id(id, deps \\ @default_deps) do
+    %{paths: paths, env: env} = deps = Map.merge(@default_deps, deps)
+
+    with {:ok, path} <- build_absolute_path(paths[:products], env),
+         {:ok, products} <- read_product_data(path, deps) do
+      case Enum.find(products, &(&1.id == id)) do
+        nil -> {:error, :product_not_found}
+        product -> {:ok, product}
+      end
+    end
+  end
+
   @spec save_login_data(Authorization.t(), User.t(), Type.dependencies()) ::
           Type.save_login_data_response()
   def save_login_data(auth, user, deps \\ @default_deps) do
