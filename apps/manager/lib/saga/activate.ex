@@ -8,6 +8,7 @@ defmodule Manager.Saga.Activate do
     Order,
     PlacedOrder,
     Product,
+    Syndicate,
     User
   }
 
@@ -156,8 +157,8 @@ defmodule Manager.Saga.Activate do
     send(
       from,
       {:activate,
-       {:price_calculated, item_name, Map.get(updated_product_prices, product),
-        calculated_prices_count, order_number_limit}}
+       {:price_calculated, item_name, Map.get(updated_product_prices, product), calculated_prices_count,
+        order_number_limit}}
     )
 
     if all_prices_calculated? do

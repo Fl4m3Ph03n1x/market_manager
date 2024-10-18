@@ -2,7 +2,7 @@ defmodule Manager.Runtime.SagaSupervisor do
   use DynamicSupervisor
 
   alias Manager.Saga.{Activate, Deactivate, Login}
-  alias Shared.Data.Credentials
+  alias Shared.Data.{Credentials, Strategy, Syndicate}
 
   ##############
   # Public API #
@@ -16,15 +16,14 @@ defmodule Manager.Runtime.SagaSupervisor do
     {:ok, _child} =
       DynamicSupervisor.start_child(
         __MODULE__,
-        {Login,
-         %{from: self(), args: %{credentials: credentials, keep_logged_in: keep_logged_in}}}
+        {Login, %{from: self(), args: %{credentials: credentials, keep_logged_in: keep_logged_in}}}
       )
 
     :ok
   end
 
   @spec activate([Syndicate.t()], Strategy.t()) :: :ok
-  def activate(syndicates, strategy) do
+  def activate(syndicates, strategy) when is_list(syndicates) do
     {:ok, _child} =
       DynamicSupervisor.start_child(
         __MODULE__,
@@ -35,7 +34,7 @@ defmodule Manager.Runtime.SagaSupervisor do
   end
 
   @spec deactivate([Syndicate.t()]) :: :ok
-  def deactivate(syndicates) do
+  def deactivate(syndicates) when is_list(syndicates) do
     {:ok, _child} =
       DynamicSupervisor.start_child(
         __MODULE__,
