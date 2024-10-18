@@ -9,6 +9,12 @@ defmodule Shared.Data.Order.RankedOrder do
 
   alias Shared.Utils.Structs
 
+  @type item_id :: String.t()
+  @type order_type :: String.t()
+  @type platinum :: pos_integer()
+  @type quantity :: pos_integer()
+  @type mod_rank :: non_neg_integer()
+
   @type ranked_order ::
           %{
             (item_id :: String.t()) => String.t(),
@@ -22,11 +28,11 @@ defmodule Shared.Data.Order.RankedOrder do
   typedstruct enforce: true do
     @typedoc "An order."
 
-    field(:item_id, String.t())
-    field(:order_type, String.t())
-    field(:platinum, pos_integer())
-    field(:quantity, pos_integer())
-    field(:mod_rank, non_neg_integer())
+    field(:item_id, item_id())
+    field(:order_type, order_type())
+    field(:platinum, platinum())
+    field(:quantity, quantity())
+    field(:mod_rank, mod_rank())
   end
 
   @spec new(ranked_order) :: __MODULE__.t()

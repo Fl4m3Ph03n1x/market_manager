@@ -13,23 +13,32 @@ defmodule Shared.Data.Product do
 
   @type id :: String.t()
   @type name :: String.t()
+  @type min_price :: pos_integer()
+  @type default_price :: pos_integer()
+  @type quantity :: pos_integer()
+  @type rank :: non_neg_integer() | String.t()
 
   @type product ::
           %{
-            (name :: String.t()) => name(),
-            (id :: String.t()) => id(),
+            (name :: String.t()) => String.t(),
+            (id :: String.t()) => String.t(),
             (min_price :: String.t()) => pos_integer(),
             (default_price :: String.t()) => pos_integer(),
             (quantity :: String.t()) => pos_integer(),
             (rank :: String.t()) => non_neg_integer() | String.t()
           }
           | %{
-              (name :: String.t()) => name(),
-              (id :: String.t()) => id(),
+              (name :: String.t()) => String.t(),
+              (id :: String.t()) => String.t(),
               (min_price :: String.t()) => pos_integer(),
               (default_price :: String.t()) => pos_integer()
             }
-          | [name: name(), id: id(), min_price: pos_integer(), default_price: pos_integer()]
+          | [
+              name: String.t(),
+              id: String.t(),
+              min_price: pos_integer(),
+              default_price: pos_integer()
+            ]
 
   @derive Jason.Encoder
   typedstruct enforce: true do
@@ -37,10 +46,10 @@ defmodule Shared.Data.Product do
 
     field(:name, name())
     field(:id, id())
-    field(:min_price, pos_integer())
-    field(:default_price, pos_integer())
-    field(:quantity, pos_integer())
-    field(:rank, non_neg_integer() | String.t())
+    field(:min_price, min_price())
+    field(:default_price, default_price())
+    field(:quantity, quantity())
+    field(:rank, rank())
   end
 
   @spec new(product()) :: __MODULE__.t()

@@ -7,6 +7,10 @@ defmodule Shared.Data.Strategy do
 
   alias Shared.Utils.Structs
 
+  @type name :: String.t()
+  @type id :: atom()
+  @type description :: String.t()
+
   @type strategy ::
           %{
             (name :: String.t()) => String.t(),
@@ -19,9 +23,9 @@ defmodule Shared.Data.Strategy do
   typedstruct enforce: true do
     @typedoc "Strategy details"
 
-    field(:name, String.t())
-    field(:id, atom())
-    field(:description, String.t())
+    field(:name, name())
+    field(:id, id())
+    field(:description, description())
   end
 
   @spec new(strategy()) :: __MODULE__.t()

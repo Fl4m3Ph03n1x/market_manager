@@ -23,9 +23,9 @@ defmodule Shared.Data.Syndicate do
   typedstruct enforce: true do
     @typedoc "Syndicate details"
 
-    field(:name, String.t())
-    field(:id, atom())
-    field(:catalog, [String.t()])
+    field(:name, name())
+    field(:id, id())
+    field(:catalog, catalog())
   end
 
   @spec new(syndicate()) :: __MODULE__.t()

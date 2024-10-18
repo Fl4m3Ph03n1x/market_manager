@@ -8,6 +8,9 @@ defmodule Shared.Data.OrderInfo.User do
 
   alias Shared.Utils.Structs
 
+  @type ingame_name :: String.t()
+  @type status :: String.t()
+
   @type user :: %{
           (ingame_name :: String.t()) => String.t(),
           (status :: String.t()) => String.t()
@@ -16,8 +19,8 @@ defmodule Shared.Data.OrderInfo.User do
   typedstruct enforce: true do
     @typedoc "Account information of an User"
 
-    field(:ingame_name, String.t())
-    field(:status, String.t())
+    field(:ingame_name, ingame_name())
+    field(:status, status())
   end
 
   @spec new(user) :: __MODULE__.t()

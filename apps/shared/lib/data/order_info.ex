@@ -9,6 +9,12 @@ defmodule Shared.Data.OrderInfo do
 
   alias Shared.Utils.Structs
 
+  @type visible :: boolean()
+  @type order_type :: String.t()
+  @type platform :: String.t()
+  @type platinum :: pos_integer()
+  @type user :: __MODULE__.User.t()
+
   @type order_info :: %{
           (visible :: String.t()) => boolean(),
           (order_type :: String.t()) => String.t(),
@@ -20,11 +26,11 @@ defmodule Shared.Data.OrderInfo do
   typedstruct enforce: true do
     @typedoc "Information about an order"
 
-    field(:visible, boolean())
-    field(:order_type, String.t())
-    field(:platform, String.t())
-    field(:platinum, pos_integer())
-    field(:user, __MODULE__.User.t())
+    field(:visible, visible())
+    field(:order_type, order_type())
+    field(:platform, platform())
+    field(:platinum, platinum())
+    field(:user, user())
   end
 
   @spec new(order_info) :: __MODULE__.t()
