@@ -81,8 +81,8 @@ defmodule Manager do
   :ok
   ```
   """
-  @spec deactivate(Syndicate.t()) :: Type.deactivate_response()
-  defdelegate deactivate(syndicate), to: SagaSupervisor
+  @spec deactivate([Syndicate.t()]) :: Type.deactivate_response()
+  defdelegate deactivate(syndicates), to: SagaSupervisor
 
   @doc """
   Asynchronous operation.
