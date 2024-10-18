@@ -3,7 +3,6 @@ defmodule AuctionHouse.Impl.UseCase.Login do
   Contains all the logic to parse and login a user asynchronously.
   """
 
-  alias AuctionHouse.Type
   alias AuctionHouse.Impl.{HttpAsyncClient, UseCase}
   alias AuctionHouse.Impl.UseCase.Data.{Metadata, Request, Response}
   alias Jason
@@ -21,16 +20,27 @@ defmodule AuctionHouse.Impl.UseCase.Login do
     finder: &Floki.find/2
   }
 
+  @typep deps :: %{
+           get: fun(),
+           post: fun(),
+           finder: fun(),
+           parser: fun()
+         }
+  @typep parsed_body :: [String.t()]
+  @typep body :: map()
+  @typep cookie :: String.t()
+
   ##########
   # Public #
   ##########
 
   @impl UseCase
+  @spec start(Request.t(), deps()) :: any()
   def start(request, %{get: async_get} \\ @default_deps) do
     async_get.(@market_signin_url, request, &sign_in/1)
   end
 
-  @spec sign_in(Response.t(), map()) :: :ok | {:error, any()}
+  @spec sign_in(Response.t(), deps()) :: :ok | {:error, any()}
   def sign_in(
         %Response{
           metadata: meta,
@@ -62,7 +72,13 @@ defmodule AuctionHouse.Impl.UseCase.Login do
   end
 
   @impl UseCase
-  @spec finish(Response.t()) :: Type.login_response()
+  @spec finish(Response.t()) ::
+          {:error,
+           {:missing_jwt, map()}
+           | {:no_cookie_found, map()}
+           | {:payload_not_found, map()}
+           | {:unable_to_decode_body, Jason.DecodeError.t()}}
+          | {:ok, {Authorization.t(), User.t()}}
   def finish(%Response{
         body: body,
         headers: headers,
@@ -83,8 +99,8 @@ defmodule AuctionHouse.Impl.UseCase.Login do
   ###########
 
   @spec validate_body(HttpAsyncClient.body()) ::
-          {:ok, map}
-          | {:error, {:payload_not_found, map} | {:unable_to_decode_body, Jason.DecodeError.t()}}
+          {:ok, body()}
+          | {:error, {:payload_not_found, body()} | {:unable_to_decode_body, Jason.DecodeError.t()}}
   defp validate_body(body) do
     case Jason.decode(body) do
       {:ok, decoded_body} ->
@@ -99,8 +115,8 @@ defmodule AuctionHouse.Impl.UseCase.Login do
     end
   end
 
-  @spec find_xrfc_token(parsed_body :: [any], dependencies :: map) ::
-          {:ok, String.t()} | {:error, {:xrfc_token_not_found, parsed_body :: [any]}}
+  @spec find_xrfc_token(parsed_body(), deps()) ::
+          {:ok, String.t()} | {:error, {:xrfc_token_not_found, parsed_body()}}
   defp find_xrfc_token(doc, %{finder: find_in_document}) do
     case find_in_document.(doc, "meta[name=\"csrf-token\"]") do
       [{"meta", [{"name", "csrf-token"}, {"content", token}], []}] -> {:ok, token}
@@ -109,7 +125,7 @@ defmodule AuctionHouse.Impl.UseCase.Login do
   end
 
   @spec parse_cookie(Response.headers()) ::
-          {:ok, String.t()} | {:error, {:no_cookie_found | :missing_jwt, Reponse.headers()}}
+          {:ok, cookie()} | {:error, {:no_cookie_found | :missing_jwt, Response.headers()}}
   defp parse_cookie(%{"Set-Cookie" => val} = headers) do
     with [cookie | _tail] <- String.split(val, ";"),
          true <- String.contains?(cookie, "JWT=") do
@@ -122,7 +138,7 @@ defmodule AuctionHouse.Impl.UseCase.Login do
 
   defp parse_cookie(headers), do: {:error, {:no_cookie_found, headers}}
 
-  @spec parse_patreon(body :: map) :: {:ok, boolean} | {:error, :missing_patreon, map()}
+  @spec parse_patreon(body()) :: {:ok, boolean} | {:error, :missing_patreon, body()}
   defp parse_patreon(body) do
     case get_in(body, ["payload", "user", "linked_accounts", "patreon_profile"]) do
       nil ->

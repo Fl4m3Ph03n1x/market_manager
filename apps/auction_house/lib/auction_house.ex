@@ -177,7 +177,7 @@ defmodule AuctionHouse do
   {:error, :reason}
   ```
   """
-  @spec get_saved_login :: Type.get_saved_login()
+  @spec get_saved_login :: Type.get_saved_login_response()
   defdelegate get_saved_login, to: Server
 
   @doc """

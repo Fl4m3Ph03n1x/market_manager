@@ -18,12 +18,14 @@ defmodule AuctionHouse.Impl.UseCase.GetUserOrders do
   }
 
   @typep url :: String.t()
+  @typep deps :: %{get: fun()}
 
   ##########
   # Public #
   ##########
 
   @impl UseCase
+  @spec start(Request.t(), deps()) :: any()
   def start(%Request{args: %{username: username}} = request, %{get: async_get} \\ @default_deps) do
     username
     |> build_user_orders_url()
@@ -31,7 +33,7 @@ defmodule AuctionHouse.Impl.UseCase.GetUserOrders do
   end
 
   @impl UseCase
-  @spec finish(Response.t()) :: Type.get_user_orders_response()
+  @spec finish(Response.t()) :: {:ok, [PlacedOrder.t()]} | {:error, Jason.DecodeError.t()}
   def finish(%Response{body: body}) do
     case Jason.decode(body) do
       {:ok, content} ->

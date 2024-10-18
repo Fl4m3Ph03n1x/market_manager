@@ -20,28 +20,28 @@ defmodule AuctionHouse.Runtime.Server do
   @spec start_link :: :ignore | {:error, any} | {:ok, pid}
   def start_link, do: GenServer.start_link(__MODULE__, nil, name: __MODULE__)
 
-  @spec get_item_orders(Type.item_name()) :: :ok
+  @spec get_item_orders(Type.item_name()) :: Type.get_item_orders_response()
   def get_item_orders(item_name),
     do: GenServer.cast(__MODULE__, {:get_item_orders, item_name, self()})
 
-  @spec get_user_orders(Type.username()) :: :ok
+  @spec get_user_orders(Type.username()) :: Type.get_user_orders_response()
   def get_user_orders(username),
     do: GenServer.cast(__MODULE__, {:get_user_orders, username, self()})
 
-  @spec place_order(Order.t()) :: :ok
+  @spec place_order(Order.t()) :: Type.place_order_response()
   def place_order(order), do: GenServer.cast(__MODULE__, {:place_order, order, self()})
 
-  @spec delete_order(PlacedOrder.t()) :: :ok
+  @spec delete_order(PlacedOrder.t()) :: Type.delete_order_response()
   def delete_order(placed_order),
     do: GenServer.cast(__MODULE__, {:delete_order, placed_order, self()})
 
-  @spec login(Credentials.t()) :: :ok
+  @spec login(Credentials.t()) :: Type.login_response()
   def login(credentials), do: GenServer.cast(__MODULE__, {:login, credentials, self()})
 
-  @spec get_saved_login :: Type.get_saved_login()
+  @spec get_saved_login :: Type.get_saved_login_response()
   def get_saved_login, do: GenServer.call(__MODULE__, {:get_saved_login})
 
-  @spec update_login(Authorization.t(), User.t()) :: Type.recover_login_response()
+  @spec update_login(Authorization.t(), User.t()) :: Type.update_login_response()
   def update_login(auth, user),
     do: GenServer.call(__MODULE__, {:update_login, auth, user})
 

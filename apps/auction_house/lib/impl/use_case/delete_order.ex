@@ -3,7 +3,7 @@ defmodule AuctionHouse.Impl.UseCase.DeleteOrder do
   Sends a delete request to the given PlacedOrder. Returns the deleted PlacedOrder if successful.
   """
 
-  alias AuctionHouse.Type
+  alias Shared.Data.PlacedOrder
   alias AuctionHouse.Impl.{HttpAsyncClient, UseCase}
   alias AuctionHouse.Impl.UseCase.Data.{Request, Response}
   alias Shared.Data.Authorization
@@ -17,12 +17,14 @@ defmodule AuctionHouse.Impl.UseCase.DeleteOrder do
   }
 
   @typep url :: String.t()
+  @typep deps :: %{delete: fun()}
 
   ##########
   # Public #
   ##########
 
   @impl UseCase
+  @spec start(Request.t(), deps()) :: any()
   def start(
         %Request{args: %{placed_order: placed_order, authorization: auth}} = req,
         %{delete: async_delete} \\ @default_deps
@@ -39,7 +41,7 @@ defmodule AuctionHouse.Impl.UseCase.DeleteOrder do
   end
 
   @impl UseCase
-  @spec finish(Response.t()) :: Type.delete_order_response()
+  @spec finish(Response.t()) :: {:ok, PlacedOrder.t()}
   def finish(%Response{request_args: %{placed_order: po}}), do: {:ok, po}
 
   ###########

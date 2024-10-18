@@ -3,7 +3,7 @@ defmodule AuctionHouse.Type do
   Holds the types for this library.
   """
 
-  alias Shared.Data.{Authorization, OrderInfo, PlacedOrder, User}
+  alias Shared.Data.{Authorization, User}
 
   ##########
   # Types  #
@@ -14,7 +14,6 @@ defmodule AuctionHouse.Type do
   @type username :: String.t()
   @type reason :: atom()
   @type state :: %{
-          dependencies: map(),
           user: User.t() | nil,
           authorization: Authorization.t() | nil
         }
@@ -23,12 +22,12 @@ defmodule AuctionHouse.Type do
   # Responses #
   #############
 
-  @type place_order_response :: {:ok, PlacedOrder.t()} | {:error, any()}
-  @type delete_order_response :: :ok | {:error, reason(), PlacedOrder.t()}
-  @type get_item_orders_response :: {:ok, [OrderInfo.t()]} | {:error, any()}
-  @type get_user_orders_response :: {:ok, [PlacedOrder.t()]} | {:error, any()}
-  @type login_response ::
-          {:ok, {Authorization.t(), User.t()}} | {:error, any()}
-  @type recover_login_response :: :ok
+  @type place_order_response :: :ok
+  @type delete_order_response :: :ok
+  @type get_item_orders_response :: :ok
+  @type get_user_orders_response :: :ok
+  @type login_response :: :ok
+  @type update_login_response :: :ok
+  @type get_saved_login_response :: {:ok, {Authorization.t(), User.t()}} | {:error, any()}
   @type logout_response :: :ok
 end

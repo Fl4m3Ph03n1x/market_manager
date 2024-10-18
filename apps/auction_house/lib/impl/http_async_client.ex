@@ -80,7 +80,7 @@ defmodule AuctionHouse.Impl.HttpAsyncClient do
   @spec get(
           url(),
           Request.t(),
-          RateLimiter.response_fun(),
+          RateLimiter.response_function(),
           Authorization.t() | nil,
           deps()
         ) :: :ok

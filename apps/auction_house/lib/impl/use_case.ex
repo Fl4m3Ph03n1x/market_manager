@@ -7,7 +7,7 @@ defmodule AuctionHouse.Impl.UseCase do
   Uses structures to encode the format of requests and responses being passed around the flow.
   """
 
-  alias AuctionHouse.Impl.Data.{Request, Response}
+  alias AuctionHouse.Impl.UseCase.Data.{Request, Response}
 
   @doc """
   Starts a use case, by passing in a Request. This Request will then be used to make a request to a 3rd party library
