@@ -1,4 +1,4 @@
-defmodule Manager.Runtime.Server do
+defmodule Manager.Runtime.ManagerSupervisor do
   @moduledoc """
   Process responsible for taking requests from the interface and directing them
   to the appropriate layers. Supervises dependencies to make sure they are
@@ -8,8 +8,7 @@ defmodule Manager.Runtime.Server do
   use Supervisor
 
   alias AuctionHouse
-  alias Manager.Impl.Interpreter
-  alias Manager.Runtime.Worker
+  alias Manager.Runtime.{SagaSupervisor, Worker}
   alias Store
 
   ##############
@@ -28,7 +27,8 @@ defmodule Manager.Runtime.Server do
   def init(nil) do
     children = [
       AuctionHouse,
-      {Worker, [interpreter: Interpreter]}
+      {Worker, [store: Store, auction_house: AuctionHouse]},
+      SagaSupervisor
     ]
 
     Supervisor.init(children, strategy: :one_for_one)

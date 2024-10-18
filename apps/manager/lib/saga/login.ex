@@ -1,22 +1,13 @@
-defmodule Manager.UseCase.Login do
+defmodule Manager.Saga.Login do
   use GenServer, restart: :transient
 
   alias AuctionHouse
-
-  alias Shared.Data.{
-    Authorization,
-    Credentials,
-    User
-  }
-
   alias Store
 
   @default_deps %{
     store: Store,
     auction_house: AuctionHouse
   }
-
-  @typep keep_logged_in :: boolean()
 
   ##########
   # Client #
@@ -57,6 +48,7 @@ defmodule Manager.UseCase.Login do
       else
         store.delete_login_data()
       end
+
       # we fetched the user info from storage and updated the auction server correctly
       send(from, {:login, {:ok, user}})
     else
@@ -92,7 +84,7 @@ defmodule Manager.UseCase.Login do
     {:stop, :normal, state}
   end
 
-  def handle_info({:login, {:error, reason}} = err, %{from: from} = state) do
+  def handle_info({:login, {:error, _reason}} = err, %{from: from} = state) do
     send(from, err)
     {:stop, :normal, state}
   end

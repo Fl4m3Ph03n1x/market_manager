@@ -6,7 +6,7 @@ defmodule Manager do
   """
 
   alias Manager.Type
-  alias Manager.Runtime.{Server, Worker}
+  alias Manager.Runtime.{ManagerSupervisor, SagaSupervisor, Worker}
   alias Shared.Data.{Credentials, Strategy, Syndicate}
 
   ##########
@@ -46,8 +46,8 @@ defmodule Manager do
   :ok
   ```
   """
-  @spec activate([Syndicate.t()], Strategy.t()) :: :ok
-  defdelegate activate(syndicates, strategy), to: Worker
+  @spec activate([Syndicate.t()], Strategy.t()) :: Type.activate_response()
+  defdelegate activate(syndicates, strategy), to: SagaSupervisor
 
   @doc """
   Asynchronous operation.
@@ -81,8 +81,8 @@ defmodule Manager do
   :ok
   ```
   """
-  @spec deactivate(Syndicate.t()) :: :ok
-  defdelegate deactivate(syndicate), to: Worker
+  @spec deactivate(Syndicate.t()) :: Type.deactivate_response()
+  defdelegate deactivate(syndicate), to: SagaSupervisor
 
   @doc """
   Asynchronous operation.
@@ -112,9 +112,8 @@ defmodule Manager do
   :ok
   ```
   """
-  @spec login(Credentials.t(), keep_logged_in :: boolean) ::
-          Type.login_response()
-  defdelegate login(credentials, keep_logged_in), to: Worker
+  @spec login(Credentials.t(), keep_logged_in :: boolean) :: Type.login_response()
+  defdelegate login(credentials, keep_logged_in), to: SagaSupervisor
 
   @doc """
   Synchronous operation.
@@ -143,9 +142,9 @@ defmodule Manager do
   Synchronous operation.
 
   Deletes the current active session. This only logs out the MarketManager application and does not affect the
-  login session in the AuctionHouse. If a user is logged in the AuctionHouse, it will continue logged in there, but next
-  time this application is launched, the user will have to login into the AuctionHouse from this application to be able
-  to use it.
+  login session in the AuctionHouse. If a user is logged in the AuctionHouse, it will continue  to be logged in there,
+  but next time this application is launched, the user will have to login into the AuctionHouse from this application
+  to be able to use it.
 
   This operation deletes the sessions data from memory and from disk. Even if the second fails, the first will still
   be attempted.
@@ -232,5 +231,5 @@ defmodule Manager do
 
   @doc false
   @spec child_spec(any) :: Supervisor.child_spec()
-  defdelegate child_spec(args), to: Server
+  defdelegate child_spec(args), to: ManagerSupervisor
 end

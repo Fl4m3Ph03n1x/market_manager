@@ -24,17 +24,20 @@ defmodule Manager.Impl.PriceAnalyst do
       |> apply_strategy(strategy)
       |> apply_boundaries(product)
 
-  @spec list_strategies :: {:ok, [Strategy.t]} | {:error, any}
+  @spec list_strategies :: {:ok, [Strategy.t()]} | {:error, any}
   def list_strategies do
     case :application.get_key(:manager, :modules) do
       {:ok, modules} ->
         modules
-        |> Enum.filter(fn module -> (module.module_info(:attributes)[:behaviour] || []) |> Enum.member?(StrategyInterface) end)
-        |> Enum.map(&(&1.info/0))
+        |> Enum.filter(fn module ->
+          (module.module_info(:attributes)[:behaviour] || []) |> Enum.member?(StrategyInterface)
+        end)
+        |> Enum.map(& &1.info())
         |> Enum.sort()
         |> Tuples.to_tagged_tuple()
 
-      error -> {:error, error}
+      error ->
+        {:error, error}
     end
   end
 
