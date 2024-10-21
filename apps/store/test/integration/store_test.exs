@@ -16,17 +16,17 @@ defmodule StoreTest do
   defp create_watch_list_file do
     content =
       Jason.encode!(%{
-        active_syndicates: [
-          %Syndicate{name: "Cephalon Simaris", id: :cephalon_simaris, catalog: []},
-          %Syndicate{name: "Cephalon Suda", id: :cephalon_suda, catalog: []}
-        ]
+        active_syndicates: %{
+          cephalon_suda: :lowest_minus_one,
+          cephalon_simaris: :equal_to_lowest
+        }
       })
 
     File.write(@watch_list_file, content)
   end
 
   defp reset_watch_list_file do
-    content = Jason.encode!(%{"active_syndicates" => []})
+    content = Jason.encode!(%{active_syndicates: %{}})
     File.write(@watch_list_file, content)
   end
 
@@ -213,23 +213,39 @@ defmodule StoreTest do
     end
   end
 
-  describe "set_active_syndicates/1" do
+  describe "activate_syndicates/2" do
     setup do
       create_watch_list_file()
       on_exit(&reset_watch_list_file/0)
     end
 
-    test "returns list of active syndicates" do
-      # Act
+    test "marks the given syndicates as active with the given strategy" do
+      # Act & Assert
+      assert Store.activate_syndicates([:new_loka, :red_veil], :top_five_average) == :ok
 
-      assert Store.set_active_syndicates([
-               %Syndicate{name: "New Loka", id: :new_loka, catalog: []}
-             ]) == :ok
+      assert Store.list_active_syndicates() ==
+               {:ok,
+                %{
+                  new_loka: :top_five_average,
+                  red_veil: :top_five_average,
+                  cephalon_suda: :lowest_minus_one,
+                  cephalon_simaris: :equal_to_lowest
+                }}
+    end
 
-      # Assert
-      {:ok, [syndicate]} = Store.list_active_syndicates()
+    test "overwrites strategy for the given syndicate if it is already active" do
+      # Act & Assert
 
-      assert syndicate.id == :new_loka
+      assert Store.activate_syndicates([:new_loka, :cephalon_suda], :top_five_average) == :ok
+      assert Store.activate_syndicates([:new_loka], :top_three_average) == :ok
+
+      assert Store.list_active_syndicates() ==
+               {:ok,
+                %{
+                  new_loka: :top_three_average,
+                  cephalon_suda: :top_five_average,
+                  cephalon_simaris: :equal_to_lowest
+                }}
     end
   end
 
@@ -240,23 +256,21 @@ defmodule StoreTest do
     end
 
     test "returns list of active syndicates" do
-      # Act
-      {:ok, [synd1, synd2]} = Store.list_active_syndicates()
-
-      # Assert
-      assert synd1.id == :cephalon_simaris
-      assert synd2.id == :cephalon_suda
+      # Act & Assert
+      assert Store.list_active_syndicates() ==
+               {:ok,
+                %{
+                  cephalon_suda: :lowest_minus_one,
+                  cephalon_simaris: :equal_to_lowest
+                }}
     end
 
     test "returns empty list if no syndicates are active" do
       # Arrange
       reset_watch_list_file()
 
-      # Act
-      {:ok, syndicates} = Store.list_active_syndicates()
-
-      # Assert
-      assert syndicates == []
+      # Act & Assert
+      assert Store.list_active_syndicates() == {:ok, %{}}
     end
   end
 end

@@ -143,20 +143,21 @@ defmodule Store do
   defdelegate list_syndicates, to: FileSystem
 
   @doc """
-  Sets the list of active syndicates to the given list.
+  Marks the given syndicates as activated with the given strategy.
 
   Example:
   ```
   > alias Shared.Data.Syndicate
 
-  > Store.set_active_syndicates([%Syndicate{name: "Red Veil", id: :red_veil, catalog: []}])
+  > Store.activate_syndicates([:red_veil, :new_loka], :top_five_average)
   :ok
 
-  > Store.set_active_syndicates()
+  > Store.set_active_syndicates([:red_veil, :new_loka], :top_five_average)
   {:error, :enoent}
   """
-  @spec set_active_syndicates([Syndicate.t()]) :: Type.set_active_syndicates_response()
-  defdelegate set_active_syndicates(syndicates), to: FileSystem
+  @spec activate_syndicates([Syndicate.id()], Strategy.id()) ::
+          Type.activate_syndicates_response()
+  defdelegate activate_syndicates(syndicates, strategy), to: FileSystem
 
   @doc """
   Returns the syndicates currently active. An active syndicate is a syndicate with orders in `current_orders`.

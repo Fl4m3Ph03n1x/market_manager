@@ -5,7 +5,7 @@ defmodule Store.FileSystem do
 
   require Config
   alias Shared.Data.{Authorization, Product, Syndicate, User}
-  alias Shared.Utils.Tuples
+  alias Shared.Utils.{Maps, Tuples}
   alias Store.Type
 
   @default_deps %{
@@ -102,16 +102,25 @@ defmodule Store.FileSystem do
     end
   end
 
-  @spec set_active_syndicates([Syndicate.t()], Type.dependencies()) ::
+  @spec activate_syndicates([Syndicate.id()], Strategy.id(), Type.dependencies()) ::
           Type.set_active_syndicates_response()
-  def set_active_syndicates(syndicates, deps \\ @default_deps) do
+  def activate_syndicates(syndicates, strategy, deps \\ @default_deps) when syndicates != [] do
     %{io: io, paths: paths, env: env} = Map.merge(@default_deps, deps)
 
     with {:ok, watch_list_path} <- build_absolute_path(paths[:watch_list], env),
          {:ok, content} <- io.read.(watch_list_path),
          {:ok, watch_list} <- Jason.decode(content),
-         updated_watch_list <- Map.put(watch_list, "active_syndicates", syndicates),
-         {:ok, encoded_content} <- Jason.encode(updated_watch_list) do
+         current_active_syndicates <- Map.get(watch_list, "active_syndicates", %{}),
+         updated_active_syndicates <-
+           build_updated_syndicates(
+             syndicates,
+             strategy,
+             current_active_syndicates
+           ),
+         {:ok, encoded_content} <-
+           watch_list
+           |> Map.put("active_syndicates", updated_active_syndicates)
+           |> Jason.encode() do
       io.write.(watch_list_path, encoded_content)
     end
   end
@@ -125,7 +134,7 @@ defmodule Store.FileSystem do
          {:ok, watch_list} <- Jason.decode(watch_list_data) do
       watch_list
       |> Map.get("active_syndicates")
-      |> Enum.map(&Syndicate.new/1)
+      |> Maps.to_atom_map(true)
       |> Tuples.to_tagged_tuple()
     end
   end
@@ -162,4 +171,16 @@ defmodule Store.FileSystem do
   end
 
   defp build_absolute_path(path, _env), do: {:ok, Path.join(path)}
+
+  defp build_updated_syndicates(syndicates, strategy, old_active_syndicates) do
+    new_active_syndicates =
+      syndicates
+      |> Enum.intersperse(strategy)
+      |> Enum.concat([strategy])
+      |> Enum.chunk_every(2)
+      |> Enum.map(fn [k, v] -> {k, v} end)
+      |> Map.new()
+
+    Map.merge(old_active_syndicates, new_active_syndicates)
+  end
 end

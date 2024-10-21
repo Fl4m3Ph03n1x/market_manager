@@ -356,18 +356,23 @@ defmodule MarketManager.Store.FileSystemTest do
     end
   end
 
-  describe "set_active_syndicates/2" do
-    test "sets the list of all active syndicates with the gives ones", deps do
+  describe "activate_syndicates/2" do
+    test "activates the given syndicates with the given strategies", deps do
       # Arrange
-      syndicates = [
-        %Syndicate{name: "Cephalon Simaris", id: :cephalon_simaris, catalog: []},
-        %Syndicate{name: "Cephalon Suda", id: :cephalon_suda, catalog: []}
-      ]
+      syndicates = [:cephalon_simaris, :cephalon_suda]
+      strategy = :top_five_average
 
       io_stubs = %{
-        read: fn "watch_list.json" -> {:ok, "{\"active_syndicates\": []}"} end,
+        read: fn "watch_list.json" -> {:ok, "{\"active_syndicates\": {}}"} end,
         write: fn "watch_list.json", data ->
-          assert data == Jason.encode!(%{"active_syndicates" => syndicates})
+          assert data ==
+                   Jason.encode!(%{
+                     active_syndicates: %{
+                       cephalon_simaris: strategy,
+                       cephalon_suda: strategy
+                     }
+                   })
+
           :ok
         end
       }
@@ -375,7 +380,7 @@ defmodule MarketManager.Store.FileSystemTest do
       deps = Map.put(deps, :io, io_stubs)
 
       # Act & Assert
-      assert FileSystem.set_active_syndicates(syndicates, deps) == :ok
+      assert FileSystem.activate_syndicates(syndicates, strategy, deps) == :ok
     end
 
     test "returns the error if it fails to read watch_list.json", deps do
@@ -387,20 +392,21 @@ defmodule MarketManager.Store.FileSystemTest do
       deps = Map.put(deps, :io, io_stubs)
 
       # Act & Assert
-      assert FileSystem.set_active_syndicates([], deps) == {:error, :enoent}
+      assert FileSystem.activate_syndicates([], :top_five_average, deps) == {:error, :enoent}
     end
 
     test "returns the error if it fails to write to watch_list.json", deps do
       # Arrange
       io_stubs = %{
-        read: fn "watch_list.json" -> {:ok, "{\"active_syndicates\": []}"} end,
+        read: fn "watch_list.json" -> {:ok, "{\"active_syndicates\": {}}"} end,
         write: fn "watch_list.json", _data -> {:error, :enoent} end
       }
 
       deps = Map.put(deps, :io, io_stubs)
 
       # Act & Assert
-      assert FileSystem.set_active_syndicates([], deps) == {:error, :enoent}
+      assert FileSystem.activate_syndicates([:new_loka], :top_five_average, deps) ==
+               {:error, :enoent}
     end
   end
 
@@ -410,7 +416,12 @@ defmodule MarketManager.Store.FileSystemTest do
       read_fn = fn
         "watch_list.json" ->
           {:ok,
-           "{\"active_syndicates\":[{\"id\":\"cephalon_simaris\",\"name\":\"Cephalon Simaris\",\"catalog\":[]},{\"id\":\"cephalon_suda\",\"name\":\"Cephalon Suda\",\"catalog\":[]}]}"}
+           Jason.encode!(%{
+             active_syndicates: %{
+               cephalon_simaris: :top_five_average,
+               cephalon_suda: :top_five_average
+             }
+           })}
       end
 
       deps = Map.put(deps, :io, %{read: read_fn})
@@ -418,10 +429,10 @@ defmodule MarketManager.Store.FileSystemTest do
       # Act & Assert
       assert FileSystem.list_active_syndicates(deps) ==
                {:ok,
-                [
-                  %Syndicate{name: "Cephalon Simaris", id: :cephalon_simaris, catalog: []},
-                  %Syndicate{name: "Cephalon Suda", id: :cephalon_suda, catalog: []}
-                ]}
+                %{
+                  cephalon_simaris: :top_five_average,
+                  cephalon_suda: :top_five_average
+                }}
     end
 
     test "returns the error if it fails to read watch_list.json", deps do
