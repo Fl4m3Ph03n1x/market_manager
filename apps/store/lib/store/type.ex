@@ -36,7 +36,7 @@ defmodule Store.Type do
           | {:error, :product_not_found | :file.posix() | Jason.DecodeError.t()}
   @type list_syndicates_response ::
           {:ok, [Syndicate.t()]} | {:error, :file.posix() | Jason.DecodeError.t()}
-  @type set_active_syndicates_response :: :ok | {:error, :file.posix() | Jason.DecodeError.t()}
+  @type activate_syndicates_response :: :ok | {:error, :file.posix() | Jason.DecodeError.t()}
   @type list_active_syndicates_response ::
           {:ok, [Syndicate.t()]} | {:error, :file.posix() | Jason.DecodeError.t()}
 end

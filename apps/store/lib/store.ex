@@ -152,7 +152,7 @@ defmodule Store do
   > Store.activate_syndicates([:red_veil, :new_loka], :top_five_average)
   :ok
 
-  > Store.set_active_syndicates([:red_veil, :new_loka], :top_five_average)
+  > Store.activate_syndicates([:red_veil, :new_loka], :top_five_average)
   {:error, :enoent}
   """
   @spec activate_syndicates([Syndicate.id()], Strategy.id()) ::
