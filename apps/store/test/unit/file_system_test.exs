@@ -392,7 +392,8 @@ defmodule MarketManager.Store.FileSystemTest do
       deps = Map.put(deps, :io, io_stubs)
 
       # Act & Assert
-      assert FileSystem.activate_syndicates([], :top_five_average, deps) == {:error, :enoent}
+      assert FileSystem.activate_syndicates([:new_loka], :top_five_average, deps) ==
+               {:error, :enoent}
     end
 
     test "returns the error if it fails to write to watch_list.json", deps do
