@@ -213,7 +213,7 @@ defmodule StoreTest do
     end
   end
 
-  describe "activate_syndicates/2" do
+  describe "activate_syndicates/1" do
     setup do
       create_watch_list_file()
       on_exit(&reset_watch_list_file/0)
@@ -221,12 +221,15 @@ defmodule StoreTest do
 
     test "marks the given syndicates as active with the given strategy" do
       # Act & Assert
-      assert Store.activate_syndicates([:new_loka, :red_veil], :top_five_average) == :ok
+      assert Store.activate_syndicates(%{
+               new_loka: :top_three_average,
+               red_veil: :top_five_average
+             }) == :ok
 
       assert Store.list_active_syndicates() ==
                {:ok,
                 %{
-                  new_loka: :top_five_average,
+                  new_loka: :top_three_average,
                   red_veil: :top_five_average,
                   cephalon_suda: :lowest_minus_one,
                   cephalon_simaris: :equal_to_lowest
@@ -236,8 +239,12 @@ defmodule StoreTest do
     test "overwrites strategy for the given syndicate if it is already active" do
       # Act & Assert
 
-      assert Store.activate_syndicates([:new_loka, :cephalon_suda], :top_five_average) == :ok
-      assert Store.activate_syndicates([:new_loka], :top_three_average) == :ok
+      assert Store.activate_syndicates(%{
+               new_loka: :top_five_average,
+               cephalon_suda: :top_five_average
+             }) == :ok
+
+      assert Store.activate_syndicates(%{new_loka: :top_three_average}) == :ok
 
       assert Store.list_active_syndicates() ==
                {:ok,

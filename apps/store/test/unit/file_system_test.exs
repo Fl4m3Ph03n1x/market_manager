@@ -356,11 +356,13 @@ defmodule MarketManager.Store.FileSystemTest do
     end
   end
 
-  describe "activate_syndicates/2" do
+  describe "activate_syndicates/1" do
     test "activates the given syndicates with the given strategies", deps do
       # Arrange
-      syndicates = [:cephalon_simaris, :cephalon_suda]
-      strategy = :top_five_average
+      syndicates_with_strategies = %{
+        cephalon_simaris: :top_five_average,
+        cephalon_suda: :top_five_average
+      }
 
       io_stubs = %{
         read: fn "watch_list.json" -> {:ok, "{\"active_syndicates\": {}}"} end,
@@ -368,8 +370,8 @@ defmodule MarketManager.Store.FileSystemTest do
           assert data ==
                    Jason.encode!(%{
                      active_syndicates: %{
-                       cephalon_simaris: strategy,
-                       cephalon_suda: strategy
+                       cephalon_simaris: :top_five_average,
+                       cephalon_suda: :top_five_average
                      }
                    })
 
@@ -380,7 +382,7 @@ defmodule MarketManager.Store.FileSystemTest do
       deps = Map.put(deps, :io, io_stubs)
 
       # Act & Assert
-      assert FileSystem.activate_syndicates(syndicates, strategy, deps) == :ok
+      assert FileSystem.activate_syndicates(syndicates_with_strategies, deps) == :ok
     end
 
     test "returns the error if it fails to read watch_list.json", deps do
@@ -392,7 +394,7 @@ defmodule MarketManager.Store.FileSystemTest do
       deps = Map.put(deps, :io, io_stubs)
 
       # Act & Assert
-      assert FileSystem.activate_syndicates([:new_loka], :top_five_average, deps) ==
+      assert FileSystem.activate_syndicates(%{new_loka: :top_five_average}, deps) ==
                {:error, :enoent}
     end
 
@@ -406,7 +408,7 @@ defmodule MarketManager.Store.FileSystemTest do
       deps = Map.put(deps, :io, io_stubs)
 
       # Act & Assert
-      assert FileSystem.activate_syndicates([:new_loka], :top_five_average, deps) ==
+      assert FileSystem.activate_syndicates(%{new_loka: :top_five_average}, deps) ==
                {:error, :enoent}
     end
   end

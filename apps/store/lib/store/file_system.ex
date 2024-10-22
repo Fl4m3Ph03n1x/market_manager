@@ -102,21 +102,19 @@ defmodule Store.FileSystem do
     end
   end
 
-  @spec activate_syndicates([Syndicate.id()], Strategy.id(), Type.dependencies()) ::
+  @spec activate_syndicates(%{Syndicate.id() => Strategy.id()}, Type.dependencies()) ::
           Type.activate_syndicates_response()
-  def activate_syndicates(syndicates, strategy, deps \\ @default_deps) when syndicates != [] do
+  def activate_syndicates(syndicates_with_strategy, deps \\ @default_deps)
+      when syndicates_with_strategy != %{} do
     %{io: io, paths: paths, env: env} = Map.merge(@default_deps, deps)
 
     with {:ok, watch_list_path} <- build_absolute_path(paths[:watch_list], env),
          {:ok, content} <- io.read.(watch_list_path),
          {:ok, watch_list} <- Jason.decode(content),
-         current_active_syndicates <- Map.get(watch_list, "active_syndicates", %{}),
          updated_active_syndicates <-
-           build_updated_syndicates(
-             syndicates,
-             strategy,
-             current_active_syndicates
-           ),
+           watch_list
+           |> Map.get("active_syndicates", %{})
+           |> Map.merge(syndicates_with_strategy),
          {:ok, encoded_content} <-
            watch_list
            |> Map.put("active_syndicates", updated_active_syndicates)
@@ -192,16 +190,4 @@ defmodule Store.FileSystem do
   end
 
   defp build_absolute_path(path, _env), do: {:ok, Path.join(path)}
-
-  defp build_updated_syndicates(syndicates, strategy, old_active_syndicates) do
-    new_active_syndicates =
-      syndicates
-      |> Enum.intersperse(strategy)
-      |> Enum.concat([strategy])
-      |> Enum.chunk_every(2)
-      |> Enum.map(fn [k, v] -> {k, v} end)
-      |> Map.new()
-
-    Map.merge(old_active_syndicates, new_active_syndicates)
-  end
 end

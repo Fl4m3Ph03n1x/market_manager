@@ -149,15 +149,15 @@ defmodule Store do
   ```
   > alias Shared.Data.Syndicate
 
-  > Store.activate_syndicates([:red_veil, :new_loka], :top_five_average)
+  > Store.activate_syndicates(%{red_veil: :top_five_average, new_loka: :top_five_average})
   :ok
 
-  > Store.activate_syndicates([:red_veil, :new_loka], :top_five_average)
+  > Store.activate_syndicates(%{red_veil: :top_five_average, new_loka: :top_five_average})
   {:error, :enoent}
   """
-  @spec activate_syndicates([Syndicate.id()], Strategy.id()) ::
+  @spec activate_syndicates(%{Syndicate.id() => Strategy.id()}) ::
           Type.activate_syndicates_response()
-  defdelegate activate_syndicates(syndicates, strategy), to: FileSystem
+  defdelegate activate_syndicates(syndicates_with_strategy), to: FileSystem
 
   @doc """
   Removes the syndicates with the given ids from the set of active syndicates.
@@ -183,7 +183,7 @@ defmodule Store do
   > alias Shared.Data.Syndicate
 
   > Store.list_active_syndicates()
-  {:ok, [%Syndicate{name: "Red Veil", id: :red_veil, catalog: []}, %Syndicate{name: "New Loka", id: :new_loka, catalog: []}]}
+  {:ok, %{red_veil: :top_five_average, new_loka: :top_five_average}}
 
   > Store.list_active_syndicates()
   {:error, :enoent}
