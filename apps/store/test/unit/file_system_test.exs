@@ -411,6 +411,61 @@ defmodule MarketManager.Store.FileSystemTest do
     end
   end
 
+  describe "deactivate_syndicates/1" do
+    test "deactivates the syndicates with the given ids", deps do
+      # Arrange
+      syndicates = [:cephalon_simaris, :cephalon_suda]
+
+      io_stubs = %{
+        read: fn "watch_list.json" ->
+          {:ok,
+           Jason.encode!(%{
+             active_syndicates: %{
+               cephalon_simaris: :top_five_average,
+               cephalon_suda: :top_five_average
+             }
+           })}
+        end,
+        write: fn "watch_list.json", data ->
+          assert data ==
+                   Jason.encode!(%{active_syndicates: %{}})
+
+          :ok
+        end
+      }
+
+      deps = Map.put(deps, :io, io_stubs)
+
+      # Act & Assert
+      assert FileSystem.deactivate_syndicates(syndicates, deps) == :ok
+    end
+
+    test "returns the error if it fails to read watch_list.json", deps do
+      # Arrange
+      io_stubs = %{
+        read: fn "watch_list.json" -> {:error, :enoent} end
+      }
+
+      deps = Map.put(deps, :io, io_stubs)
+
+      # Act & Assert
+      assert FileSystem.deactivate_syndicates([:new_loka], deps) == {:error, :enoent}
+    end
+
+    test "returns the error if it fails to write to watch_list.json", deps do
+      # Arrange
+      io_stubs = %{
+        read: fn "watch_list.json" -> {:ok, "{\"active_syndicates\": {}}"} end,
+        write: fn "watch_list.json", _data -> {:error, :enoent} end
+      }
+
+      deps = Map.put(deps, :io, io_stubs)
+
+      # Act & Assert
+      assert FileSystem.deactivate_syndicates([:new_loka], deps) == {:error, :enoent}
+    end
+  end
+
   describe "list_active_syndicates/1" do
     test "returns the list of all active syndicates", deps do
       # Arrange

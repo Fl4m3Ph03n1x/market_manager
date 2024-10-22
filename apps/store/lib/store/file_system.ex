@@ -4,7 +4,7 @@ defmodule Store.FileSystem do
   """
 
   require Config
-  alias Shared.Data.{Authorization, Product, Syndicate, User}
+  alias Shared.Data.{Authorization, Product, Strategy, Syndicate, User}
   alias Shared.Utils.{Maps, Tuples}
   alias Store.Type
 
@@ -103,7 +103,7 @@ defmodule Store.FileSystem do
   end
 
   @spec activate_syndicates([Syndicate.id()], Strategy.id(), Type.dependencies()) ::
-          Type.set_active_syndicates_response()
+          Type.activate_syndicates_response()
   def activate_syndicates(syndicates, strategy, deps \\ @default_deps) when syndicates != [] do
     %{io: io, paths: paths, env: env} = Map.merge(@default_deps, deps)
 
@@ -117,6 +117,27 @@ defmodule Store.FileSystem do
              strategy,
              current_active_syndicates
            ),
+         {:ok, encoded_content} <-
+           watch_list
+           |> Map.put("active_syndicates", updated_active_syndicates)
+           |> Jason.encode() do
+      io.write.(watch_list_path, encoded_content)
+    end
+  end
+
+  @spec deactivate_syndicates([Syndicate.id()], Type.dependencies()) ::
+          Type.deactivate_syndicates_response()
+  def deactivate_syndicates(syndicates, deps \\ @default_deps) when syndicates != [] do
+    %{io: io, paths: paths, env: env} = Map.merge(@default_deps, deps)
+
+    with {:ok, watch_list_path} <- build_absolute_path(paths[:watch_list], env),
+         {:ok, content} <- io.read.(watch_list_path),
+         {:ok, watch_list} <- Jason.decode(content),
+         current_active_syndicates <- Map.get(watch_list, "active_syndicates", %{}),
+         updated_active_syndicates <-
+           Enum.reduce(syndicates, current_active_syndicates, fn syndicate_id, acc ->
+             Map.delete(acc, Atom.to_string(syndicate_id))
+           end),
          {:ok, encoded_content} <-
            watch_list
            |> Map.put("active_syndicates", updated_active_syndicates)

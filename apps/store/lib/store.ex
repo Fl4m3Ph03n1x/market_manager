@@ -4,7 +4,7 @@ defmodule Store do
   This module contains the Public API for the storage app.
   """
 
-  alias Shared.Data.{Authorization, Syndicate, User}
+  alias Shared.Data.{Authorization, Product, Strategy, Syndicate, User}
   alias Store.FileSystem
   alias Store.Type
 
@@ -158,6 +158,22 @@ defmodule Store do
   @spec activate_syndicates([Syndicate.id()], Strategy.id()) ::
           Type.activate_syndicates_response()
   defdelegate activate_syndicates(syndicates, strategy), to: FileSystem
+
+  @doc """
+  Removes the syndicates with the given ids from the set of active syndicates.
+
+  Example:
+  ```
+  > alias Shared.Data.Syndicate
+
+  > Store.deactivate_syndicates([:red_veil, :new_loka])
+  :ok
+
+  > Store.deactivate_syndicates([:red_veil, :new_loka])
+  {:error, :enoent}
+  """
+  @spec deactivate_syndicates([Syndicate.id()]) :: Type.deactivate_syndicates_response()
+  defdelegate deactivate_syndicates(syndicates), to: FileSystem
 
   @doc """
   Returns the syndicates currently active. An active syndicate is a syndicate with orders in `current_orders`.

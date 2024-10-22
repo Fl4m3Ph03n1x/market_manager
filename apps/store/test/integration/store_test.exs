@@ -249,6 +249,24 @@ defmodule StoreTest do
     end
   end
 
+  describe "deactivate_syndicates/1" do
+    setup do
+      create_watch_list_file()
+      on_exit(&reset_watch_list_file/0)
+    end
+
+    test "removes the syndicates from active list" do
+      # Act & Assert
+      assert Store.deactivate_syndicates([:cephalon_suda]) == :ok
+
+      assert Store.list_active_syndicates() ==
+               {:ok,
+                %{
+                  cephalon_simaris: :equal_to_lowest
+                }}
+    end
+  end
+
   describe "list_active_syndicates/0" do
     setup do
       create_watch_list_file()
