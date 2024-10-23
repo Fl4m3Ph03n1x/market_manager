@@ -96,6 +96,7 @@ defmodule Manager.Saga.Activate do
 
         updated_state =
           state
+          |> Map.put(:total_products_count, length(total_products))
           |> Map.put(:product_prices, product_prices)
           |> Map.put(:order_number_limit, order_number_limit)
 
@@ -116,6 +117,7 @@ defmodule Manager.Saga.Activate do
           deps: %{store: store, auction_house: _auction_house},
           args: %{syndicates_with_strategy: syndicates_with_strategy},
           product_prices: product_prices,
+          total_products_count: total_products_count,
           non_patreon_order_limit: _limit,
           user: _user,
           order_number_limit: order_number_limit,
@@ -166,14 +168,13 @@ defmodule Manager.Saga.Activate do
         |> Map.values()
         |> Enum.count(&(&1 != nil))
 
-      all_prices_calculated? =
-        calculated_prices_count == updated_product_prices |> Map.to_list() |> length()
+      all_prices_calculated? = calculated_prices_count == total_products_count
 
       send(
         from,
         {:activate,
          {:price_calculated, item_name, Map.get(updated_product_prices, product),
-          calculated_prices_count, order_number_limit}}
+          calculated_prices_count, total_products_count}}
       )
 
       if all_prices_calculated? do
@@ -191,6 +192,7 @@ defmodule Manager.Saga.Activate do
           args: %{syndicates_with_strategy: _syndicates_with_strategy},
           product_prices: product_prices,
           non_patreon_order_limit: _limit,
+          total_products_count: _total_products_count,
           user: _user,
           order_number_limit: order_number_limit,
           from: from
