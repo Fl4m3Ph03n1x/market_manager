@@ -8,11 +8,9 @@ defmodule Manager.Saga.Activate do
     Order,
     PlacedOrder,
     Product,
-    Syndicate,
     User
   }
 
-  alias Shared.Utils.Tuples
   alias Store
 
   @type price :: pos_integer()
@@ -28,13 +26,17 @@ defmodule Manager.Saga.Activate do
   # Client #
   ##########
 
-  def start_link(%{from: from, args: %{syndicates: _syndicates, strategy: _strategy}} = state) do
-    updated_state = %{
-      deps: Map.merge(@default_deps, Map.get(state, :deps, %{})),
-      args: state.args,
-      non_patreon_order_limit: Map.get(state, :non_patreon_order_limit, @non_patreon_order_limit),
-      from: from
-    }
+  def start_link(
+        %{from: from, args: %{syndicates_with_strategy: _syndicates_with_strategy}} = state
+      ) do
+    updated_state =
+      %{
+        deps: Map.merge(@default_deps, Map.get(state, :deps, %{})),
+        args: state.args,
+        non_patreon_order_limit:
+          Map.get(state, :non_patreon_order_limit, @non_patreon_order_limit),
+        from: from
+      }
 
     GenServer.start_link(__MODULE__, updated_state)
   end
@@ -51,16 +53,14 @@ defmodule Manager.Saga.Activate do
         nil,
         %{
           deps: %{store: store, auction_house: auction_house},
-          args: %{syndicates: syndicates, strategy: _strategy},
           non_patreon_order_limit: _limit,
+          args: %{syndicates_with_strategy: syndicates_with_strategy},
           from: from
         } = state
       ) do
     with {:ok, {_auth, %User{} = user}} <- auction_house.get_saved_login(),
-         {:ok, current_active_syndicates} <- store.list_active_syndicates(),
-         :ok <-
-           Enum.uniq(current_active_syndicates ++ syndicates) |> store.set_active_syndicates() do
-      auction_house.get_user_orders(user.ingame_name)
+         :ok <- store.activate_syndicates(syndicates_with_strategy),
+         :ok <- auction_house.get_user_orders(user.ingame_name) do
       updated_state = Map.put(state, :user, user)
 
       send(from, {:activate, :get_user_orders})
@@ -76,13 +76,13 @@ defmodule Manager.Saga.Activate do
         {:get_user_orders, {:ok, placed_orders}},
         %{
           deps: %{store: store, auction_house: auction_house},
-          args: %{syndicates: syndicates, strategy: _strategy},
+          args: %{syndicates_with_strategy: syndicates_with_strategy},
           non_patreon_order_limit: limit,
           user: %User{patreon?: patreon?},
           from: from
         } = state
       ) do
-    with {:ok, total_products} <- fetch_products(syndicates, store),
+    with {:ok, total_products} <- syndicates_with_strategy |> Map.keys() |> store.list_products(),
          order_number_limit <-
            calculate_order_limit(placed_orders, total_products, limit, patreon?) do
       if order_number_limit == 0 do
@@ -113,8 +113,8 @@ defmodule Manager.Saga.Activate do
   def handle_info(
         {:get_item_orders, {tag, item_name, data}},
         %{
-          deps: %{store: _store, auction_house: _auction_house},
-          args: %{syndicates: _syndicates, strategy: strategy},
+          deps: %{store: store, auction_house: _auction_house},
+          args: %{syndicates_with_strategy: syndicates_with_strategy},
           product_prices: product_prices,
           non_patreon_order_limit: _limit,
           user: _user,
@@ -122,57 +122,73 @@ defmodule Manager.Saga.Activate do
           from: from
         } = state
       ) do
-    product =
-      product_prices
-      |> Map.keys()
-      |> Enum.find(&(&1.name == item_name))
+    with {:ok, all_syndicates} <- store.list_syndicates(),
+         {:ok, strategies} <- Manager.strategies() do
+      syndicates =
+        Enum.filter(all_syndicates, fn syndicate ->
+          syndicate.id in Map.keys(syndicates_with_strategy)
+        end)
 
-    updated_product_prices =
-      case tag do
-        :ok ->
-          Map.put(
-            product_prices,
-            product,
-            PriceAnalyst.calculate_price(product, data, strategy)
-          )
+      product =
+        product_prices
+        |> Map.keys()
+        |> Enum.find(&(&1.name == item_name))
 
-        :error ->
-          Map.put(
-            product_prices,
-            product,
-            product.default_price
-          )
+      owner_syndicate =
+        Enum.find(syndicates, fn the_syndicate ->
+          product.id in the_syndicate.catalog
+        end)
+
+      strategy_id = Map.get(syndicates_with_strategy, owner_syndicate.id)
+      strategy = Enum.find(strategies, &(&1.id == strategy_id))
+
+      updated_product_prices =
+        case tag do
+          :ok ->
+            Map.put(
+              product_prices,
+              product,
+              PriceAnalyst.calculate_price(product, data, strategy)
+            )
+
+          :error ->
+            Map.put(
+              product_prices,
+              product,
+              product.default_price
+            )
+        end
+
+      updated_state = Map.put(state, :product_prices, updated_product_prices)
+
+      calculated_prices_count =
+        updated_product_prices
+        |> Map.values()
+        |> Enum.count(&(&1 != nil))
+
+      all_prices_calculated? =
+        calculated_prices_count == updated_product_prices |> Map.to_list() |> length()
+
+      send(
+        from,
+        {:activate,
+         {:price_calculated, item_name, Map.get(updated_product_prices, product),
+          calculated_prices_count, order_number_limit}}
+      )
+
+      if all_prices_calculated? do
+        send(self(), :all_prices_calculated)
       end
 
-    updated_state = Map.put(state, :product_prices, updated_product_prices)
-
-    calculated_prices_count =
-      updated_product_prices
-      |> Map.values()
-      |> Enum.count(&(&1 != nil))
-
-    all_prices_calculated? =
-      calculated_prices_count == updated_product_prices |> Map.to_list() |> length()
-
-    send(
-      from,
-      {:activate,
-       {:price_calculated, item_name, Map.get(updated_product_prices, product), calculated_prices_count,
-        order_number_limit}}
-    )
-
-    if all_prices_calculated? do
-      send(self(), :all_prices_calculated)
+      {:noreply, updated_state}
     end
-
-    {:noreply, updated_state}
   end
 
   def handle_info(
         :all_prices_calculated,
         %{
           deps: %{store: _store, auction_house: auction_house},
-          args: %{syndicates: _syndicates, strategy: _strategy},
+          args: %{syndicates_with_strategy: _syndicates_with_strategy},
           product_prices: product_prices,
           non_patreon_order_limit: _limit,
           user: _user,
@@ -208,7 +224,7 @@ defmodule Manager.Saga.Activate do
         {:place_order, {:ok, placed_order}},
         %{
           deps: %{store: _store, auction_house: _auction_house},
-          args: %{syndicates: _syndicates, strategy: _strategy},
+          args: %{syndicates_with_strategy: _syndicates_with_strategy},
           product_prices: _product_prices,
           non_patreon_order_limit: _limit,
           user: _user,
@@ -263,23 +279,6 @@ defmodule Manager.Saga.Activate do
 
   defp calculate_order_limit(_placed_orders, total_products, _limit, true),
     do: length(total_products)
-
-  @spec fetch_products([Syndicate.t()], store :: module()) ::
-          {:ok, [Product.t()]} | {:error, any()}
-  defp fetch_products(syndicates, store) do
-    products = Enum.map(syndicates, &store.list_products(&1))
-
-    errors = Enum.filter(products, fn {op_result, _data} -> op_result == :error end)
-
-    if Enum.empty?(errors) do
-      products
-      |> Enum.flat_map(&Tuples.from_tagged_tuple(&1))
-      |> Enum.uniq()
-      |> Tuples.to_tagged_tuple()
-    else
-      {:error, errors}
-    end
-  end
 
   @spec build_order(Product.t(), price()) :: Order.t()
   defp build_order(%Product{rank: "n/a"} = product, price),

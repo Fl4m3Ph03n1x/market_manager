@@ -16,29 +16,31 @@ defmodule Manager.Runtime.SagaSupervisor do
     {:ok, _child} =
       DynamicSupervisor.start_child(
         __MODULE__,
-        {Login, %{from: self(), args: %{credentials: credentials, keep_logged_in: keep_logged_in}}}
+        {Login,
+         %{from: self(), args: %{credentials: credentials, keep_logged_in: keep_logged_in}}}
       )
 
     :ok
   end
 
-  @spec activate([Syndicate.t()], Strategy.t()) :: :ok
-  def activate(syndicates, strategy) when is_list(syndicates) do
+  @spec activate(%{Syndicate.id() => Strategy.t()}) :: :ok
+  def activate(syndicates_with_strategy)
+      when is_map(syndicates_with_strategy) and syndicates_with_strategy != %{} do
     {:ok, _child} =
       DynamicSupervisor.start_child(
         __MODULE__,
-        {Activate, %{from: self(), args: %{syndicates: syndicates, strategy: strategy}}}
+        {Activate, %{from: self(), args: %{syndicates_with_strategy: syndicates_with_strategy}}}
       )
 
     :ok
   end
 
-  @spec deactivate([Syndicate.t()]) :: :ok
-  def deactivate(syndicates) when is_list(syndicates) do
+  @spec deactivate([Syndicate.id()]) :: :ok
+  def deactivate(syndicate_ids) when is_list(syndicate_ids) and syndicate_ids != [] do
     {:ok, _child} =
       DynamicSupervisor.start_child(
         __MODULE__,
-        {Deactivate, %{from: self(), args: %{syndicates: syndicates}}}
+        {Deactivate, %{from: self(), args: %{syndicate_ids: syndicate_ids}}}
       )
 
     :ok

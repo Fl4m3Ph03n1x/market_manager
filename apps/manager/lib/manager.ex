@@ -46,8 +46,8 @@ defmodule Manager do
   :ok
   ```
   """
-  @spec activate([Syndicate.t()], Strategy.t()) :: Type.activate_response()
-  defdelegate activate(syndicates, strategy), to: SagaSupervisor
+  @spec activate(%{Syndicate.id() => Strategy.t()}) :: Type.activate_response()
+  defdelegate activate(syndicates_with_strategy), to: SagaSupervisor
 
   @doc """
   Asynchronous operation.
@@ -81,8 +81,8 @@ defmodule Manager do
   :ok
   ```
   """
-  @spec deactivate([Syndicate.t()]) :: Type.deactivate_response()
-  defdelegate deactivate(syndicates), to: SagaSupervisor
+  @spec deactivate([Syndicate.id()]) :: Type.deactivate_response()
+  defdelegate deactivate(syndicate_ids), to: SagaSupervisor
 
   @doc """
   Asynchronous operation.
