@@ -29,7 +29,7 @@ defmodule Store do
   ]}
 
   > Store.list_products([:invalid_syndicate_id])
-  {:error, {:syndicate_not_found, :invalid_syndicate_id}}
+  {:error, {:syndicate_not_found, [:invalid_syndicate_id]}}
   ```
   """
   @spec list_products([Syndicate.id()]) :: Type.list_products_response()
