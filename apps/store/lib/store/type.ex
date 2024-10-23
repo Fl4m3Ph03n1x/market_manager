@@ -7,18 +7,13 @@ defmodule Store.Type do
 
   alias WebInterface.Persistence.Syndicate
   alias Jason
-  alias Shared.Data.{Authorization, PlacedOrder, Product, Syndicate, User}
+  alias Shared.Data.{Authorization, Product, Syndicate, User}
 
   ##########
   # Types  #
   ##########
 
   @type dependencies :: map()
-  @type sell_orders_store :: %{
-          manual: [PlacedOrder.t()],
-          automatic: [PlacedOrder.t()],
-          active_syndicates: [Syndicate.id()]
-        }
 
   #############
   # Responses #
@@ -30,7 +25,9 @@ defmodule Store.Type do
   @type save_login_data_response :: :ok | {:error, :file.posix() | Jason.EncodeError.t()}
   @type delete_login_data_response :: :ok | {:error, :file.posix() | Jason.EncodeError.t()}
   @type list_products_response ::
-          {:ok, [Product.t()]} | {:error, :file.posix() | Jason.DecodeError.t()}
+          {:ok, [Product.t()]}
+          | {:error,
+             :file.posix() | Jason.DecodeError.t() | {:syndicate_not_found, [Syndicate.id()]}}
   @type get_product_by_id_response ::
           {:ok, Product.t()}
           | {:error, :product_not_found | :file.posix() | Jason.DecodeError.t()}

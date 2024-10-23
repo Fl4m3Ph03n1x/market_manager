@@ -20,53 +20,116 @@ defmodule MarketManager.Store.FileSystemTest do
   end
 
   describe "list_products/2" do
-    test "returns list of available products from given syndicate", %{paths: paths} = deps do
+    test "returns list of available products from given syndicate ids", %{paths: paths} = deps do
       # Arrange
-      read_fn = fn filename ->
-        assert filename == Path.join(paths[:products])
+      products_filename = Path.join(paths[:products])
+      syndicates_filename = Path.join(paths[:syndicates])
 
-        {:ok,
-         "[{\"name\": \"Gleaming Blight\",\"id\": \"54a74454e779892d5e5155d5\",\"min_price\": 14,\"default_price\": 16,\"quantity\": 1, \"rank\": 0}]"}
+      read_fn = fn
+        ^products_filename ->
+          {:ok,
+           "[{\"name\": \"Gleaming Blight\",\"id\": \"54a74454e779892d5e5155d5\",\"min_price\": 14,\"default_price\": 16,\"quantity\": 1, \"rank\": 0}, {\"name\":\"Fracturing Crush\",\"id\": \"5526aec0e779896af9418259\",\"min_price\": 14,\"default_price\": 16}]"}
+
+        ^syndicates_filename ->
+          {:ok,
+           "[{\"id\":\"red_veil\",\"name\":\"Red Veil\",\"catalog\":[\"54a74454e779892d5e5155d5\"]},{\"id\":\"perrin_sequence\",\"name\":\"Perrin Sequence\",\"catalog\":[\"5526aec0e779896af9418259\"]}]"}
       end
 
       deps = Map.put(deps, :io, %{read: read_fn})
 
-      syndicate =
-        Syndicate.new(name: "Red Veil", id: :red_veil, catalog: ["54a74454e779892d5e5155d5"])
+      syndicate_ids = [:red_veil, :perrin_sequence]
 
       # Act
-      actual = FileSystem.list_products(syndicate, deps)
+      actual = FileSystem.list_products(syndicate_ids, deps)
 
       expected =
         {:ok,
          [
-           Product.new(%{
-             "id" => "54a74454e779892d5e5155d5",
-             "name" => "Gleaming Blight",
-             "min_price" => 14,
-             "default_price" => 16,
-             "quantity" => 1,
-             "rank" => 0
-           })
+           %Product{
+             id: "54a74454e779892d5e5155d5",
+             name: "Gleaming Blight",
+             min_price: 14,
+             default_price: 16,
+             quantity: 1,
+             rank: 0
+           },
+           %Product{
+             id: "5526aec0e779896af9418259",
+             name: "Fracturing Crush",
+             min_price: 14,
+             default_price: 16,
+             quantity: 1,
+             rank: 0
+           }
          ]}
 
       # Assert
       assert actual == expected
     end
 
-    test "returns error if it cannot read file", %{paths: paths} = deps do
+    test "returns error if it cannot read products file", %{paths: paths} = deps do
       # Arrange
-      read_fn = fn filename ->
-        assert filename == Path.join(paths[:products])
-        {:error, :enoent}
+      products_filename = Path.join(paths[:products])
+
+      read_fn = fn ^products_filename -> {:error, :enoent} end
+
+      deps = Map.put(deps, :io, %{read: read_fn})
+      syndicate_ids = [:new_loka]
+
+      # Act
+      actual = FileSystem.list_products(syndicate_ids, deps)
+      expected = {:error, :enoent}
+
+      # Assert
+      assert actual == expected
+    end
+
+    test "returns error if it cannot read syndicates file", %{paths: paths} = deps do
+      # Arrange
+      products_filename = Path.join(paths[:products])
+      syndicates_filename = Path.join(paths[:syndicates])
+
+      read_fn = fn
+        ^products_filename ->
+          {:ok,
+           "[{\"name\": \"Gleaming Blight\",\"id\": \"54a74454e779892d5e5155d5\",\"min_price\": 14,\"default_price\": 16,\"quantity\": 1, \"rank\": 0}, {\"name\":\"Fracturing Crush\",\"id\": \"5526aec0e779896af9418259\",\"min_price\": 14,\"default_price\": 16}]"}
+
+        ^syndicates_filename ->
+          {:error, :enoent}
       end
 
       deps = Map.put(deps, :io, %{read: read_fn})
-      syndicate = Syndicate.new(name: "New Loka", id: :new_loka, catalog: [])
+      syndicate_ids = [:new_loka]
 
       # Act
-      actual = FileSystem.list_products(syndicate, deps)
+      actual = FileSystem.list_products(syndicate_ids, deps)
       expected = {:error, :enoent}
+
+      # Assert
+      assert actual == expected
+    end
+
+    test "returns error if syndicates are not found", %{paths: paths} = deps do
+      # Arrange
+      products_filename = Path.join(paths[:products])
+      syndicates_filename = Path.join(paths[:syndicates])
+
+      read_fn = fn
+        ^products_filename ->
+          {:ok,
+           "[{\"name\": \"Gleaming Blight\",\"id\": \"54a74454e779892d5e5155d5\",\"min_price\": 14,\"default_price\": 16,\"quantity\": 1, \"rank\": 0}, {\"name\":\"Fracturing Crush\",\"id\": \"5526aec0e779896af9418259\",\"min_price\": 14,\"default_price\": 16}]"}
+
+        ^syndicates_filename ->
+          {:ok,
+           "[{\"id\":\"red_veil\",\"name\":\"Red Veil\",\"catalog\":[\"54a74454e779892d5e5155d5\"]},{\"id\":\"perrin_sequence\",\"name\":\"Perrin Sequence\",\"catalog\":[\"5526aec0e779896af9418259\"]}]"}
+      end
+
+      deps = Map.put(deps, :io, %{read: read_fn})
+      syndicate_ids = [:new_loka]
+
+      # Act
+      actual = FileSystem.list_products(syndicate_ids, deps)
+      expected = {:error, {:syndicate_not_found, [:new_loka]}}
 
       # Assert
       assert actual == expected

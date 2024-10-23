@@ -8,6 +8,8 @@ defmodule Store.FileSystem do
   alias Shared.Utils.{Maps, Tuples}
   alias Store.Type
 
+  @typep filename :: String.t()
+
   @default_deps %{
     io: %{
       read: &File.read/1,
@@ -26,15 +28,38 @@ defmodule Store.FileSystem do
   # Public #
   ##########
 
-  @spec list_products(Syndicate.t(), Type.dependencies()) :: Type.list_products_response()
-  def list_products(syndicate, deps \\ @default_deps) do
+  @spec list_products([Syndicate.id()], Type.dependencies()) :: Type.list_products_response()
+  def list_products(syndicate_ids, deps \\ @default_deps) do
     %{paths: paths, env: env} = deps = Map.merge(@default_deps, deps)
 
-    with {:ok, path} <- build_absolute_path(paths[:products], env),
-         {:ok, products} <- read_product_data(path, deps) do
-      products
-      |> Enum.filter(&Enum.member?(syndicate.catalog, &1.id))
-      |> Tuples.to_tagged_tuple()
+    with {:ok, syndicates_path} <- build_absolute_path(paths[:syndicates], env),
+         {:ok, products_path} <- build_absolute_path(paths[:products], env),
+         {:ok, products} <- read_product_data(products_path, deps),
+         {:ok, syndicates} <- read_syndicate_data(syndicates_path, deps) do
+      syndicate_ids_set = MapSet.new(syndicate_ids)
+      all_syndicate_ids_set = syndicates |> Enum.map(& &1.id) |> MapSet.new()
+
+      all_valid_syndicate_ids? =
+        MapSet.union(syndicate_ids_set, all_syndicate_ids_set)
+        |> MapSet.equal?(all_syndicate_ids_set)
+
+      if all_valid_syndicate_ids? do
+        syndicate_catalogs =
+          syndicates
+          |> Enum.filter(&(&1.id in syndicate_ids))
+          |> Enum.flat_map(& &1.catalog)
+
+        products
+        |> Enum.filter(&Enum.member?(syndicate_catalogs, &1.id))
+        |> Tuples.to_tagged_tuple()
+      else
+        not_found =
+          syndicate_ids_set
+          |> MapSet.reject(fn id -> MapSet.member?(all_syndicate_ids_set, id) end)
+          |> MapSet.to_list()
+
+        {:error, {:syndicate_not_found, not_found}}
+      end
     end
   end
 
@@ -162,16 +187,24 @@ defmodule Store.FileSystem do
   # Private #
   ###########
 
-  @spec read_product_data(
-          filename :: String.t(),
-          Type.dependencies()
-        ) ::
+  @spec read_product_data(filename(), Type.dependencies()) ::
           {:ok, [Product.t()]} | {:error, :file.posix() | Jason.DecodeError.t()}
   defp read_product_data(filename, %{io: io}) do
     with {:ok, content} <- io.read.(filename),
          {:ok, product_data} <- Jason.decode(content) do
       product_data
       |> Enum.map(&Product.new/1)
+      |> Tuples.to_tagged_tuple()
+    end
+  end
+
+  @spec read_syndicate_data(filename(), Type.dependencies()) ::
+          {:ok, [Syndicate.t()]} | {:error, :file.posix() | Jason.DecodeError.t()}
+  defp read_syndicate_data(filename, %{io: io}) do
+    with {:ok, content} <- io.read.(filename),
+         {:ok, syndicate_data} <- Jason.decode(content) do
+      syndicate_data
+      |> Enum.map(&Syndicate.new/1)
       |> Tuples.to_tagged_tuple()
     end
   end

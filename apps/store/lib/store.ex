@@ -9,14 +9,13 @@ defmodule Store do
   alias Store.Type
 
   @doc """
-  Lists the products from the given syndicate.
+  Lists the products for the syndicates with the given ids.
 
   Example:
   ```
-  > alias Shared.Data.{Product, Syndicate}
+  > alias Shared.Data.Product
 
-  > syndicate = Syndicate.new(name: "Red Veil", id: :red_veil, catalog: ["8ee5b3b0-fa43-4dbc-9363-a52930dc742e"])
-  > Store.list_products(syndicate)
+  > Store.list_products([:red_veil])
   {:ok, [
     %Product{
       name: "Eternal War",
@@ -29,13 +28,12 @@ defmodule Store do
     ...
   ]}
 
-  > invalid_syndicate = Syndicate.new(name: "Bad Synd", id: :bad_syndicate, catalog: [])
-  > Store.list_products(invalid_syndicate)
-  {:error, :syndicate_not_found}
+  > Store.list_products([:invalid_syndicate_id])
+  {:error, {:syndicate_not_found, :invalid_syndicate_id}}
   ```
   """
-  @spec list_products(Syndicate.t()) :: Type.list_products_response()
-  defdelegate list_products(syndicate), to: FileSystem
+  @spec list_products([Syndicate.id()]) :: Type.list_products_response()
+  defdelegate list_products(syndicates), to: FileSystem
 
   @doc """
   Returns the product with the given id.
