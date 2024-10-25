@@ -23,13 +23,16 @@ defmodule Manager.Runtime.SagaSupervisor do
     :ok
   end
 
-  @spec activate(%{Syndicate.id() => Strategy.t()}) :: :ok
-  def activate(syndicates_with_strategy)
+  @spec activate(%{Syndicate.id() => Strategy.t()}, pid() | nil) :: :ok
+  def activate(syndicates_with_strategy, from \\ nil)
       when is_map(syndicates_with_strategy) and syndicates_with_strategy != %{} do
+    updated_from = from || self()
+
     {:ok, _child} =
       DynamicSupervisor.start_child(
         __MODULE__,
-        {Activate, %{from: self(), args: %{syndicates_with_strategy: syndicates_with_strategy}}}
+        {Activate,
+         %{from: updated_from, args: %{syndicates_with_strategy: syndicates_with_strategy}}}
       )
 
     :ok

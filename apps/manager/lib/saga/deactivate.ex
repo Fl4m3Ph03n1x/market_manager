@@ -2,6 +2,7 @@ defmodule Manager.Saga.Deactivate do
   use GenServer, restart: :transient
 
   alias AuctionHouse
+  alias Manager.Runtime.SagaSupervisor
   alias Shared.Data.User
   alias Store
 
@@ -112,7 +113,7 @@ defmodule Manager.Saga.Deactivate do
           else
             send(from, {:deactivate, :reactivating_remaining_syndicates})
             # reactivate syndicate with last strategy used
-            :ok = store.activate_syndicates(updated_active_syndicates)
+            SagaSupervisor.activate(updated_active_syndicates, from)
           end
 
           {:stop, :normal, state}

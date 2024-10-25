@@ -26,15 +26,12 @@ defmodule Manager.Saga.Activate do
   # Client #
   ##########
 
-  def start_link(
-        %{from: from, args: %{syndicates_with_strategy: _syndicates_with_strategy}} = state
-      ) do
+  def start_link(%{from: from, args: %{syndicates_with_strategy: _syndicates_with_strategy}} = state) do
     updated_state =
       %{
         deps: Map.merge(@default_deps, Map.get(state, :deps, %{})),
         args: state.args,
-        non_patreon_order_limit:
-          Map.get(state, :non_patreon_order_limit, @non_patreon_order_limit),
+        non_patreon_order_limit: Map.get(state, :non_patreon_order_limit, @non_patreon_order_limit),
         from: from
       }
 
@@ -120,12 +117,11 @@ defmodule Manager.Saga.Activate do
           total_products_count: total_products_count,
           non_patreon_order_limit: _limit,
           user: _user,
-          order_number_limit: order_number_limit,
+          order_number_limit: _order_number_limit,
           from: from
         } = state
       ) do
-    with {:ok, all_syndicates} <- store.list_syndicates(),
-         {:ok, strategies} <- Manager.strategies() do
+    with {:ok, all_syndicates} <- store.list_syndicates() do
       syndicates =
         Enum.filter(all_syndicates, fn syndicate ->
           syndicate.id in Map.keys(syndicates_with_strategy)
@@ -142,7 +138,6 @@ defmodule Manager.Saga.Activate do
         end)
 
       strategy_id = Map.get(syndicates_with_strategy, owner_syndicate.id)
-      strategy = Enum.find(strategies, &(&1.id == strategy_id))
 
       updated_product_prices =
         case tag do
@@ -150,7 +145,7 @@ defmodule Manager.Saga.Activate do
             Map.put(
               product_prices,
               product,
-              PriceAnalyst.calculate_price(product, data, strategy)
+              PriceAnalyst.calculate_price(product, data, strategy_id)
             )
 
           :error ->
@@ -173,8 +168,8 @@ defmodule Manager.Saga.Activate do
       send(
         from,
         {:activate,
-         {:price_calculated, item_name, Map.get(updated_product_prices, product),
-          calculated_prices_count, total_products_count}}
+         {:price_calculated, item_name, Map.get(updated_product_prices, product), calculated_prices_count,
+          total_products_count}}
       )
 
       if all_prices_calculated? do
