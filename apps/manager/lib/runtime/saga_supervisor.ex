@@ -8,6 +8,7 @@ defmodule Manager.Runtime.SagaSupervisor do
   # Public API #
   ##############
 
+  @spec start_link(any()) :: Supervisor.on_start()
   def start_link(_init_arg),
     do: DynamicSupervisor.start_link(__MODULE__, nil, name: __MODULE__)
 
@@ -16,8 +17,7 @@ defmodule Manager.Runtime.SagaSupervisor do
     {:ok, _child} =
       DynamicSupervisor.start_child(
         __MODULE__,
-        {Login,
-         %{from: self(), args: %{credentials: credentials, keep_logged_in: keep_logged_in}}}
+        {Login, %{from: self(), args: %{credentials: credentials, keep_logged_in: keep_logged_in}}}
       )
 
     :ok
@@ -31,8 +31,7 @@ defmodule Manager.Runtime.SagaSupervisor do
     {:ok, _child} =
       DynamicSupervisor.start_child(
         __MODULE__,
-        {Activate,
-         %{from: updated_from, args: %{syndicates_with_strategy: syndicates_with_strategy}}}
+        {Activate, %{from: updated_from, args: %{syndicates_with_strategy: syndicates_with_strategy}}}
       )
 
     :ok
