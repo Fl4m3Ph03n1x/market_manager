@@ -11,22 +11,17 @@ defmodule Manager.Runtime.Worker do
   alias Manager.Type
   alias Manager.Impl.PriceAnalyst
 
-  @type state :: keyword(module)
-
-  @default_deps [
-    interpreter: Interpreter
-  ]
+  @opaque state :: [
+            store: module(),
+            auction_house: module()
+          ]
 
   ##############
   # Public API #
   ##############
 
   @spec start_link(state) :: GenServer.on_start()
-  def start_link([]),
-    do: GenServer.start_link(__MODULE__, @default_deps, name: __MODULE__)
-
-  def start_link(deps),
-    do: GenServer.start_link(__MODULE__, deps, name: __MODULE__)
+  def start_link(deps), do: GenServer.start_link(__MODULE__, deps, name: __MODULE__)
 
   @spec recover_login :: Type.recover_login_response()
   def recover_login, do: GenServer.call(__MODULE__, :recover_login)
