@@ -13,9 +13,7 @@ defmodule Manager.Saga.Login do
   # Client #
   ##########
 
-  def start_link(
-        %{from: from, args: %{credentials: _credentials, keep_logged_in: _keep_logged_in}} = state
-      ) do
+  def start_link(%{from: from, args: %{credentials: _credentials, keep_logged_in: _keep_logged_in}} = state) do
     updated_state = %{
       deps: Map.merge(@default_deps, Map.get(state, :deps, %{})),
       args: state.args,
