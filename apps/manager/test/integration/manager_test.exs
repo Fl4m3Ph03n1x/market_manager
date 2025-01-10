@@ -1,0 +1,1016 @@
+defmodule Manager.WorkerTest do
+  @moduledoc false
+
+  use ExUnit.Case, async: false
+
+  alias Helpers
+  alias Manager.Runtime.ManagerSupervisor
+  alias Plug.Conn
+  alias Shared.Data.{Authorization, Credentials, Strategy, User}
+
+  @timeout 5000
+  @long_timeout 15_000
+
+  ##########
+  # Setup  #
+  ##########
+
+  @watch_list_file :store |> Application.compile_env!(:watch_list) |> Path.join()
+  @setup_file :store |> Application.compile_env!(:setup) |> Path.join()
+
+  defp create_watch_list_file do
+    content =
+      Jason.encode!(%{
+        active_syndicates: %{
+          cephalon_suda: :lowest_minus_one,
+          cephalon_simaris: :equal_to_lowest
+        }
+      })
+
+    File.write(@watch_list_file, content)
+  end
+
+  defp reset_watch_list_file do
+    content = Jason.encode!(%{active_syndicates: %{}})
+    File.write(@watch_list_file, content)
+  end
+
+  defp create_setup_file do
+    content =
+      Jason.encode!(%{
+        authorization: %{
+          cookie: "a_cookie",
+          token: "a_token"
+        },
+        user: %{
+          ingame_name: "fl4m3",
+          patreon?: false
+        }
+      })
+
+    File.write(@setup_file, content)
+  end
+
+  defp reset_setup_file do
+    content =
+      Jason.encode!(%{
+        authorization: %{},
+        user: %{}
+      })
+
+    File.write(@setup_file, content)
+  end
+
+  ##########
+  # Tests  #
+  ##########
+
+  describe "activate" do
+    setup do
+      create_setup_file()
+      on_exit(&reset_setup_file/0)
+
+      bypass = Bypass.open(port: 8082)
+      credentials = Credentials.new("an_email", "a_password")
+      user = User.new(%{"ingame_name" => "fl4m3", "patreon?" => false})
+
+      Bypass.stub(bypass, "GET", "/auth/signin", fn conn ->
+        body = """
+        <!DOCTYPE html>
+        <html lang=en>
+        <head>
+        <meta charset="UTF-8">
+        <meta name="csrf-token" content="##2263dcc167c732ca1b54566e0c1ffb66d8e13e2ed59d113967f7fb5e119fed0f813bf7b98c9777c2f5eafd0ab5f6fdc9ad5a3a44d8b585c07ebdf0af1be310b1">
+        <link rel="canonical" href="https://warframe.market/auth/signin">
+        <link rel="alternate" hreflang="en" href="https://warframe.market/auth/signin">
+        <link rel="manifest" href="/manifest.json">
+        <body>
+        </body>
+        </script>
+        </html>
+        """
+
+        conn
+        |> Plug.Conn.put_resp_header(
+          "Set-Cookie",
+          "JWT=old_cookie; Domain=.warframe.market; Expires=Tue, 21-Mar-2023 15:16:03 GMT; Secure; HttpOnly; Path=/; SameSite=Lax"
+        )
+        |> Plug.Conn.resp(200, body)
+      end)
+
+      Bypass.stub(bypass, "POST", "/v1/auth/signin", fn conn ->
+        body =
+          "{\"payload\": {\"user\": {\"has_mail\": true, \"written_reviews\": 0, \"region\": \"en\", \"banned\": false, \"anonymous\": false, \"role\": \"user\", \"reputation\": 84, \"ingame_name\": \"Fl4m3Ph03n1x\", \"platform\": \"pc\", \"unread_messages\": 0, \"background\": null, \"check_code\": \"66BAPR88DLLZ\", \"avatar\": \"user/avatar/584d425cd3ffb630c3f9df42.png?0a8ad917dc66b85aa69520d70a31dafb\", \"verification\": true, \"linked_accounts\": {\"steam_profile\": true, \"patreon_profile\": false, \"xbox_profile\": false, \"discord_profile\": false, \"github_profile\": false}, \"id\": \"584d425cd3ffb630c3f9df42\", \"locale\": \"en\"}}}"
+
+        conn
+        |> Plug.Conn.put_resp_header(
+          "Set-Cookie",
+          "JWT=new_cookie; Domain=.warframe.market; Expires=Tue, 21-Mar-2023 14:41:06 GMT; Secure; HttpOnly; Path=/; SameSite=Lax"
+        )
+        |> Plug.Conn.resp(200, body)
+      end)
+
+      _manager_pid = start_link_supervised!(ManagerSupervisor)
+      :ok = Manager.login(credentials, false)
+
+      assert_receive({:login, {:ok, %User{patreon?: false, ingame_name: "fl4m3"}}}, @timeout)
+
+      %{
+        user: user,
+        bypass: bypass
+      }
+    end
+
+    test "activates multiple syndicates with the given strategies", %{bypass: bypass} do
+      # get current orders
+      Bypass.expect_once(bypass, "GET", "/v1/profile/fl4m3/orders", fn conn ->
+        body = """
+          {
+            "payload": {
+              "sell_orders": [
+                  {
+                      "region": "en",
+                      "order_type": "sell",
+                      "mod_rank": 0,
+                      "id": "677f90f6a8a4b1000937d1bb",
+                      "quantity": 1,
+                      "visible": true,
+                      "item": {
+                          "icon_format": "port",
+                          "tags": [
+                              "mod",
+                              "rare",
+                              "warframe",
+                              "trinity"
+                          ],
+                          "mod_max_rank": 3,
+                          "id": "54e644ffe779897594fa68d2",
+                          "sub_icon": null,
+                          "icon": "items/images/en/abating_link.c547fa09315093a5ba6c609a9b195580.png",
+                          "thumb": "items/images/en/thumbs/abating_link.c547fa09315093a5ba6c609a9b195580.128x128.png",
+                          "url_name": "abating_link",
+                          "en": {
+                              "item_name": "Abating Link"
+                          },
+                          "ru": {
+                              "item_name": "Ослабляющая Связь"
+                          },
+                          "ko": {
+                              "item_name": "어베이팅 링크"
+                          },
+                          "fr": {
+                              "item_name": "Lien Dégradant"
+                          },
+                          "sv": {
+                              "item_name": "Abating Link"
+                          },
+                          "de": {
+                              "item_name": "Dämpfende Verbindung"
+                          },
+                          "zh-hant": {
+                              "item_name": "耗弱連結"
+                          },
+                          "zh-hans": {
+                              "item_name": "耗弱链接"
+                          },
+                          "pt": {
+                              "item_name": "Elo Redutivo"
+                          },
+                          "es": {
+                              "item_name": "Enlace Mermador"
+                          },
+                          "pl": {
+                              "item_name": "Osłabiające Połączenie"
+                          },
+                          "cs": {
+                              "item_name": "Abating Link"
+                          },
+                          "uk": {
+                              "item_name": "Вгамовний Зв’язок"
+                          }
+                      },
+                      "platinum": 15,
+                      "creation_date": "2025-01-09T09:03:50.271+00:00",
+                      "last_update": "2025-01-09T09:03:50.271+00:00",
+                      "platform": "pc"
+                  }
+              ],
+              "buy_orders": []
+            }
+          }
+        """
+
+        conn
+        |> Conn.put_resp_header(
+          "Set-Cookie",
+          "JWT=old_cookie; Domain=.warframe.market; Expires=Tue, 21-Mar-2023 15:16:03 GMT; Secure; HttpOnly; Path=/; SameSite=Lax"
+        )
+        |> Conn.put_resp_header("content-type", "application/json")
+        |> Conn.resp(200, body)
+      end)
+
+      # get current sell order for item
+      Bypass.expect_once(bypass, "GET", "/v1/items/scattered_justice/orders", fn conn ->
+        body = """
+        {
+          "payload": {
+            "orders": [
+                {
+                    "creation_date": "2017-09-19T02:01:29.000+00:00",
+                    "visible": true,
+                    "quantity": 1,
+                    "user": {
+                        "reputation": 1975,
+                        "locale": "en",
+                        "avatar": "user/avatar/5678a156cbfa8f02c9b814c3.png?0d832d1017240078ecf4bdeb0d08a101",
+                        "ingame_name": "Ealirinineomh",
+                        "last_seen": "2025-01-10T06:19:14.369+00:00",
+                        "id": "5678a156cbfa8f02c9b814c3",
+                        "region": "en",
+                        "status": "offline"
+                    },
+                    "last_update": "2019-11-24T01:58:58.000+00:00",
+                    "platinum": 18,
+                    "order_type": "sell",
+                    "platform": "pc",
+                    "id": "59c07a790f31396e83ed709b",
+                    "mod_rank": 0,
+                    "region": "en"
+                },
+                {
+                    "order_type": "sell",
+                    "last_update": "2021-08-23T07:28:38.000+00:00",
+                    "platform": "pc",
+                    "user": {
+                        "reputation": 262,
+                        "locale": "en",
+                        "avatar": "user/avatar/599d52da0f313979a13fad96.png?4499006929224dac2b142b9e246d76c4",
+                        "ingame_name": "ElysiumLeoSK",
+                        "last_seen": "2025-01-08T18:00:48.795+00:00",
+                        "id": "599d52da0f313979a13fad96",
+                        "region": "en",
+                        "status": "offline"
+                    },
+                    "quantity": 1,
+                    "creation_date": "2018-01-09T07:07:17.000+00:00",
+                    "visible": true,
+                    "platinum": 15,
+                    "id": "5a546a25d1d7bb035fec97c1",
+                    "mod_rank": 0,
+                    "region": "en"
+                }
+            ]
+          }
+        }
+        """
+
+        conn
+        |> Plug.Conn.put_resp_header(
+          "Set-Cookie",
+          "JWT=old_cookie; Domain=.warframe.market; Expires=Tue, 21-Mar-2023 15:16:03 GMT; Secure; HttpOnly; Path=/; SameSite=Lax"
+        )
+        |> Conn.put_resp_header("content-type", "application/json")
+        |> Plug.Conn.resp(200, body)
+      end)
+
+      # get current sell order for item
+      Bypass.expect_once(bypass, "GET", "/v1/items/justice_blades/orders", fn conn ->
+        body = """
+        {
+          "payload": {
+            "orders": [
+                {
+                    "creation_date": "2017-08-12T21:42:28.000+00:00",
+                    "visible": true,
+                    "quantity": 1,
+                    "user": {
+                        "reputation": 1975,
+                        "locale": "en",
+                        "avatar": "user/avatar/5678a156cbfa8f02c9b814c3.png?0d832d1017240078ecf4bdeb0d08a101",
+                        "ingame_name": "Ealirinineomh",
+                        "last_seen": "2025-01-10T06:19:14.369+00:00",
+                        "id": "5678a156cbfa8f02c9b814c3",
+                        "region": "en",
+                        "status": "offline"
+                    },
+                    "last_update": "2019-11-24T01:58:47.000+00:00",
+                    "platinum": 18,
+                    "order_type": "sell",
+                    "platform": "pc",
+                    "id": "598f76440f313951e3167944",
+                    "mod_rank": 0,
+                    "region": "en"
+                },
+                {
+                    "last_update": "2023-02-17T18:27:29.000+00:00",
+                    "creation_date": "2018-08-20T13:38:24.000+00:00",
+                    "user": {
+                        "reputation": 6,
+                        "locale": "en",
+                        "avatar": "user/avatar/5901a9a30f313932036b4184.png?861fd1b5e8feb05f8bda1ce653dd07fb",
+                        "ingame_name": "Bloody1Sword",
+                        "last_seen": "2025-01-05T19:40:48.101+00:00",
+                        "id": "5901a9a30f313932036b4184",
+                        "region": "en",
+                        "status": "offline"
+                    },
+                    "platinum": 10,
+                    "order_type": "sell",
+                    "visible": true,
+                    "platform": "pc",
+                    "quantity": 1,
+                    "id": "5b7ac4503ed75603d3638cb9",
+                    "mod_rank": 0,
+                    "region": "en"
+                }
+            ]
+          }
+        }
+        """
+
+        conn
+        |> Plug.Conn.put_resp_header(
+          "Set-Cookie",
+          "JWT=old_cookie; Domain=.warframe.market; Expires=Tue, 21-Mar-2023 15:16:03 GMT; Secure; HttpOnly; Path=/; SameSite=Lax"
+        )
+        |> Conn.put_resp_header("content-type", "application/json")
+        |> Plug.Conn.resp(200, body)
+      end)
+
+      # get current sell order for item
+      Bypass.expect_once(bypass, "GET", "/v1/items/gilded_truth/orders", fn conn ->
+        body = """
+        {
+          "payload": {
+            "orders": [
+                {
+                    "quantity": 1,
+                    "platinum": 14,
+                    "user": {
+                        "reputation": 2,
+                        "locale": "en",
+                        "avatar": null,
+                        "last_seen": "2025-01-03T17:21:46.737+00:00",
+                        "ingame_name": "lazerg20555",
+                        "id": "5a78b3fce9df0c054562135b",
+                        "region": "en",
+                        "status": "offline"
+                    },
+                    "platform": "pc",
+                    "last_update": "2018-03-12T20:02:01.000+00:00",
+                    "order_type": "sell",
+                    "visible": true,
+                    "creation_date": "2018-03-12T20:02:01.000+00:00",
+                    "id": "5aa6dcb9e47c5c0219e0e887",
+                    "mod_rank": 0,
+                    "region": "en"
+                },
+                {
+                    "order_type": "sell",
+                    "platinum": 12,
+                    "quantity": 1,
+                    "user": {
+                        "reputation": 36,
+                        "locale": "en",
+                        "avatar": "user/avatar/5b7bf16cdebecf04373da2bf.png?c2bda0157a8c8e48f01648ca9866d3be",
+                        "last_seen": "2025-01-10T10:14:11.746+00:00",
+                        "ingame_name": "tevinskii",
+                        "id": "5b7bf16cdebecf04373da2bf",
+                        "region": "en",
+                        "status": "offline"
+                    },
+                    "platform": "pc",
+                    "creation_date": "2018-09-18T07:33:06.000+00:00",
+                    "last_update": "2024-12-07T08:04:08.000+00:00",
+                    "visible": true,
+                    "id": "5ba0aa3217f2f2014f4344e2",
+                    "mod_rank": 0,
+                    "region": "en"
+                }
+            ]
+          }
+        }
+        """
+
+        conn
+        |> Plug.Conn.put_resp_header(
+          "Set-Cookie",
+          "JWT=old_cookie; Domain=.warframe.market; Expires=Tue, 21-Mar-2023 15:16:03 GMT; Secure; HttpOnly; Path=/; SameSite=Lax"
+        )
+        |> Conn.put_resp_header("content-type", "application/json")
+        |> Plug.Conn.resp(200, body)
+      end)
+
+      # get current sell order for item
+      Bypass.expect_once(bypass, "GET", "/v1/items/blade_of_truth/orders", fn conn ->
+        body = """
+        {
+          "payload": {
+            "orders": [
+                {
+                    "visible": true,
+                    "creation_date": "2018-03-12T20:02:18.000+00:00",
+                    "platform": "pc",
+                    "user": {
+                        "reputation": 2,
+                        "locale": "en",
+                        "avatar": null,
+                        "last_seen": "2025-01-03T17:21:46.737+00:00",
+                        "ingame_name": "lazerg20555",
+                        "id": "5a78b3fce9df0c054562135b",
+                        "region": "en",
+                        "status": "offline"
+                    },
+                    "platinum": 14,
+                    "quantity": 1,
+                    "last_update": "2018-03-12T20:02:18.000+00:00",
+                    "order_type": "sell",
+                    "id": "5aa6dcca12434f02120289aa",
+                    "mod_rank": 0,
+                    "region": "en"
+                },
+                {
+                    "quantity": 10,
+                    "platinum": 19,
+                    "order_type": "sell",
+                    "user": {
+                        "reputation": 32,
+                        "locale": "en",
+                        "avatar": "user/avatar/5aa2b01449ef000cb71214f7.png?298c6d87e287773609cc9db362372bf3",
+                        "last_seen": "2025-01-09T01:00:46.499+00:00",
+                        "ingame_name": "PrimedDaniel",
+                        "id": "5aa2b01449ef000cb71214f7",
+                        "region": "en",
+                        "status": "offline"
+                    },
+                    "platform": "pc",
+                    "creation_date": "2019-07-22T16:45:59.000+00:00",
+                    "last_update": "2025-01-06T14:24:28.000+00:00",
+                    "visible": true,
+                    "id": "5d35e847efe513024f0a7f10",
+                    "mod_rank": 0,
+                    "region": "en"
+                }
+            ]
+          }
+        }
+        """
+
+        conn
+        |> Plug.Conn.put_resp_header(
+          "Set-Cookie",
+          "JWT=old_cookie; Domain=.warframe.market; Expires=Tue, 21-Mar-2023 15:16:03 GMT; Secure; HttpOnly; Path=/; SameSite=Lax"
+        )
+        |> Conn.put_resp_header("content-type", "application/json")
+        |> Plug.Conn.resp(200, body)
+      end)
+
+      # post orders online
+      Bypass.expect(bypass, "POST", "/v1/profile/orders", fn conn ->
+        {:ok, req_body, _req_conn} = Plug.Conn.read_body(conn)
+
+        body =
+          case req_body do
+            "{\"item_id\":\"54a74454e779892d5e5155f5\",\"order_type\":\"sell\",\"platinum\":16,\"quantity\":1,\"mod_rank\":0}" ->
+              """
+              {
+                "payload": {
+                  "order": {
+                  "last_update": "2025-01-10T15:29:18.242+00:00",
+                  "id": "67813cce093d4c0009d3445e",
+                  "region": "en",
+                  "mod_rank": 0,
+                  "creation_date": "2025-01-10T15:29:18.242+00:00",
+                  "item": {
+                    "mod_max_rank": 3,
+                    "id": "54a74454e779892d5e5155f5",
+                    "url_name": "scattered_justice",
+                    "icon": "items/images/en/scattered_justice.b46113ecdbc04d327240cedec0e3b1f1.png",
+                    "thumb": "items/images/en/thumbs/scattered_justice.b46113ecdbc04d327240cedec0e3b1f1.128x128.png",
+                    "icon_format": "port",
+                    "tags": [
+                        "syndicate",
+                        "mod",
+                        "rare",
+                        "primary",
+                        "hek"
+                    ],
+                    "sub_icon": null,
+                    "en": {
+                        "item_name": "Scattered Justice"
+                    },
+                    "ru": {
+                        "item_name": "Переменная Справедливость"
+                    },
+                    "ko": {
+                        "item_name": "스캐터드 저스티스"
+                    },
+                    "fr": {
+                        "item_name": "Justice Dispersée"
+                    },
+                    "sv": {
+                        "item_name": "Scattered Justice"
+                    },
+                    "de": {
+                        "item_name": "Zerstreute Gerechtigkeit"
+                    },
+                    "zh-hant": {
+                        "item_name": "散射正義"
+                    },
+                    "zh-hans": {
+                        "item_name": "散射正义"
+                    },
+                    "pt": {
+                        "item_name": "Scattered Justice"
+                    },
+                    "es": {
+                        "item_name": "Justicia Dispersa"
+                    },
+                    "pl": {
+                        "item_name": "Rozproszona Sprawiedliwość"
+                    },
+                    "cs": {
+                        "item_name": "Scattered Justice"
+                    },
+                    "uk": {
+                        "item_name": "Розсіяне Правосуддя"
+                    },
+                    "it": {
+                        "item_name": "Scattered Justice"
+                    }
+                  },
+                  "quantity": 1,
+                  "visible": true,
+                  "platinum": 16,
+                  "order_type": "sell",
+                  "platform": "pc"
+                  }
+                }
+              }
+              """
+
+            "{\"item_id\":\"54a74454e779892d5e515645\",\"order_type\":\"sell\",\"platinum\":16,\"quantity\":1,\"mod_rank\":0}" ->
+              """
+              {
+              "payload": {
+                  "order": {
+                      "last_update": "2025-01-10T15:33:51.481+00:00",
+                      "region": "en",
+                      "creation_date": "2025-01-10T15:33:51.481+00:00",
+                      "item": {
+                          "tags": [
+                              "syndicate",
+                              "mod",
+                              "melee",
+                              "rare",
+                              "jaw_sword"
+                          ],
+                          "icon_format": "port",
+                          "url_name": "blade_of_truth",
+                          "icon": "items/images/en/blade_of_truth.53d68caa8f7ae06642b2ed1fd8f3b6cd.png",
+                          "thumb": "items/images/en/thumbs/blade_of_truth.53d68caa8f7ae06642b2ed1fd8f3b6cd.128x128.png",
+                          "id": "54a74454e779892d5e515645",
+                          "sub_icon": null,
+                          "mod_max_rank": 3,
+                          "en": {
+                              "item_name": "Blade Of Truth"
+                          },
+                          "ru": {
+                              "item_name": "Клинок Правды"
+                          },
+                          "ko": {
+                              "item_name": "블레이드 오브 트루스"
+                          },
+                          "fr": {
+                              "item_name": "Lames De La Vérité"
+                          },
+                          "sv": {
+                              "item_name": "Blade Of Truth"
+                          },
+                          "de": {
+                              "item_name": "Klinge Der Wahrheit"
+                          },
+                          "zh-hant": {
+                              "item_name": "真相之刃"
+                          },
+                          "zh-hans": {
+                              "item_name": "真相之刃"
+                          },
+                          "pt": {
+                              "item_name": "Blade Of Truth"
+                          },
+                          "es": {
+                              "item_name": "Hoja De La Verdad"
+                          },
+                          "pl": {
+                              "item_name": "Ostrze Prawdy"
+                          },
+                          "cs": {
+                              "item_name": "Blade Of Truth"
+                          },
+                          "uk": {
+                              "item_name": "Лезо Правди"
+                          },
+                          "it": {
+                              "item_name": "Blade Of Truth"
+                          }
+                      },
+                      "visible": true,
+                      "mod_rank": 0,
+                      "platinum": 16,
+                      "quantity": 1,
+                      "id": "67813ddf3ba9d800083a54b8",
+                      "order_type": "sell",
+                      "platform": "pc"
+                  }
+                }
+              }
+              """
+
+            "{\"item_id\":\"54a74454e779892d5e515664\",\"order_type\":\"sell\",\"platinum\":16,\"quantity\":1,\"mod_rank\":0}" ->
+              """
+              {
+                "payload": {
+                    "order": {
+                        "last_update": "2025-01-10T15:36:10.778+00:00",
+                        "id": "67813e6a093d4c000bae6f8a",
+                        "region": "en",
+                        "mod_rank": 0,
+                        "creation_date": "2025-01-10T15:36:10.778+00:00",
+                        "item": {
+                            "mod_max_rank": 3,
+                            "id": "54a74454e779892d5e515664",
+                            "url_name": "gilded_truth",
+                            "icon": "items/images/en/gilded_truth.4f864f82b65bf77a28c01419c6cbfce1.png",
+                            "thumb": "items/images/en/thumbs/gilded_truth.4f864f82b65bf77a28c01419c6cbfce1.128x128.png",
+                            "icon_format": "port",
+                            "tags": [
+                                "syndicate",
+                                "burston_prime",
+                                "mod",
+                                "rare",
+                                "primary",
+                                "prime"
+                            ],
+                            "sub_icon": null,
+                            "en": {
+                                "item_name": "Gilded Truth"
+                            },
+                            "ru": {
+                                "item_name": "Позолоченная Правда"
+                            },
+                            "ko": {
+                                "item_name": "길디드 트루스"
+                            },
+                            "fr": {
+                                "item_name": "Vérité Dorée"
+                            },
+                            "sv": {
+                                "item_name": "Gilded Truth"
+                            },
+                            "de": {
+                                "item_name": "Vergoldete Wahrheit"
+                            },
+                            "zh-hant": {
+                                "item_name": "鍍金真相"
+                            },
+                            "zh-hans": {
+                                "item_name": "镀金真相"
+                            },
+                            "pt": {
+                                "item_name": "Gilded Truth"
+                            },
+                            "es": {
+                                "item_name": "Verdad Dorada"
+                            },
+                            "pl": {
+                                "item_name": "Pozłacana Prawda"
+                            },
+                            "cs": {
+                                "item_name": "Gilded Truth"
+                            },
+                            "uk": {
+                                "item_name": "Позолочена Правда"
+                            },
+                            "it": {
+                                "item_name": "Gilded Truth"
+                            }
+                        },
+                        "quantity": 1,
+                        "visible": true,
+                        "platinum": 16,
+                        "order_type": "sell",
+                        "platform": "pc"
+                    }
+                }
+              }
+              """
+
+            "{\"item_id\":\"54a74455e779892d5e5156b9\",\"order_type\":\"sell\",\"platinum\":16,\"quantity\":1,\"mod_rank\":0}" ->
+              """
+              {
+                "payload": {
+                    "order": {
+                        "last_update": "2025-01-10T15:37:20.300+00:00",
+                        "item": {
+                            "icon_format": "port",
+                            "url_name": "justice_blades",
+                            "icon": "items/images/en/justice_blades.465e02b8fa93e85a73dd5aa83e0808fb.png",
+                            "sub_icon": null,
+                            "thumb": "items/images/en/thumbs/justice_blades.465e02b8fa93e85a73dd5aa83e0808fb.128x128.png",
+                            "id": "54a74455e779892d5e5156b9",
+                            "tags": [
+                                "syndicate",
+                                "dual_cleavers",
+                                "mod",
+                                "melee",
+                                "rare"
+                            ],
+                            "mod_max_rank": 3,
+                            "en": {
+                                "item_name": "Justice Blades"
+                            },
+                            "ru": {
+                                "item_name": "Лезвия Справедливости"
+                            },
+                            "ko": {
+                                "item_name": "저스티스 블레이드"
+                            },
+                            "fr": {
+                                "item_name": "Lames Justicières"
+                            },
+                            "sv": {
+                                "item_name": "Justice Blades"
+                            },
+                            "de": {
+                                "item_name": "Gerechtigkeits-Klinge"
+                            },
+                            "zh-hant": {
+                                "item_name": "正義刀鋒"
+                            },
+                            "zh-hans": {
+                                "item_name": "正义刀锋"
+                            },
+                            "pt": {
+                                "item_name": "Justice Blades"
+                            },
+                            "es": {
+                                "item_name": "Hojas De Justicia"
+                            },
+                            "pl": {
+                                "item_name": "Ostrza Sprawiedliwości"
+                            },
+                            "cs": {
+                                "item_name": "Justice Blades"
+                            },
+                            "uk": {
+                                "item_name": "Леза Правосуддя"
+                            },
+                            "it": {
+                                "item_name": "Justice Blades"
+                            }
+                        },
+                        "region": "en",
+                        "order_type": "sell",
+                        "creation_date": "2025-01-10T15:37:20.300+00:00",
+                        "mod_rank": 0,
+                        "quantity": 1,
+                        "id": "67813eb0862c1d00070f9a57",
+                        "platinum": 16,
+                        "visible": true,
+                        "platform": "pc"
+                    }
+                }
+              }
+              """
+
+            _ ->
+              throw("Unknown request body: #{req_body}")
+          end
+
+        conn
+        |> Plug.Conn.put_resp_header(
+          "Set-Cookie",
+          "JWT=old_cookie; Domain=.warframe.market; Expires=Tue, 21-Mar-2023 15:16:03 GMT; Secure; HttpOnly; Path=/; SameSite=Lax"
+        )
+        |> Conn.put_resp_header("content-type", "application/json")
+        |> Plug.Conn.resp(200, body)
+      end)
+
+      :ok = Manager.activate(%{steel_meridian: :top_five_average, arbiters_of_hexis: :top_three_average})
+      assert_receive({:activate, :get_user_orders}, @long_timeout)
+      assert_receive({:activate, :calculating_item_prices}, @long_timeout)
+      assert_receive({:activate, {:price_calculated, "Scattered Justice", 16, 1, 4}}, @long_timeout)
+      assert_receive({:activate, {:price_calculated, "Blade of Truth", 16, 2, 4}}, @long_timeout)
+      assert_receive({:activate, {:price_calculated, "Gilded Truth", 16, 3, 4}}, @long_timeout)
+      assert_receive({:activate, {:price_calculated, "Justice Blades", 16, 4, 4}}, @long_timeout)
+      assert_receive({:activate, :placing_orders}, @long_timeout)
+      assert_receive({:activate, {:order_placed, "Scattered Justice", 1, 4}}, @long_timeout)
+      assert_receive({:activate, {:order_placed, "Blade of Truth", 2, 4}}, @long_timeout)
+      assert_receive({:activate, {:order_placed, "Gilded Truth", 3, 4}}, @long_timeout)
+      assert_receive({:activate, {:order_placed, "Justice Blades", 4, 4}}, @long_timeout)
+      assert_receive({:activate, :done}, @long_timeout)
+    end
+  end
+
+  describe "deactivate" do
+    test "works" do
+      throw("Not Done")
+    end
+  end
+
+  describe "login/2" do
+    setup do
+      create_setup_file()
+      on_exit(&reset_setup_file/0)
+
+      bypass = Bypass.open(port: 8082)
+      credentials = Credentials.new("an_email", "a_password")
+      authorization = Authorization.new(%{"cookie" => "a_cookie", "token" => "a_token"})
+      user = User.new(%{"ingame_name" => "fl4m3", "patreon?" => false})
+
+      %{
+        credentials: credentials,
+        authorization: authorization,
+        user: user,
+        bypass: bypass
+      }
+    end
+
+    test "logs in user correctly when no login data is saved", %{bypass: bypass, credentials: credentials} do
+      reset_setup_file()
+
+      Bypass.expect_once(bypass, "GET", "/auth/signin", fn conn ->
+        body = """
+        <!DOCTYPE html>
+        <html lang=en>
+        <head>
+        <meta charset="UTF-8">
+        <meta name="csrf-token" content="##2263dcc167c732ca1b54566e0c1ffb66d8e13e2ed59d113967f7fb5e119fed0f813bf7b98c9777c2f5eafd0ab5f6fdc9ad5a3a44d8b585c07ebdf0af1be310b1">
+        <link rel="canonical" href="https://warframe.market/auth/signin">
+        <link rel="alternate" hreflang="en" href="https://warframe.market/auth/signin">
+        <link rel="manifest" href="/manifest.json">
+        <body>
+        </body>
+        </script>
+        </html>
+        """
+
+        conn
+        |> Plug.Conn.put_resp_header(
+          "Set-Cookie",
+          "JWT=old_cookie; Domain=.warframe.market; Expires=Tue, 21-Mar-2023 15:16:03 GMT; Secure; HttpOnly; Path=/; SameSite=Lax"
+        )
+        |> Plug.Conn.resp(200, body)
+      end)
+
+      Bypass.expect_once(bypass, "POST", "/v1/auth/signin", fn conn ->
+        body =
+          "{\"payload\": {\"user\": {\"has_mail\": true, \"written_reviews\": 0, \"region\": \"en\", \"banned\": false, \"anonymous\": false, \"role\": \"user\", \"reputation\": 84, \"ingame_name\": \"Fl4m3Ph03n1x\", \"platform\": \"pc\", \"unread_messages\": 0, \"background\": null, \"check_code\": \"66BAPR88DLLZ\", \"avatar\": \"user/avatar/584d425cd3ffb630c3f9df42.png?0a8ad917dc66b85aa69520d70a31dafb\", \"verification\": true, \"linked_accounts\": {\"steam_profile\": true, \"patreon_profile\": false, \"xbox_profile\": false, \"discord_profile\": false, \"github_profile\": false}, \"id\": \"584d425cd3ffb630c3f9df42\", \"locale\": \"en\"}}}"
+
+        conn
+        |> Plug.Conn.put_resp_header(
+          "Set-Cookie",
+          "JWT=new_cookie; Domain=.warframe.market; Expires=Tue, 21-Mar-2023 14:41:06 GMT; Secure; HttpOnly; Path=/; SameSite=Lax"
+        )
+        |> Plug.Conn.resp(200, body)
+      end)
+
+      _manager_pid = start_link_supervised!(ManagerSupervisor)
+      :ok = Manager.login(credentials, false)
+
+      assert_receive({:login, {:ok, %User{patreon?: false, ingame_name: "Fl4m3Ph03n1x"}}}, @timeout)
+    end
+
+    test "logs in user correctly when there is previous login data", %{credentials: credentials} do
+      _manager_pid = start_link_supervised!(ManagerSupervisor)
+      :ok = Manager.login(credentials, false)
+
+      assert_receive({:login, {:ok, %User{patreon?: false, ingame_name: "fl4m3"}}}, @timeout)
+    end
+  end
+
+  describe "recover_login/0" do
+    setup do
+      create_setup_file()
+      on_exit(&reset_setup_file/0)
+
+      credentials = Credentials.new("an_email", "a_password")
+      authorization = Authorization.new(%{"cookie" => "a_cookie", "token" => "a_token"})
+      user = User.new(%{"ingame_name" => "fl4m3", "patreon?" => false})
+
+      %{
+        credentials: credentials,
+        authorization: authorization,
+        user: user
+      }
+    end
+
+    test "returns user when successful" do
+      _manager_pid = start_link_supervised!(ManagerSupervisor)
+
+      assert Manager.recover_login() == {:ok, %User{patreon?: false, ingame_name: "fl4m3"}}
+    end
+
+    test "returns nil if no login session is found" do
+      reset_setup_file()
+
+      _manager_pid = start_link_supervised!(ManagerSupervisor)
+
+      assert Manager.recover_login() == {:ok, nil}
+    end
+  end
+
+  describe "logout/0" do
+    setup do
+      create_setup_file()
+      on_exit(&reset_setup_file/0)
+
+      credentials = Credentials.new("an_email", "a_password")
+      user = User.new(%{"ingame_name" => "fl4m3", "patreon?" => false})
+
+      %{
+        credentials: credentials,
+        user: user
+      }
+    end
+
+    test "returns OK if session is deleted from disk and memory", %{credentials: credentials, user: user} do
+      _manager_pid = start_link_supervised!(ManagerSupervisor)
+
+      assert Manager.login(credentials, true) == :ok
+      assert_receive({:login, {:ok, ^user}}, @timeout)
+
+      assert Manager.recover_login() == {:ok, user}
+      assert Manager.logout() == :ok
+      assert Manager.recover_login() == {:ok, nil}
+    end
+  end
+
+  describe "syndicates/0" do
+    test "returns known syndicates" do
+      _manager_pid = start_link_supervised!(ManagerSupervisor)
+
+      {:ok, syndicates} = Manager.syndicates()
+      syndicate_ids = Enum.map(syndicates, fn syndicate -> syndicate.id end)
+
+      assert syndicate_ids == [
+               :red_veil,
+               :new_loka,
+               :perrin_sequence,
+               :steel_meridian,
+               :arbiters_of_hexis,
+               :cephalon_suda,
+               :cephalon_simaris,
+               :arbitrations
+             ]
+    end
+  end
+
+  describe "active_syndicates" do
+    setup do
+      create_watch_list_file()
+      on_exit(&reset_watch_list_file/0)
+    end
+
+    test "returns currently active syndicates with their strategies" do
+      _manager_pid = start_link_supervised!(ManagerSupervisor)
+
+      assert Manager.active_syndicates() ==
+               {:ok, %{cephalon_suda: :lowest_minus_one, cephalon_simaris: :equal_to_lowest}}
+    end
+  end
+
+  describe "strategies" do
+    test "returns the strategies" do
+      # Arrange
+      _manager_pid = start_link_supervised!(ManagerSupervisor)
+
+      expected_strategies = [
+        %Strategy{
+          description: "Gets the 3 lowest prices for the given item and calculates the average.",
+          id: :top_three_average,
+          name: "Top 3 Average"
+        },
+        %Strategy{
+          description: "Gets the 5 lowest prices for the given item and calculates the average.",
+          id: :top_five_average,
+          name: "Top 5 Average"
+        },
+        %Strategy{
+          description: "Gets the lowest price for the given item and beats it by 1.",
+          id: :lowest_minus_one,
+          name: "Lowest minus one"
+        },
+        %Strategy{
+          description: "Gets the lowest price for the given item and uses it.",
+          id: :equal_to_lowest,
+          name: "Equal to lowest"
+        }
+      ]
+
+      # Act and Assert
+      assert Manager.strategies() == {:ok, expected_strategies}
+    end
+  end
+end
