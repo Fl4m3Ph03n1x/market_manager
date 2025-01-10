@@ -188,12 +188,18 @@
     {
         "id": "steel_meridian",
         "name": "Steel Meridian",
-        "catalog": []
+        "catalog": [
+            "54a74454e779892d5e5155f5",
+            "54a74455e779892d5e5156b9"
+        ]
     },
     {
         "id": "arbiters_of_hexis",
         "name": "Arbiters of Hexis",
-        "catalog": []
+        "catalog": [
+            "54a74454e779892d5e515664",
+            "54a74454e779892d5e515645"
+        ]
     },
     {
         "id": "cephalon_suda",
