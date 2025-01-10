@@ -137,7 +137,7 @@ defmodule WebInterface.ActivateLive do
       err ->
         Logger.error("Failed to retrieve persistence data: #{inspect(err)}")
 
-        {:noreply, put_flash(socket, :error, "Multiple errors ocurred, please check the logs.")}
+        {:noreply, put_flash(socket, :error, "Multiple errors occurred, please check the logs.")}
     end
   end
 
