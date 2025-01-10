@@ -216,7 +216,7 @@ defmodule Manager.Saga.Activate do
     {:noreply, updated_state}
   end
 
-  # TODO: we we fail to place the order, we may want to retry / give up
+  # TODO: if we fail to place the order, we may want to retry / give up
   def handle_info(
         {:place_order, {:ok, placed_order}},
         %{
