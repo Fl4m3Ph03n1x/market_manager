@@ -68,7 +68,12 @@ defmodule Manager.WorkerTest do
   describe "activate" do
     setup do
       create_setup_file()
-      on_exit(&reset_setup_file/0)
+      create_watch_list_file()
+
+      on_exit(fn ->
+        reset_setup_file()
+        reset_watch_list_file()
+      end)
 
       bypass = Bypass.open(port: 8082)
       credentials = Credentials.new("an_email", "a_password")
@@ -214,52 +219,77 @@ defmodule Manager.WorkerTest do
         body = """
         {
           "payload": {
-            "orders": [
-                {
-                    "creation_date": "2017-09-19T02:01:29.000+00:00",
-                    "visible": true,
-                    "quantity": 1,
-                    "user": {
-                        "reputation": 1975,
-                        "locale": "en",
-                        "avatar": "user/avatar/5678a156cbfa8f02c9b814c3.png?0d832d1017240078ecf4bdeb0d08a101",
-                        "ingame_name": "Ealirinineomh",
-                        "last_seen": "2025-01-10T06:19:14.369+00:00",
-                        "id": "5678a156cbfa8f02c9b814c3",
-                        "region": "en",
-                        "status": "offline"
-                    },
-                    "last_update": "2019-11-24T01:58:58.000+00:00",
-                    "platinum": 18,
-                    "order_type": "sell",
-                    "platform": "pc",
-                    "id": "59c07a790f31396e83ed709b",
-                    "mod_rank": 0,
-                    "region": "en"
-                },
-                {
-                    "order_type": "sell",
-                    "last_update": "2021-08-23T07:28:38.000+00:00",
-                    "platform": "pc",
-                    "user": {
-                        "reputation": 262,
-                        "locale": "en",
-                        "avatar": "user/avatar/599d52da0f313979a13fad96.png?4499006929224dac2b142b9e246d76c4",
-                        "ingame_name": "ElysiumLeoSK",
-                        "last_seen": "2025-01-08T18:00:48.795+00:00",
-                        "id": "599d52da0f313979a13fad96",
-                        "region": "en",
-                        "status": "offline"
-                    },
-                    "quantity": 1,
-                    "creation_date": "2018-01-09T07:07:17.000+00:00",
-                    "visible": true,
-                    "platinum": 15,
-                    "id": "5a546a25d1d7bb035fec97c1",
-                    "mod_rank": 0,
-                    "region": "en"
-                }
-            ]
+              "orders": [
+                  {
+                      "creation_date": "2017-09-19T02:01:29.000+00:00",
+                      "visible": true,
+                      "quantity": 1,
+                      "user": {
+                          "reputation": 1977,
+                          "locale": "en",
+                          "avatar": "user/avatar/5678a156cbfa8f02c9b814c3.png?0d832d1017240078ecf4bdeb0d08a101",
+                          "ingame_name": "Ealirinineomh",
+                          "last_seen": "2025-01-13T04:21:53.899+00:00",
+                          "crossplay": false,
+                          "platform": "pc",
+                          "id": "5678a156cbfa8f02c9b814c3",
+                          "region": "en",
+                          "status": "online"
+                      },
+                      "last_update": "2019-11-24T01:58:58.000+00:00",
+                      "platinum": 18,
+                      "order_type": "sell",
+                      "id": "59c07a790f31396e83ed709b",
+                      "mod_rank": 0,
+                      "region": "en"
+                  },
+                  {
+                      "order_type": "sell",
+                      "last_update": "2021-08-23T07:28:38.000+00:00",
+                      "user": {
+                          "reputation": 262,
+                          "locale": "en",
+                          "avatar": "user/avatar/599d52da0f313979a13fad96.png?4499006929224dac2b142b9e246d76c4",
+                          "ingame_name": "ElysiumLeoSK",
+                          "last_seen": "2025-01-10T16:48:28.224+00:00",
+                          "crossplay": false,
+                          "platform": "pc",
+                          "id": "599d52da0f313979a13fad96",
+                          "region": "en",
+                          "status": "ingame"
+                      },
+                      "quantity": 1,
+                      "creation_date": "2018-01-09T07:07:17.000+00:00",
+                      "visible": true,
+                      "platinum": 15,
+                      "id": "5a546a25d1d7bb035fec97c1",
+                      "mod_rank": 0,
+                      "region": "en"
+                  },
+                  {
+                      "last_update": "2025-01-11T08:36:52.000+00:00",
+                      "quantity": 1,
+                      "user": {
+                          "reputation": 18,
+                          "locale": "en",
+                          "avatar": null,
+                          "last_seen": "2025-01-13T08:14:49.114+00:00",
+                          "ingame_name": "Evilwarboss",
+                          "crossplay": false,
+                          "platform": "pc",
+                          "id": "5a18b506089425052e4cb592",
+                          "region": "en",
+                          "status": "ingame"
+                      },
+                      "creation_date": "2018-07-25T03:41:00.000+00:00",
+                      "order_type": "sell",
+                      "platinum": 10,
+                      "visible": true,
+                      "id": "5b57f14cb15db0042d1fcf29",
+                      "mod_rank": 0,
+                      "region": "en"
+                  }
+              ]
           }
         }
         """
@@ -278,52 +308,77 @@ defmodule Manager.WorkerTest do
         body = """
         {
           "payload": {
-            "orders": [
-                {
-                    "creation_date": "2017-08-12T21:42:28.000+00:00",
-                    "visible": true,
-                    "quantity": 1,
-                    "user": {
-                        "reputation": 1975,
-                        "locale": "en",
-                        "avatar": "user/avatar/5678a156cbfa8f02c9b814c3.png?0d832d1017240078ecf4bdeb0d08a101",
-                        "ingame_name": "Ealirinineomh",
-                        "last_seen": "2025-01-10T06:19:14.369+00:00",
-                        "id": "5678a156cbfa8f02c9b814c3",
-                        "region": "en",
-                        "status": "offline"
-                    },
-                    "last_update": "2019-11-24T01:58:47.000+00:00",
-                    "platinum": 18,
-                    "order_type": "sell",
-                    "platform": "pc",
-                    "id": "598f76440f313951e3167944",
-                    "mod_rank": 0,
-                    "region": "en"
-                },
-                {
-                    "last_update": "2023-02-17T18:27:29.000+00:00",
-                    "creation_date": "2018-08-20T13:38:24.000+00:00",
-                    "user": {
-                        "reputation": 6,
-                        "locale": "en",
-                        "avatar": "user/avatar/5901a9a30f313932036b4184.png?861fd1b5e8feb05f8bda1ce653dd07fb",
-                        "ingame_name": "Bloody1Sword",
-                        "last_seen": "2025-01-05T19:40:48.101+00:00",
-                        "id": "5901a9a30f313932036b4184",
-                        "region": "en",
-                        "status": "offline"
-                    },
-                    "platinum": 10,
-                    "order_type": "sell",
-                    "visible": true,
-                    "platform": "pc",
-                    "quantity": 1,
-                    "id": "5b7ac4503ed75603d3638cb9",
-                    "mod_rank": 0,
-                    "region": "en"
-                }
-            ]
+              "orders": [
+                  {
+                      "creation_date": "2017-08-12T21:42:28.000+00:00",
+                      "visible": true,
+                      "quantity": 1,
+                      "user": {
+                          "reputation": 1977,
+                          "locale": "en",
+                          "avatar": "user/avatar/5678a156cbfa8f02c9b814c3.png?0d832d1017240078ecf4bdeb0d08a101",
+                          "ingame_name": "Ealirinineomh",
+                          "last_seen": "2025-01-13T04:21:53.899+00:00",
+                          "crossplay": false,
+                          "platform": "pc",
+                          "id": "5678a156cbfa8f02c9b814c3",
+                          "region": "en",
+                          "status": "online"
+                      },
+                      "last_update": "2019-11-24T01:58:47.000+00:00",
+                      "platinum": 18,
+                      "order_type": "sell",
+                      "id": "598f76440f313951e3167944",
+                      "mod_rank": 0,
+                      "region": "en"
+                  },
+                  {
+                      "order_type": "sell",
+                      "visible": true,
+                      "creation_date": "2018-07-25T03:40:35.000+00:00",
+                      "platinum": 10,
+                      "quantity": 1,
+                      "last_update": "2023-02-09T17:31:17.000+00:00",
+                      "user": {
+                          "reputation": 18,
+                          "locale": "en",
+                          "avatar": null,
+                          "last_seen": "2025-01-13T08:14:49.114+00:00",
+                          "ingame_name": "Evilwarboss",
+                          "crossplay": false,
+                          "platform": "pc",
+                          "id": "5a18b506089425052e4cb592",
+                          "region": "en",
+                          "status": "online"
+                      },
+                      "id": "5b57f1332550e9041b8d9c8a",
+                      "mod_rank": 0,
+                      "region": "en"
+                  },
+                  {
+                      "order_type": "sell",
+                      "quantity": 1,
+                      "platinum": 20,
+                      "visible": true,
+                      "user": {
+                          "reputation": 0,
+                          "platform": "pc",
+                          "crossplay": false,
+                          "locale": "en",
+                          "avatar": null,
+                          "last_seen": "2025-01-13T10:08:00.346+00:00",
+                          "ingame_name": "Ticklezz",
+                          "id": "675f493c39f475004213f4cc",
+                          "region": "en",
+                          "status": "ingame"
+                      },
+                      "creation_date": "2025-01-12T21:04:06.000+00:00",
+                      "last_update": "2025-01-13T07:44:22.000+00:00",
+                      "id": "67842e4671aa440009ee3492",
+                      "mod_rank": 3,
+                      "region": "en"
+                  }
+              ]
           }
         }
         """
@@ -341,54 +396,79 @@ defmodule Manager.WorkerTest do
       Bypass.expect_once(bypass, "GET", "/v1/items/gilded_truth/orders", fn conn ->
         body = """
         {
-          "payload": {
-            "orders": [
-                {
-                    "quantity": 1,
-                    "platinum": 14,
-                    "user": {
-                        "reputation": 2,
-                        "locale": "en",
-                        "avatar": null,
-                        "last_seen": "2025-01-03T17:21:46.737+00:00",
-                        "ingame_name": "lazerg20555",
-                        "id": "5a78b3fce9df0c054562135b",
-                        "region": "en",
-                        "status": "offline"
+            "payload": {
+                "orders": [
+                    {
+                        "order_type": "sell",
+                        "platinum": 12,
+                        "quantity": 1,
+                        "user": {
+                            "reputation": 36,
+                            "locale": "en",
+                            "avatar": "user/avatar/5b7bf16cdebecf04373da2bf.png?c2bda0157a8c8e48f01648ca9866d3be",
+                            "last_seen": "2025-01-13T02:58:09.665+00:00",
+                            "ingame_name": "tevinskii",
+                            "crossplay": false,
+                            "platform": "pc",
+                            "id": "5b7bf16cdebecf04373da2bf",
+                            "region": "en",
+                            "status": "ingame"
+                        },
+                        "creation_date": "2018-09-18T07:33:06.000+00:00",
+                        "last_update": "2024-12-07T08:04:08.000+00:00",
+                        "visible": true,
+                        "id": "5ba0aa3217f2f2014f4344e2",
+                        "mod_rank": 0,
+                        "region": "en"
                     },
-                    "platform": "pc",
-                    "last_update": "2018-03-12T20:02:01.000+00:00",
-                    "order_type": "sell",
-                    "visible": true,
-                    "creation_date": "2018-03-12T20:02:01.000+00:00",
-                    "id": "5aa6dcb9e47c5c0219e0e887",
-                    "mod_rank": 0,
-                    "region": "en"
-                },
-                {
-                    "order_type": "sell",
-                    "platinum": 12,
-                    "quantity": 1,
-                    "user": {
-                        "reputation": 36,
-                        "locale": "en",
-                        "avatar": "user/avatar/5b7bf16cdebecf04373da2bf.png?c2bda0157a8c8e48f01648ca9866d3be",
-                        "last_seen": "2025-01-10T10:14:11.746+00:00",
-                        "ingame_name": "tevinskii",
-                        "id": "5b7bf16cdebecf04373da2bf",
-                        "region": "en",
-                        "status": "offline"
+                    {
+                        "order_type": "sell",
+                        "quantity": 1,
+                        "platinum": 100,
+                        "user": {
+                            "reputation": 1027,
+                            "locale": "en",
+                            "avatar": "user/avatar/5686d3e3cbfa8f12f73672f1.png?4c3f058d716e3513efb955759d2049de",
+                            "ingame_name": "-BM-SniperKitten",
+                            "last_seen": "2025-01-13T02:21:38.247+00:00",
+                            "crossplay": false,
+                            "platform": "pc",
+                            "id": "5686d3e3cbfa8f12f73672f1",
+                            "region": "en",
+                            "status": "online"
+                        },
+                        "creation_date": "2019-09-04T12:41:10.000+00:00",
+                        "last_update": "2024-03-18T06:44:17.000+00:00",
+                        "visible": true,
+                        "id": "5d6fb0e6934a4d035b797593",
+                        "mod_rank": 3,
+                        "region": "en"
                     },
-                    "platform": "pc",
-                    "creation_date": "2018-09-18T07:33:06.000+00:00",
-                    "last_update": "2024-12-07T08:04:08.000+00:00",
-                    "visible": true,
-                    "id": "5ba0aa3217f2f2014f4344e2",
-                    "mod_rank": 0,
-                    "region": "en"
-                }
-            ]
-          }
+                    {
+                        "quantity": 1,
+                        "order_type": "sell",
+                        "platinum": 14,
+                        "user": {
+                            "reputation": 5,
+                            "locale": "en",
+                            "avatar": null,
+                            "last_seen": "2025-01-13T06:31:53.982+00:00",
+                            "ingame_name": "stinkydoge773",
+                            "crossplay": false,
+                            "platform": "pc",
+                            "id": "5b306745c34b920652b5bfb4",
+                            "region": "en",
+                            "status": "ingame"
+                        },
+                        "creation_date": "2020-07-13T05:02:43.000+00:00",
+                        "last_update": "2020-07-13T22:20:31.000+00:00",
+                        "visible": true,
+                        "id": "5f0beaf3d48cbd016e5e20e8",
+                        "mod_rank": 0,
+                        "region": "en"
+                    }
+                ]
+            }
         }
         """
 
@@ -405,54 +485,79 @@ defmodule Manager.WorkerTest do
       Bypass.expect_once(bypass, "GET", "/v1/items/blade_of_truth/orders", fn conn ->
         body = """
         {
-          "payload": {
-            "orders": [
-                {
-                    "visible": true,
-                    "creation_date": "2018-03-12T20:02:18.000+00:00",
-                    "platform": "pc",
-                    "user": {
-                        "reputation": 2,
-                        "locale": "en",
-                        "avatar": null,
-                        "last_seen": "2025-01-03T17:21:46.737+00:00",
-                        "ingame_name": "lazerg20555",
-                        "id": "5a78b3fce9df0c054562135b",
-                        "region": "en",
-                        "status": "offline"
+            "payload": {
+                "orders": [
+                    {
+                        "quantity": 10,
+                        "platinum": 19,
+                        "order_type": "sell",
+                        "user": {
+                            "reputation": 32,
+                            "locale": "en",
+                            "avatar": "user/avatar/5aa2b01449ef000cb71214f7.png?298c6d87e287773609cc9db362372bf3",
+                            "last_seen": "2025-01-13T09:26:11.288+00:00",
+                            "ingame_name": "PrimedDaniel",
+                            "crossplay": false,
+                            "platform": "pc",
+                            "id": "5aa2b01449ef000cb71214f7",
+                            "region": "en",
+                            "status": "offline"
+                        },
+                        "creation_date": "2019-07-22T16:45:59.000+00:00",
+                        "last_update": "2025-01-06T14:24:28.000+00:00",
+                        "visible": true,
+                        "id": "5d35e847efe513024f0a7f10",
+                        "mod_rank": 0,
+                        "region": "en"
                     },
-                    "platinum": 14,
-                    "quantity": 1,
-                    "last_update": "2018-03-12T20:02:18.000+00:00",
-                    "order_type": "sell",
-                    "id": "5aa6dcca12434f02120289aa",
-                    "mod_rank": 0,
-                    "region": "en"
-                },
-                {
-                    "quantity": 10,
-                    "platinum": 19,
-                    "order_type": "sell",
-                    "user": {
-                        "reputation": 32,
-                        "locale": "en",
-                        "avatar": "user/avatar/5aa2b01449ef000cb71214f7.png?298c6d87e287773609cc9db362372bf3",
-                        "last_seen": "2025-01-09T01:00:46.499+00:00",
-                        "ingame_name": "PrimedDaniel",
-                        "id": "5aa2b01449ef000cb71214f7",
-                        "region": "en",
-                        "status": "offline"
+                    {
+                        "order_type": "sell",
+                        "quantity": 1,
+                        "platinum": 100,
+                        "user": {
+                            "reputation": 1027,
+                            "locale": "en",
+                            "avatar": "user/avatar/5686d3e3cbfa8f12f73672f1.png?4c3f058d716e3513efb955759d2049de",
+                            "ingame_name": "-BM-SniperKitten",
+                            "last_seen": "2025-01-13T02:21:38.247+00:00",
+                            "crossplay": false,
+                            "platform": "pc",
+                            "id": "5686d3e3cbfa8f12f73672f1",
+                            "region": "en",
+                            "status": "offline"
+                        },
+                        "creation_date": "2019-09-04T12:40:39.000+00:00",
+                        "last_update": "2024-03-18T06:45:20.000+00:00",
+                        "visible": true,
+                        "id": "5d6fb0c7b6afee035a643e7b",
+                        "mod_rank": 3,
+                        "region": "en"
                     },
-                    "platform": "pc",
-                    "creation_date": "2019-07-22T16:45:59.000+00:00",
-                    "last_update": "2025-01-06T14:24:28.000+00:00",
-                    "visible": true,
-                    "id": "5d35e847efe513024f0a7f10",
-                    "mod_rank": 0,
-                    "region": "en"
-                }
-            ]
-          }
+                    {
+                        "platinum": 14,
+                        "quantity": 6,
+                        "order_type": "sell",
+                        "user": {
+                            "reputation": 111,
+                            "locale": "en",
+                            "avatar": "user/avatar/5d826e71879286050eebfc76.png?cadedd0ef194b4edd8ac3ed64d3cfbdb",
+                            "last_seen": "2025-01-13T10:33:21.964+00:00",
+                            "ingame_name": "Skyz72",
+                            "crossplay": false,
+                            "platform": "pc",
+                            "id": "5d826e71879286050eebfc76",
+                            "region": "en",
+                            "status": "offline"
+                        },
+                        "creation_date": "2020-01-05T20:14:15.000+00:00",
+                        "last_update": "2025-01-10T11:52:32.000+00:00",
+                        "visible": true,
+                        "id": "5e124397145697056201a5cd",
+                        "mod_rank": 3,
+                        "region": "en"
+                    }
+                ]
+            }
         }
         """
 
