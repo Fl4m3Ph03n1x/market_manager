@@ -68,8 +68,8 @@ defmodule Shared.Data.OrderInfo.User do
              is_boolean(crossplay) do
     updated_user =
       user
-      |> Map.put("status", String.to_existing_atom(status))
-      |> Map.put("platform", String.to_existing_atom(platform))
+      |> Map.put("status", String.to_atom(status))
+      |> Map.put("platform", String.to_atom(platform))
 
     Structs.string_map_to_struct(updated_user, __MODULE__)
   end

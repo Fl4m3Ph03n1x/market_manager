@@ -75,7 +75,7 @@ defmodule Shared.Data.OrderInfo do
       when is_boolean(visible) and is_valid_order_type(order_type) and
              is_pos_integer(platinum) and is_map(user) do
     order_info
-    |> Map.put("order_type", String.to_existing_atom(order_type))
+    |> Map.put("order_type", String.to_atom(order_type))
     |> Structs.string_map_to_struct(__MODULE__)
     |> Map.put(:user, User.new(user))
   end
