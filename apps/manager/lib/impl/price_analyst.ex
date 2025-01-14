@@ -62,7 +62,7 @@ defmodule Manager.Impl.PriceAnalyst do
   defp user_ingame?(order), do: order.user.status == :ingame
 
   @spec can_trade?(OrderInfo.t()) :: boolean
-  defp can_trade?(order), do: order.user.platform == :pc or order.user.crossplay
+  defp can_trade?(order), do: order.user.platform == :pc or order.user.crossplay == true
 
   @spec sell_order?(OrderInfo.t()) :: boolean
   defp sell_order?(order), do: order.order_type == :sell
