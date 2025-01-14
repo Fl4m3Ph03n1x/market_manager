@@ -18,10 +18,10 @@ defmodule Manager.PriceAnalystTest do
       ]
 
       product = Helpers.create_product(min_price: 1, default_price: 1)
-      strategy = Helpers.strategy(:top_three_average)
+      strategy_id = :top_three_average
 
       # Act
-      actual = PriceAnalyst.calculate_price(product, order_info, strategy)
+      actual = PriceAnalyst.calculate_price(product, order_info, strategy_id)
       expected = 50
 
       # Assert
@@ -32,10 +32,10 @@ defmodule Manager.PriceAnalystTest do
       # Arrange
       order_info = []
       product = Helpers.create_product(min_price: 14, default_price: 20)
-      strategy = Helpers.strategy(:top_three_average)
+      strategy_id = :top_three_average
 
       # Act
-      actual = PriceAnalyst.calculate_price(product, order_info, strategy)
+      actual = PriceAnalyst.calculate_price(product, order_info, strategy_id)
       expected = 20
 
       # Assert
@@ -50,10 +50,10 @@ defmodule Manager.PriceAnalystTest do
       ]
 
       product = Helpers.create_product(min_price: 14, default_price: 16)
-      strategy = Helpers.strategy(:top_three_average)
+      strategy_id = :top_three_average
 
       # Act
-      actual = PriceAnalyst.calculate_price(product, order_info, strategy)
+      actual = PriceAnalyst.calculate_price(product, order_info, strategy_id)
       expected = 14
 
       # Assert
@@ -75,10 +75,10 @@ defmodule Manager.PriceAnalystTest do
       ]
 
       product = Helpers.create_product(min_price: 1, default_price: 1)
-      strategy = Helpers.strategy(:top_five_average)
+      strategy_id = :top_five_average
 
       # Act
-      actual = PriceAnalyst.calculate_price(product, order_info, strategy)
+      actual = PriceAnalyst.calculate_price(product, order_info, strategy_id)
       expected = 53
 
       # Assert
@@ -95,10 +95,10 @@ defmodule Manager.PriceAnalystTest do
       ]
 
       product = Helpers.create_product(min_price: 1, default_price: 1)
-      strategy = Helpers.strategy(:top_five_average)
+      strategy_id = :top_five_average
 
       # Act
-      actual = PriceAnalyst.calculate_price(product, order_info, strategy)
+      actual = PriceAnalyst.calculate_price(product, order_info, strategy_id)
       expected = 54
 
       # Assert
@@ -120,10 +120,10 @@ defmodule Manager.PriceAnalystTest do
       ]
 
       product = Helpers.create_product(min_price: 1, default_price: 1)
-      strategy = Helpers.strategy(:top_three_average)
+      strategy_id = :top_three_average
 
       # Act
-      actual = PriceAnalyst.calculate_price(product, order_info, strategy)
+      actual = PriceAnalyst.calculate_price(product, order_info, strategy_id)
       expected = 50
 
       # Assert
@@ -138,10 +138,10 @@ defmodule Manager.PriceAnalystTest do
       ]
 
       product = Helpers.create_product(min_price: 1, default_price: 1)
-      strategy = Helpers.strategy(:top_three_average)
+      strategy_id = :top_three_average
 
       # Act
-      actual = PriceAnalyst.calculate_price(product, order_info, strategy)
+      actual = PriceAnalyst.calculate_price(product, order_info, strategy_id)
       expected = 53
 
       # Assert
@@ -163,10 +163,10 @@ defmodule Manager.PriceAnalystTest do
       ]
 
       product = Helpers.create_product(min_price: 1, default_price: 1)
-      strategy = Helpers.strategy(:equal_to_lowest)
+      strategy_id = :equal_to_lowest
 
       # Act
-      actual = PriceAnalyst.calculate_price(product, order_info, strategy)
+      actual = PriceAnalyst.calculate_price(product, order_info, strategy_id)
       expected = 45
 
       # Assert
@@ -188,10 +188,10 @@ defmodule Manager.PriceAnalystTest do
       ]
 
       product = Helpers.create_product(min_price: 1, default_price: 1)
-      strategy = Helpers.strategy(:lowest_minus_one)
+      strategy_id = :lowest_minus_one
 
       # Act
-      actual = PriceAnalyst.calculate_price(product, order_info, strategy)
+      actual = PriceAnalyst.calculate_price(product, order_info, strategy_id)
       expected = 44
 
       # Assert

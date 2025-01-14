@@ -53,19 +53,19 @@ defmodule Manager.Impl.PriceAnalyst do
 
   @spec valid_order?(OrderInfo.t()) :: boolean
   defp valid_order?(order),
-    do: visible?(order) and user_ingame?(order) and platform_pc?(order) and sell_order?(order)
+    do: visible?(order) and user_ingame?(order) and can_trade?(order) and sell_order?(order)
 
   @spec visible?(OrderInfo.t()) :: boolean
   defp visible?(order), do: order.visible == true
 
   @spec user_ingame?(OrderInfo.t()) :: boolean
-  defp user_ingame?(order), do: order.user.status == "ingame"
+  defp user_ingame?(order), do: order.user.status == :ingame
 
-  @spec platform_pc?(OrderInfo.t()) :: boolean
-  defp platform_pc?(order), do: order.platform == "pc"
+  @spec can_trade?(OrderInfo.t()) :: boolean
+  defp can_trade?(order), do: order.user.platform == :pc or order.user.crossplay == true
 
   @spec sell_order?(OrderInfo.t()) :: boolean
-  defp sell_order?(order), do: order.order_type == "sell"
+  defp sell_order?(order), do: order.order_type == :sell
 
   @spec price_ascending(OrderInfo.t(), OrderInfo.t()) :: boolean
   defp price_ascending(order1, order2), do: order1.platinum < order2.platinum
