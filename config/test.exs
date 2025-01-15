@@ -25,4 +25,4 @@ config :auction_house,
 
 config :rate_limiter,
   algorithm: RateLimiter.LeakyBucket,
-  requests_per_second: 1
+  requests_per_second: 100
