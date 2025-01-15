@@ -3,7 +3,7 @@ defmodule Manager.Saga.Deactivate do
 
   alias AuctionHouse
   alias Manager.Runtime.SagaSupervisor
-  alias Shared.Data.User
+  alias Shared.Data.{Product, Syndicate, User}
   alias Store
 
   @default_deps %{
@@ -57,23 +57,30 @@ defmodule Manager.Saga.Deactivate do
   def handle_info(
         {:get_user_orders, {:ok, placed_orders}},
         %{
-          deps: %{store: _store, auction_house: auction_house},
+          deps: %{store: store, auction_house: auction_house},
           args: %{syndicate_ids: _syndicate_ids},
           user: _user,
           from: from
         } = state
       ) do
-    # We delete all orders because after this step is complete, we do a full reactivation of the remaining syndicates.
-    orders_to_delete_tracker =
-      placed_orders
-      |> Enum.map(&{&1, nil})
-      |> Map.new()
+    with {:ok, active_syndicate_ids} <- get_active_syndicate_ids(store),
+         {:ok, active_syndicate_product_ids} <- get_active_syndicate_product_ids(active_syndicate_ids, store) do
+      # We delete all orders that belong to known syndicates because after this step is complete, we do a full
+      # reactivation of the remaining syndicates (if they are still active).
+      orders_to_delete =
+        Enum.filter(placed_orders, fn placed_order -> placed_order.item_id in active_syndicate_product_ids end)
 
-    updated_state = Map.put(state, :orders_to_delete_tracker, orders_to_delete_tracker)
+      orders_to_delete_tracker =
+        orders_to_delete
+        |> Enum.map(&{&1, nil})
+        |> Map.new()
 
-    Enum.each(placed_orders, &auction_house.delete_order/1)
-    send(from, {:deactivate, :deleting_orders})
-    {:noreply, updated_state}
+      updated_state = Map.put(state, :orders_to_delete_tracker, orders_to_delete_tracker)
+
+      Enum.each(orders_to_delete, &auction_house.delete_order/1)
+      send(from, {:deactivate, :deleting_orders})
+      {:noreply, updated_state}
+    end
   end
 
   # TODO: if we fail to delete the order, we may want to retry / give up
@@ -101,8 +108,7 @@ defmodule Manager.Saga.Deactivate do
 
       send(
         from,
-        {:deactivate,
-         {:order_deleted, product.name, deleted_orders_count, orders_to_delete_count}}
+        {:deactivate, {:order_deleted, product.name, deleted_orders_count, orders_to_delete_count}}
       )
 
       if all_orders_deleted? do
@@ -121,6 +127,24 @@ defmodule Manager.Saga.Deactivate do
       else
         {:noreply, updated_state}
       end
+    end
+  end
+
+  @spec get_active_syndicate_ids(module()) :: {:ok, [Syndicate.id()]} | {:error, :file.posix() | Jason.DecodeError.t()}
+  defp get_active_syndicate_ids(store) do
+    case store.list_active_syndicates() do
+      {:ok, syndicates} -> {:ok, Map.keys(syndicates)}
+      error -> error
+    end
+  end
+
+  @spec get_active_syndicate_product_ids([Syndicate.id()], module()) ::
+          {:ok, [Product.id()]}
+          | {:error, :file.posix() | Jason.DecodeError.t() | {:syndicate_not_found, [Syndicate.id()]}}
+  defp get_active_syndicate_product_ids(syndicate_ids, store) do
+    case store.list_products(syndicate_ids) do
+      {:ok, products} -> {:ok, Enum.map(products, & &1.id)}
+      error -> error
     end
   end
 end
