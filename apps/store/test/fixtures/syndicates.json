@@ -204,7 +204,9 @@
     {
         "id": "cephalon_suda",
         "name": "Cephalon Suda",
-        "catalog": []
+        "catalog": [
+            "54a74454e779892d5e5155ee"
+        ]
     },
     {
         "id": "cephalon_simaris",

@@ -1199,5 +1199,11 @@
 		"id": "54a74454e779892d5e515645",
 		"min_price": 14,
 		"default_price": 16
+	},
+	{
+		"name": "Entropy Flight",
+		"id": "54a74454e779892d5e5155ee",
+		"min_price": 14,
+		"default_price": 16
 	}
 ]
