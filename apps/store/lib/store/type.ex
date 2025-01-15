@@ -5,9 +5,8 @@ defmodule Store.Type do
   a cyclical dependency between them.
   """
 
-  alias WebInterface.Persistence.Syndicate
   alias Jason
-  alias Shared.Data.{Authorization, Product, Syndicate, User}
+  alias Shared.Data.{Authorization, Product, Syndicate, Strategy, User}
 
   ##########
   # Types  #
@@ -36,5 +35,6 @@ defmodule Store.Type do
   @type activate_syndicates_response :: :ok | {:error, :file.posix() | Jason.DecodeError.t()}
   @type deactivate_syndicates_response :: :ok | {:error, :file.posix() | Jason.DecodeError.t()}
   @type list_active_syndicates_response ::
-          {:ok, [Syndicate.t()]} | {:error, :file.posix() | Jason.DecodeError.t()}
+          {:ok, %{Syndicate.id() => Strategy.id()}}
+          | {:error, :file.posix() | Jason.DecodeError.t()}
 end
