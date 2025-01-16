@@ -905,6 +905,9 @@ defmodule Manager.WorkerTest do
       assert_receive({:activate, {:order_placed, "Gilded Truth", 3, 4}}, @timeout)
       assert_receive({:activate, {:order_placed, "Justice Blades", 4, 4}}, @timeout)
       assert_receive({:activate, :done}, @timeout)
+
+      assert Manager.active_syndicates() ==
+               {:ok, %{steel_meridian: :top_five_average, arbiters_of_hexis: :top_three_average}}
     end
   end
 
@@ -1686,6 +1689,8 @@ defmodule Manager.WorkerTest do
 
       assert_receive({:activate, {:order_placed, "Entropy Flight", 1, 1}}, @timeout)
       assert_receive({:activate, :done}, @timeout)
+
+      assert Manager.active_syndicates() == {:ok, %{cephalon_suda: :lowest_minus_one}}
     end
   end
 
