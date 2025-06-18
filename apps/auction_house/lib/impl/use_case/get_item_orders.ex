@@ -3,11 +3,11 @@ defmodule AuctionHouse.Impl.UseCase.GetItemOrders do
   Requests all the sell orders for the item with the given name.
   """
 
-  alias AuctionHouse.Type
   alias AuctionHouse.Impl.{HttpAsyncClient, UseCase}
   alias AuctionHouse.Impl.UseCase.Data.{Request, Response}
-  alias Shared.Data.OrderInfo
+  alias AuctionHouse.Type
   alias Jason
+  alias Shared.Data.OrderInfo
 
   @behaviour UseCase
 

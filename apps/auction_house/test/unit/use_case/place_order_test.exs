@@ -3,8 +3,8 @@ defmodule AuctionHouse.Impl.UseCase.PlaceOrderTest do
 
   use ExUnit.Case, async: true
 
+  alias AuctionHouse.Impl.UseCase.Data.{Metadata, Request, Response}
   alias AuctionHouse.Impl.UseCase.PlaceOrder
-  alias AuctionHouse.Impl.UseCase.Data.{Request, Response, Metadata}
   alias Jason
   alias Shared.Data.{Authorization, Order, PlacedOrder}
 

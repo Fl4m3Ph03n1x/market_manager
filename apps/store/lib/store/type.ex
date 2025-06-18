@@ -6,7 +6,7 @@ defmodule Store.Type do
   """
 
   alias Jason
-  alias Shared.Data.{Authorization, Product, Syndicate, Strategy, User}
+  alias Shared.Data.{Authorization, Product, Strategy, Syndicate, User}
 
   ##########
   # Types  #

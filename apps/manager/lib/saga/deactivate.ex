@@ -1,4 +1,8 @@
 defmodule Manager.Saga.Deactivate do
+  @moduledoc """
+  Creates a process that will be responsible for the entire deactivation flow.
+  """
+
   use GenServer, restart: :transient
 
   alias AuctionHouse
@@ -41,13 +45,14 @@ defmodule Manager.Saga.Deactivate do
           from: from
         } = state
       ) do
-    with {:ok, {_auth, %User{} = user}} <- auction_house.get_saved_login() do
-      auction_house.get_user_orders(user.ingame_name)
-      updated_state = Map.put(state, :user, user)
+    case auction_house.get_saved_login() do
+      {:ok, {_auth, %User{} = user}} ->
+        auction_house.get_user_orders(user.ingame_name)
+        updated_state = Map.put(state, :user, user)
 
-      send(from, {:deactivate, :get_user_orders})
-      {:noreply, updated_state}
-    else
+        send(from, {:deactivate, :get_user_orders})
+        {:noreply, updated_state}
+
       err ->
         {:stop, err, state}
     end

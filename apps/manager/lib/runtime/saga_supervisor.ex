@@ -1,4 +1,9 @@
 defmodule Manager.Runtime.SagaSupervisor do
+  @moduledoc """
+  Interface between the manager and the saga processes. Uses a Dynamic Supervisor to keep the application always
+  running.
+  """
+
   use DynamicSupervisor
 
   alias Manager.Saga.{Activate, Deactivate, Login}

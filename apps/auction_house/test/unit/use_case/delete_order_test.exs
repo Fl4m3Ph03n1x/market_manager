@@ -3,8 +3,8 @@ defmodule AuctionHouse.Impl.UseCase.DeleteOrderTest do
 
   use ExUnit.Case, async: true
 
+  alias AuctionHouse.Impl.UseCase.Data.{Metadata, Request, Response}
   alias AuctionHouse.Impl.UseCase.DeleteOrder
-  alias AuctionHouse.Impl.UseCase.Data.{Request, Response, Metadata}
   alias Jason
   alias Shared.Data.{Authorization, PlacedOrder}
 

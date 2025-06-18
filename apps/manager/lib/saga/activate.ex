@@ -1,4 +1,8 @@
 defmodule Manager.Saga.Activate do
+  @moduledoc """
+  Creates a process that will be responsible for the entire activation flow.
+  """
+
   use GenServer, restart: :transient
 
   alias AuctionHouse
@@ -80,33 +84,39 @@ defmodule Manager.Saga.Activate do
           from: from
         } = state
       ) do
-    with {:ok, total_products} <- syndicates_with_strategy |> Map.keys() |> store.list_products() do
-      order_number_limit = calculate_order_limit(placed_orders, total_products, limit, patreon?)
+    products =
+      syndicates_with_strategy
+      |> Map.keys()
+      |> store.list_products()
 
-      if order_number_limit == 0 do
-        send(from, {:activate, {:ok, :no_slots_free}})
-        {:stop, :normal, state}
-      else
-        product_prices =
-          Enum.reduce(total_products, %{}, fn product, prices ->
-            Map.put(prices, product, nil)
-          end)
+    case products do
+      {:ok, total_products} ->
+        order_number_limit = calculate_order_limit(placed_orders, total_products, limit, patreon?)
 
-        updated_state =
-          state
-          |> Map.put(:total_products_count, length(total_products))
-          |> Map.put(:product_prices, product_prices)
-          |> Map.put(:order_number_limit, order_number_limit)
+        if order_number_limit == 0 do
+          send(from, {:activate, {:ok, :no_slots_free}})
+          {:stop, :normal, state}
+        else
+          product_prices =
+            Enum.reduce(total_products, %{}, fn product, prices ->
+              Map.put(prices, product, nil)
+            end)
 
-        product_prices
-        |> Map.keys()
-        |> Enum.map(& &1.name)
-        |> Enum.each(&auction_house.get_item_orders/1)
+          updated_state =
+            state
+            |> Map.put(:total_products_count, length(total_products))
+            |> Map.put(:product_prices, product_prices)
+            |> Map.put(:order_number_limit, order_number_limit)
 
-        send(from, {:activate, {:ok, :calculating_item_prices}})
-        {:noreply, updated_state}
-      end
-    else
+          product_prices
+          |> Map.keys()
+          |> Enum.map(& &1.name)
+          |> Enum.each(&auction_house.get_item_orders/1)
+
+          send(from, {:activate, {:ok, :calculating_item_prices}})
+          {:noreply, updated_state}
+        end
+
       err ->
         send(from, {:activate, {:error, {:get_item_orders, err}}})
         {:stop, err, state}

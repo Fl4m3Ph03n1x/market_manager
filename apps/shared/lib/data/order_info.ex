@@ -36,8 +36,8 @@ defmodule Shared.Data.OrderInfo do
 
   import Shared.Utils.ExtraGuards
 
-  alias Shared.Utils.Structs
   alias __MODULE__.User
+  alias Shared.Utils.Structs
 
   @type visible :: boolean()
   @type order_type :: :sell | :buy

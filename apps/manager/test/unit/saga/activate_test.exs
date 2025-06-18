@@ -5,17 +5,17 @@ defmodule Manager.Saga.ActivateTest do
 
   import Mock
 
-  alias Helpers
-
-  alias Manager.Saga.Activate
-  alias Store
   alias AuctionHouse
+  alias Helpers
+  alias Manager.Saga.Activate
 
   alias Shared.Data.{
     Authorization,
     Product,
     User
   }
+
+  alias Store
 
   @timeout 5000
 

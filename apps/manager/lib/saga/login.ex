@@ -1,4 +1,8 @@
 defmodule Manager.Saga.Login do
+  @moduledoc """
+  Creates a process that will be responsible for the entire login flow.
+  """
+
   use GenServer, restart: :transient
 
   alias AuctionHouse

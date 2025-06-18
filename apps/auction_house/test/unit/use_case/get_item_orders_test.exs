@@ -3,8 +3,8 @@ defmodule AuctionHouse.Impl.UseCase.GetItemOrdersTest do
 
   use ExUnit.Case, async: true
 
+  alias AuctionHouse.Impl.UseCase.Data.{Metadata, Request, Response}
   alias AuctionHouse.Impl.UseCase.GetItemOrders
-  alias AuctionHouse.Impl.UseCase.Data.{Request, Response, Metadata}
   alias Jason
   alias Shared.Data.OrderInfo
   alias Shared.Data.OrderInfo.User

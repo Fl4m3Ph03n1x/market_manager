@@ -8,8 +8,8 @@ defmodule Manager.Runtime.Worker do
 
   use GenServer
 
-  alias Manager.Type
   alias Manager.Impl.PriceAnalyst
+  alias Manager.Type
 
   @opaque state :: [
             store: module(),

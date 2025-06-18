@@ -3,11 +3,11 @@ defmodule AuctionHouse.Impl.UseCase.PlaceOrder do
   Places a sell order in the auction house and returns the result as a PlacedOrder.
   """
 
-  alias AuctionHouse.Type
   alias AuctionHouse.Impl.{HttpAsyncClient, UseCase}
   alias AuctionHouse.Impl.UseCase.Data.{Request, Response}
-  alias Shared.Data.{Authorization, PlacedOrder}
+  alias AuctionHouse.Type
   alias Jason
+  alias Shared.Data.{Authorization, PlacedOrder}
 
   @behaviour UseCase
 
