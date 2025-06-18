@@ -1,6 +1,6 @@
 defmodule AuctionHouse.Runtime.AuctionSupervisor do
   @moduledoc """
-  Supervisor of the AuctionHouse application that supervises both the RaterLimiter and the Server.
+  Supervisor of the AuctionHouse application that supervises both the RateLimiter and the Server.
   """
 
   use Supervisor
