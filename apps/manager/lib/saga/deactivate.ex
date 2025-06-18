@@ -88,7 +88,6 @@ defmodule Manager.Saga.Deactivate do
     end
   end
 
-  # TODO: if we fail to delete the order, we may want to retry / give up
   def handle_info(
         {:delete_order, {:ok, placed_order}},
         %{

@@ -99,7 +99,6 @@ defmodule RateLimiter.LeakyBucket do
 
   def handle_info({:DOWN, _ref, :process, _pid, reason}, state) do
     # Task failed and died
-    # TODO: find a way to enqueue request again
     Logger.error("Task failed with reason: #{reason}")
     {:noreply, state}
   end
