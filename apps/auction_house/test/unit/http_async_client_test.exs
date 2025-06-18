@@ -8,6 +8,8 @@ defmodule AuctionHouse.Impl.HttpAsyncClientTest do
   alias HTTPoison
   alias Shared.Data.Authorization
 
+  alias AuctionHouse.Impl.HttpAsyncClientTest.{DeleteClient, GetClient1, GetClient2, PostClient}
+
   describe "post/6" do
     test "calls rate limiter correctly" do
       url = "www.warframe.market.com/api/v1"
@@ -24,7 +26,7 @@ defmodule AuctionHouse.Impl.HttpAsyncClientTest do
       defmodule PostLimiter do
         def make_request(request, {_, {_response_handler, original_req}} = _handler) do
           assert request ==
-                   {&AuctionHouse.Impl.HttpAsyncClientTest.PostClient.post/3,
+                   {&PostClient.post/3,
                     [
                       "www.warframe.market.com/api/v1",
                       "{}",
@@ -68,7 +70,7 @@ defmodule AuctionHouse.Impl.HttpAsyncClientTest do
       defmodule DeleteLimiter do
         def make_request(request, {_, {_response_handler, original_req}} = _handler) do
           assert request ==
-                   {&AuctionHouse.Impl.HttpAsyncClientTest.DeleteClient.delete/2,
+                   {&DeleteClient.delete/2,
                     [
                       "www.warframe.market.com/api/v1",
                       [
@@ -111,7 +113,7 @@ defmodule AuctionHouse.Impl.HttpAsyncClientTest do
       defmodule GetLimiter1 do
         def make_request(request, {_, {_response_handler, original_req}} = _handler) do
           assert request ==
-                   {&AuctionHouse.Impl.HttpAsyncClientTest.GetClient1.get/2,
+                   {&GetClient1.get/2,
                     [
                       "www.warframe.market.com/api/v1",
                       [
@@ -151,7 +153,7 @@ defmodule AuctionHouse.Impl.HttpAsyncClientTest do
       defmodule GetLimiter2 do
         def make_request(request, {_, {_response_handler, original_req}} = _handler) do
           assert request ==
-                   {&AuctionHouse.Impl.HttpAsyncClientTest.GetClient2.get/2,
+                   {&GetClient2.get/2,
                     [
                       "www.warframe.market.com/api/v1",
                       [

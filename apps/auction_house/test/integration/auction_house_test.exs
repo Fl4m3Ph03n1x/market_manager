@@ -4,6 +4,7 @@ defmodule AuctionHouseTest do
   use ExUnit.Case, async: false
 
   alias AuctionHouse
+  alias AuctionHouse.Runtime.AuctionSupervisor
   alias Bypass
   alias Shared.Data.{Authorization, Credentials, Order, OrderInfo, PlacedOrder}
   alias Shared.Data.OrderInfo.User
@@ -13,7 +14,7 @@ defmodule AuctionHouseTest do
 
   setup_all do
     bypass = Bypass.open(port: @test_port)
-    {:ok, _pid} = AuctionHouse.Runtime.AuctionSupervisor.start_link()
+    {:ok, _pid} = AuctionSupervisor.start_link()
 
     %{
       bypass: bypass
