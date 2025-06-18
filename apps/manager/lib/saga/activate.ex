@@ -97,10 +97,7 @@ defmodule Manager.Saga.Activate do
           send(from, {:activate, {:ok, :no_slots_free}})
           {:stop, :normal, state}
         else
-          product_prices =
-            Enum.reduce(total_products, %{}, fn product, prices ->
-              Map.put(prices, product, nil)
-            end)
+          product_prices = initiate_product_prices(total_products)
 
           updated_state =
             state
@@ -282,6 +279,13 @@ defmodule Manager.Saga.Activate do
   ###########
   # Private #
   ###########
+
+  @spec initiate_product_prices([Product.t()]) :: %{Product.t() => nil}
+  defp initiate_product_prices(total_products) do
+    Enum.reduce(total_products, %{}, fn product, prices ->
+      Map.put(prices, product, nil)
+    end)
+  end
 
   @spec calculate_order_limit([PlacedOrder.t()], [Product.t()], pos_integer(), boolean()) ::
           non_neg_integer()
