@@ -102,8 +102,7 @@ defmodule AuctionHouseTest do
                   "sub_icon" => nil,
                   "mod_max_rank" => 3,
                   "icon_format" => "port",
-                  "thumb" =>
-                    "items/images/en/thumbs/despoil.2633a2c7793d85b21d22cb4c4a0b70cf.128x128.png",
+                  "thumb" => "items/images/en/thumbs/despoil.2633a2c7793d85b21d22cb4c4a0b70cf.128x128.png",
                   "url_name" => "despoil",
                   "icon" => "items/images/en/despoil.2633a2c7793d85b21d22cb4c4a0b70cf.png",
                   "id" => "54e644ffe779897594fa68cd",
@@ -174,9 +173,7 @@ defmodule AuctionHouseTest do
       :ok = AuctionHouse.delete_order(placed_order)
 
       assert_receive(
-        {:delete_order,
-         {:ok,
-          %PlacedOrder{item_id: "57c73be094b4b0f159ab5e15", order_id: "5ee71a2604d55c0a5cbdc3c2"}}},
+        {:delete_order, {:ok, %PlacedOrder{item_id: "57c73be094b4b0f159ab5e15", order_id: "5ee71a2604d55c0a5cbdc3c2"}}},
         3000
       )
     end
@@ -188,57 +185,64 @@ defmodule AuctionHouseTest do
     } do
       # Arrange
       Bypass.expect(bypass, "GET", "/v1/items/:item_name/orders", fn conn ->
-        response = %{
-          "payload" => %{
-            "orders" => [
-              %{
-                "creation_date" => "2019-01-05T20:52:40.000+00:00",
-                "id" => "5c311918716c98021463eb32",
-                "last_update" => "2019-04-01T09:39:58.000+00:00",
-                "order_type" => "sell",
-                "platform" => "pc",
-                "platinum" => 45,
-                "quantity" => 1,
-                "region" => "en",
-                "user" => %{
-                  "avatar" => nil,
-                  "id" => "598c96d60f313948524a2b66",
-                  "ingame_name" => "Elect4k",
-                  "last_seen" => "2020-07-20T18:20:28.422+00:00",
-                  "region" => "en",
-                  "reputation" => 2,
-                  "reputation_bonus" => 0,
-                  "status" => "ingame"
-                },
-                "visible" => true
-              },
-              %{
-                "creation_date" => "2019-02-08T22:11:22.000+00:00",
-                "id" => "5c5dfe8a83d1620563a75a7d",
-                "last_update" => "2020-07-02T14:53:06.000+00:00",
-                "order_type" => "sell",
-                "platform" => "pc",
-                "platinum" => 30,
-                "quantity" => 2,
-                "region" => "en",
-                "user" => %{
-                  "avatar" =>
-                    "user/avatar/55d77904e779893a9827aee2.png?9b0eed7b4885f4ec4275240b3035aa55",
-                  "id" => "55d77904e779893a9827aee2",
-                  "ingame_name" => "porottaja",
-                  "last_seen" => "2020-07-18T13:58:49.665+00:00",
-                  "region" => "en",
-                  "reputation" => 28,
-                  "reputation_bonus" => 0,
-                  "status" => "ingame"
-                },
-                "visible" => true
-              }
-            ]
+        response = """
+        {
+          "payload": {
+              "orders": [
+                  {
+                      "visible": true,
+                      "quantity": 1,
+                      "creation_date": "2016-01-22T21:18:19.000+00:00",
+                      "user": {
+                          "reputation": 87,
+                          "locale": "en",
+                          "avatar": "user/avatar/56a293b3d3ffb60a43942be4.png?2b19ae420608cd7b816d931eb62db438",
+                          "ingame_name": "JeyciKon",
+                          "last_seen": "2025-06-17T02:34:40.464+00:00",
+                          "slug": "jeycikon",
+                          "crossplay": true,
+                          "platform": "pc",
+                          "id": "56a293b3d3ffb60a43942be4",
+                          "region": "en",
+                          "status": "ingame"
+                      },
+                      "last_update": "2024-02-10T19:19:04.000+00:00",
+                      "platinum": 22,
+                      "order_type": "sell",
+                      "id": "56a29c9bd3ffb60a4b3d32d3",
+                      "mod_rank": 0,
+                      "region": "en"
+                  },
+                  {
+                      "visible": true,
+                      "creation_date": "2016-07-21T09:00:36.000+00:00",
+                      "quantity": 1,
+                      "user": {
+                          "reputation": 259,
+                          "locale": "en",
+                          "avatar": "user/avatar/55cbd976e77989320127aee2.png?5f4395ca16bc4bc35f7624dddc579cca",
+                          "ingame_name": "nellone",
+                          "last_seen": "2025-06-15T03:05:59.608+00:00",
+                          "slug": "nellone",
+                          "crossplay": true,
+                          "platform": "pc",
+                          "id": "55cbd976e77989320127aee2",
+                          "region": "en",
+                          "status": "ingame"
+                      },
+                      "last_update": "2025-04-13T00:59:28.000+00:00",
+                      "platinum": 20,
+                      "order_type": "sell",
+                      "id": "57908f34d3ffb61fc81374a9",
+                      "mod_rank": 0,
+                      "region": "en"
+                  }
+              ]
           }
         }
+        """
 
-        Plug.Conn.resp(conn, 200, Jason.encode!(response))
+        Plug.Conn.resp(conn, 200, response)
       end)
 
       item_name = "Gleaming Blight"
@@ -249,22 +253,24 @@ defmodule AuctionHouseTest do
          {:ok, ^item_name,
           [
             %OrderInfo{
-              order_type: "sell",
-              platform: "pc",
-              platinum: 45,
+              order_type: :sell,
+              platinum: 22,
               user: %User{
-                status: "ingame",
-                ingame_name: "Elect4k"
+                status: :ingame,
+                ingame_name: "JeyciKon",
+                platform: :pc,
+                crossplay: true
               },
               visible: true
             },
             %OrderInfo{
-              order_type: "sell",
-              platform: "pc",
-              platinum: 30,
+              order_type: :sell,
+              platinum: 20,
               user: %User{
-                status: "ingame",
-                ingame_name: "porottaja"
+                status: :ingame,
+                ingame_name: "nellone",
+                platform: :pc,
+                crossplay: true
               },
               visible: true
             }
@@ -302,8 +308,7 @@ defmodule AuctionHouseTest do
                   "sub_icon" => nil,
                   "sv" => %{"item_name" => "Arcane Agility"},
                   "tags" => ["uncommon", "arcane_enhancement"],
-                  "thumb" =>
-                    "items/images/en/thumbs/arcane_agility.2274fd115d389b990a55f5a4ff864773.128x128.png",
+                  "thumb" => "items/images/en/thumbs/arcane_agility.2274fd115d389b990a55f5a4ff864773.128x128.png",
                   "uk" => %{"item_name" => "Містична Жвавість"},
                   "url_name" => "arcane_agility",
                   "zh-hans" => %{"item_name" => "赋能·灵敏"},
@@ -338,8 +343,7 @@ defmodule AuctionHouseTest do
                   "sub_icon" => nil,
                   "sv" => %{"item_name" => "Abating Link"},
                   "tags" => ["mod", "rare", "warframe", "trinity"],
-                  "thumb" =>
-                    "items/images/en/thumbs/abating_link.c547fa09315093a5ba6c609a9b195580.128x128.png",
+                  "thumb" => "items/images/en/thumbs/abating_link.c547fa09315093a5ba6c609a9b195580.128x128.png",
                   "uk" => %{"item_name" => "Вгамовний Зв’язок"},
                   "url_name" => "abating_link",
                   "zh-hans" => %{"item_name" => "耗弱链接"},
