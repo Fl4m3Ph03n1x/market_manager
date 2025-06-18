@@ -893,18 +893,18 @@ defmodule Manager.WorkerTest do
       end)
 
       :ok = Manager.activate(%{steel_meridian: :top_five_average, arbiters_of_hexis: :top_three_average})
-      assert_receive({:activate, :get_user_orders}, @timeout)
-      assert_receive({:activate, :calculating_item_prices}, @timeout)
-      assert_receive({:activate, {:price_calculated, "Scattered Justice", 14, 1, 4}}, @timeout)
-      assert_receive({:activate, {:price_calculated, "Blade of Truth", 16, 2, 4}}, @timeout)
-      assert_receive({:activate, {:price_calculated, "Gilded Truth", 14, 3, 4}}, @timeout)
-      assert_receive({:activate, {:price_calculated, "Justice Blades", 20, 4, 4}}, @timeout)
-      assert_receive({:activate, :placing_orders}, @timeout)
-      assert_receive({:activate, {:order_placed, "Scattered Justice", 1, 4}}, @timeout)
-      assert_receive({:activate, {:order_placed, "Blade of Truth", 2, 4}}, @timeout)
-      assert_receive({:activate, {:order_placed, "Gilded Truth", 3, 4}}, @timeout)
-      assert_receive({:activate, {:order_placed, "Justice Blades", 4, 4}}, @timeout)
-      assert_receive({:activate, :done}, @timeout)
+      assert_receive({:activate, {:ok, :get_user_orders}}, @timeout)
+      assert_receive({:activate, {:ok, :calculating_item_prices}}, @timeout)
+      assert_receive({:activate, {:ok, {:price_calculated, "Scattered Justice", 14, 1, 4}}}, @timeout)
+      assert_receive({:activate, {:ok, {:price_calculated, "Blade of Truth", 16, 2, 4}}}, @timeout)
+      assert_receive({:activate, {:ok, {:price_calculated, "Gilded Truth", 14, 3, 4}}}, @timeout)
+      assert_receive({:activate, {:ok, {:price_calculated, "Justice Blades", 20, 4, 4}}}, @timeout)
+      assert_receive({:activate, {:ok, :placing_orders}}, @timeout)
+      assert_receive({:activate, {:ok, {:order_placed, "Scattered Justice", 1, 4}}}, @timeout)
+      assert_receive({:activate, {:ok, {:order_placed, "Blade of Truth", 2, 4}}}, @timeout)
+      assert_receive({:activate, {:ok, {:order_placed, "Gilded Truth", 3, 4}}}, @timeout)
+      assert_receive({:activate, {:ok, {:order_placed, "Justice Blades", 4, 4}}}, @timeout)
+      assert_receive({:activate, {:ok, :done}}, @timeout)
 
       assert Manager.active_syndicates() ==
                {:ok, %{steel_meridian: :top_five_average, arbiters_of_hexis: :top_three_average}}
@@ -1496,7 +1496,7 @@ defmodule Manager.WorkerTest do
         |> Conn.resp(200, body)
       end)
 
-      assert_receive({:activate, :get_user_orders}, @timeout)
+      assert_receive({:activate, {:ok, :get_user_orders}}, @timeout)
 
       Bypass.expect_once(bypass, "GET", "/v1/items/entropy_flight/orders", fn conn ->
         body = """
@@ -1586,9 +1586,9 @@ defmodule Manager.WorkerTest do
         |> Plug.Conn.resp(200, body)
       end)
 
-      assert_receive({:activate, :calculating_item_prices}, @timeout)
-      assert_receive({:activate, {:price_calculated, "Entropy Flight", 14, 1, 1}}, @timeout)
-      assert_receive({:activate, :placing_orders}, @timeout)
+      assert_receive({:activate, {:ok, :calculating_item_prices}}, @timeout)
+      assert_receive({:activate, {:ok, {:price_calculated, "Entropy Flight", 14, 1, 1}}}, @timeout)
+      assert_receive({:activate, {:ok, :placing_orders}}, @timeout)
 
       Bypass.expect_once(bypass, "POST", "/v1/profile/orders", fn conn ->
         {:ok, actual_request_body, _req_conn} = Plug.Conn.read_body(conn)
@@ -1687,8 +1687,8 @@ defmodule Manager.WorkerTest do
         |> Plug.Conn.resp(200, response)
       end)
 
-      assert_receive({:activate, {:order_placed, "Entropy Flight", 1, 1}}, @timeout)
-      assert_receive({:activate, :done}, @timeout)
+      assert_receive({:activate, {:ok, {:order_placed, "Entropy Flight", 1, 1}}}, @timeout)
+      assert_receive({:activate, {:ok, :done}}, @timeout)
 
       assert Manager.active_syndicates() == {:ok, %{cephalon_suda: :lowest_minus_one}}
     end

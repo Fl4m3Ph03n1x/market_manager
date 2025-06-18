@@ -41,6 +41,9 @@ defmodule Helpers do
       |> Map.merge(Maps.to_string_map(data))
       |> Order.new()
 
+  @spec create_product :: Product.t()
+  def create_product, do: create_product([])
+
   @spec create_product(Keyword.t()) :: Product.t()
   def create_product(data) when is_list(data),
     do:
@@ -54,6 +57,9 @@ defmodule Helpers do
       @default_order_info
       |> Map.merge(Maps.to_string_map(data))
       |> OrderInfo.new()
+
+  @spec create_placed_order :: PlacedOrder.t()
+  def create_placed_order, do: create_placed_order([])
 
   @spec create_placed_order(Keyword.t()) :: PlacedOrder.t()
   def create_placed_order(data) when is_list(data),

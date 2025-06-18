@@ -60,10 +60,11 @@ defmodule Manager.Saga.Activate do
          :ok <- auction_house.get_user_orders(user.ingame_name) do
       updated_state = Map.put(state, :user, user)
 
-      send(from, {:activate, :get_user_orders})
+      send(from, {:activate, {:ok, :get_user_orders}})
       {:noreply, updated_state}
     else
       err ->
+        send(from, {:activate, {:error, {:continue, err}}})
         {:stop, err, state}
     end
   end
@@ -79,11 +80,11 @@ defmodule Manager.Saga.Activate do
           from: from
         } = state
       ) do
-    with {:ok, total_products} <- syndicates_with_strategy |> Map.keys() |> store.list_products(),
-         order_number_limit <-
-           calculate_order_limit(placed_orders, total_products, limit, patreon?) do
+    with {:ok, total_products} <- syndicates_with_strategy |> Map.keys() |> store.list_products() do
+      order_number_limit = calculate_order_limit(placed_orders, total_products, limit, patreon?)
+
       if order_number_limit == 0 do
-        send(from, {:activate, :no_slots_free})
+        send(from, {:activate, {:ok, :no_slots_free}})
         {:stop, :normal, state}
       else
         product_prices =
@@ -102,9 +103,13 @@ defmodule Manager.Saga.Activate do
         |> Enum.map(& &1.name)
         |> Enum.each(&auction_house.get_item_orders/1)
 
-        send(from, {:activate, :calculating_item_prices})
+        send(from, {:activate, {:ok, :calculating_item_prices}})
         {:noreply, updated_state}
       end
+    else
+      err ->
+        send(from, {:activate, {:error, {:get_item_orders, err}}})
+        {:stop, err, state}
     end
   end
 
@@ -168,8 +173,9 @@ defmodule Manager.Saga.Activate do
       send(
         from,
         {:activate,
-         {:price_calculated, item_name, Map.get(updated_product_prices, product), calculated_prices_count,
-          total_products_count}}
+         {:ok,
+          {:price_calculated, item_name, Map.get(updated_product_prices, product), calculated_prices_count,
+           total_products_count}}}
       )
 
       if all_prices_calculated? do
@@ -211,7 +217,7 @@ defmodule Manager.Saga.Activate do
     |> Enum.map(fn {product, price} -> build_order(product, price) end)
     |> Enum.each(&auction_house.place_order/1)
 
-    send(from, {:activate, :placing_orders})
+    send(from, {:activate, {:ok, :placing_orders}})
 
     {:noreply, updated_state}
   end
@@ -251,11 +257,11 @@ defmodule Manager.Saga.Activate do
 
     send(
       from,
-      {:activate, {:order_placed, product.name, placed_orders_count, order_number_limit}}
+      {:activate, {:ok, {:order_placed, product.name, placed_orders_count, order_number_limit}}}
     )
 
     if all_orders_placed? do
-      send(from, {:activate, :done})
+      send(from, {:activate, {:ok, :done}})
 
       {:stop, :normal, state}
     else
