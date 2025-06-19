@@ -563,10 +563,17 @@ defmodule Manager.WorkerTest do
       # post orders online
       Bypass.expect(bypass, "POST", "/v1/profile/orders", fn conn ->
         {:ok, req_body, _req_conn} = Plug.Conn.read_body(conn)
+        decoded_request = Jason.decode!(req_body)
 
-        body =
-          case req_body do
-            "{\"item_id\":\"54a74454e779892d5e5155f5\",\"order_type\":\"sell\",\"platinum\":14,\"quantity\":1,\"mod_rank\":0}" ->
+        response_body =
+          case decoded_request do
+            %{
+              "item_id" => "54a74454e779892d5e5155f5",
+              "order_type" => "sell",
+              "platinum" => 14,
+              "quantity" => 1,
+              "mod_rank" => 0
+            } ->
               """
               {
                 "payload": {
@@ -644,7 +651,13 @@ defmodule Manager.WorkerTest do
               }
               """
 
-            "{\"item_id\":\"54a74454e779892d5e515645\",\"order_type\":\"sell\",\"platinum\":16,\"quantity\":1,\"mod_rank\":0}" ->
+            %{
+              "item_id" => "54a74454e779892d5e515645",
+              "order_type" => "sell",
+              "platinum" => 16,
+              "quantity" => 1,
+              "mod_rank" => 0
+            } ->
               """
               {
               "payload": {
@@ -722,7 +735,13 @@ defmodule Manager.WorkerTest do
               }
               """
 
-            "{\"item_id\":\"54a74454e779892d5e515664\",\"order_type\":\"sell\",\"platinum\":14,\"quantity\":1,\"mod_rank\":0}" ->
+            %{
+              "item_id" => "54a74454e779892d5e515664",
+              "order_type" => "sell",
+              "platinum" => 14,
+              "quantity" => 1,
+              "mod_rank" => 0
+            } ->
               """
               {
                 "payload": {
@@ -801,7 +820,13 @@ defmodule Manager.WorkerTest do
               }
               """
 
-            "{\"item_id\":\"54a74455e779892d5e5156b9\",\"order_type\":\"sell\",\"platinum\":20,\"quantity\":1,\"mod_rank\":0}" ->
+            %{
+              "item_id" => "54a74455e779892d5e5156b9",
+              "order_type" => "sell",
+              "platinum" => 20,
+              "quantity" => 1,
+              "mod_rank" => 0
+            } ->
               """
               {
                 "payload": {
@@ -889,7 +914,7 @@ defmodule Manager.WorkerTest do
           "JWT=old_cookie; Domain=.warframe.market; Expires=Tue, 21-Mar-2023 15:16:03 GMT; Secure; HttpOnly; Path=/; SameSite=Lax"
         )
         |> Conn.put_resp_header("content-type", "application/json")
-        |> Plug.Conn.resp(200, body)
+        |> Plug.Conn.resp(200, response_body)
       end)
 
       :ok = Manager.activate(%{steel_meridian: :top_five_average, arbiters_of_hexis: :top_three_average})
