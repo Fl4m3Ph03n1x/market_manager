@@ -17,7 +17,7 @@ defmodule Manager do
   Asynchronous operation.
 
   Activates a syndicate in warframe.market. Activating a syndicate means you
-  put on sell all the mods the syndicate has. The price of each mod will be calculated via a
+  put on sell all the mods/arcanes the syndicate has. The price of each mod will be calculated via a
   `PriceAnalyst` depending on which strategy you choose.
 
   This is an asynchronous operation, which will return `:ok` immediately.
@@ -46,7 +46,7 @@ defmodule Manager do
   :ok
   ```
   """
-  @spec activate(%{Syndicate.id() => Strategy.t()}) :: Type.activate_response()
+  @spec activate(%{Syndicate.id() => Strategy.id()}) :: Type.activate_response()
   defdelegate activate(syndicates_with_strategy), to: SagaSupervisor
 
   @doc """
@@ -97,9 +97,9 @@ defmodule Manager do
   The caller must have implemented a `handle_info` in its Server to handle messages with the
   following format:
 
-  - `{:login, user_info :: Shared.Data.User.t(), :done}`: If the operation was successful.
+  - `{:login, {:ok, user_info :: Shared.Data.User.t()}}`: If the operation was successful.
 
-  - `{:login, credentials :: Shared.Data.Credentials.t(), error :: any}`: If the login operation failed.
+  - `{:login, {:error, error :: any()}}`: If the login operation failed.
     This can happen due to a network error, wrong password or any other cause.
 
   Example:
