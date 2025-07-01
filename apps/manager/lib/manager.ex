@@ -183,14 +183,14 @@ defmodule Manager do
   @doc """
   Synchronous operation.
 
-  Returns a list containing all currently active syndicates.
+  Returns a list containing all currently active syndicates with their strategies.
 
   Example:
   ```
   > alias Shared.Data.Syndicate
 
   > MarketManager.active_syndicates()
-  {:ok, [%Syndicate{name: "Red Veil", id: :red_veil, catalog: []}]}
+  {:ok, %{red_veil: :top_five_average, new_loka: :top_five_average}}
 
   > Manager.active_syndicates()
   {:error, :enoent}
