@@ -18,8 +18,6 @@ defmodule WebInterface.LoginLive do
 
   @impl true
   def handle_event("login", %{"email" => email, "password" => password} = params, socket) do
-    IO.inspect(params, label: "PARAMS")
-
     :ok =
       email
       |> Credentials.new(password)
