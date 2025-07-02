@@ -47,7 +47,7 @@ defmodule WebInterface.LoginLive do
     {:noreply, socket}
   end
 
-  def handle_info({:login, {:error, :econnrefused, _data}}, socket) do
+  def handle_info({:login, {:error, :econnrefused}}, socket) do
     socket =
       socket
       |> assign(logging_in: false)
@@ -74,7 +74,7 @@ defmodule WebInterface.LoginLive do
     {:noreply, socket}
   end
 
-  def handle_info({:login, {:error, :invalid_email, _data}}, socket) do
+  def handle_info({:login, {:error, :invalid_email}}, socket) do
     socket =
       socket
       |> assign(logging_in: false)
@@ -83,7 +83,7 @@ defmodule WebInterface.LoginLive do
     {:noreply, socket}
   end
 
-  def handle_info({:login, {:error, :timeout, _data}}, socket) do
+  def handle_info({:login, {:error, :timeout}}, socket) do
     socket =
       socket
       |> assign(logging_in: false)
@@ -92,7 +92,7 @@ defmodule WebInterface.LoginLive do
     {:noreply, socket}
   end
 
-  def handle_info({:login, {:error, :unknown_error, _data}}, socket) do
+  def handle_info({:login, {:error, :unknown_error}}, socket) do
     socket =
       socket
       |> assign(logging_in: false)
@@ -102,7 +102,11 @@ defmodule WebInterface.LoginLive do
   end
 
   def handle_info(message, socket) do
+    socket
+    |> assign(logging_in: false)
+    |> put_flash(:error, "Unknown message received, please check the logs and report it!")
+
     Logger.error("Unknown message received: #{inspect(message)}")
-    {:noreply, socket |> put_flash(:error, "Something unexpected happened, please report it!")}
+    {:noreply, socket}
   end
 end

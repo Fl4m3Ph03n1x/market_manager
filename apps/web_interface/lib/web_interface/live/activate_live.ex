@@ -123,7 +123,7 @@ defmodule WebInterface.ActivateLive do
   end
 
   def handle_event(event, params, socket) do
-    Logger.info("Event: #{inspect(event)} ; #{inspect(params)}")
+    Logger.error("Event: #{inspect(event)} ; #{inspect(params)}")
     {:noreply, socket}
   end
 
@@ -174,6 +174,7 @@ defmodule WebInterface.ActivateLive do
         |> assign(operation_in_progress?: false)
         |> assign(message: nil)
 
+      Logger.info("Activate: Action completed.")
       {:noreply, updated_socket}
     else
       error ->

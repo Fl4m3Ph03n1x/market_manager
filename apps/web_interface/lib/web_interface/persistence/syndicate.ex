@@ -1,6 +1,6 @@
 defmodule WebInterface.Persistence.Syndicate do
   @moduledoc """
-  Persistence module for syndicate data. Mostly to track selected options in the menu and access the list of 
+  Persistence module for syndicate data. Mostly to track selected options in the menu and access the list of
   syndicates.
   """
 
@@ -45,6 +45,17 @@ defmodule WebInterface.Persistence.Syndicate do
         nil -> {:error, :not_found}
         syndicate -> {:ok, syndicate}
       end
+    end
+  end
+
+  @spec deactivate_syndicates([Syndicate.t()], Persistence.table()) :: :ok | [{:error, any}]
+  def deactivate_syndicates(syndicates, table \\ Persistence.default_table()) do
+    syndicates
+    |> Enum.map(&deactivate_syndicate(&1, table))
+    |> Enum.filter(fn res -> res != :ok end)
+    |> case do
+      [] -> :ok
+      errors -> errors
     end
   end
 

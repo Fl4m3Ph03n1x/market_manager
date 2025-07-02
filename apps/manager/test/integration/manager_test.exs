@@ -1471,35 +1471,35 @@ defmodule Manager.WorkerTest do
       end)
 
       :ok = Manager.deactivate([:steel_meridian, :arbiters_of_hexis])
-      assert_receive({:deactivate, :get_user_orders}, @timeout)
-      assert_receive({:deactivate, :deleting_orders}, @timeout)
+      assert_receive({:deactivate, {:ok, :get_user_orders}}, @timeout)
+      assert_receive({:deactivate, {:ok, :deleting_orders}}, @timeout)
 
       assert_receive(
-        {:deactivate, {:order_deleted, "Scattered Justice", 1, 5}},
+        {:deactivate, {:ok, {:order_deleted, "Scattered Justice", 1, 5}}},
         @timeout
       )
 
       assert_receive(
-        {:deactivate, {:order_deleted, "Justice Blades", 2, 5}},
+        {:deactivate, {:ok, {:order_deleted, "Justice Blades", 2, 5}}},
         @timeout
       )
 
       assert_receive(
-        {:deactivate, {:order_deleted, "Gilded Truth", 3, 5}},
+        {:deactivate, {:ok, {:order_deleted, "Gilded Truth", 3, 5}}},
         @timeout
       )
 
       assert_receive(
-        {:deactivate, {:order_deleted, "Blade of Truth", 4, 5}},
+        {:deactivate, {:ok, {:order_deleted, "Blade of Truth", 4, 5}}},
         @timeout
       )
 
       assert_receive(
-        {:deactivate, {:order_deleted, "Entropy Flight", 5, 5}},
+        {:deactivate, {:ok, {:order_deleted, "Entropy Flight", 5, 5}}},
         @timeout
       )
 
-      assert_receive({:deactivate, :reactivating_remaining_syndicates}, @timeout)
+      assert_receive({:deactivate, {:ok, :reactivating_remaining_syndicates}}, @timeout)
 
       Bypass.expect(bypass, "GET", "/v1/profile/fl4m3/orders", fn conn ->
         body =

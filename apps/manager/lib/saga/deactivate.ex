@@ -50,7 +50,7 @@ defmodule Manager.Saga.Deactivate do
         auction_house.get_user_orders(user.ingame_name)
         updated_state = Map.put(state, :user, user)
 
-        send(from, {:deactivate, :get_user_orders})
+        send(from, {:deactivate, {:ok, :get_user_orders}})
         {:noreply, updated_state}
 
       err ->
@@ -83,7 +83,7 @@ defmodule Manager.Saga.Deactivate do
       updated_state = Map.put(state, :orders_to_delete_tracker, orders_to_delete_tracker)
 
       Enum.each(orders_to_delete, &auction_house.delete_order/1)
-      send(from, {:deactivate, :deleting_orders})
+      send(from, {:deactivate, {:ok, :deleting_orders}})
       {:noreply, updated_state}
     end
   end
@@ -112,16 +112,16 @@ defmodule Manager.Saga.Deactivate do
 
       send(
         from,
-        {:deactivate, {:order_deleted, product.name, deleted_orders_count, orders_to_delete_count}}
+        {:deactivate, {:ok, {:order_deleted, product.name, deleted_orders_count, orders_to_delete_count}}}
       )
 
       if all_orders_deleted? do
         with :ok <- store.deactivate_syndicates(syndicate_ids),
              {:ok, updated_active_syndicates} <- store.list_active_syndicates() do
           if Enum.empty?(updated_active_syndicates) do
-            send(from, {:deactivate, :done})
+            send(from, {:deactivate, {:ok, :done}})
           else
-            send(from, {:deactivate, :reactivating_remaining_syndicates})
+            send(from, {:deactivate, {:ok, :reactivating_remaining_syndicates}})
             # reactivate syndicate with last strategy used
             SagaSupervisor.activate(updated_active_syndicates, from)
           end
