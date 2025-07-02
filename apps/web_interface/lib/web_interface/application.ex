@@ -46,9 +46,10 @@ defmodule WebInterface.Application do
          {:ok, syndicates} <- Manager.syndicates(),
          {:ok, strategies} <- Manager.strategies(),
          {:ok, user} <- Manager.recover_login(),
-         {:ok, active_syndicates} <- Manager.active_syndicates(),
+         {:ok, active_syndicates_with_strategies} <- Manager.active_syndicates(),
          :ok <- Persistence.init(strategies, syndicates, user),
          :ok <- SyndicateStore.set_selected_inactive_syndicates(syndicates),
+         active_syndicates = Enum.filter(syndicates, &(&1.id in Map.keys(active_syndicates_with_strategies))),
          :ok <- SyndicateStore.activate_syndicates(active_syndicates) do
       link
     end
