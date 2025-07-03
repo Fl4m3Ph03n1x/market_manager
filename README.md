@@ -128,6 +128,7 @@ MarketManager is divided into multiple small applications/libraries, each one wi
       shared-->store;
       shared-->web_interface;
       shared-->auction_house;
+      auction_house-->rate_limiter;
 ```
 
 - `web_interface` is a Phoenix application that holds all the code for the front-end. Works as the client.
@@ -135,6 +136,7 @@ MarketManager is divided into multiple small applications/libraries, each one wi
 - `auction_house` is the app responsible for understanding and making requests to the given auction house. In this case, warframe market.
 - `store` is the persistency layer. It saves your data and remembers what is being sold or not.
 - `shared` is a library that holds the domain model entities of the entire project. 
+- `rate_limiter` is a library focused on limiting the rate at which requests are made to the market, to avoid being blocked.
 
 For more information, feel free to read the README file of each application.
 
