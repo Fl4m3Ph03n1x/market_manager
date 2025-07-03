@@ -7,7 +7,7 @@ defmodule MarketManager.MixProject do
   def project,
     do: [
       apps_path: "apps",
-      version: "2.1.9",
+      version: "2.2.0",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       test_coverage: [tool: ExCoveralls],
