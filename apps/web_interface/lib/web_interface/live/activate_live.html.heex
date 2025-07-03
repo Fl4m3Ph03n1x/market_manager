@@ -3,7 +3,7 @@
     class="flex items-center justify-center h-screen"
     hidden={not @activation_in_progress}
     progress={@activation_progress}
-    message={progress_bar_message(@activation_current_syndicate)}
+    message={@message}
   />
   <%= if not @activation_in_progress do %>
     <div class="shadow">

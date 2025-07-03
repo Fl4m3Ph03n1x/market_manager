@@ -9,8 +9,12 @@ defmodule WebInterface.LoginLive do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, logging_in: false) }
+    {:ok, assign(socket, logging_in: false)}
   end
+
+  ###################
+  # Frontend Events #
+  ###################
 
   @impl true
   def handle_event("login", %{"email" => email, "password" => password} = params, socket) do
@@ -19,12 +23,16 @@ defmodule WebInterface.LoginLive do
       |> Credentials.new(password)
       |> Manager.login(Map.has_key?(params, "remember-me"))
 
-      # show spinning wheel animation
-      {:noreply, assign(socket, logging_in: true)}
+    # show spinning wheel animation
+    {:noreply, assign(socket, logging_in: true)}
   end
 
+  ##################
+  # Backend Events #
+  ##################
+
   @impl true
-  def handle_info({:login, %User{} = user, :done}, socket) do
+  def handle_info({:login, {:ok, %User{} = user}}, socket) do
     Logger.info("Authentication succeeded for user #{inspect(user)}")
 
     :ok = UserStore.set_user(user)
@@ -34,10 +42,10 @@ defmodule WebInterface.LoginLive do
       |> assign(logging_in: false)
       |> redirect(to: ~p"/activate")
 
-    {:noreply,  socket}
+    {:noreply, socket}
   end
 
-  def handle_info({:login, _credentials, {:error, :econnrefused, _data}}, socket) do
+  def handle_info({:login, {:error, :econnrefused}}, socket) do
     socket =
       socket
       |> assign(logging_in: false)
@@ -46,7 +54,7 @@ defmodule WebInterface.LoginLive do
     {:noreply, socket}
   end
 
-  def handle_info({:login, _credentials, {:error, :wrong_password, _data}}, socket) do
+  def handle_info({:login, {:error, :wrong_password}}, socket) do
     socket =
       socket
       |> assign(logging_in: false)
@@ -55,7 +63,7 @@ defmodule WebInterface.LoginLive do
     {:noreply, socket}
   end
 
-  def handle_info({:login, _credentials, {:error, :wrong_email, _data}}, socket) do
+  def handle_info({:login, {:error, :wrong_email}}, socket) do
     socket =
       socket
       |> assign(logging_in: false)
@@ -64,7 +72,7 @@ defmodule WebInterface.LoginLive do
     {:noreply, socket}
   end
 
-  def handle_info({:login, _credentials, {:error, :invalid_email, _data}}, socket) do
+  def handle_info({:login, {:error, :invalid_email}}, socket) do
     socket =
       socket
       |> assign(logging_in: false)
@@ -73,7 +81,7 @@ defmodule WebInterface.LoginLive do
     {:noreply, socket}
   end
 
-  def handle_info({:login, _credentials, {:error, :timeout, _data}}, socket) do
+  def handle_info({:login, {:error, :timeout}}, socket) do
     socket =
       socket
       |> assign(logging_in: false)
@@ -82,18 +90,21 @@ defmodule WebInterface.LoginLive do
     {:noreply, socket}
   end
 
-  def handle_info({:login, _credentials, {:error, :unknown_error, _data}}, socket) do
+  def handle_info({:login, {:error, :unknown_error}}, socket) do
     socket =
       socket
       |> assign(logging_in: false)
-      |> put_flash(:error, "An unknown error ocurred, please report it!")
+      |> put_flash(:error, "An unknown error occurred, please report it!")
 
     {:noreply, socket}
   end
 
   def handle_info(message, socket) do
-    Logger.error("Unknown message received: #{inspect(message)}")
-    {:noreply, socket |> put_flash(:error, "Something unexpected happened, please report it!")}
-  end
+    socket
+    |> assign(logging_in: false)
+    |> put_flash(:error, "Unknown message received, please check the logs and report it!")
 
+    Logger.error("Unknown message received: #{inspect(message)}")
+    {:noreply, socket}
+  end
 end

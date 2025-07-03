@@ -4,13 +4,13 @@ defmodule MarketManager.Store.FileSystemTest do
   use ExUnit.Case, async: true
 
   alias Jason
-  alias Shared.Data.{Authorization, PlacedOrder, Product, Syndicate, User}
+  alias Shared.Data.{Authorization, Product, Syndicate, User}
   alias Store.FileSystem
 
   setup do
     %{
       paths: [
-        current_orders: ["current_orders.json"],
+        watch_list: ["watch_list.json"],
         products: ["products.json"],
         syndicates: ["syndicates.json"],
         setup: ["setup.json"]
@@ -20,7 +20,124 @@ defmodule MarketManager.Store.FileSystemTest do
   end
 
   describe "list_products/2" do
-    test "returns list of available products from given syndicate", %{paths: paths} = deps do
+    test "returns list of available products from given syndicate ids", %{paths: paths} = deps do
+      # Arrange
+      products_filename = Path.join(paths[:products])
+      syndicates_filename = Path.join(paths[:syndicates])
+
+      read_fn = fn
+        ^products_filename ->
+          {:ok,
+           "[{\"name\": \"Gleaming Blight\",\"id\": \"54a74454e779892d5e5155d5\",\"min_price\": 14,\"default_price\": 16,\"quantity\": 1, \"rank\": 0}, {\"name\":\"Fracturing Crush\",\"id\": \"5526aec0e779896af9418259\",\"min_price\": 14,\"default_price\": 16}]"}
+
+        ^syndicates_filename ->
+          {:ok,
+           "[{\"id\":\"red_veil\",\"name\":\"Red Veil\",\"catalog\":[\"54a74454e779892d5e5155d5\"]},{\"id\":\"perrin_sequence\",\"name\":\"Perrin Sequence\",\"catalog\":[\"5526aec0e779896af9418259\"]}]"}
+      end
+
+      deps = Map.put(deps, :io, %{read: read_fn})
+
+      syndicate_ids = [:red_veil, :perrin_sequence]
+
+      # Act
+      actual = FileSystem.list_products(syndicate_ids, deps)
+
+      expected =
+        {:ok,
+         [
+           %Product{
+             id: "54a74454e779892d5e5155d5",
+             name: "Gleaming Blight",
+             min_price: 14,
+             default_price: 16,
+             quantity: 1,
+             rank: 0
+           },
+           %Product{
+             id: "5526aec0e779896af9418259",
+             name: "Fracturing Crush",
+             min_price: 14,
+             default_price: 16,
+             quantity: 1,
+             rank: 0
+           }
+         ]}
+
+      # Assert
+      assert actual == expected
+    end
+
+    test "returns error if it cannot read products file", %{paths: paths} = deps do
+      # Arrange
+      products_filename = Path.join(paths[:products])
+
+      read_fn = fn ^products_filename -> {:error, :enoent} end
+
+      deps = Map.put(deps, :io, %{read: read_fn})
+      syndicate_ids = [:new_loka]
+
+      # Act
+      actual = FileSystem.list_products(syndicate_ids, deps)
+      expected = {:error, :enoent}
+
+      # Assert
+      assert actual == expected
+    end
+
+    test "returns error if it cannot read syndicates file", %{paths: paths} = deps do
+      # Arrange
+      products_filename = Path.join(paths[:products])
+      syndicates_filename = Path.join(paths[:syndicates])
+
+      read_fn = fn
+        ^products_filename ->
+          {:ok,
+           "[{\"name\": \"Gleaming Blight\",\"id\": \"54a74454e779892d5e5155d5\",\"min_price\": 14,\"default_price\": 16,\"quantity\": 1, \"rank\": 0}, {\"name\":\"Fracturing Crush\",\"id\": \"5526aec0e779896af9418259\",\"min_price\": 14,\"default_price\": 16}]"}
+
+        ^syndicates_filename ->
+          {:error, :enoent}
+      end
+
+      deps = Map.put(deps, :io, %{read: read_fn})
+      syndicate_ids = [:new_loka]
+
+      # Act
+      actual = FileSystem.list_products(syndicate_ids, deps)
+      expected = {:error, :enoent}
+
+      # Assert
+      assert actual == expected
+    end
+
+    test "returns error if syndicates are not found", %{paths: paths} = deps do
+      # Arrange
+      products_filename = Path.join(paths[:products])
+      syndicates_filename = Path.join(paths[:syndicates])
+
+      read_fn = fn
+        ^products_filename ->
+          {:ok,
+           "[{\"name\": \"Gleaming Blight\",\"id\": \"54a74454e779892d5e5155d5\",\"min_price\": 14,\"default_price\": 16,\"quantity\": 1, \"rank\": 0}, {\"name\":\"Fracturing Crush\",\"id\": \"5526aec0e779896af9418259\",\"min_price\": 14,\"default_price\": 16}]"}
+
+        ^syndicates_filename ->
+          {:ok,
+           "[{\"id\":\"red_veil\",\"name\":\"Red Veil\",\"catalog\":[\"54a74454e779892d5e5155d5\"]},{\"id\":\"perrin_sequence\",\"name\":\"Perrin Sequence\",\"catalog\":[\"5526aec0e779896af9418259\"]}]"}
+      end
+
+      deps = Map.put(deps, :io, %{read: read_fn})
+      syndicate_ids = [:new_loka]
+
+      # Act
+      actual = FileSystem.list_products(syndicate_ids, deps)
+      expected = {:error, {:syndicate_not_found, [:new_loka]}}
+
+      # Assert
+      assert actual == expected
+    end
+  end
+
+  describe "get_product_by_id/2" do
+    test "returns the product with the given id", %{paths: paths} = deps do
       # Arrange
       read_fn = fn filename ->
         assert filename == Path.join(paths[:products])
@@ -31,24 +148,41 @@ defmodule MarketManager.Store.FileSystemTest do
 
       deps = Map.put(deps, :io, %{read: read_fn})
 
-      syndicate =
-        Syndicate.new(name: "Red Veil", id: :red_veil, catalog: ["54a74454e779892d5e5155d5"])
+      product_id = "54a74454e779892d5e5155d5"
 
       # Act
-      actual = FileSystem.list_products(syndicate, deps)
+      actual = FileSystem.get_product_by_id(product_id, deps)
 
       expected =
         {:ok,
-         [
-           Product.new(%{
-             "id" => "54a74454e779892d5e5155d5",
-             "name" => "Gleaming Blight",
-             "min_price" => 14,
-             "default_price" => 16,
-             "quantity" => 1,
-             "rank" => 0
-           })
-         ]}
+         Product.new(%{
+           "id" => "54a74454e779892d5e5155d5",
+           "name" => "Gleaming Blight",
+           "min_price" => 14,
+           "default_price" => 16,
+           "quantity" => 1,
+           "rank" => 0
+         })}
+
+      # Assert
+      assert actual == expected
+    end
+
+    test "returns error if product is not found", %{paths: paths} = deps do
+      # Arrange
+      deps =
+        Map.put(deps, :io, %{
+          read: fn filename ->
+            assert filename == Path.join(paths[:products])
+            {:ok, "[]"}
+          end
+        })
+
+      product_id = "54a74454e779892d5e5155d5"
+
+      # Act
+      actual = FileSystem.get_product_by_id(product_id, deps)
+      expected = {:error, :product_not_found}
 
       # Assert
       assert actual == expected
@@ -62,249 +196,14 @@ defmodule MarketManager.Store.FileSystemTest do
       end
 
       deps = Map.put(deps, :io, %{read: read_fn})
-      syndicate = Syndicate.new(name: "New Loka", id: :new_loka, catalog: [])
+      product_id = "54a74454e779892d5e5155d5"
 
       # Act
-      actual = FileSystem.list_products(syndicate, deps)
+      actual = FileSystem.get_product_by_id(product_id, deps)
       expected = {:error, :enoent}
 
       # Assert
       assert actual == expected
-    end
-  end
-
-  describe "list_orders/2" do
-    test "returns list of available placed orders from given syndicate", %{paths: paths} = deps do
-      # Arrange
-      read_fn = fn filename ->
-        assert filename == Path.join(paths[:current_orders])
-
-        {:ok,
-         "{\"new_loka\":[{\"item_id\":\"54e644ffe779897594fa68d2\",\"order_id\":\"5ee71a2604d55c0a5cbdc3c2\"},{\"item_id\":\"Vampire leech\",\"order_id\":\"5ee71a2604d55c0a5cbdc3e3\"}]}"}
-      end
-
-      deps = Map.put(deps, :io, %{read: read_fn})
-      syndicate = Syndicate.new(name: "New Loka", id: :new_loka, catalog: [])
-
-      # Act
-      actual = FileSystem.list_orders(syndicate, deps)
-
-      expected = {
-        :ok,
-        [
-          PlacedOrder.new(%{
-            "item_id" => "54e644ffe779897594fa68d2",
-            "order_id" => "5ee71a2604d55c0a5cbdc3c2"
-          }),
-          PlacedOrder.new(%{
-            "item_id" => "Vampire leech",
-            "order_id" => "5ee71a2604d55c0a5cbdc3e3"
-          })
-        ]
-      }
-
-      # Assert
-      assert actual == expected
-    end
-
-    test "returns empty if syndicate is not found", %{paths: paths} = deps do
-      # Arrange
-
-      read_fn = fn filename ->
-        assert filename == Path.join(paths[:current_orders])
-
-        {:ok,
-         "{\"red_veil\":[{\"item_id\":\"54e644ffe779897594fa68d2\",\"order_id\":\"5ee71a2604d55c0a5cbdc3c2\"}]}"}
-      end
-
-      deps = Map.put(deps, :io, %{read: read_fn})
-      syndicate = Syndicate.new(name: "New Loka", id: :new_loka, catalog: [])
-
-      # Act
-      actual = FileSystem.list_orders(syndicate, deps)
-      expected = {:ok, []}
-
-      # Assert
-      assert actual == expected
-    end
-
-    test "returns error if it cannot read file", %{paths: paths} = deps do
-      # Arrange
-      read_fn = fn filename ->
-        assert filename == Path.join(paths[:current_orders])
-        {:error, :enoent}
-      end
-
-      deps = Map.put(deps, :io, %{read: read_fn})
-
-      syndicate = Syndicate.new(name: "New Loka", id: :new_loka, catalog: [])
-
-      # Act
-      actual = FileSystem.list_orders(syndicate, deps)
-      expected = {:error, :enoent}
-
-      # Assert
-      assert actual == expected
-    end
-  end
-
-  describe "save_order/3" do
-    test "returns :ok if order was saved successfully", %{paths: paths} = deps do
-      # Arrange
-      read_fn = fn filename ->
-        assert filename == Path.join(paths[:current_orders])
-
-        {:ok,
-         "{\"perrin_sequence\":[{\"item_id\":\"54e644ffe779897594fa68d2\",\"order_id\":\"54a74454e779892d5e5155d5\"}]}"}
-      end
-
-      write_fn = fn filename, content ->
-        assert filename == Path.join(paths[:current_orders])
-
-        assert content ==
-                 "{\"perrin_sequence\":[{\"item_id\":\"54e644ffe779897594fa68d2\",\"order_id\":\"54a74454e779892d5e5155d5\"},{\"item_id\":\"Vampire leech\",\"order_id\":\"5ee71a2604d55c0a5cbdc3e3\"}]}"
-
-        :ok
-      end
-
-      deps = Map.put(deps, :io, %{read: read_fn, write: write_fn})
-      syndicate = Syndicate.new(name: "Perrin Sequence", id: :perrin_sequence, catalog: [])
-
-      placed_order =
-        PlacedOrder.new(%{
-          "item_id" => "Vampire leech",
-          "order_id" => "5ee71a2604d55c0a5cbdc3e3"
-        })
-
-      # Act & Assert
-      assert FileSystem.save_order(placed_order, syndicate, deps) == :ok
-    end
-
-    test "returns error if it failed to read file", %{paths: paths} = deps do
-      # Arrange
-      read_fn = fn filename ->
-        assert filename == Path.join(paths[:current_orders])
-        {:error, :enoent}
-      end
-
-      deps = Map.put(deps, :io, %{read: read_fn})
-      syndicate = Syndicate.new(name: "Perrin Sequence", id: :perrin_sequence, catalog: [])
-
-      placed_order =
-        PlacedOrder.new(%{
-          "item_id" => "Vampire leech",
-          "order_id" => "5ee71a2604d55c0a5cbdc3e3"
-        })
-
-      # Act & Assert
-      assert FileSystem.save_order(placed_order, syndicate, deps) == {:error, :enoent}
-    end
-
-    test "returns error if it failed to save order", %{paths: paths} = deps do
-      # Arrange
-      read_fn = fn filename ->
-        assert filename == Path.join(paths[:current_orders])
-
-        {:ok,
-         "{\"perrin_sequence\":[{\"item_id\":\"54e644ffe779897594fa68d2\",\"order_id\":\"54a74454e779892d5e5155d5\"}]}"}
-      end
-
-      write_fn = fn filename, _content ->
-        assert filename == Path.join(paths[:current_orders])
-        {:error, :enoent}
-      end
-
-      deps = Map.put(deps, :io, %{read: read_fn, write: write_fn})
-      syndicate = Syndicate.new(name: "Perrin Sequence", id: :perrin_sequence, catalog: [])
-
-      placed_order =
-        PlacedOrder.new(%{
-          "item_id" => "Vampire leech",
-          "order_id" => "5ee71a2604d55c0a5cbdc3e3"
-        })
-
-      # Act & Assert
-      assert FileSystem.save_order(placed_order, syndicate, deps) == {:error, :enoent}
-    end
-  end
-
-  describe "delete_order/3" do
-    test "returns :ok if order was deleted successfully", %{paths: paths} = deps do
-      # Arrange
-      read_fn = fn filename ->
-        assert filename == Path.join(paths[:current_orders])
-
-        {:ok,
-         "{\"perrin_sequence\":[{\"item_id\":\"54e644ffe779897594fa68d2\",\"order_id\":\"54a74454e779892d5e5155d5\"}]}"}
-      end
-
-      write_fn = fn filename, content ->
-        assert filename == Path.join(paths[:current_orders])
-        assert content == "{\"perrin_sequence\":[]}"
-        :ok
-      end
-
-      deps = Map.put(deps, :io, %{read: read_fn, write: write_fn})
-      syndicate = Syndicate.new(name: "Perrin Sequence", id: :perrin_sequence, catalog: [])
-
-      placed_order =
-        PlacedOrder.new(%{
-          "item_id" => "54e644ffe779897594fa68d2",
-          "order_id" => "54a74454e779892d5e5155d5"
-        })
-
-      # Act & Assert
-      assert FileSystem.delete_order(placed_order, syndicate, deps) == :ok
-    end
-
-    test "returns error if it fails to read file", %{paths: paths} = deps do
-      # Arrange
-      read_fn = fn filename ->
-        assert filename == Path.join(paths[:current_orders])
-        {:error, :enoent}
-      end
-
-      deps = Map.put(deps, :io, %{read: read_fn})
-      syndicate = Syndicate.new(name: "Perrin Sequence", id: :perrin_sequence, catalog: [])
-
-      placed_order =
-        PlacedOrder.new(%{
-          "item_id" => "54e644ffe779897594fa68d2",
-          "order_id" => "54a74454e779892d5e5155d5"
-        })
-
-      # Act & Assert
-      assert FileSystem.delete_order(placed_order, syndicate, deps) == {:error, :enoent}
-    end
-
-    test "returns error if it failed to save deleted order",
-         %{paths: paths} = deps do
-      # Arrange
-
-      read_fn = fn filename ->
-        assert filename == Path.join(paths[:current_orders])
-
-        {:ok,
-         "{\"perrin_sequence\":[{\"item_id\":\"54e644ffe779897594fa68d2\",\"order_id\":\"54a74454e779892d5e5155d5\"}]}"}
-      end
-
-      write_fn = fn filename, content ->
-        assert filename == Path.join(paths[:current_orders])
-        assert content == "{\"perrin_sequence\":[]}"
-        {:error, :enoent}
-      end
-
-      deps = Map.put(deps, :io, %{read: read_fn, write: write_fn})
-      syndicate = Syndicate.new(name: "Perrin Sequence", id: :perrin_sequence, catalog: [])
-
-      placed_order =
-        PlacedOrder.new(%{
-          "item_id" => "54e644ffe779897594fa68d2",
-          "order_id" => "54a74454e779892d5e5155d5"
-        })
-
-      # Act & Assert
-      assert FileSystem.delete_order(placed_order, syndicate, deps) == {:error, :enoent}
     end
   end
 
@@ -520,51 +419,146 @@ defmodule MarketManager.Store.FileSystemTest do
     end
   end
 
+  describe "activate_syndicates/1" do
+    test "activates the given syndicates with the given strategies", deps do
+      # Arrange
+      syndicates_with_strategies = %{
+        cephalon_simaris: :top_five_average,
+        cephalon_suda: :top_five_average
+      }
+
+      io_stubs = %{
+        read: fn "watch_list.json" -> {:ok, "{\"active_syndicates\": {}}"} end,
+        write: fn "watch_list.json", data ->
+          assert data ==
+                   Jason.encode!(%{
+                     active_syndicates: %{
+                       cephalon_simaris: :top_five_average,
+                       cephalon_suda: :top_five_average
+                     }
+                   })
+
+          :ok
+        end
+      }
+
+      deps = Map.put(deps, :io, io_stubs)
+
+      # Act & Assert
+      assert FileSystem.activate_syndicates(syndicates_with_strategies, deps) == :ok
+    end
+
+    test "returns the error if it fails to read watch_list.json", deps do
+      # Arrange
+      io_stubs = %{
+        read: fn "watch_list.json" -> {:error, :enoent} end
+      }
+
+      deps = Map.put(deps, :io, io_stubs)
+
+      # Act & Assert
+      assert FileSystem.activate_syndicates(%{new_loka: :top_five_average}, deps) ==
+               {:error, :enoent}
+    end
+
+    test "returns the error if it fails to write to watch_list.json", deps do
+      # Arrange
+      io_stubs = %{
+        read: fn "watch_list.json" -> {:ok, "{\"active_syndicates\": {}}"} end,
+        write: fn "watch_list.json", _data -> {:error, :enoent} end
+      }
+
+      deps = Map.put(deps, :io, io_stubs)
+
+      # Act & Assert
+      assert FileSystem.activate_syndicates(%{new_loka: :top_five_average}, deps) ==
+               {:error, :enoent}
+    end
+  end
+
+  describe "deactivate_syndicates/1" do
+    test "deactivates the syndicates with the given ids", deps do
+      # Arrange
+      syndicates = [:cephalon_simaris, :cephalon_suda]
+
+      io_stubs = %{
+        read: fn "watch_list.json" ->
+          {:ok,
+           Jason.encode!(%{
+             active_syndicates: %{
+               cephalon_simaris: :top_five_average,
+               cephalon_suda: :top_five_average
+             }
+           })}
+        end,
+        write: fn "watch_list.json", data ->
+          assert data ==
+                   Jason.encode!(%{active_syndicates: %{}})
+
+          :ok
+        end
+      }
+
+      deps = Map.put(deps, :io, io_stubs)
+
+      # Act & Assert
+      assert FileSystem.deactivate_syndicates(syndicates, deps) == :ok
+    end
+
+    test "returns the error if it fails to read watch_list.json", deps do
+      # Arrange
+      io_stubs = %{
+        read: fn "watch_list.json" -> {:error, :enoent} end
+      }
+
+      deps = Map.put(deps, :io, io_stubs)
+
+      # Act & Assert
+      assert FileSystem.deactivate_syndicates([:new_loka], deps) == {:error, :enoent}
+    end
+
+    test "returns the error if it fails to write to watch_list.json", deps do
+      # Arrange
+      io_stubs = %{
+        read: fn "watch_list.json" -> {:ok, "{\"active_syndicates\": {}}"} end,
+        write: fn "watch_list.json", _data -> {:error, :enoent} end
+      }
+
+      deps = Map.put(deps, :io, io_stubs)
+
+      # Act & Assert
+      assert FileSystem.deactivate_syndicates([:new_loka], deps) == {:error, :enoent}
+    end
+  end
+
   describe "list_active_syndicates/1" do
     test "returns the list of all active syndicates", deps do
       # Arrange
       read_fn = fn
-        "current_orders.json" ->
+        "watch_list.json" ->
           {:ok,
-           "{\"new_loka\":[{\"item_id\":\"54e644ffe779897594fa68d2\",\"order_id\":\"5ee71a2604d55c0a5cbdc3c2\"},{\"item_id\":\"Vampire leech\",\"order_id\":\"5ee71a2604d55c0a5cbdc3e3\"}]}"}
-
-        "syndicates.json" ->
-          {:ok,
-           "[{\"id\":\"new_loka\",\"name\":\"New Loka\",\"catalog\":[]},{\"id\":\"perrin_sequence\",\"name\":\"Perrin Sequence\",\"catalog\":[]}]"}
+           Jason.encode!(%{
+             active_syndicates: %{
+               cephalon_simaris: :top_five_average,
+               cephalon_suda: :top_five_average
+             }
+           })}
       end
 
       deps = Map.put(deps, :io, %{read: read_fn})
 
       # Act & Assert
       assert FileSystem.list_active_syndicates(deps) ==
-               {:ok, [%Syndicate{name: "New Loka", id: :new_loka, catalog: []}]}
+               {:ok,
+                %{
+                  cephalon_simaris: :top_five_average,
+                  cephalon_suda: :top_five_average
+                }}
     end
 
-    test "returns the error if it fails to read current_orders.json", deps do
-      # Arrange
+    test "returns the error if it fails to read watch_list.json", deps do
       read_fn = fn
-        "current_orders.json" ->
-          {:error, :enoent}
-
-        "syndicates.json" ->
-          {:ok,
-           "[{\"id\":\"new_loka\",\"name\":\"New Loka\",\"catalog\":[]},{\"id\":\"perrin_sequence\",\"name\":\"Perrin Sequence\",\"catalog\":[]}]"}
-      end
-
-      deps = Map.put(deps, :io, %{read: read_fn})
-
-      # Act & Assert
-      assert FileSystem.list_active_syndicates(deps) == {:error, :enoent}
-    end
-
-    test "returns the error if it fails to read syndicates.json", deps do
-      read_fn = fn
-        "current_orders.json" ->
-          {:ok,
-           "{\"new_loka\":[{\"item_id\":\"54e644ffe779897594fa68d2\",\"order_id\":\"5ee71a2604d55c0a5cbdc3c2\"},{\"item_id\":\"Vampire leech\",\"order_id\":\"5ee71a2604d55c0a5cbdc3e3\"}]}"}
-
-        "syndicates.json" ->
-          {:error, :enoent}
+        "watch_list.json" -> {:error, :enoent}
       end
 
       deps = Map.put(deps, :io, %{read: read_fn})

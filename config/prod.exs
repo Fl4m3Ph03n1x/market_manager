@@ -18,7 +18,7 @@ config :web_interface, WebInterface.Endpoint,
 
 config :store,
   products: ["priv", "products.json"],
-  current_orders: ["priv", "current_orders.json"],
+  watch_list: ["priv", "watch_list.json"],
   setup: ["priv", "setup.json"],
   syndicates: ["priv", "syndicates.json"]
 
@@ -27,5 +27,8 @@ config :auction_house,
   api_base_url: "https://api.warframe.market/v1/profile/orders",
   market_signin_url: "https://warframe.market/auth/signin",
   api_signin_url: "https://api.warframe.market/v1/auth/signin",
-  http_response_timeout: 9_000,
-  genserver_timeout: 20_000
+  api_profile_url: "https://api.warframe.market/v1/profile"
+
+config :rate_limiter,
+  algorithm: RateLimiter.LeakyBucket,
+  requests_per_second: 1

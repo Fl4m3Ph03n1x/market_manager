@@ -4,12 +4,12 @@ defmodule Store.MixProject do
   def project do
     [
       app: :store,
-      version: "3.1.1",
+      version: "5.0.0",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
-      elixir: "~> 1.16",
+      elixir: "~> 1.18",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       test_coverage: [tool: ExCoveralls],

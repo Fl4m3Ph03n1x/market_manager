@@ -4,46 +4,28 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="ExDoc v0.31.1">
-    <meta name="project" content="Market Manager v2.1.8">
+    <meta name="generator" content="ExDoc v0.38.2">
+    <meta name="project" content="Market Manager v2.1.9">
 
 
-    <title>AuctionHouse — Market Manager v2.1.8</title>
-    <link rel="stylesheet" href="dist/html-elixir-FM2CSD74.css" />
+    <title>AuctionHouse — Market Manager v2.1.9</title>
 
+    <link rel="stylesheet" href="dist/html-elixir-KV3YOVJ3.css" />
 
-    <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
-    <script src="dist/handlebars.templates-43PMFBC7.js"></script>
-    <script src="dist/sidebar_items-27AEC54F.js"></script>
-
-      <script src="docs_config.js"></script>
-
-    <script async src="dist/html-L4O5OK2K.js"></script>
-
+    <script defer src="dist/sidebar_items-4288A184.js"></script>
+    <script defer src="docs_config.js"></script>
+    <script defer src="dist/html-DPJLHKSM.js"></script>
 
   </head>
-  <body data-type="modules" class="page-module">
-    <script>
+  <body>
+    <script>(()=>{var t="ex_doc:settings",e="dark";var o="dark",s="light";var E="sidebar_state",n="closed";var r="sidebar_width";var a="sidebar-open";var i=new URLSearchParams(window.location.search),S=i.get("theme")||JSON.parse(localStorage.getItem(t)||"{}").theme;(S===o||S!==s&&window.matchMedia("(prefers-color-scheme: dark)").matches)&&document.body.classList.add(e);var d=sessionStorage.getItem(E),A=d!==n&&!window.matchMedia(`screen and (max-width: ${768}px)`).matches;document.body.classList.toggle(a,A);var c=sessionStorage.getItem(r);c&&document.body.style.setProperty("--sidebarWidth",`${c}px`);var p=/(Macintosh|iPhone|iPad|iPod)/.test(window.navigator.userAgent);document.documentElement.classList.toggle("apple-os",p);})();
+</script>
 
-      try {
-        var settings = JSON.parse(localStorage.getItem('ex_doc:settings') || '{}');
-
-        if (settings.theme === 'dark' ||
-           ((settings.theme === 'system' || settings.theme == null) &&
-             window.matchMedia('(prefers-color-scheme: dark)').matches)
-           ) {
-          document.body.classList.add('dark')
-        }
-      } catch (error) { }
-    </script>
-
-<div class="main">
+<div class="body-wrapper">
 
 <button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
   <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
 </button>
-
-<div class="background-layer"></div>
 
 <nav id="sidebar" class="sidebar">
 
@@ -59,85 +41,64 @@
 Market Manager
         </a>
         <div class="sidebar-projectVersion" translate="no">
-          v2.1.8
+          v2.1.9
         </div>
       </div>
     </div>
-    <ul id="sidebar-listNav" class="sidebar-listNav" role="tablist">
-      <li>
-        <button id="extras-list-tab-button" role="tab" data-type="extras" aria-controls="extras-tab-panel" aria-selected="true" tabindex="0">
-Pages
-        </button>
-      </li>
-
-        <li>
-          <button id="modules-list-tab-button" role="tab" data-type="modules" aria-controls="modules-tab-panel" aria-selected="false" tabindex="-1">
-            Modules
-          </button>
-        </li>
-
-
-    </ul>
+    <ul id="sidebar-list-nav" class="sidebar-list-nav" role="tablist" data-extras=""></ul>
   </div>
-
-  <div id="extras-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="extras-list-tab-button">
-    <ul id="extras-full-list" class="full-list"></ul>
-  </div>
-
-    <div id="modules-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="modules-list-tab-button" hidden>
-      <ul id="modules-full-list" class="full-list"></ul>
-    </div>
-
-
 </nav>
 
-<main class="content">
-  <output role="status" id="toast"></output>
-  <div class="content-outer">
-    <div id="content" class="content-inner">
-      <div class="top-search">
-        <div class="search-settings">
-          <form class="search-bar" action="search.html">
-            <label class="search-label">
-              <span class="sr-only">Search documentation of Market Manager</span>
-              <input name="q" type="text" class="search-input" placeholder="Search Documentation (press /)" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
-            </label>
-            <button type="submit" class="search-button" aria-label="Submit Search">
-              <i class="ri-search-2-line ri-lg" aria-hidden="true" title="Submit search"></i>
-            </button>
-            <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
-              <i class="ri-close-line ri-lg" title="Cancel search"></i>
-            </button>
-          </form>
-          <div class="autocomplete">
-          </div>
-          <button class="icon-settings display-settings">
-            <i class="ri-settings-3-line"></i>
-            <span class="sr-only">Settings</span>
+<output role="status" id="toast"></output>
+
+<main class="content page-module" id="main" data-type="modules">
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of Market Manager</span>
+            <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+          </label>
+          <button type="submit" class="search-button" aria-label="Submit Search" tabindex="-1">
+            <i class="ri-search-2-line ri-lg" aria-hidden="true"></i>
           </button>
+          <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+            <i class="ri-close-line ri-lg" title="Cancel search"></i>
+          </button>
+        </form>
+        <div class="autocomplete">
         </div>
-
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
       </div>
+    </div>
 
-<h1>
+<div id="top-content">
+  <div class="heading-with-actions top-heading">
+    <h1>
+      <span translate="no">AuctionHouse</span> 
+      <small class="app-vsn" translate="no">(Market Manager v2.1.9)</small>
 
-    <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/auction_house.ex#L1" title="View Source" class="icon-action" rel="help">
-      <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-      <span class="sr-only">View Source</span>
-    </a>
+    </h1>
 
-  <span translate="no">AuctionHouse</span> 
-  <small class="app-vsn" translate="no">(Market Manager v2.1.8)</small>
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/auction_house.ex#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
 
-</h1>
+  </div>
 
 
-  <section id="moduledoc">
+    <section id="moduledoc">
 <p>Library representing the interface for the auction house.
 Responsible for making calls and decoding the answers from the auction house
 into a format the manager understands.</p>
-  </section>
+    </section>
 
+</div>
 
   <section id="summary" class="details-list">
     <h1 class="section-heading">
@@ -153,69 +114,94 @@ into a format the manager understands.</p>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#delete_order/1" translate="no">delete_order(order_id)</a>
+        <a href="#delete_order/1" data-no-tooltip="" translate="no">delete_order(order)</a>
 
       </div>
 
-        <div class="summary-synopsis"><p>Deletes an order from warframe market.</p></div>
+        <div class="summary-synopsis"><p>Deletes an order from warframe market asynchronously.
+Notifies invoking process asynchronously with placed order or with error.</p></div>
 
     </div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#get_all_orders/1" translate="no">get_all_orders(item_name)</a>
+        <a href="#get_item_orders/1" data-no-tooltip="" translate="no">get_item_orders(item_name)</a>
 
       </div>
 
         <div class="summary-synopsis"><p>Gets all warframe market orders for the item with the given name.
 The item's name is in human readable format. This function also converts the
-name into a format that the external party can understand.</p></div>
+name into a format that the external party can understand.
+Notifies invoking process asynchronously with a list of OrderInfo or with error.</p></div>
 
     </div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#login/1" translate="no">login(credentials)</a>
+        <a href="#get_saved_login/0" data-no-tooltip="" translate="no">get_saved_login()</a>
 
       </div>
 
-        <div class="summary-synopsis"><p>Stores the user's credentials and  authenticates with the auction house to
-make requests. Must be invoked every time the application is launched.
-It also performs the necessary steps for authorization. Returns user
-information.</p></div>
+        <div class="summary-synopsis"><p>Returns the authorization and user directly from state.
+Synchronous call, will only fail if this service is down.</p></div>
 
     </div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#logout/0" translate="no">logout()</a>
+        <a href="#get_user_orders/1" data-no-tooltip="" translate="no">get_user_orders(username)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Gets all warframe market sell orders for the given user.
+Notifies invoking process asynchronously with a list of user PlacedOrders or with error.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#login/1" data-no-tooltip="" translate="no">login(credentials)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Authenticates the user with the auction house and saves the session.
+Must be invoked every time the application is launched.
+Notifies invoking process asynchronously with user information or with error.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#logout/0" data-no-tooltip="" translate="no">logout()</a>
 
       </div>
 
         <div class="summary-synopsis"><p>Deletes the current session and user data from the this application.
-Does not interact with the External AuctionHouse, this is a local operation only.</p></div>
+Does not interact with the External AuctionHouse, this is a local operation only.
+Will only fail if this service is down.</p></div>
 
     </div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#place_order/1" translate="no">place_order(order)</a>
+        <a href="#place_order/1" data-no-tooltip="" translate="no">place_order(order)</a>
 
       </div>
 
-        <div class="summary-synopsis"><p>Places an order in warframe market.</p></div>
+        <div class="summary-synopsis"><p>Places an order in warframe market.
+Notifies invoking process asynchronously with placed order or with error.</p></div>
 
     </div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#recover_login/2" translate="no">recover_login(auth, user)</a>
+        <a href="#update_login/2" data-no-tooltip="" translate="no">update_login(auth, user)</a>
 
       </div>
 
         <div class="summary-synopsis"><p>Feeds the authorization information directly to the AuctionHouse. Used when
-the login data is being recovered from a past login. Will only fail if this
-service is down.</p></div>
+the login data is being recovered from a past login to update the this service's state.
+Synchronous call, will only fail if this service is down.</p></div>
 
     </div>
 
@@ -235,18 +221,18 @@ service is down.</p></div>
 <section class="detail" id="delete_order/1">
 
   <div class="detail-header">
-    <a href="#delete_order/1" class="detail-link" title="Link to this function">
+    <a href="#delete_order/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">delete_order(order_id)</h1>
-
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/auction_house.ex#L64" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">delete_order(order)</h1>
 
 
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/auction_house.ex#L66" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -258,82 +244,164 @@ service is down.</p></div>
 
       </div>
 
-<p>Deletes an order from warframe market.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="n">placed_order</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">PlacedOrder</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="2131968248-1">(</span><span class="p" data-group-id="2131968248-2">%{</span><span class="w">
+<p>Deletes an order from warframe market asynchronously.
+Notifies invoking process asynchronously with placed order or with error.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="kn">alias</span><span class="w"> </span><span class="nc">Shared.Data.PlacedOrder</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="n">placed_order</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">PlacedOrder</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="9227955753-1">(</span><span class="p" data-group-id="9227955753-2">%{</span><span class="w">
     </span><span class="s">&quot;item_id&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;54e644ffe779897594fa68cd&quot;</span><span class="p">,</span><span class="w">
     </span><span class="s">&quot;order_id&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;626127cbc984ac033cd2bbd2&quot;</span><span class="w">
-</span><span class="p" data-group-id="2131968248-2">}</span><span class="p" data-group-id="2131968248-1">)</span><span class="w">
+</span><span class="p" data-group-id="9227955753-2">}</span><span class="p" data-group-id="9227955753-1">)</span><span class="w">
 
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">AuctionHouse</span><span class="o">.</span><span class="n">delete_order</span><span class="p" data-group-id="2131968248-3">(</span><span class="n">placed_order</span><span class="p" data-group-id="2131968248-3">)</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">AuctionHouse</span><span class="o">.</span><span class="n">delete_order</span><span class="p" data-group-id="9227955753-3">(</span><span class="n">placed_order</span><span class="p" data-group-id="9227955753-3">)</span><span class="w">
 </span><span class="ss">:ok</span><span class="w">
 
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">AuctionHouse</span><span class="o">.</span><span class="n">delete_order</span><span class="p" data-group-id="2131968248-4">(</span><span class="n">placed_order</span><span class="p" data-group-id="2131968248-4">)</span><span class="w">
-</span><span class="p" data-group-id="2131968248-5">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:reason</span><span class="p">,</span><span class="w"> </span><span class="n">order_id</span><span class="p" data-group-id="2131968248-5">}</span></code></pre>
+</span><span class="nc">The</span><span class="w"> </span><span class="n">received</span><span class="w"> </span><span class="n">messages</span><span class="w"> </span><span class="n">will</span><span class="w"> </span><span class="n">one</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">following</span><span class="w"> </span><span class="ss">formats</span><span class="p">:</span><span class="w">
+
+</span><span class="o">-</span><span class="w"> </span><span class="p" data-group-id="9227955753-4">{</span><span class="ss">:delete_order</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="9227955753-5">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="9227955753-6">%</span><span class="nc" data-group-id="9227955753-6">PlacedOrder</span><span class="p" data-group-id="9227955753-6">{</span><span class="ss">item_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;54e644ffe779897594fa68cd&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">order_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;626127cbc984ac033cd2bbd2&quot;</span><span class="p" data-group-id="9227955753-6">}</span><span class="p" data-group-id="9227955753-5">}</span><span class="p" data-group-id="9227955753-4">}</span><span class="w">
+</span><span class="o">-</span><span class="w"> </span><span class="p" data-group-id="9227955753-7">{</span><span class="ss">:delete_order</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="9227955753-8">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="9227955753-9">{</span><span class="n">reason</span><span class="p">,</span><span class="w"> </span><span class="n">err</span><span class="p" data-group-id="9227955753-9">}</span><span class="p" data-group-id="9227955753-8">}</span><span class="p" data-group-id="9227955753-7">}</span></code></pre>
   </section>
 </section>
-<section class="detail" id="get_all_orders/1">
+<section class="detail" id="get_item_orders/1">
 
   <div class="detail-header">
-    <a href="#get_all_orders/1" class="detail-link" title="Link to this function">
+    <a href="#get_item_orders/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">get_all_orders(item_name)</h1>
-
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/auction_house.ex#L95" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">get_item_orders(item_name)</h1>
 
 
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/auction_house.ex#L90" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@spec</span> get_all_orders(<a href="AuctionHouse.Type.html#t:item_name/0">AuctionHouse.Type.item_name</a>()) ::
-  <a href="AuctionHouse.Type.html#t:get_all_orders_response/0">AuctionHouse.Type.get_all_orders_response</a>()</pre>
+          <pre translate="no"><span class="attribute">@spec</span> get_item_orders(<a href="AuctionHouse.Type.html#t:item_name/0">AuctionHouse.Type.item_name</a>()) ::
+  <a href="AuctionHouse.Type.html#t:get_item_orders_response/0">AuctionHouse.Type.get_item_orders_response</a>()</pre>
 
       </div>
 
 <p>Gets all warframe market orders for the item with the given name.
 The item's name is in human readable format. This function also converts the
-name into a format that the external party can understand.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="n">item_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Despoil&quot;</span><span class="w">
+name into a format that the external party can understand.
+Notifies invoking process asynchronously with a list of OrderInfo or with error.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="kn">alias</span><span class="w"> </span><span class="nc">Shared.Data.OrderInfo</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="n">item_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Despoil&quot;</span><span class="w">
 
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">AuctionHouse</span><span class="o">.</span><span class="n">get_all_orders</span><span class="p" data-group-id="0062133761-1">(</span><span class="n">item_name</span><span class="p" data-group-id="0062133761-1">)</span><span class="w">
-</span><span class="p" data-group-id="0062133761-2">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="0062133761-3">[</span><span class="w">
-  </span><span class="p" data-group-id="0062133761-4">%</span><span class="nc" data-group-id="0062133761-4">Shared.Data.OrderInfo</span><span class="p" data-group-id="0062133761-4">{</span><span class="w">
-        </span><span class="s">&quot;visible&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="no">true</span><span class="p">,</span><span class="w">
-        </span><span class="s">&quot;order_type&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;sell&quot;</span><span class="p">,</span><span class="w">
-        </span><span class="s">&quot;platform&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;pc&quot;</span><span class="p">,</span><span class="w">
-        </span><span class="s">&quot;platinum&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="mi">20</span><span class="p">,</span><span class="w">
-        </span><span class="s">&quot;user&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p" data-group-id="0062133761-5">%</span><span class="nc" data-group-id="0062133761-5">Shared.Data.OrderInfo.User</span><span class="p" data-group-id="0062133761-5">{</span><span class="w">
-          </span><span class="s">&quot;ingame_name&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;user_name_1&quot;</span><span class="p">,</span><span class="w">
-          </span><span class="s">&quot;status&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;ingame&quot;</span><span class="w">
-        </span><span class="p" data-group-id="0062133761-5">}</span><span class="w">
-      </span><span class="p" data-group-id="0062133761-4">}</span><span class="w">
-    </span><span class="p" data-group-id="0062133761-3">]</span><span class="w">
-</span><span class="p" data-group-id="0062133761-2">}</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">AuctionHouse</span><span class="o">.</span><span class="n">get_item_orders</span><span class="p" data-group-id="7945178875-1">(</span><span class="n">item_name</span><span class="p" data-group-id="7945178875-1">)</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="ss">:ok</span><span class="w">
 
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">AuctionHouse</span><span class="o">.</span><span class="n">get_all_orders</span><span class="p" data-group-id="0062133761-6">(</span><span class="n">item_name</span><span class="p" data-group-id="0062133761-6">)</span><span class="w">
-</span><span class="p" data-group-id="0062133761-7">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:reason</span><span class="p">,</span><span class="w"> </span><span class="n">item_name</span><span class="p" data-group-id="0062133761-7">}</span></code></pre>
+</span><span class="nc">The</span><span class="w"> </span><span class="n">received</span><span class="w"> </span><span class="n">messages</span><span class="w"> </span><span class="n">will</span><span class="w"> </span><span class="n">one</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">following</span><span class="w"> </span><span class="ss">formats</span><span class="p">:</span><span class="w">
+
+</span><span class="o">-</span><span class="w"> </span><span class="p" data-group-id="7945178875-2">{</span><span class="ss">:get_item_orders</span><span class="p">,</span><span class="w">  </span><span class="p" data-group-id="7945178875-3">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Despoil&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="7945178875-4">[</span><span class="p" data-group-id="7945178875-5">%</span><span class="nc" data-group-id="7945178875-5">OrderInfo</span><span class="p" data-group-id="7945178875-5">{</span><span class="s">&quot;visible&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="no">true</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;order_type&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;sell&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;platform&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;pc&quot;</span><span class="p">,</span><span class="w">
+  </span><span class="s">&quot;platinum&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="mi">20</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;user&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p" data-group-id="7945178875-6">%</span><span class="nc" data-group-id="7945178875-6">OrderInfo.User</span><span class="p" data-group-id="7945178875-6">{</span><span class="s">&quot;ingame_name&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;user_name_1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;status&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;ingame&quot;</span><span class="p" data-group-id="7945178875-6">}</span><span class="p" data-group-id="7945178875-5">}</span><span class="p" data-group-id="7945178875-4">]</span><span class="p" data-group-id="7945178875-3">}</span><span class="w">
+</span><span class="o">-</span><span class="w"> </span><span class="p" data-group-id="7945178875-7">{</span><span class="ss">:get_item_orders</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="7945178875-8">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Despoil&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="7945178875-9">{</span><span class="n">reason</span><span class="p">,</span><span class="w"> </span><span class="n">err</span><span class="p" data-group-id="7945178875-9">}</span><span class="p" data-group-id="7945178875-8">}</span><span class="p" data-group-id="7945178875-7">}</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="get_saved_login/0">
+
+  <div class="detail-header">
+    <a href="#get_saved_login/0" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">get_saved_login()</h1>
+
+
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/auction_house.ex#L181" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> get_saved_login() :: <a href="AuctionHouse.Type.html#t:get_saved_login_response/0">AuctionHouse.Type.get_saved_login_response</a>()</pre>
+
+      </div>
+
+<p>Returns the authorization and user directly from state.
+Synchronous call, will only fail if this service is down.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="kn">alias</span><span class="w"> </span><span class="nc">Shared.Data</span><span class="o">.</span><span class="p" data-group-id="5906042597-1">{</span><span class="nc">Authorization</span><span class="p">,</span><span class="w"> </span><span class="nc">User</span><span class="p" data-group-id="5906042597-1">}</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="n">auth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Authorization</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="5906042597-2">(</span><span class="s">&quot;a_cookie&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;a_token&quot;</span><span class="p" data-group-id="5906042597-2">)</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">User</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="5906042597-3">(</span><span class="s">&quot;fl4m3&quot;</span><span class="p">,</span><span class="w"> </span><span class="no">false</span><span class="p" data-group-id="5906042597-3">)</span><span class="w">
+
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">AuctionHouse</span><span class="o">.</span><span class="n">get_saved_login</span><span class="p" data-group-id="5906042597-4">(</span><span class="p" data-group-id="5906042597-4">)</span><span class="w">
+</span><span class="p" data-group-id="5906042597-5">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="5906042597-6">{</span><span class="p" data-group-id="5906042597-7">%</span><span class="nc" data-group-id="5906042597-7">Authorization</span><span class="p" data-group-id="5906042597-7">{</span><span class="p" data-group-id="5906042597-7">}</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="5906042597-8">%</span><span class="nc" data-group-id="5906042597-8">User</span><span class="p" data-group-id="5906042597-8">{</span><span class="p" data-group-id="5906042597-8">}</span><span class="p" data-group-id="5906042597-6">}</span><span class="p" data-group-id="5906042597-5">}</span><span class="w">
+
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">AuctionHouse</span><span class="o">.</span><span class="n">get_saved_login</span><span class="p" data-group-id="5906042597-9">(</span><span class="p" data-group-id="5906042597-9">)</span><span class="w">
+</span><span class="p" data-group-id="5906042597-10">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:reason</span><span class="p" data-group-id="5906042597-10">}</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="get_user_orders/1">
+
+  <div class="detail-header">
+    <a href="#get_user_orders/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">get_user_orders(username)</h1>
+
+
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/auction_house.ex#L120" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> get_user_orders(<a href="AuctionHouse.Type.html#t:username/0">AuctionHouse.Type.username</a>()) ::
+  <a href="AuctionHouse.Type.html#t:get_user_orders_response/0">AuctionHouse.Type.get_user_orders_response</a>()</pre>
+
+      </div>
+
+<p>Gets all warframe market sell orders for the given user.
+Notifies invoking process asynchronously with a list of user PlacedOrders or with error.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="nc">AuctionHouse</span><span class="o">.</span><span class="n">get_user_orders</span><span class="p" data-group-id="4682356469-1">(</span><span class="s">&quot;Fl4m3&quot;</span><span class="p" data-group-id="4682356469-1">)</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="ss">:ok</span><span class="w">
+
+</span><span class="nc">The</span><span class="w"> </span><span class="n">received</span><span class="w"> </span><span class="n">messages</span><span class="w"> </span><span class="n">will</span><span class="w"> </span><span class="n">one</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">following</span><span class="w"> </span><span class="ss">formats</span><span class="p">:</span><span class="w">
+
+</span><span class="o">-</span><span class="w"> </span><span class="p" data-group-id="4682356469-2">{</span><span class="ss">:get_user_orders</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="4682356469-3">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w">
+  </span><span class="p" data-group-id="4682356469-4">[</span><span class="w">
+    </span><span class="p" data-group-id="4682356469-5">%</span><span class="nc" data-group-id="4682356469-5">PlacedOrder</span><span class="p" data-group-id="4682356469-5">{</span><span class="w">
+      </span><span class="ss">order_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;66058313a9630600302d4889&quot;</span><span class="p">,</span><span class="w">
+      </span><span class="ss">item_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;55108594e77989728d5100c6&quot;</span><span class="w">
+    </span><span class="p" data-group-id="4682356469-5">}</span><span class="p">,</span><span class="w">
+    </span><span class="p" data-group-id="4682356469-6">%</span><span class="nc" data-group-id="4682356469-6">PlacedOrder</span><span class="p" data-group-id="4682356469-6">{</span><span class="w">
+      </span><span class="ss">order_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;6605832ea96306003657a90d&quot;</span><span class="p">,</span><span class="w">
+      </span><span class="ss">item_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;54e644ffe779897594fa68d2&quot;</span><span class="w">
+    </span><span class="p" data-group-id="4682356469-6">}</span><span class="w">
+  </span><span class="p" data-group-id="4682356469-4">]</span><span class="w">
+</span><span class="p" data-group-id="4682356469-3">}</span><span class="p" data-group-id="4682356469-2">}</span><span class="w">
+
+</span><span class="o">-</span><span class="w"> </span><span class="p" data-group-id="4682356469-7">{</span><span class="ss">:get_user_orders</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="4682356469-8">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="4682356469-9">{</span><span class="n">reason</span><span class="p">,</span><span class="w"> </span><span class="n">err</span><span class="p" data-group-id="4682356469-9">}</span><span class="p" data-group-id="4682356469-8">}</span><span class="p" data-group-id="4682356469-7">}</span></code></pre>
   </section>
 </section>
 <section class="detail" id="login/1">
 
   <div class="detail-header">
-    <a href="#login/1" class="detail-link" title="Link to this function">
+    <a href="#login/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">login(credentials)</h1>
-
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/auction_house.ex#L121" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">login(credentials)</h1>
 
 
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/auction_house.ex#L143" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -344,39 +412,36 @@ name into a format that the external party can understand.</p><p>Example:</p><pr
 
       </div>
 
-<p>Stores the user's credentials and  authenticates with the auction house to
-make requests. Must be invoked every time the application is launched.
-It also performs the necessary steps for authorization. Returns user
-information.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="kn">alias</span><span class="w"> </span><span class="nc">Shared.Data</span><span class="o">.</span><span class="p" data-group-id="0157893623-1">{</span><span class="nc">Authorization</span><span class="p">,</span><span class="w"> </span><span class="nc">Credentials</span><span class="p">,</span><span class="w"> </span><span class="nc">User</span><span class="p" data-group-id="0157893623-1">}</span><span class="w">
-</span><span class="o">&gt;</span><span class="w"> </span><span class="n">credentials</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Credentials</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="0157893623-2">(</span><span class="s">&quot;the_username&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;the_password&quot;</span><span class="p" data-group-id="0157893623-2">)</span><span class="w">
+<p>Authenticates the user with the auction house and saves the session.
+Must be invoked every time the application is launched.
+Notifies invoking process asynchronously with user information or with error.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="kn">alias</span><span class="w"> </span><span class="nc">Shared.Data</span><span class="o">.</span><span class="p" data-group-id="7091401060-1">{</span><span class="nc">Authorization</span><span class="p">,</span><span class="w"> </span><span class="nc">Credentials</span><span class="p">,</span><span class="w"> </span><span class="nc">User</span><span class="p" data-group-id="7091401060-1">}</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="n">credentials</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Credentials</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="7091401060-2">(</span><span class="s">&quot;the_username&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;the_password&quot;</span><span class="p" data-group-id="7091401060-2">)</span><span class="w">
 
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">AuctionHouse</span><span class="o">.</span><span class="n">login</span><span class="p" data-group-id="0157893623-3">(</span><span class="n">credentials</span><span class="p" data-group-id="0157893623-3">)</span><span class="w">
-</span><span class="p" data-group-id="0157893623-4">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w">
-  </span><span class="p" data-group-id="0157893623-5">{</span><span class="w">
-    </span><span class="p" data-group-id="0157893623-6">%</span><span class="nc" data-group-id="0157893623-6">Authorization</span><span class="p" data-group-id="0157893623-6">{</span><span class="ss">cookie</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;a_cookie&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">token</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;a_token&quot;</span><span class="p" data-group-id="0157893623-6">}</span><span class="p">,</span><span class="w">
-    </span><span class="p" data-group-id="0157893623-7">%</span><span class="nc" data-group-id="0157893623-7">User</span><span class="p" data-group-id="0157893623-7">{</span><span class="ss">patreon?</span><span class="p">:</span><span class="w"> </span><span class="no">false</span><span class="p">,</span><span class="w"> </span><span class="ss">ingame_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;fl4m3&quot;</span><span class="p" data-group-id="0157893623-7">}</span><span class="w">
-  </span><span class="p" data-group-id="0157893623-5">}</span><span class="w">
-</span><span class="p" data-group-id="0157893623-4">}</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">AuctionHouse</span><span class="o">.</span><span class="n">login</span><span class="p" data-group-id="7091401060-3">(</span><span class="n">credentials</span><span class="p" data-group-id="7091401060-3">)</span><span class="w">
+</span><span class="ss">:ok</span><span class="w">
 
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">AuctionHouse</span><span class="o">.</span><span class="n">login</span><span class="p" data-group-id="0157893623-8">(</span><span class="n">credentials</span><span class="p" data-group-id="0157893623-8">)</span><span class="w">
-</span><span class="p" data-group-id="0157893623-9">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:reason</span><span class="p">,</span><span class="w"> </span><span class="n">credentials</span><span class="p" data-group-id="0157893623-9">}</span></code></pre>
+</span><span class="nc">The</span><span class="w"> </span><span class="n">received</span><span class="w"> </span><span class="n">messages</span><span class="w"> </span><span class="n">will</span><span class="w"> </span><span class="n">one</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">following</span><span class="w"> </span><span class="ss">formats</span><span class="p">:</span><span class="w">
+
+</span><span class="o">-</span><span class="w"> </span><span class="p" data-group-id="7091401060-4">{</span><span class="ss">:login</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="7091401060-5">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="7091401060-6">{</span><span class="w"> </span><span class="p" data-group-id="7091401060-7">%</span><span class="nc" data-group-id="7091401060-7">Authorization</span><span class="p" data-group-id="7091401060-7">{</span><span class="ss">cookie</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;a_cookie&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">token</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;a_token&quot;</span><span class="p" data-group-id="7091401060-7">}</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="7091401060-8">%</span><span class="nc" data-group-id="7091401060-8">User</span><span class="p" data-group-id="7091401060-8">{</span><span class="ss">patreon?</span><span class="p">:</span><span class="w"> </span><span class="no">false</span><span class="p">,</span><span class="w"> </span><span class="ss">ingame_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;fl4m3&quot;</span><span class="p" data-group-id="7091401060-8">}</span><span class="p" data-group-id="7091401060-6">}</span><span class="p" data-group-id="7091401060-5">}</span><span class="p" data-group-id="7091401060-4">}</span><span class="w">
+</span><span class="o">-</span><span class="w"> </span><span class="p" data-group-id="7091401060-9">{</span><span class="ss">:login</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="7091401060-10">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="7091401060-11">{</span><span class="n">reason</span><span class="p">,</span><span class="w"> </span><span class="n">err</span><span class="p" data-group-id="7091401060-11">}</span><span class="p" data-group-id="7091401060-10">}</span><span class="p" data-group-id="7091401060-9">}</span><span class="w">
+</span></code></pre>
   </section>
 </section>
 <section class="detail" id="logout/0">
 
   <div class="detail-header">
-    <a href="#logout/0" class="detail-link" title="Link to this function">
+    <a href="#logout/0" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">logout()</h1>
-
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/auction_house.ex#L152" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">logout()</h1>
 
 
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/auction_house.ex#L195" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -388,25 +453,26 @@ information.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><
       </div>
 
 <p>Deletes the current session and user data from the this application.
-Does not interact with the External AuctionHouse, this is a local operation only.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="nc">AuctionHouse</span><span class="o">.</span><span class="n">logout</span><span class="p" data-group-id="7404561926-1">(</span><span class="p" data-group-id="7404561926-1">)</span><span class="w">
+Does not interact with the External AuctionHouse, this is a local operation only.
+Will only fail if this service is down.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="nc">AuctionHouse</span><span class="o">.</span><span class="n">logout</span><span class="p" data-group-id="6292263340-1">(</span><span class="p" data-group-id="6292263340-1">)</span><span class="w">
 </span><span class="ss">:ok</span></code></pre>
   </section>
 </section>
 <section class="detail" id="place_order/1">
 
   <div class="detail-header">
-    <a href="#place_order/1" class="detail-link" title="Link to this function">
+    <a href="#place_order/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">place_order(order)</h1>
-
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/auction_house.ex#L44" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">place_order(order)</h1>
 
 
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/auction_house.ex#L42" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -417,60 +483,58 @@ Does not interact with the External AuctionHouse, this is a local operation only
 
       </div>
 
-<p>Places an order in warframe market.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="kn">alias</span><span class="w"> </span><span class="nc">Shared.Data</span><span class="o">.</span><span class="p" data-group-id="0425253317-1">{</span><span class="nc">Order</span><span class="p">,</span><span class="w"> </span><span class="nc">PlacedOrder</span><span class="p" data-group-id="0425253317-1">}</span><span class="w">
-</span><span class="o">&gt;</span><span class="w"> </span><span class="n">order</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Order</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="0425253317-2">(</span><span class="p" data-group-id="0425253317-3">%{</span><span class="w">
+<p>Places an order in warframe market.
+Notifies invoking process asynchronously with placed order or with error.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="kn">alias</span><span class="w"> </span><span class="nc">Shared.Data</span><span class="o">.</span><span class="p" data-group-id="5551685530-1">{</span><span class="nc">Order</span><span class="p">,</span><span class="w"> </span><span class="nc">PlacedOrder</span><span class="p" data-group-id="5551685530-1">}</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="n">order</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Order</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="5551685530-2">(</span><span class="p" data-group-id="5551685530-3">%{</span><span class="w">
   </span><span class="s">&quot;item_id&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;54e644ffe779897594fa68cd&quot;</span><span class="p">,</span><span class="w">
   </span><span class="s">&quot;mod_rank&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
   </span><span class="s">&quot;order_type&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;sell&quot;</span><span class="p">,</span><span class="w">
   </span><span class="s">&quot;platinum&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="mi">20</span><span class="p">,</span><span class="w">
   </span><span class="s">&quot;quantity&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="mi">1</span><span class="w">
-</span><span class="p" data-group-id="0425253317-3">}</span><span class="p" data-group-id="0425253317-2">)</span><span class="w">
+</span><span class="p" data-group-id="5551685530-3">}</span><span class="p" data-group-id="5551685530-2">)</span><span class="w">
 
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">AuctionHouse</span><span class="o">.</span><span class="n">place_order</span><span class="p" data-group-id="0425253317-4">(</span><span class="n">order</span><span class="p" data-group-id="0425253317-4">)</span><span class="w">
-</span><span class="p" data-group-id="0425253317-5">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w">
-  </span><span class="p" data-group-id="0425253317-6">%</span><span class="nc" data-group-id="0425253317-6">PlacedOrder</span><span class="p" data-group-id="0425253317-6">{</span><span class="w">
-    </span><span class="ss">item_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;54e644ffe779897594fa68cd&quot;</span><span class="p">,</span><span class="w">
-    </span><span class="ss">order_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;626127cbc984ac033cd2bbd2&quot;</span><span class="w">
-  </span><span class="p" data-group-id="0425253317-6">}</span><span class="w">
-</span><span class="p" data-group-id="0425253317-5">}</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">AuctionHouse</span><span class="o">.</span><span class="n">place_order</span><span class="p" data-group-id="5551685530-4">(</span><span class="n">order</span><span class="p" data-group-id="5551685530-4">)</span><span class="w">
+</span><span class="ss">:ok</span><span class="w">
 
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">AuctionHouse</span><span class="o">.</span><span class="n">place_order</span><span class="p" data-group-id="0425253317-7">(</span><span class="n">order</span><span class="p" data-group-id="0425253317-7">)</span><span class="w">
-</span><span class="p" data-group-id="0425253317-8">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:reason</span><span class="p">,</span><span class="w"> </span><span class="n">order</span><span class="p" data-group-id="0425253317-8">}</span></code></pre>
+</span><span class="nc">The</span><span class="w"> </span><span class="n">received</span><span class="w"> </span><span class="n">messages</span><span class="w"> </span><span class="n">will</span><span class="w"> </span><span class="n">one</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">following</span><span class="w"> </span><span class="ss">formats</span><span class="p">:</span><span class="w">
+
+</span><span class="o">-</span><span class="w"> </span><span class="p" data-group-id="5551685530-5">{</span><span class="ss">:place_order</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="5551685530-6">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="5551685530-7">%</span><span class="nc" data-group-id="5551685530-7">PlacedOrder</span><span class="p" data-group-id="5551685530-7">{</span><span class="ss">item_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;54a74454e779892d5e5155d5&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">order_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;66b9c7aa6b17410a57974e4b&quot;</span><span class="p" data-group-id="5551685530-7">}</span><span class="p" data-group-id="5551685530-6">}</span><span class="p" data-group-id="5551685530-5">}</span><span class="w">
+</span><span class="o">-</span><span class="w"> </span><span class="p" data-group-id="5551685530-8">{</span><span class="ss">:place_order</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="5551685530-9">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="5551685530-10">{</span><span class="n">reason</span><span class="p">,</span><span class="w"> </span><span class="n">err</span><span class="p" data-group-id="5551685530-10">}</span><span class="p" data-group-id="5551685530-9">}</span><span class="p" data-group-id="5551685530-8">}</span></code></pre>
   </section>
 </section>
-<section class="detail" id="recover_login/2">
+<section class="detail" id="update_login/2">
 
   <div class="detail-header">
-    <a href="#recover_login/2" class="detail-link" title="Link to this function">
+    <a href="#update_login/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">recover_login(auth, user)</h1>
-
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/auction_house.ex#L139" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">update_login(auth, user)</h1>
 
 
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/auction_house.ex#L161" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@spec</span> recover_login(<a href="Shared.Data.Authorization.html#t:t/0">Shared.Data.Authorization.t</a>(), <a href="Shared.Data.User.html#t:t/0">Shared.Data.User.t</a>()) ::
-  <a href="AuctionHouse.Type.html#t:recover_login_response/0">AuctionHouse.Type.recover_login_response</a>()</pre>
+          <pre translate="no"><span class="attribute">@spec</span> update_login(<a href="Shared.Data.Authorization.html#t:t/0">Shared.Data.Authorization.t</a>(), <a href="Shared.Data.User.html#t:t/0">Shared.Data.User.t</a>()) ::
+  <a href="AuctionHouse.Type.html#t:update_login_response/0">AuctionHouse.Type.update_login_response</a>()</pre>
 
       </div>
 
 <p>Feeds the authorization information directly to the AuctionHouse. Used when
-the login data is being recovered from a past login. Will only fail if this
-service is down.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="kn">alias</span><span class="w"> </span><span class="nc">Shared.Data</span><span class="o">.</span><span class="p" data-group-id="1941238426-1">{</span><span class="nc">Authorization</span><span class="p">,</span><span class="w"> </span><span class="nc">User</span><span class="p" data-group-id="1941238426-1">}</span><span class="w">
-</span><span class="o">&gt;</span><span class="w"> </span><span class="n">auth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Authorization</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="1941238426-2">(</span><span class="s">&quot;a_cookie&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;a_token&quot;</span><span class="p" data-group-id="1941238426-2">)</span><span class="w">
-</span><span class="o">&gt;</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">User</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="1941238426-3">(</span><span class="s">&quot;fl4m3&quot;</span><span class="p">,</span><span class="w"> </span><span class="no">false</span><span class="p" data-group-id="1941238426-3">)</span><span class="w">
+the login data is being recovered from a past login to update the this service's state.
+Synchronous call, will only fail if this service is down.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="kn">alias</span><span class="w"> </span><span class="nc">Shared.Data</span><span class="o">.</span><span class="p" data-group-id="9100609938-1">{</span><span class="nc">Authorization</span><span class="p">,</span><span class="w"> </span><span class="nc">User</span><span class="p" data-group-id="9100609938-1">}</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="n">auth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Authorization</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="9100609938-2">(</span><span class="s">&quot;a_cookie&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;a_token&quot;</span><span class="p" data-group-id="9100609938-2">)</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">User</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="9100609938-3">(</span><span class="s">&quot;fl4m3&quot;</span><span class="p">,</span><span class="w"> </span><span class="no">false</span><span class="p" data-group-id="9100609938-3">)</span><span class="w">
 
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">AuctionHouse</span><span class="o">.</span><span class="n">recover_login</span><span class="p" data-group-id="1941238426-4">(</span><span class="n">auth</span><span class="p">,</span><span class="w"> </span><span class="n">user</span><span class="p" data-group-id="1941238426-4">)</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">AuctionHouse</span><span class="o">.</span><span class="n">update_login</span><span class="p" data-group-id="9100609938-4">(</span><span class="n">auth</span><span class="p">,</span><span class="w"> </span><span class="n">user</span><span class="p" data-group-id="9100609938-4">)</span><span class="w">
 </span><span class="ss">:ok</span></code></pre>
   </section>
 </section>
@@ -478,34 +542,33 @@ service is down.</p><p>Example:</p><pre><code class="makeup elixir" translate="n
     </div>
   </section>
 
-      <footer class="footer">
-        <p>
+    <footer class="footer">
+      <p>
 
-          <span class="line">
-            <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
-              Search HexDocs
-            </button>
+        <span class="line">
+          <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
+            Search HexDocs
+          </button>
 
-              <a href="Market Manager.epub" title="ePub version">
-                Download ePub version
-              </a>
+            <a href="Market Manager.epub" title="ePub version">
+              Download ePub version
+            </a>
 
-          </span>
-        </p>
+        </span>
+      </p>
 
-        <p class="built-using">
-          Built using
-          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.31.1) for the
+      <p class="built-using">
+        Built using
+        <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.38.2) for the
 
-            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+          <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
 
-        </p>
-      </footer>
-    </div>
+      </p>
+
+    </footer>
   </div>
 </main>
 </div>
-
 
   </body>
 </html>

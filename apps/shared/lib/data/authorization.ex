@@ -7,6 +7,9 @@ defmodule Shared.Data.Authorization do
 
   alias Shared.Utils.Structs
 
+  @type cookie :: String.t()
+  @type token :: String.t()
+
   @type authorization ::
           %{
             (cookie :: String.t()) => String.t(),

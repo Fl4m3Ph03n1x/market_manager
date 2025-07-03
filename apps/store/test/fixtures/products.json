@@ -1175,5 +1175,35 @@
 		"id": "60e5b8fd4794450053e99947",
 		"min_price": 15,
 		"default_price": 17
+	},
+	{
+		"name": "Scattered Justice",
+		"id": "54a74454e779892d5e5155f5",
+		"min_price": 14,
+		"default_price": 16
+	},
+	{
+		"name": "Justice Blades",
+		"id": "54a74455e779892d5e5156b9",
+		"min_price": 14,
+		"default_price": 16
+	},
+	{
+		"name": "Gilded Truth",
+		"id": "54a74454e779892d5e515664",
+		"min_price": 14,
+		"default_price": 16
+	},
+	{
+		"name": "Blade of Truth",
+		"id": "54a74454e779892d5e515645",
+		"min_price": 14,
+		"default_price": 16
+	},
+	{
+		"name": "Entropy Flight",
+		"id": "54a74454e779892d5e5155ee",
+		"min_price": 14,
+		"default_price": 16
 	}
 ]

@@ -5,7 +5,7 @@ defmodule AuctionHouse do
   into a format the manager understands.
   """
 
-  alias AuctionHouse.Runtime.Server
+  alias AuctionHouse.Runtime.{AuctionSupervisor, Server}
   alias AuctionHouse.Type
   alias Shared.Data.{Authorization, Credentials, Order, PlacedOrder, User}
   alias Supervisor
@@ -16,6 +16,7 @@ defmodule AuctionHouse do
 
   @doc """
   Places an order in warframe market.
+  Notifies invoking process asynchronously with placed order or with error.
 
   Example:
   ```
@@ -29,25 +30,24 @@ defmodule AuctionHouse do
   })
 
   > AuctionHouse.place_order(order)
-  {:ok,
-    %PlacedOrder{
-      item_id: "54e644ffe779897594fa68cd",
-      order_id: "626127cbc984ac033cd2bbd2"
-    }
-  }
+  :ok
 
-  > AuctionHouse.place_order(order)
-  {:error, :reason, order}
+  The received messages will one of the following formats:
+
+  - {:place_order, {:ok, %PlacedOrder{item_id: "54a74454e779892d5e5155d5", order_id: "66b9c7aa6b17410a57974e4b"}}}
+  - {:place_order, {:error, {reason, err}}}
   ```
   """
   @spec place_order(Order.t()) :: Type.place_order_response()
   defdelegate place_order(order), to: Server
 
   @doc """
-  Deletes an order from warframe market.
+  Deletes an order from warframe market asynchronously.
+  Notifies invoking process asynchronously with placed order or with error.
 
   Example:
   ```
+  > alias Shared.Data.PlacedOrder
   > placed_order = PlacedOrder.new(%{
       "item_id" => "54e644ffe779897594fa68cd",
       "order_id" => "626127cbc984ac033cd2bbd2"
@@ -56,49 +56,73 @@ defmodule AuctionHouse do
   > AuctionHouse.delete_order(placed_order)
   :ok
 
-  > AuctionHouse.delete_order(placed_order)
-  {:error, :reason, order_id}
+  The received messages will one of the following formats:
+
+  - {:delete_order, {:ok, %PlacedOrder{item_id: "54e644ffe779897594fa68cd", order_id: "626127cbc984ac033cd2bbd2"}}}
+  - {:delete_order, {:error, {reason, err}}}
   ```
   """
   @spec delete_order(PlacedOrder.t()) :: Type.delete_order_response()
-  defdelegate delete_order(order_id), to: Server
+  defdelegate delete_order(order), to: Server
 
   @doc """
   Gets all warframe market orders for the item with the given name.
   The item's name is in human readable format. This function also converts the
   name into a format that the external party can understand.
+  Notifies invoking process asynchronously with a list of OrderInfo or with error.
 
   Example:
   ```
+  > alias Shared.Data.OrderInfo
   > item_name = "Despoil"
 
-  > AuctionHouse.get_all_orders(item_name)
-  {:ok, [
-    %Shared.Data.OrderInfo{
-          "visible" => true,
-          "order_type" => "sell",
-          "platform" => "pc",
-          "platinum" => 20,
-          "user" => %Shared.Data.OrderInfo.User{
-            "ingame_name" => "user_name_1",
-            "status" => "ingame"
-          }
-        }
-      ]
-  }
+  > AuctionHouse.get_item_orders(item_name)
+  > :ok
 
-  > AuctionHouse.get_all_orders(item_name)
-  {:error, :reason, item_name}
+  The received messages will one of the following formats:
+
+  - {:get_item_orders,  {:ok, "Despoil", [%OrderInfo{"visible" => true, "order_type" => "sell", "platform" => "pc",
+    "platinum" => 20, "user" => %OrderInfo.User{"ingame_name" => "user_name_1", "status" => "ingame"}}]}
+  - {:get_item_orders, {:error, "Despoil", {reason, err}}}
   ```
   """
-  @spec get_all_orders(Type.item_name()) :: Type.get_all_orders_response()
-  defdelegate get_all_orders(item_name), to: Server
+  @spec get_item_orders(Type.item_name()) :: Type.get_item_orders_response()
+  defdelegate get_item_orders(item_name), to: Server
 
   @doc """
-  Stores the user's credentials and  authenticates with the auction house to
-  make requests. Must be invoked every time the application is launched.
-  It also performs the necessary steps for authorization. Returns user
-  information.
+  Gets all warframe market sell orders for the given user.
+  Notifies invoking process asynchronously with a list of user PlacedOrders or with error.
+
+  Example:
+  ```
+  > AuctionHouse.get_user_orders("Fl4m3")
+  > :ok
+
+  The received messages will one of the following formats:
+
+  - {:get_user_orders, {:ok,
+    [
+      %PlacedOrder{
+        order_id: "66058313a9630600302d4889",
+        item_id: "55108594e77989728d5100c6"
+      },
+      %PlacedOrder{
+        order_id: "6605832ea96306003657a90d",
+        item_id: "54e644ffe779897594fa68d2"
+      }
+    ]
+  }}
+
+  - {:get_user_orders, {:error, {reason, err}}}
+  ```
+  """
+  @spec get_user_orders(Type.username()) :: Type.get_user_orders_response()
+  defdelegate get_user_orders(username), to: Server
+
+  @doc """
+  Authenticates the user with the auction house and saves the session.
+  Must be invoked every time the application is launched.
+  Notifies invoking process asynchronously with user information or with error.
 
   Example:
   ```
@@ -106,15 +130,13 @@ defmodule AuctionHouse do
   > credentials = Credentials.new("the_username", "the_password")
 
   > AuctionHouse.login(credentials)
-  {:ok,
-    {
-      %Authorization{cookie: "a_cookie", token: "a_token"},
-      %User{patreon?: false, ingame_name: "fl4m3"}
-    }
-  }
+  :ok
 
-  > AuctionHouse.login(credentials)
-  {:error, :reason, credentials}
+  The received messages will one of the following formats:
+
+  - {:login, {:ok, { %Authorization{cookie: "a_cookie", token: "a_token"}, %User{patreon?: false, ingame_name: "fl4m3"}}}}
+  - {:login, {:error, {reason, err}}}
+
   ```
   """
   @spec login(Credentials.t()) :: Type.login_response()
@@ -122,8 +144,8 @@ defmodule AuctionHouse do
 
   @doc """
   Feeds the authorization information directly to the AuctionHouse. Used when
-  the login data is being recovered from a past login. Will only fail if this
-  service is down.
+  the login data is being recovered from a past login to update the this service's state.
+  Synchronous call, will only fail if this service is down.
 
   Example:
   ```
@@ -131,16 +153,37 @@ defmodule AuctionHouse do
   > auth = Authorization.new("a_cookie", "a_token")
   > user = User.new("fl4m3", false)
 
-  > AuctionHouse.recover_login(auth, user)
+  > AuctionHouse.update_login(auth, user)
   :ok
   ```
   """
-  @spec recover_login(Authorization.t(), User.t()) :: Type.recover_login_response()
-  defdelegate recover_login(auth, user), to: Server
+  @spec update_login(Authorization.t(), User.t()) :: Type.update_login_response()
+  defdelegate update_login(auth, user), to: Server
+
+  @doc """
+  Returns the authorization and user directly from state.
+  Synchronous call, will only fail if this service is down.
+
+  Example:
+  ```
+  > alias Shared.Data.{Authorization, User}
+  > auth = Authorization.new("a_cookie", "a_token")
+  > user = User.new("fl4m3", false)
+
+  > AuctionHouse.get_saved_login()
+  {:ok, {%Authorization{}, %User{}}}
+
+  > AuctionHouse.get_saved_login()
+  {:error, :reason}
+  ```
+  """
+  @spec get_saved_login :: Type.get_saved_login_response()
+  defdelegate get_saved_login, to: Server
 
   @doc """
   Deletes the current session and user data from the this application.
   Does not interact with the External AuctionHouse, this is a local operation only.
+  Will only fail if this service is down.
 
   Example:
   ```
@@ -153,5 +196,5 @@ defmodule AuctionHouse do
 
   @doc false
   @spec child_spec(any) :: Supervisor.child_spec()
-  defdelegate child_spec(args), to: Server
+  defdelegate child_spec(args), to: AuctionSupervisor
 end

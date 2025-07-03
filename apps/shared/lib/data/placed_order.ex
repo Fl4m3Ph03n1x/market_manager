@@ -9,6 +9,9 @@ defmodule Shared.Data.PlacedOrder do
 
   alias Shared.Utils.Structs
 
+  @type order_id :: String.t()
+  @type item_id :: String.t()
+
   @type placed_order ::
           %{
             (order_id :: String.t()) => String.t(),
@@ -20,8 +23,8 @@ defmodule Shared.Data.PlacedOrder do
   typedstruct enforce: true do
     @typedoc "A PlacedOrder"
 
-    field(:order_id, String.t())
-    field(:item_id, String.t())
+    field(:order_id, order_id())
+    field(:item_id, item_id())
   end
 
   @spec new(placed_order()) :: __MODULE__.t()

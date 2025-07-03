@@ -6,7 +6,7 @@ defmodule Manager do
   """
 
   alias Manager.Type
-  alias Manager.Runtime.{Server, Worker}
+  alias Manager.Runtime.{ManagerSupervisor, SagaSupervisor, Worker}
   alias Shared.Data.{Credentials, Strategy, Syndicate}
 
   ##########
@@ -17,72 +17,58 @@ defmodule Manager do
   Asynchronous operation.
 
   Activates a syndicate in warframe.market. Activating a syndicate means you
-  put on sell all the mods the syndicate has. The price of each mod will be calculated via a
+  put on sell all the mods/arcanes the syndicate has. The price of each mod will be calculated via a
   `PriceAnalyst` depending on which strategy you choose.
 
   This is an asynchronous operation, which will return `:ok` immediately.
   The caller must have implemented a `handle_info` in its Server to handle messages with the
   following format:
 
-  - `{:activate, syndicate :: String.t(), {index :: pos_integer(), total :: pos_integer(), result :: any}}`:
-    Each time a placement for an item is done. This message contains the current index, the total
-    and the result of the operation. It also has the id of the syndicate this order placement
-    belongs to.
-    The `result` of an operation, will be a tagged tuple. Some common formats are:
+  - `{:activate, {:ok, :get_user_orders}}`: Informs that a request was made to get current user orders.
+  - `{:activate, {:ok, :calculating_item_prices}}`: Informs that the Manager is now calculating prices for all the items of the selected syndicates.
+  - `{:activate, {:ok, {:price_calculated, item_name, price, current_progress, total_progress}}}`: Informs that "price" was successfully calculated for "item_name". It also give the "current_progress" and "total_progress" for the caller to know how long the operation will take.
+  - `{:activate, {:ok, :placing_orders}}`: Informs that the final stage, of placing orders, has now begun.
+  - `{:activate, {:ok, {:order_placed, item_name, current_progress, total_progress}}}`: Informs that an order with "price" was successfully posted in Warframe Market for "item_name". It also gives the "current_progress" and "total_progress" for the caller to know how long the operation will take.
+  - `{:activate, {:ok, :done}}`: Informs the process is now complete.
 
-     - `{:ok, order_id :: String.t()}`, when the placement was successful
-     - `{:error, reason :: any(), item_id :: String.t()}`, when the placement failed
+  Any other received messages will be of the format `{:error, any()}` and mean that something has failed during the activation process.
 
-  - `{:activate, syndicate :: String.t(), :done}`: Once all orders have been placed (successfully
-    or not). It is the end of the `:activate` operation. It also has the id of the syndicate for
-    which this operation was completed for.
-  - `{:activate, syndicate :: String.t(), error :: any}`: If a critical error occurred while trying
-    to perform the `:activate` operation and this cannot continue/succeed. It also signals the end
-    of the operation. Contains the id of the syndicate for which the operation failed.
 
   Example:
   ```
-  > Manager.activate("cephalon_simaris", :lowest_minus_one)
+  > Manager.activate(%{cephalon_simaris: :lowest_minus_one})
   :ok
   ```
   """
-  @spec activate(Syndicate.t(), Strategy.t()) :: :ok
-  defdelegate activate(syndicate, strategy), to: Worker
+  @spec activate(%{Syndicate.id() => Strategy.id()}) :: Type.activate_response()
+  defdelegate activate(syndicates_with_strategy), to: SagaSupervisor
 
   @doc """
   Asynchronous operation.
 
-  Deactivates a syndicate in warframe.market. Deactivating a syndicate means you
-  delete all orders you have placed before that belong to the given syndicate.
+  Deactivates a syndicate in warframe.market. Deactivating a syndicate means you delete all orders you have placed that belong to the given syndicate.
 
   This is an asynchronous operation, which will return `:ok` immediately.
-  The caller must have implemented a `handle_info` in its Server to handle messages with the
-  following format:
+  The caller must have implemented a `handle_info` in its Server to handle messages with the following format:
 
-  - `{:deactivate, syndicate :: String.t(), {index :: pos_integer(), total :: pos_integer(), result :: any}}`:
-    Each time a placement for an item is done. This message contains the current index, the total
-    and the result of the operation. It also has the id of the syndicate this order placement
-    belongs to.
-    The `result` of an operation, will be a tagged tuple. Some common formats are:
+  - `{:deactivate, {:ok, :get_user_orders}}`: Informs that a request was made to get current user orders.
+  - `{:deactivate, {:ok, :deleting_orders}}`: Informs that the Manager started deleting orders.
+  - `{:deactivate, {:ok, {:order_deleted, item_name, current_progress, total_progress}}}`: Informs that the order for "item_name" was successfully deleted in Warframe Market. It also gives the "current_progress" and "total_progress" for the caller to know how long the operation will take.
+  - `{:deactivate, {:ok, :done}}`: Informs the process is not complete.
 
-     - `{:ok, order_id :: String.t()}`, when the deletion was successful
-     - `{:error, reason :: any(), order_id :: String.t()}`, when the deletion failed
+  Optionally, if the deactivation was partial, meaning there are still some syndicates active, instead of receiving `{:deactivate, {:ok, :done}}`, the caller will instead receive:
+  - `{:deactivate, {:ok, :reactivating_remaining_syndicates}}`
 
-  - `{:deactivate, syndicate :: String.t(), :done}`: Once all orders have been deleted (successfully
-    or not). It is the end of the `:deactivate` operation. It also has the id of the syndicate for
-    which this operation was completed for.
-  - `{:deactivate, syndicate :: String.t(), error :: any}`: If a critical error occurred while trying
-    to perform the `:deactivate` operation and this cannot continue/succeed. It also signals the end
-    of the operation. Contains the id of the syndicate for which the operation failed.
+  Which informs that the activation process for the remaining syndicates will now begin, in order to update the selection of current items on sale and their prices. Consequently, all messages from the Activation process also need to be handled by the caller.
 
   Example:
   ```
-  > Manager.deactivate("cephalon_simaris")
+  > Manager.deactivate([:cephalon_simaris])
   :ok
   ```
   """
-  @spec deactivate(Syndicate.t()) :: :ok
-  defdelegate deactivate(syndicate), to: Worker
+  @spec deactivate([Syndicate.id()]) :: Type.deactivate_response()
+  defdelegate deactivate(syndicate_ids), to: SagaSupervisor
 
   @doc """
   Asynchronous operation.
@@ -97,9 +83,9 @@ defmodule Manager do
   The caller must have implemented a `handle_info` in its Server to handle messages with the
   following format:
 
-  - `{:login, user_info :: Shared.Data.User.t(), :done}`: If the operation was successful.
+  - `{:login, {:ok, user_info :: Shared.Data.User.t()}}`: If the operation was successful.
 
-  - `{:login, credentials :: Shared.Data.Credentials.t(), error :: any}`: If the login operation failed.
+  - `{:login, {:error, error :: any()}}`: If the login operation failed.
     This can happen due to a network error, wrong password or any other cause.
 
   Example:
@@ -112,9 +98,8 @@ defmodule Manager do
   :ok
   ```
   """
-  @spec login(Credentials.t(), keep_logged_in :: boolean) ::
-          Type.login_response()
-  defdelegate login(credentials, keep_logged_in), to: Worker
+  @spec login(Credentials.t(), keep_logged_in :: boolean) :: Type.login_response()
+  defdelegate login(credentials, keep_logged_in), to: SagaSupervisor
 
   @doc """
   Synchronous operation.
@@ -143,9 +128,9 @@ defmodule Manager do
   Synchronous operation.
 
   Deletes the current active session. This only logs out the MarketManager application and does not affect the
-  login session in the AuctionHouse. If a user is logged in the AuctionHouse, it will continue logged in there, but next
-  time this application is launched, the user will have to login into the AuctionHouse from this application to be able
-  to use it.
+  login session in the AuctionHouse. If a user is logged in the AuctionHouse, it will continue  to be logged in there,
+  but next time this application is launched, the user will have to login into the AuctionHouse from this application
+  to be able to use it.
 
   This operation deletes the sessions data from memory and from disk. Even if the second fails, the first will still
   be attempted.
@@ -184,14 +169,14 @@ defmodule Manager do
   @doc """
   Synchronous operation.
 
-  Returns a list containing all currently active syndicates.
+  Returns a list containing all currently active syndicates with their strategies.
 
   Example:
   ```
   > alias Shared.Data.Syndicate
 
   > MarketManager.active_syndicates()
-  {:ok, [%Syndicate{name: "Red Veil", id: :red_veil, catalog: []}]}
+  {:ok, %{red_veil: :top_five_average, new_loka: :top_five_average}}
 
   > Manager.active_syndicates()
   {:error, :enoent}
@@ -232,5 +217,5 @@ defmodule Manager do
 
   @doc false
   @spec child_spec(any) :: Supervisor.child_spec()
-  defdelegate child_spec(args), to: Server
+  defdelegate child_spec(args), to: ManagerSupervisor
 end

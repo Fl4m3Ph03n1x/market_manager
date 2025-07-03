@@ -4,19 +4,18 @@ defmodule Store do
   This module contains the Public API for the storage app.
   """
 
-  alias Shared.Data.{Authorization, PlacedOrder, Syndicate, User}
+  alias Shared.Data.{Authorization, Product, Strategy, Syndicate, User}
   alias Store.FileSystem
   alias Store.Type
 
   @doc """
-  Lists the products from the given syndicate.
+  Lists the products for the syndicates with the given ids.
 
   Example:
   ```
-  > alias Shared.Data.{Product, Syndicate}
+  > alias Shared.Data.Product
 
-  > syndicate = Syndicate.new(name: "Red Veil", id: :red_veil, catalog: [])
-  > Store.list_products(syndicate)
+  > Store.list_products([:red_veil])
   {:ok, [
     %Product{
       name: "Eternal War",
@@ -29,78 +28,41 @@ defmodule Store do
     ...
   ]}
 
-  > invalid_syndicate = Syndicate.new(name: "Bad Synd", id: :bad_syndicate, catalog: [])
-  > Store.list_products(invalid_syndicate)
-  {:error, :syndicate_not_found}
+  > Store.list_products([:invalid_syndicate_id])
+  {:error, {:syndicate_not_found, [:invalid_syndicate_id]}}
   ```
   """
-  @spec list_products(Syndicate.t()) :: Type.list_products_response()
-  defdelegate list_products(syndicate), to: FileSystem
+  @spec list_products([Syndicate.id()]) :: Type.list_products_response()
+  defdelegate list_products(syndicates), to: FileSystem
 
   @doc """
-  Lists all placed orders from the given syndicate.
+  Returns the product with the given id.
 
   Example:
   ```
-  > alias Shared.Data.{PlacedOrder, Syndicate}
+  > alias Shared.Data.{Product}
 
-  > syndicate = Syndicate.new(name: "Red Veil", id: :red_veil, catalog: [])
-  > Store.list_orders(syndicate)
-  {:ok, [
-    %PlacedOrder{item_name: "Exothermic", order_id: "5526aec1e779896af9418266"},
-    %PlacedOrder{item_name: "Tribunal", order_id: "5ea087d1c160d001303f9ed7"},
-    ...
-  ]}
+  > Store.get_product_by_id("8ee5b3b0-fa43-4dbc-9363-a52930dc742e")
+  {:ok,
+    %Product{
+      name: "Eternal War",
+      id: "8ee5b3b0-fa43-4dbc-9363-a52930dc742e",
+      min_price: 14,
+      default_price: 15,
+      quantity: 1,
+      rank: 0
+    }
+  }
 
-  > invalid_syndicate = Syndicate.new(name: "Bad Synd", id: :bad_syndicate)
-  > Store.list_orders(invalid_syndicate)
-  {:error, :syndicate_not_found}
-  ```
-  """
-  @spec list_orders(Syndicate.t()) :: Type.list_orders_response()
-  defdelegate list_orders(syndicate), to: FileSystem
+  > Store.get_product_by_id("non-existent-id")
+  {:error, :product_not_found}
 
-  @doc """
-  Saves the given placed_order for the given syndicate in the storage system.
-
-  Example:
-  ```
-  > alias Shared.Data.{PlacedOrder, Syndicate}
-
-  > Store.save_order(
-    %PlacedOrder{item_name: "Exothermic", order_id: "5526aec1e779896af9418266"},
-    Syndicate.new(name: "Red Veil", id: :red_veil, catalog: [])
-  )
-  :ok
-
-  > invalid_syndicate = Syndicate.new(name: "Bad Synd", id: :bad_syndicate, catalog: [])
-  > Store.save_order(invalid_syndicate)
+  > Store.get_product_by_id("8ee5b3b0-fa43-4dbc-9363-a52930dc742e")
   {:error, :enoent}
   ```
   """
-  @spec save_order(PlacedOrder.t(), Syndicate.t()) :: Type.save_order_response()
-  defdelegate save_order(placed_order, syndicate), to: FileSystem
-
-  @doc """
-  Deletes the given placed_order from the given syndicate from the storage system.
-
-  Example:
-  ```
-  > alias Shared.Data.{PlacedOrder, Syndicate}
-
-  > Store.delete_order(
-    %PlacedOrder{item_name: "Exothermic", order_id: "5526aec1e779896af9418266"},
-    Syndicate.new(name: "Red Veil", id: :red_veil, catalog: [])
-  )
-  :ok
-
-  > invalid_syndicate = Syndicate.new(name: "Bad Synd", id: :bad_syndicate, catalog: [])
-  > Store.delete_order(invalid_syndicate)
-  {:error, :enoent}
-  ```
-  """
-  @spec delete_order(PlacedOrder.t(), Syndicate.t()) :: Type.delete_order_response()
-  defdelegate delete_order(placed_order, syndicate), to: FileSystem
+  @spec get_product_by_id(Product.id()) :: Type.get_product_by_id_response()
+  defdelegate get_product_by_id(id), to: FileSystem
 
   @doc """
   Saves the login information from the user into the storage system.
@@ -179,6 +141,41 @@ defmodule Store do
   defdelegate list_syndicates, to: FileSystem
 
   @doc """
+  Marks the given syndicates as activated with the given strategy.
+
+  Example:
+  ```
+  > alias Shared.Data.Syndicate
+
+  > Store.activate_syndicates(%{red_veil: :top_five_average, new_loka: :top_five_average})
+  :ok
+
+  > Store.activate_syndicates(%{red_veil: :top_five_average, new_loka: :top_five_average})
+  {:error, :enoent}
+  ```
+  """
+  @spec activate_syndicates(%{Syndicate.id() => Strategy.id()}) ::
+          Type.activate_syndicates_response()
+  defdelegate activate_syndicates(syndicates_with_strategy), to: FileSystem
+
+  @doc """
+  Removes the syndicates with the given ids from the set of active syndicates.
+
+  Example:
+  ```
+  > alias Shared.Data.Syndicate
+
+  > Store.deactivate_syndicates([:red_veil, :new_loka])
+  :ok
+
+  > Store.deactivate_syndicates([:red_veil, :new_loka])
+  {:error, :enoent}
+  ```
+  """
+  @spec deactivate_syndicates([Syndicate.id()]) :: Type.deactivate_syndicates_response()
+  defdelegate deactivate_syndicates(syndicates), to: FileSystem
+
+  @doc """
   Returns the syndicates currently active. An active syndicate is a syndicate with orders in `current_orders`.
 
   Example:
@@ -186,7 +183,7 @@ defmodule Store do
   > alias Shared.Data.Syndicate
 
   > Store.list_active_syndicates()
-  {:ok, [%Syndicate{name: "Red Veil", id: :red_veil, catalog: []}, %Syndicate{name: "New Loka", id: :new_loka, catalog: []}]}
+  {:ok, %{red_veil: :top_five_average, new_loka: :top_five_average}}
 
   > Store.list_active_syndicates()
   {:error, :enoent}

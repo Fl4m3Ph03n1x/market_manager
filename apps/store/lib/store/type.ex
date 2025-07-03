@@ -6,14 +6,13 @@ defmodule Store.Type do
   """
 
   alias Jason
-  alias Shared.Data.{Authorization, PlacedOrder, Product, Syndicate, User}
+  alias Shared.Data.{Authorization, Product, Strategy, Syndicate, User}
 
   ##########
   # Types  #
   ##########
 
   @type dependencies :: map()
-  @type all_orders_store :: %{String.t() => [PlacedOrder.t()]}
 
   #############
   # Responses #
@@ -25,16 +24,17 @@ defmodule Store.Type do
   @type save_login_data_response :: :ok | {:error, :file.posix() | Jason.EncodeError.t()}
   @type delete_login_data_response :: :ok | {:error, :file.posix() | Jason.EncodeError.t()}
   @type list_products_response ::
-          {:ok, [Product.t()]} | {:error, :file.posix() | Jason.DecodeError.t()}
-  @type list_orders_response ::
-          {:ok, [PlacedOrder.t()]}
-          | {:error, :file.posix() | Jason.DecodeError.t()}
-  @type save_order_response ::
-          :ok | {:error, :file.posix() | Jason.DecodeError.t() | Jason.EncodeError.t()}
-  @type delete_order_response ::
-          :ok | {:error, :file.posix() | Jason.DecodeError.t() | Jason.EncodeError.t()}
+          {:ok, [Product.t()]}
+          | {:error,
+             :file.posix() | Jason.DecodeError.t() | {:syndicate_not_found, [Syndicate.id()]}}
+  @type get_product_by_id_response ::
+          {:ok, Product.t()}
+          | {:error, :product_not_found | :file.posix() | Jason.DecodeError.t()}
   @type list_syndicates_response ::
           {:ok, [Syndicate.t()]} | {:error, :file.posix() | Jason.DecodeError.t()}
+  @type activate_syndicates_response :: :ok | {:error, :file.posix() | Jason.DecodeError.t()}
+  @type deactivate_syndicates_response :: :ok | {:error, :file.posix() | Jason.DecodeError.t()}
   @type list_active_syndicates_response ::
-          {:ok, [Syndicate.t()]} | {:error, :file.posix() | Jason.DecodeError.t()}
+          {:ok, %{Syndicate.id() => Strategy.id()}}
+          | {:error, :file.posix() | Jason.DecodeError.t()}
 end

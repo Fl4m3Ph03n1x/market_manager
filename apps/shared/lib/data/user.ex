@@ -7,6 +7,9 @@ defmodule Shared.Data.User do
 
   alias Shared.Utils.Structs
 
+  @type ingame_name :: String.t()
+  @type patreon? :: boolean()
+
   @type user ::
           %{
             (ingame_name :: String.t()) => String.t(),
@@ -18,8 +21,8 @@ defmodule Shared.Data.User do
   typedstruct enforce: true do
     @typedoc "User information"
 
-    field(:ingame_name, String.t())
-    field(:patreon?, boolean())
+    field(:ingame_name, ingame_name())
+    field(:patreon?, patreon?())
   end
 
   @spec new(user()) :: __MODULE__.t()

@@ -4,46 +4,28 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="ExDoc v0.31.1">
-    <meta name="project" content="Market Manager v2.1.8">
+    <meta name="generator" content="ExDoc v0.38.2">
+    <meta name="project" content="Market Manager v2.1.9">
 
 
-    <title>Store.FileSystem — Market Manager v2.1.8</title>
-    <link rel="stylesheet" href="dist/html-elixir-FM2CSD74.css" />
+    <title>Store.FileSystem — Market Manager v2.1.9</title>
 
+    <link rel="stylesheet" href="dist/html-elixir-KV3YOVJ3.css" />
 
-    <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
-    <script src="dist/handlebars.templates-43PMFBC7.js"></script>
-    <script src="dist/sidebar_items-27AEC54F.js"></script>
-
-      <script src="docs_config.js"></script>
-
-    <script async src="dist/html-L4O5OK2K.js"></script>
-
+    <script defer src="dist/sidebar_items-4288A184.js"></script>
+    <script defer src="docs_config.js"></script>
+    <script defer src="dist/html-DPJLHKSM.js"></script>
 
   </head>
-  <body data-type="modules" class="page-module">
-    <script>
+  <body>
+    <script>(()=>{var t="ex_doc:settings",e="dark";var o="dark",s="light";var E="sidebar_state",n="closed";var r="sidebar_width";var a="sidebar-open";var i=new URLSearchParams(window.location.search),S=i.get("theme")||JSON.parse(localStorage.getItem(t)||"{}").theme;(S===o||S!==s&&window.matchMedia("(prefers-color-scheme: dark)").matches)&&document.body.classList.add(e);var d=sessionStorage.getItem(E),A=d!==n&&!window.matchMedia(`screen and (max-width: ${768}px)`).matches;document.body.classList.toggle(a,A);var c=sessionStorage.getItem(r);c&&document.body.style.setProperty("--sidebarWidth",`${c}px`);var p=/(Macintosh|iPhone|iPad|iPod)/.test(window.navigator.userAgent);document.documentElement.classList.toggle("apple-os",p);})();
+</script>
 
-      try {
-        var settings = JSON.parse(localStorage.getItem('ex_doc:settings') || '{}');
-
-        if (settings.theme === 'dark' ||
-           ((settings.theme === 'system' || settings.theme == null) &&
-             window.matchMedia('(prefers-color-scheme: dark)').matches)
-           ) {
-          document.body.classList.add('dark')
-        }
-      } catch (error) { }
-    </script>
-
-<div class="main">
+<div class="body-wrapper">
 
 <button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
   <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
 </button>
-
-<div class="background-layer"></div>
 
 <nav id="sidebar" class="sidebar">
 
@@ -59,83 +41,62 @@
 Market Manager
         </a>
         <div class="sidebar-projectVersion" translate="no">
-          v2.1.8
+          v2.1.9
         </div>
       </div>
     </div>
-    <ul id="sidebar-listNav" class="sidebar-listNav" role="tablist">
-      <li>
-        <button id="extras-list-tab-button" role="tab" data-type="extras" aria-controls="extras-tab-panel" aria-selected="true" tabindex="0">
-Pages
-        </button>
-      </li>
-
-        <li>
-          <button id="modules-list-tab-button" role="tab" data-type="modules" aria-controls="modules-tab-panel" aria-selected="false" tabindex="-1">
-            Modules
-          </button>
-        </li>
-
-
-    </ul>
+    <ul id="sidebar-list-nav" class="sidebar-list-nav" role="tablist" data-extras=""></ul>
   </div>
-
-  <div id="extras-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="extras-list-tab-button">
-    <ul id="extras-full-list" class="full-list"></ul>
-  </div>
-
-    <div id="modules-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="modules-list-tab-button" hidden>
-      <ul id="modules-full-list" class="full-list"></ul>
-    </div>
-
-
 </nav>
 
-<main class="content">
-  <output role="status" id="toast"></output>
-  <div class="content-outer">
-    <div id="content" class="content-inner">
-      <div class="top-search">
-        <div class="search-settings">
-          <form class="search-bar" action="search.html">
-            <label class="search-label">
-              <span class="sr-only">Search documentation of Market Manager</span>
-              <input name="q" type="text" class="search-input" placeholder="Search Documentation (press /)" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
-            </label>
-            <button type="submit" class="search-button" aria-label="Submit Search">
-              <i class="ri-search-2-line ri-lg" aria-hidden="true" title="Submit search"></i>
-            </button>
-            <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
-              <i class="ri-close-line ri-lg" title="Cancel search"></i>
-            </button>
-          </form>
-          <div class="autocomplete">
-          </div>
-          <button class="icon-settings display-settings">
-            <i class="ri-settings-3-line"></i>
-            <span class="sr-only">Settings</span>
+<output role="status" id="toast"></output>
+
+<main class="content page-module" id="main" data-type="modules">
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of Market Manager</span>
+            <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+          </label>
+          <button type="submit" class="search-button" aria-label="Submit Search" tabindex="-1">
+            <i class="ri-search-2-line ri-lg" aria-hidden="true"></i>
           </button>
+          <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+            <i class="ri-close-line ri-lg" title="Cancel search"></i>
+          </button>
+        </form>
+        <div class="autocomplete">
         </div>
-
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
       </div>
+    </div>
 
-<h1>
+<div id="top-content">
+  <div class="heading-with-actions top-heading">
+    <h1>
+      <span translate="no">Store.FileSystem</span> 
+      <small class="app-vsn" translate="no">(Market Manager v2.1.9)</small>
 
-    <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/store/lib/store/file_system.ex#L1" title="View Source" class="icon-action" rel="help">
-      <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-      <span class="sr-only">View Source</span>
-    </a>
+    </h1>
 
-  <span translate="no">Store.FileSystem</span> 
-  <small class="app-vsn" translate="no">(Market Manager v2.1.8)</small>
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/store/lib/store/file_system.ex#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
 
-</h1>
+  </div>
 
 
-  <section id="moduledoc">
+    <section id="moduledoc">
 <p>Adapter for the Store port, implements it using the file system.</p>
-  </section>
+    </section>
 
+</div>
 
   <section id="summary" class="details-list">
     <h1 class="section-heading">
@@ -151,7 +112,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#delete_login_data/1" translate="no">delete_login_data(deps \\ %{env: :dev, io: %{read: &amp;File.read/1, write: &amp;File.write/2}, paths: [current_orders: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;current_orders.json&quot;], products: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;products.json&quot;], syndicates: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;syndicates.json&quot;], setup: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;setup.json&quot;]]})</a>
+        <a href="#activate_syndicates/2" data-no-tooltip="" translate="no">activate_syndicates(syndicates_with_strategy, deps \\ %{env: :dev, io: %{read: &amp;File.read/1, write: &amp;File.write/2}, paths: [watch_list: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;watch_list.json&quot;], products: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;products.json&quot;], syndicates: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;syndicates.json&quot;], setup: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;setup.json&quot;]]})</a>
 
       </div>
 
@@ -159,7 +120,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#delete_order/3" translate="no">delete_order(placed_order, syndicate, deps \\ %{env: :dev, io: %{read: &amp;File.read/1, write: &amp;File.write/2}, paths: [current_orders: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;current_orders.json&quot;], products: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;products.json&quot;], syndicates: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;syndicates.json&quot;], setup: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;setup.json&quot;]]})</a>
+        <a href="#deactivate_syndicates/2" data-no-tooltip="" translate="no">deactivate_syndicates(syndicates, deps \\ %{env: :dev, io: %{read: &amp;File.read/1, write: &amp;File.write/2}, paths: [watch_list: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;watch_list.json&quot;], products: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;products.json&quot;], syndicates: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;syndicates.json&quot;], setup: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;setup.json&quot;]]})</a>
 
       </div>
 
@@ -167,7 +128,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#get_login_data/1" translate="no">get_login_data(deps \\ %{env: :dev, io: %{read: &amp;File.read/1, write: &amp;File.write/2}, paths: [current_orders: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;current_orders.json&quot;], products: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;products.json&quot;], syndicates: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;syndicates.json&quot;], setup: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;setup.json&quot;]]})</a>
+        <a href="#delete_login_data/1" data-no-tooltip="" translate="no">delete_login_data(deps \\ %{env: :dev, io: %{read: &amp;File.read/1, write: &amp;File.write/2}, paths: [watch_list: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;watch_list.json&quot;], products: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;products.json&quot;], syndicates: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;syndicates.json&quot;], setup: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;setup.json&quot;]]})</a>
 
       </div>
 
@@ -175,7 +136,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#list_active_syndicates/1" translate="no">list_active_syndicates(deps \\ %{env: :dev, io: %{read: &amp;File.read/1, write: &amp;File.write/2}, paths: [current_orders: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;current_orders.json&quot;], products: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;products.json&quot;], syndicates: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;syndicates.json&quot;], setup: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;setup.json&quot;]]})</a>
+        <a href="#get_login_data/1" data-no-tooltip="" translate="no">get_login_data(deps \\ %{env: :dev, io: %{read: &amp;File.read/1, write: &amp;File.write/2}, paths: [watch_list: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;watch_list.json&quot;], products: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;products.json&quot;], syndicates: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;syndicates.json&quot;], setup: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;setup.json&quot;]]})</a>
 
       </div>
 
@@ -183,7 +144,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#list_orders/2" translate="no">list_orders(syndicate, deps \\ %{env: :dev, io: %{read: &amp;File.read/1, write: &amp;File.write/2}, paths: [current_orders: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;current_orders.json&quot;], products: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;products.json&quot;], syndicates: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;syndicates.json&quot;], setup: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;setup.json&quot;]]})</a>
+        <a href="#get_product_by_id/2" data-no-tooltip="" translate="no">get_product_by_id(id, deps \\ %{env: :dev, io: %{read: &amp;File.read/1, write: &amp;File.write/2}, paths: [watch_list: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;watch_list.json&quot;], products: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;products.json&quot;], syndicates: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;syndicates.json&quot;], setup: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;setup.json&quot;]]})</a>
 
       </div>
 
@@ -191,7 +152,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#list_products/2" translate="no">list_products(syndicate, deps \\ %{env: :dev, io: %{read: &amp;File.read/1, write: &amp;File.write/2}, paths: [current_orders: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;current_orders.json&quot;], products: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;products.json&quot;], syndicates: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;syndicates.json&quot;], setup: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;setup.json&quot;]]})</a>
+        <a href="#list_active_syndicates/1" data-no-tooltip="" translate="no">list_active_syndicates(deps \\ %{env: :dev, io: %{read: &amp;File.read/1, write: &amp;File.write/2}, paths: [watch_list: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;watch_list.json&quot;], products: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;products.json&quot;], syndicates: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;syndicates.json&quot;], setup: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;setup.json&quot;]]})</a>
 
       </div>
 
@@ -199,7 +160,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#list_syndicates/1" translate="no">list_syndicates(deps \\ %{env: :dev, io: %{read: &amp;File.read/1, write: &amp;File.write/2}, paths: [current_orders: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;current_orders.json&quot;], products: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;products.json&quot;], syndicates: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;syndicates.json&quot;], setup: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;setup.json&quot;]]})</a>
+        <a href="#list_products/2" data-no-tooltip="" translate="no">list_products(syndicate_ids, deps \\ %{env: :dev, io: %{read: &amp;File.read/1, write: &amp;File.write/2}, paths: [watch_list: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;watch_list.json&quot;], products: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;products.json&quot;], syndicates: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;syndicates.json&quot;], setup: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;setup.json&quot;]]})</a>
 
       </div>
 
@@ -207,7 +168,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#save_login_data/3" translate="no">save_login_data(auth, user, deps \\ %{env: :dev, io: %{read: &amp;File.read/1, write: &amp;File.write/2}, paths: [current_orders: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;current_orders.json&quot;], products: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;products.json&quot;], syndicates: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;syndicates.json&quot;], setup: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;setup.json&quot;]]})</a>
+        <a href="#list_syndicates/1" data-no-tooltip="" translate="no">list_syndicates(deps \\ %{env: :dev, io: %{read: &amp;File.read/1, write: &amp;File.write/2}, paths: [watch_list: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;watch_list.json&quot;], products: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;products.json&quot;], syndicates: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;syndicates.json&quot;], setup: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;setup.json&quot;]]})</a>
 
       </div>
 
@@ -215,7 +176,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#save_order/3" translate="no">save_order(placed_order, syndicate, deps \\ %{env: :dev, io: %{read: &amp;File.read/1, write: &amp;File.write/2}, paths: [current_orders: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;current_orders.json&quot;], products: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;products.json&quot;], syndicates: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;syndicates.json&quot;], setup: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;setup.json&quot;]]})</a>
+        <a href="#save_login_data/3" data-no-tooltip="" translate="no">save_login_data(auth, user, deps \\ %{env: :dev, io: %{read: &amp;File.read/1, write: &amp;File.write/2}, paths: [watch_list: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;watch_list.json&quot;], products: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;products.json&quot;], syndicates: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;syndicates.json&quot;], setup: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;setup.json&quot;]]})</a>
 
       </div>
 
@@ -234,23 +195,87 @@ Pages
       <span class="text">Functions</span>
     </h1>
     <div class="functions-list">
+<section class="detail" id="activate_syndicates/2">
+
+    <span id="activate_syndicates/1"></span>
+
+  <div class="detail-header">
+    <a href="#activate_syndicates/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">activate_syndicates(syndicates_with_strategy, deps \\ %{env: :dev, io: %{read: &amp;File.read/1, write: &amp;File.write/2}, paths: [watch_list: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;watch_list.json&quot;], products: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;products.json&quot;], syndicates: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;syndicates.json&quot;], setup: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;setup.json&quot;]]})</h1>
+
+
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/store/lib/store/file_system.ex#L132" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> activate_syndicates(
+  %{required(<a href="Shared.Data.Syndicate.html#t:id/0">Shared.Data.Syndicate.id</a>()) =&gt; <a href="Shared.Data.Strategy.html#t:id/0">Shared.Data.Strategy.id</a>()},
+  <a href="Store.Type.html#t:dependencies/0">Store.Type.dependencies</a>()
+) :: <a href="Store.Type.html#t:activate_syndicates_response/0">Store.Type.activate_syndicates_response</a>()</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="deactivate_syndicates/2">
+
+    <span id="deactivate_syndicates/1"></span>
+
+  <div class="detail-header">
+    <a href="#deactivate_syndicates/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">deactivate_syndicates(syndicates, deps \\ %{env: :dev, io: %{read: &amp;File.read/1, write: &amp;File.write/2}, paths: [watch_list: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;watch_list.json&quot;], products: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;products.json&quot;], syndicates: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;syndicates.json&quot;], setup: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;setup.json&quot;]]})</h1>
+
+
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/store/lib/store/file_system.ex#L153" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> deactivate_syndicates([<a href="Shared.Data.Syndicate.html#t:id/0">Shared.Data.Syndicate.id</a>()], <a href="Store.Type.html#t:dependencies/0">Store.Type.dependencies</a>()) ::
+  <a href="Store.Type.html#t:deactivate_syndicates_response/0">Store.Type.deactivate_syndicates_response</a>()</pre>
+
+      </div>
+
+
+  </section>
+</section>
 <section class="detail" id="delete_login_data/1">
 
     <span id="delete_login_data/0"></span>
 
   <div class="detail-header">
-    <a href="#delete_login_data/1" class="detail-link" title="Link to this function">
+    <a href="#delete_login_data/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">delete_login_data(deps \\ %{env: :dev, io: %{read: &amp;File.read/1, write: &amp;File.write/2}, paths: [current_orders: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;current_orders.json&quot;], products: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;products.json&quot;], syndicates: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;syndicates.json&quot;], setup: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;setup.json&quot;]]})</h1>
-
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/store/lib/store/file_system.ex#L110" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">delete_login_data(deps \\ %{env: :dev, io: %{read: &amp;File.read/1, write: &amp;File.write/2}, paths: [watch_list: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;watch_list.json&quot;], products: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;products.json&quot;], syndicates: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;syndicates.json&quot;], setup: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;setup.json&quot;]]})</h1>
 
 
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/store/lib/store/file_system.ex#L110" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -265,58 +290,23 @@ Pages
 
   </section>
 </section>
-<section class="detail" id="delete_order/3">
-
-    <span id="delete_order/2"></span>
-
-  <div class="detail-header">
-    <a href="#delete_order/3" class="detail-link" title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">delete_order(placed_order, syndicate, deps \\ %{env: :dev, io: %{read: &amp;File.read/1, write: &amp;File.write/2}, paths: [current_orders: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;current_orders.json&quot;], products: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;products.json&quot;], syndicates: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;syndicates.json&quot;], setup: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;setup.json&quot;]]})</h1>
-
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/store/lib/store/file_system.ex#L67" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-      <div class="specs">
-
-          <pre translate="no"><span class="attribute">@spec</span> delete_order(
-  <a href="Shared.Data.PlacedOrder.html#t:t/0">Shared.Data.PlacedOrder.t</a>(),
-  <a href="Shared.Data.Syndicate.html#t:t/0">Shared.Data.Syndicate.t</a>(),
-  <a href="Store.Type.html#t:dependencies/0">Store.Type.dependencies</a>()
-) ::
-  <a href="Store.Type.html#t:delete_order_response/0">Store.Type.delete_order_response</a>()</pre>
-
-      </div>
-
-
-  </section>
-</section>
 <section class="detail" id="get_login_data/1">
 
     <span id="get_login_data/0"></span>
 
   <div class="detail-header">
-    <a href="#get_login_data/1" class="detail-link" title="Link to this function">
+    <a href="#get_login_data/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">get_login_data(deps \\ %{env: :dev, io: %{read: &amp;File.read/1, write: &amp;File.write/2}, paths: [current_orders: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;current_orders.json&quot;], products: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;products.json&quot;], syndicates: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;syndicates.json&quot;], setup: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;setup.json&quot;]]})</h1>
-
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/store/lib/store/file_system.ex#L91" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">get_login_data(deps \\ %{env: :dev, io: %{read: &amp;File.read/1, write: &amp;File.write/2}, paths: [watch_list: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;watch_list.json&quot;], products: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;products.json&quot;], syndicates: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;syndicates.json&quot;], setup: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;setup.json&quot;]]})</h1>
 
 
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/store/lib/store/file_system.ex#L91" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -331,23 +321,54 @@ Pages
 
   </section>
 </section>
+<section class="detail" id="get_product_by_id/2">
+
+    <span id="get_product_by_id/1"></span>
+
+  <div class="detail-header">
+    <a href="#get_product_by_id/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">get_product_by_id(id, deps \\ %{env: :dev, io: %{read: &amp;File.read/1, write: &amp;File.write/2}, paths: [watch_list: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;watch_list.json&quot;], products: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;products.json&quot;], syndicates: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;syndicates.json&quot;], setup: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;setup.json&quot;]]})</h1>
+
+
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/store/lib/store/file_system.ex#L67" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> get_product_by_id(<a href="Shared.Data.Product.html#t:id/0">Shared.Data.Product.id</a>(), <a href="Store.Type.html#t:dependencies/0">Store.Type.dependencies</a>()) ::
+  <a href="Store.Type.html#t:get_product_by_id_response/0">Store.Type.get_product_by_id_response</a>()</pre>
+
+      </div>
+
+
+  </section>
+</section>
 <section class="detail" id="list_active_syndicates/1">
 
     <span id="list_active_syndicates/0"></span>
 
   <div class="detail-header">
-    <a href="#list_active_syndicates/1" class="detail-link" title="Link to this function">
+    <a href="#list_active_syndicates/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">list_active_syndicates(deps \\ %{env: :dev, io: %{read: &amp;File.read/1, write: &amp;File.write/2}, paths: [current_orders: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;current_orders.json&quot;], products: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;products.json&quot;], syndicates: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;syndicates.json&quot;], setup: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;setup.json&quot;]]})</h1>
-
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/store/lib/store/file_system.ex#L131" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">list_active_syndicates(deps \\ %{env: :dev, io: %{read: &amp;File.read/1, write: &amp;File.write/2}, paths: [watch_list: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;watch_list.json&quot;], products: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;products.json&quot;], syndicates: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;syndicates.json&quot;], setup: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;setup.json&quot;]]})</h1>
 
 
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/store/lib/store/file_system.ex#L173" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -362,61 +383,30 @@ Pages
 
   </section>
 </section>
-<section class="detail" id="list_orders/2">
-
-    <span id="list_orders/1"></span>
-
-  <div class="detail-header">
-    <a href="#list_orders/2" class="detail-link" title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">list_orders(syndicate, deps \\ %{env: :dev, io: %{read: &amp;File.read/1, write: &amp;File.write/2}, paths: [current_orders: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;current_orders.json&quot;], products: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;products.json&quot;], syndicates: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;syndicates.json&quot;], setup: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;setup.json&quot;]]})</h1>
-
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/store/lib/store/file_system.ex#L42" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-      <div class="specs">
-
-          <pre translate="no"><span class="attribute">@spec</span> list_orders(<a href="Shared.Data.Syndicate.html#t:t/0">Shared.Data.Syndicate.t</a>(), <a href="Store.Type.html#t:dependencies/0">Store.Type.dependencies</a>()) ::
-  <a href="Store.Type.html#t:list_orders_response/0">Store.Type.list_orders_response</a>()</pre>
-
-      </div>
-
-
-  </section>
-</section>
 <section class="detail" id="list_products/2">
 
     <span id="list_products/1"></span>
 
   <div class="detail-header">
-    <a href="#list_products/2" class="detail-link" title="Link to this function">
+    <a href="#list_products/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">list_products(syndicate, deps \\ %{env: :dev, io: %{read: &amp;File.read/1, write: &amp;File.write/2}, paths: [current_orders: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;current_orders.json&quot;], products: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;products.json&quot;], syndicates: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;syndicates.json&quot;], setup: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;setup.json&quot;]]})</h1>
-
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/store/lib/store/file_system.ex#L30" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">list_products(syndicate_ids, deps \\ %{env: :dev, io: %{read: &amp;File.read/1, write: &amp;File.write/2}, paths: [watch_list: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;watch_list.json&quot;], products: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;products.json&quot;], syndicates: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;syndicates.json&quot;], setup: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;setup.json&quot;]]})</h1>
 
 
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/store/lib/store/file_system.ex#L32" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@spec</span> list_products(<a href="Shared.Data.Syndicate.html#t:t/0">Shared.Data.Syndicate.t</a>(), <a href="Store.Type.html#t:dependencies/0">Store.Type.dependencies</a>()) ::
+          <pre translate="no"><span class="attribute">@spec</span> list_products([<a href="Shared.Data.Syndicate.html#t:id/0">Shared.Data.Syndicate.id</a>()], <a href="Store.Type.html#t:dependencies/0">Store.Type.dependencies</a>()) ::
   <a href="Store.Type.html#t:list_products_response/0">Store.Type.list_products_response</a>()</pre>
 
       </div>
@@ -429,18 +419,18 @@ Pages
     <span id="list_syndicates/0"></span>
 
   <div class="detail-header">
-    <a href="#list_syndicates/1" class="detail-link" title="Link to this function">
+    <a href="#list_syndicates/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">list_syndicates(deps \\ %{env: :dev, io: %{read: &amp;File.read/1, write: &amp;File.write/2}, paths: [current_orders: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;current_orders.json&quot;], products: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;products.json&quot;], syndicates: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;syndicates.json&quot;], setup: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;setup.json&quot;]]})</h1>
-
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/store/lib/store/file_system.ex#L120" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">list_syndicates(deps \\ %{env: :dev, io: %{read: &amp;File.read/1, write: &amp;File.write/2}, paths: [watch_list: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;watch_list.json&quot;], products: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;products.json&quot;], syndicates: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;syndicates.json&quot;], setup: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;setup.json&quot;]]})</h1>
 
 
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/store/lib/store/file_system.ex#L120" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -460,18 +450,18 @@ Pages
     <span id="save_login_data/2"></span>
 
   <div class="detail-header">
-    <a href="#save_login_data/3" class="detail-link" title="Link to this function">
+    <a href="#save_login_data/3" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">save_login_data(auth, user, deps \\ %{env: :dev, io: %{read: &amp;File.read/1, write: &amp;File.write/2}, paths: [current_orders: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;current_orders.json&quot;], products: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;products.json&quot;], syndicates: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;syndicates.json&quot;], setup: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;setup.json&quot;]]})</h1>
-
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/store/lib/store/file_system.ex#L81" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">save_login_data(auth, user, deps \\ %{env: :dev, io: %{read: &amp;File.read/1, write: &amp;File.write/2}, paths: [watch_list: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;watch_list.json&quot;], products: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;products.json&quot;], syndicates: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;syndicates.json&quot;], setup: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;setup.json&quot;]]})</h1>
 
 
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/store/lib/store/file_system.ex#L81" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -490,73 +480,37 @@ Pages
 
   </section>
 </section>
-<section class="detail" id="save_order/3">
-
-    <span id="save_order/2"></span>
-
-  <div class="detail-header">
-    <a href="#save_order/3" class="detail-link" title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">save_order(placed_order, syndicate, deps \\ %{env: :dev, io: %{read: &amp;File.read/1, write: &amp;File.write/2}, paths: [current_orders: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;current_orders.json&quot;], products: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;products.json&quot;], syndicates: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;syndicates.json&quot;], setup: [&quot;c:/&quot;, &quot;Users&quot;, &quot;pedro&quot;, &quot;Documents&quot;, &quot;Workdir&quot;, &quot;market_manager&quot;, &quot;apps&quot;, &quot;store&quot;, &quot;test&quot;, &quot;fixtures&quot;, &quot;setup.json&quot;]]})</h1>
-
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/store/lib/store/file_system.ex#L53" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-      <div class="specs">
-
-          <pre translate="no"><span class="attribute">@spec</span> save_order(
-  <a href="Shared.Data.PlacedOrder.html#t:t/0">Shared.Data.PlacedOrder.t</a>(),
-  <a href="Shared.Data.Syndicate.html#t:t/0">Shared.Data.Syndicate.t</a>(),
-  <a href="Store.Type.html#t:dependencies/0">Store.Type.dependencies</a>()
-) ::
-  <a href="Store.Type.html#t:save_order_response/0">Store.Type.save_order_response</a>()</pre>
-
-      </div>
-
-
-  </section>
-</section>
 
     </div>
   </section>
 
-      <footer class="footer">
-        <p>
+    <footer class="footer">
+      <p>
 
-          <span class="line">
-            <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
-              Search HexDocs
-            </button>
+        <span class="line">
+          <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
+            Search HexDocs
+          </button>
 
-              <a href="Market Manager.epub" title="ePub version">
-                Download ePub version
-              </a>
+            <a href="Market Manager.epub" title="ePub version">
+              Download ePub version
+            </a>
 
-          </span>
-        </p>
+        </span>
+      </p>
 
-        <p class="built-using">
-          Built using
-          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.31.1) for the
+      <p class="built-using">
+        Built using
+        <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.38.2) for the
 
-            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+          <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
 
-        </p>
-      </footer>
-    </div>
+      </p>
+
+    </footer>
   </div>
 </main>
 </div>
-
 
   </body>
 </html>

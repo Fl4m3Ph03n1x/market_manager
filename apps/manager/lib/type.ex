@@ -11,7 +11,7 @@ defmodule Manager.Type do
 
   @type item_id :: String.t()
   @type handle :: (result :: any -> :ok)
-  @type dependencies :: keyword(module)
+  @type dependencies :: %{store: module(), auction_house: module()}
 
   #############
   # Responses #
@@ -23,6 +23,6 @@ defmodule Manager.Type do
   @type recover_login_response :: {:ok, User.t() | nil} | {:error, any}
   @type logout_response :: :ok | {:error, any}
   @type syndicates_response :: {:ok, [Syndicate.t()]} | {:error, any}
-  @type active_syndicates_response :: {:ok, [Syndicate.t()]} | {:error, any}
+  @type active_syndicates_response :: {:ok, %{Syndicate.id() => Strategy.id()}} | {:error, any}
   @type strategies_response :: {:ok, [Strategy.t()]} | {:error, any}
 end

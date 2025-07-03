@@ -24,8 +24,7 @@ defmodule Helpers do
 
   @default_order_info %{
     "visible" => true,
-    "user" => %{"status" => "ingame"},
-    "platform" => "pc",
+    "user" => %{"platform" => "pc", "status" => "ingame", "ingame_name" => "some_user", "crossplay" => false},
     "order_type" => "sell",
     "platinum" => 15
   }
@@ -42,6 +41,9 @@ defmodule Helpers do
       |> Map.merge(Maps.to_string_map(data))
       |> Order.new()
 
+  @spec create_product :: Product.t()
+  def create_product, do: create_product([])
+
   @spec create_product(Keyword.t()) :: Product.t()
   def create_product(data) when is_list(data),
     do:
@@ -56,6 +58,9 @@ defmodule Helpers do
       |> Map.merge(Maps.to_string_map(data))
       |> OrderInfo.new()
 
+  @spec create_placed_order :: PlacedOrder.t()
+  def create_placed_order, do: create_placed_order([])
+
   @spec create_placed_order(Keyword.t()) :: PlacedOrder.t()
   def create_placed_order(data) when is_list(data),
     do:
@@ -64,31 +69,35 @@ defmodule Helpers do
       |> PlacedOrder.new()
 
   @spec strategy(atom) :: Strategy.t()
-  def strategy(:top_three_average), do:
-    Strategy.new(
-      name: "Top 3 Average",
-      id: :top_three_average,
-      description: "Gets the 3 lowest prices for the given item and calculates the average."
-    )
+  def strategy(:top_three_average),
+    do:
+      Strategy.new(
+        name: "Top 3 Average",
+        id: :top_three_average,
+        description: "Gets the 3 lowest prices for the given item and calculates the average."
+      )
 
-    def strategy(:top_five_average), do:
+  def strategy(:top_five_average),
+    do:
       Strategy.new(
         name: "Top 5 Average",
         id: :top_five_average,
         description: "Gets the 5 lowest prices for the given item and calculates the average."
       )
 
-  def strategy(:equal_to_lowest), do:
-    Strategy.new(
-      name: "Equal to lowest",
-      id: :equal_to_lowest,
-      description: "Gets the lowest price for the given item and uses it."
-    )
+  def strategy(:equal_to_lowest),
+    do:
+      Strategy.new(
+        name: "Equal to lowest",
+        id: :equal_to_lowest,
+        description: "Gets the lowest price for the given item and uses it."
+      )
 
-  def strategy(:lowest_minus_one), do:
-    Strategy.new(
-      name: "Lowest minus one",
-      id: :lowest_minus_one,
-      description: "Gets the lowest price for the given item and beats it by 1."
-    )
+  def strategy(:lowest_minus_one),
+    do:
+      Strategy.new(
+        name: "Lowest minus one",
+        id: :lowest_minus_one,
+        description: "Gets the lowest price for the given item and beats it by 1."
+      )
 end

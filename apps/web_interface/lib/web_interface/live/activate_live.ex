@@ -29,38 +29,47 @@ defmodule WebInterface.ActivateLive do
           form: to_form(%{"activate_syndicates" => []}),
           activation_in_progress: false,
           activation_progress: 0,
-          activation_current_syndicate: nil,
           operation_in_progress?: false,
-          selected_button: :activate
+          selected_button: :activate,
+          message: nil
         )
 
       {:ok, updated_socket}
     else
       error ->
         Logger.error("Unable to show deactivation page: #{inspect(error)}")
-        {:error, socket |> put_flash(:error, "Unable to show deactivation page!")}
+        {:error, put_flash(socket, :error, "Unable to show deactivation page!")}
     end
   end
 
+  ###################
+  # Frontend Events #
+  ###################
+
   @impl true
   def handle_event("execute", %{"strategy" => strategy_id, "syndicates" => syndicate_ids}, socket) do
+    params =
+      Enum.reduce(syndicate_ids, %{}, fn syn_id, acc ->
+        Map.put(acc, String.to_atom(syn_id), String.to_atom(strategy_id))
+      end)
+
     with {:ok, strategy} <- StrategyStore.get_strategy_by_id(strategy_id),
-         {:ok, [syndicate | _rest] = syndicates} <- SyndicateStore.get_all_syndicates_by_id(syndicate_ids),
-         :ok <- Manager.activate(syndicate, strategy) do
+         {:ok, syndicates} <- SyndicateStore.get_all_syndicates_by_id(syndicate_ids),
+         :ok <- Manager.activate(params) do
       updated_socket =
         socket
         |> assign(selected_strategy: strategy)
         |> assign(selected_active_syndicates: syndicates)
         |> assign(activation_in_progress: true)
         |> assign(operation_in_progress?: true)
-        |> assign(activation_current_syndicate: syndicate)
         |> assign(activation_progress: 0)
+        |> assign(message: "Activation in progress...")
 
       {:noreply, updated_socket}
     else
       err ->
         Logger.error("Unable to retrieve data: #{inspect(err)}")
-        {:noreply, socket |> put_flash(:error, "Unable to retrieve data!")}
+        {:noreply, put_flash(socket, :error, "Unable to retrieve data!")}
     end
   end
 
@@ -75,7 +84,7 @@ defmodule WebInterface.ActivateLive do
     else
       err ->
         Logger.error("Unable to retrieve syndicate data: #{inspect(err)}")
-        {:noreply, socket |> put_flash(:error, "Unable to retrieve data!")}
+        {:noreply, put_flash(socket, :error, "Unable to retrieve data!")}
     end
   end
 
@@ -86,7 +95,7 @@ defmodule WebInterface.ActivateLive do
     else
       err ->
         Logger.error("Unable to retrieve strategy data: #{inspect(err)}")
-        {:noreply, socket |> put_flash(:error, "Unable to retrieve data!")}
+        {:noreply, put_flash(socket, :error, "Unable to retrieve data!")}
     end
   end
 
@@ -96,12 +105,10 @@ defmodule WebInterface.ActivateLive do
         socket
       ) do
     with {:ok, strategy} <- StrategyStore.get_strategy_by_id(strategy_id),
-         {:ok, syndicates} <-
-           SyndicateStore.get_all_syndicates_by_id(syndicate_ids),
+         {:ok, syndicates} <- SyndicateStore.get_all_syndicates_by_id(syndicate_ids),
          :ok <- StrategyStore.set_selected_strategy(strategy),
          {:ok, active_syndicates} <- SyndicateStore.get_active_syndicates(),
-         new_selected_syndicates =
-           Enum.uniq(syndicates ++ active_syndicates),
+         new_selected_syndicates = Enum.uniq(syndicates ++ active_syndicates),
          :ok <- SyndicateStore.set_selected_active_syndicates(new_selected_syndicates) do
       {:noreply,
        assign(socket,
@@ -111,105 +118,75 @@ defmodule WebInterface.ActivateLive do
     else
       err ->
         Logger.error("Unable to retrieve change data: #{inspect(err)}")
-        {:noreply, socket |> put_flash(:error, "Unable to retrieve data!")}
+        {:noreply, put_flash(socket, :error, "Unable to retrieve data!")}
     end
   end
 
   def handle_event(event, params, socket) do
-    Logger.info("Event: #{inspect(event)} ; #{inspect(params)}")
+    Logger.error("Event: #{inspect(event)} ; #{inspect(params)}")
     {:noreply, socket}
   end
 
+  ##################
+  # Backend Events #
+  ##################
+
   @impl true
-  def handle_info({:activate, syndicate, {:error, reason} = error}, socket) do
-    Logger.error("Unable to activate syndicate #{syndicate.name}: #{inspect(error)}")
-
-    with {:ok, active_syndicates} <- SyndicateStore.get_active_syndicates(),
-         new_selected_syndicates = active_syndicates -- [syndicate],
-         :ok <- SyndicateStore.set_selected_active_syndicates(new_selected_syndicates) do
-      {:noreply,
-       put_flash(
-         assign(socket, operation_in_progress?: false),
-         :error,
-         "Unable to activate syndicate #{syndicate.name} due to '#{reason}'."
-       )}
-    else
-      err ->
-        Logger.error("Failed to retrieve persistence data: #{inspect(err)}")
-
-        {:noreply, put_flash(socket, :error, "Multiple errors ocurred, please check the logs.")}
-    end
+  def handle_info({:activate, {:ok, :get_user_orders}}, socket) do
+    Logger.info("Activate: Getting user orders.")
+    {:noreply, assign(socket, message: "Activate: Getting user orders.")}
   end
 
-  def handle_info(
-        {:activate, syndicate, {current_item, total_items, {:error, reason, _item} = error}},
-        socket
-      ) do
-    Logger.error("Order placement for item of #{syndicate.name} failed: #{inspect(error)}")
-
-    updated_socket =
-      socket
-      |> assign(activation_progress: round(current_item / total_items * 100))
-      |> put_flash(:error, "Unable to place an order for #{syndicate.name} due to '#{reason}'.")
-
-    {:noreply, updated_socket}
+  def handle_info({:activate, {:ok, :calculating_item_prices}}, socket) do
+    Logger.info("Activate: Calculating item prices.")
+    {:noreply, assign(socket, message: "Activate: Calculating item prices.")}
   end
 
-  def handle_info(
-        {:activate, syndicate, {current_item, total_items, {:ok, %Shared.Data.PlacedOrder{item_id: item_id}}}},
-        socket
-      ) do
-    Logger.info("Order placed for #{syndicate.name}: #{item_id}")
+  def handle_info({:activate, {:ok, {:price_calculated, item_name, price, current_progress, total_progress}}}, socket) do
+    progress = round(current_progress / total_progress * 100)
 
-    {:noreply, assign(socket, activation_progress: round(current_item / total_items * 100))}
+    Logger.info("Activate: Price calculated for #{item_name}, #{price}p, #{progress}%")
+    {:noreply, assign(socket, activation_progress: progress)}
   end
 
-  def handle_info({:activate, syndicate, :done}, socket) do
-    Logger.info("Activation of #{syndicate.name} complete.")
+  def handle_info({:activate, {:ok, :placing_orders}}, socket) do
+    Logger.info("Activate: Placing orders.")
+    {:noreply, assign(socket, message: "Activate: Placing orders.")}
+  end
 
-    with {:ok, strategy} <- StrategyStore.get_selected_strategy(),
-         :ok <- SyndicateStore.activate_syndicate(syndicate),
+  def handle_info({:activate, {:ok, {:order_placed, item_name, current_progress, total_progress}}}, socket) do
+    progress = round(current_progress / total_progress * 100)
+
+    Logger.info("Activate: Order placed for #{item_name}, #{progress}%")
+    {:noreply, assign(socket, activation_progress: progress)}
+  end
+
+  def handle_info({:activate, {:ok, :done}}, socket) do
+    with {:ok, selected_syndicates} <- SyndicateStore.get_selected_active_syndicates(),
+         :ok <- SyndicateStore.activate_syndicates(selected_syndicates),
          {:ok, all_syndicates_active?} <- SyndicateStore.all_syndicates_active?(),
-         {:ok, selected_syndicates} <- SyndicateStore.get_selected_active_syndicates(),
-         {:ok, active_syndicates} <- SyndicateStore.get_active_syndicates(),
-         new_selected_syndicates =
-           Enum.uniq(selected_syndicates ++ active_syndicates),
-         :ok <- SyndicateStore.set_selected_active_syndicates(new_selected_syndicates) do
-      missing_syndicates =
-        selected_syndicates
-        |> MapSet.new()
-        |> MapSet.difference(MapSet.new(active_syndicates))
-        |> MapSet.to_list()
-        |> List.flatten()
-
-      to_assign =
-        if Enum.empty?(missing_syndicates) do
-          [activation_current_syndicate: nil, activation_in_progress: false, operation_in_progress?: false]
-        else
-          [next_syndicate | _rest] = missing_syndicates
-          :ok = Manager.activate(next_syndicate, strategy)
-          [activation_current_syndicate: next_syndicate, activation_progress: 0]
-        end
-
+         {:ok, active_syndicates} <- SyndicateStore.get_active_syndicates() do
       updated_socket =
         socket
         |> assign(active_syndicates: active_syndicates)
         |> assign(all_syndicates_active?: all_syndicates_active?)
-        |> assign(selected_active_syndicates: new_selected_syndicates)
-        |> assign(to_assign)
+        |> assign(activation_in_progress: false)
+        |> assign(operation_in_progress?: false)
+        |> assign(message: nil)
 
+      Logger.info("Activate: Action completed.")
       {:noreply, updated_socket}
     else
       error ->
         Logger.error("Unable complete syndicate activation: #{inspect(error)}")
-        {:noreply, socket |> put_flash(:error, "Unable complete syndicate activation!")}
+        {:noreply, put_flash(socket, :error, "Unable complete syndicate activation!")}
     end
   end
 
   def handle_info(message, socket) do
     Logger.error("Unknown message received: #{inspect(message)}")
 
-    {:noreply, socket |> put_flash(:error, "Something unexpected happened, please report it!")}
+    {:noreply, put_flash(socket, :error, "Something unexpected happened, please report it!")}
   end
 
   ####################
@@ -221,10 +198,4 @@ defmodule WebInterface.ActivateLive do
     do:
       is_nil(strategy) or Enum.empty?(selected_syndicates) or
         Enum.sort(selected_syndicates) == Enum.sort(active_syndicates)
-
-  @spec progress_bar_message(Syndicate.t() | nil) :: String.t()
-  def progress_bar_message(nil), do: "Operation in progress ..."
-
-  def progress_bar_message(activation_current_syndicate),
-    do: "Activation for #{activation_current_syndicate.name} in progress ..."
 end

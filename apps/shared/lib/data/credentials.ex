@@ -7,12 +7,15 @@ defmodule Shared.Data.Credentials do
 
   use TypedStruct
 
+  @type email :: String.t()
+  @type password :: String.t()
+
   @derive Jason.Encoder
   typedstruct enforce: true do
     @typedoc "The credentials"
 
-    field(:email, String.t())
-    field(:password, String.t())
+    field(:email, email())
+    field(:password, password())
   end
 
   @spec new(email :: String.t(), password :: String.t()) :: __MODULE__.t()

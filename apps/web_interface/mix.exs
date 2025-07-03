@@ -4,12 +4,12 @@ defmodule WebInterface.MixProject do
   def project do
     [
       app: :web_interface,
-      version: "2.2.2",
+      version: "2.3.0",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
-      elixir: "~> 1.16",
+      elixir: "~> 1.18",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: Mix.compilers(),
       start_permanent: Mix.env() == :prod,
