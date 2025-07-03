@@ -14,7 +14,7 @@ defmodule AuctionHouseTest do
 
   setup_all do
     bypass = Bypass.open(port: @test_port)
-    {:ok, _pid} = AuctionSupervisor.start_link()
+    _ = start_supervised(AuctionSupervisor)
 
     %{
       bypass: bypass

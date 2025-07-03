@@ -105,7 +105,7 @@ defmodule Manager.WorkerTest do
         |> Plug.Conn.resp(200, body)
       end)
 
-      _manager_pid = start_link_supervised!(ManagerSupervisor)
+      _manager_pid = start_supervised(ManagerSupervisor)
       :ok = Manager.login(credentials, false)
 
       assert_receive({:login, {:ok, %User{patreon?: false, ingame_name: "fl4m3"}}}, @timeout)
@@ -991,7 +991,7 @@ defmodule Manager.WorkerTest do
         |> Plug.Conn.resp(200, body)
       end)
 
-      _manager_pid = start_link_supervised!(ManagerSupervisor)
+      _manager_pid = start_supervised(ManagerSupervisor)
       :ok = Manager.login(credentials, false)
 
       assert_receive({:login, {:ok, %User{patreon?: false, ingame_name: "fl4m3"}}}, @timeout)
@@ -1776,14 +1776,14 @@ defmodule Manager.WorkerTest do
         |> Plug.Conn.resp(200, body)
       end)
 
-      _manager_pid = start_link_supervised!(ManagerSupervisor)
+      _manager_pid = start_supervised(ManagerSupervisor)
       :ok = Manager.login(credentials, false)
 
       assert_receive({:login, {:ok, %User{patreon?: false, ingame_name: "Fl4m3Ph03n1x"}}}, @timeout)
     end
 
     test "logs in user correctly when there is previous login data", %{credentials: credentials} do
-      _manager_pid = start_link_supervised!(ManagerSupervisor)
+      _manager_pid = start_supervised(ManagerSupervisor)
       :ok = Manager.login(credentials, false)
 
       assert_receive({:login, {:ok, %User{patreon?: false, ingame_name: "fl4m3"}}}, @timeout)
@@ -1807,7 +1807,7 @@ defmodule Manager.WorkerTest do
     end
 
     test "returns user when successful" do
-      _manager_pid = start_link_supervised!(ManagerSupervisor)
+      _manager_pid = start_supervised(ManagerSupervisor)
 
       assert Manager.recover_login() == {:ok, %User{patreon?: false, ingame_name: "fl4m3"}}
     end
@@ -1815,7 +1815,7 @@ defmodule Manager.WorkerTest do
     test "returns nil if no login session is found" do
       reset_setup_file()
 
-      _manager_pid = start_link_supervised!(ManagerSupervisor)
+      _manager_pid = start_supervised(ManagerSupervisor)
 
       assert Manager.recover_login() == {:ok, nil}
     end
@@ -1836,7 +1836,7 @@ defmodule Manager.WorkerTest do
     end
 
     test "returns OK if session is deleted from disk and memory", %{credentials: credentials, user: user} do
-      _manager_pid = start_link_supervised!(ManagerSupervisor)
+      _manager_pid = start_supervised(ManagerSupervisor)
 
       assert Manager.login(credentials, true) == :ok
       assert_receive({:login, {:ok, ^user}}, @timeout)
@@ -1849,7 +1849,7 @@ defmodule Manager.WorkerTest do
 
   describe "syndicates/0" do
     test "returns known syndicates" do
-      _manager_pid = start_link_supervised!(ManagerSupervisor)
+      _manager_pid = start_supervised(ManagerSupervisor)
 
       {:ok, syndicates} = Manager.syndicates()
       syndicate_ids = Enum.map(syndicates, fn syndicate -> syndicate.id end)
@@ -1874,7 +1874,7 @@ defmodule Manager.WorkerTest do
     end
 
     test "returns currently active syndicates with their strategies" do
-      _manager_pid = start_link_supervised!(ManagerSupervisor)
+      _manager_pid = start_supervised(ManagerSupervisor)
 
       assert Manager.active_syndicates() ==
                {:ok, %{cephalon_suda: :lowest_minus_one, cephalon_simaris: :equal_to_lowest}}
@@ -1884,7 +1884,7 @@ defmodule Manager.WorkerTest do
   describe "strategies" do
     test "returns the strategies" do
       # Arrange
-      _manager_pid = start_link_supervised!(ManagerSupervisor)
+      _manager_pid = start_supervised(ManagerSupervisor)
 
       expected_strategies = [
         %Strategy{
