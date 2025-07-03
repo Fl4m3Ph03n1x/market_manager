@@ -152,6 +152,7 @@ defmodule Store do
 
   > Store.activate_syndicates(%{red_veil: :top_five_average, new_loka: :top_five_average})
   {:error, :enoent}
+  ```
   """
   @spec activate_syndicates(%{Syndicate.id() => Strategy.id()}) ::
           Type.activate_syndicates_response()
@@ -169,6 +170,7 @@ defmodule Store do
 
   > Store.deactivate_syndicates([:red_veil, :new_loka])
   {:error, :enoent}
+  ```
   """
   @spec deactivate_syndicates([Syndicate.id()]) :: Type.deactivate_syndicates_response()
   defdelegate deactivate_syndicates(syndicates), to: FileSystem
