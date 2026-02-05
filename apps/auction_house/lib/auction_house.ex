@@ -32,7 +32,7 @@ defmodule AuctionHouse do
   > AuctionHouse.place_order(order)
   :ok
 
-  The received messages will one of the following formats:
+  The received messages will have one of the following formats:
 
   - {:place_order, {:ok, %PlacedOrder{item_id: "54a74454e779892d5e5155d5", order_id: "66b9c7aa6b17410a57974e4b"}}}
   - {:place_order, {:error, {reason, err}}}
