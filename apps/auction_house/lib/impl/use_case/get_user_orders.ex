@@ -11,7 +11,7 @@ defmodule AuctionHouse.Impl.UseCase.GetUserOrders do
 
   @behaviour UseCase
 
-  @api_profile_url Application.compile_env!(:auction_house, :api_profile_url)
+  @api_user_orders_url Application.compile_env!(:auction_house, :api_user_orders_url)
 
   @default_deps %{
     get: &HttpAsyncClient.get/3
@@ -35,12 +35,8 @@ defmodule AuctionHouse.Impl.UseCase.GetUserOrders do
   @impl UseCase
   @spec finish(Response.t()) :: {:ok, [PlacedOrder.t()]} | {:error, Jason.DecodeError.t()}
   def finish(%Response{body: body}) do
-    case Jason.decode(body) do
-      {:ok, content} ->
-        {:ok, parse_user_order_info(content)}
-
-      err ->
-        err
+    with {:ok, content} <- Jason.decode(body) do
+      {:ok, parse_user_order_info(content)}
     end
   end
 
@@ -50,23 +46,16 @@ defmodule AuctionHouse.Impl.UseCase.GetUserOrders do
 
   @spec build_user_orders_url(Type.username()) :: url()
   defp build_user_orders_url(username),
-    do: URI.encode(@api_profile_url <> "/" <> username <> "/orders")
+    do: URI.encode(@api_user_orders_url <> "/" <> username)
 
   @spec parse_user_order_info(orders_json :: map()) :: [PlacedOrder.t()]
   defp parse_user_order_info(orders_json) do
     orders_json
-    |> get_in(["payload", "sell_orders"])
+    |> Map.get("data")
     |> Enum.map(&to_placed_order/1)
     |> Enum.map(&PlacedOrder.new/1)
   end
 
-  @spec to_placed_order(map()) :: map()
-  defp to_placed_order(user_orders) do
-    order_id = Map.get(user_orders, "id")
-    item_id = get_in(user_orders, ["item", "id"])
-
-    user_orders
-    |> Map.put("order_id", order_id)
-    |> Map.put("item_id", item_id)
-  end
+  @spec to_placed_order(map()) :: PlacedOrder.placed_order()
+  defp to_placed_order(order), do: [order_id: Map.get(order, "id"), item_id: Map.get(order, "itemId")]
 end

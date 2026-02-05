@@ -284,86 +284,42 @@ defmodule AuctionHouseTest do
   describe "get_user_orders/1" do
     test "returns user orders if request succeeds", %{bypass: bypass} do
       # Arrange
-      Bypass.expect(bypass, "GET", "/v1/profile/:username/orders", fn conn ->
-        response = %{
-          "payload" => %{
-            "buy_orders" => [],
-            "sell_orders" => [
-              %{
-                "creation_date" => "2024-03-28T14:47:47.875+00:00",
-                "id" => "66058313a9630600302d4889",
-                "item" => %{
-                  "cs" => %{"item_name" => "Arcane Agility"},
-                  "de" => %{"item_name" => "Arkana: Agilität"},
-                  "en" => %{"item_name" => "Arcane Agility"},
-                  "es" => %{"item_name" => "Agilidad Arcana"},
-                  "fr" => %{"item_name" => "Arcane Agilité"},
-                  "icon" => "items/images/en/arcane_agility.2274fd115d389b990a55f5a4ff864773.png",
-                  "icon_format" => "land",
-                  "id" => "55108594e77989728d5100c6",
-                  "ko" => %{"item_name" => "아케인 어질리티"},
-                  "mod_max_rank" => 5,
-                  "pl" => %{"item_name" => "Arkanum Zręczności"},
-                  "pt" => %{"item_name" => "Agilidade Arcana"},
-                  "ru" => %{"item_name" => "Мистическая Ловкость"},
-                  "sub_icon" => nil,
-                  "sv" => %{"item_name" => "Arcane Agility"},
-                  "tags" => ["uncommon", "arcane_enhancement"],
-                  "thumb" => "items/images/en/thumbs/arcane_agility.2274fd115d389b990a55f5a4ff864773.128x128.png",
-                  "uk" => %{"item_name" => "Містична Жвавість"},
-                  "url_name" => "arcane_agility",
-                  "zh-hans" => %{"item_name" => "赋能·灵敏"},
-                  "zh-hant" => %{"item_name" => "靈敏賦能"}
-                },
-                "last_update" => "2024-03-28T14:47:47.875+00:00",
-                "mod_rank" => 0,
-                "order_type" => "sell",
-                "platform" => "pc",
-                "platinum" => 4,
-                "quantity" => 21,
-                "region" => "en",
-                "visible" => true
+      Bypass.expect(bypass, "GET", "/v2/orders/user/:username", fn conn ->
+        response =
+          """
+          {
+            "apiVersion": "0.22.7",
+            "data": [
+              {
+                "id": "66058313a9630600302d4889",
+                "type": "sell",
+                "platinum": 2,
+                "quantity": 21,
+                "perTrade": 1,
+                "rank": 0,
+                "visible": true,
+                "createdAt": "2025-12-04T22:13:20Z",
+                "updatedAt": "2026-01-03T23:41:56Z",
+                "itemId": "55108594e77989728d5100c6"
               },
-              %{
-                "creation_date" => "2024-03-28T14:48:14.281+00:00",
-                "id" => "6605832ea96306003657a90d",
-                "item" => %{
-                  "cs" => %{"item_name" => "Abating Link"},
-                  "de" => %{"item_name" => "Dämpfende Verbindung"},
-                  "en" => %{"item_name" => "Abating Link"},
-                  "es" => %{"item_name" => "Enlace Mermador"},
-                  "fr" => %{"item_name" => "Lien Dégradant"},
-                  "icon" => "items/images/en/abating_link.c547fa09315093a5ba6c609a9b195580.png",
-                  "icon_format" => "port",
-                  "id" => "54e644ffe779897594fa68d2",
-                  "ko" => %{"item_name" => "어베이팅 링크"},
-                  "mod_max_rank" => 3,
-                  "pl" => %{"item_name" => "Osłabiające Połączenie"},
-                  "pt" => %{"item_name" => "Abating Link"},
-                  "ru" => %{"item_name" => "Ослабляющая Связь"},
-                  "sub_icon" => nil,
-                  "sv" => %{"item_name" => "Abating Link"},
-                  "tags" => ["mod", "rare", "warframe", "trinity"],
-                  "thumb" => "items/images/en/thumbs/abating_link.c547fa09315093a5ba6c609a9b195580.128x128.png",
-                  "uk" => %{"item_name" => "Вгамовний Зв’язок"},
-                  "url_name" => "abating_link",
-                  "zh-hans" => %{"item_name" => "耗弱链接"},
-                  "zh-hant" => %{"item_name" => "耗弱連結"}
-                },
-                "last_update" => "2024-03-28T14:48:14.281+00:00",
-                "mod_rank" => 0,
-                "order_type" => "sell",
-                "platform" => "pc",
-                "platinum" => 23,
-                "quantity" => 1,
-                "region" => "en",
-                "visible" => true
+              {
+                "id": "6605832ea96306003657a90d",
+                "type": "sell",
+                "platinum": 3,
+                "quantity": 21,
+                "perTrade": 1,
+                "rank": 0,
+                "visible": true,
+                "createdAt": "2025-12-04T22:13:48Z",
+                "updatedAt": "2026-01-03T23:41:55Z",
+                "itemId": "54e644ffe779897594fa68d2"
               }
-            ]
+            ],
+            "error": null
           }
-        }
+          """
 
-        Plug.Conn.resp(conn, 200, Jason.encode!(response))
+        Plug.Conn.resp(conn, 200, response)
       end)
 
       assert AuctionHouse.get_user_orders("Fl4m3Ph03n1x") == :ok

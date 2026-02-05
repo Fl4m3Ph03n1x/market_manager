@@ -27,7 +27,7 @@ config :auction_house,
   api_base_url: "https://api.warframe.market/v1/profile/orders",
   market_signin_url: "https://warframe.market/auth/signin",
   api_signin_url: "https://api.warframe.market/v1/auth/signin",
-  api_profile_url: "https://api.warframe.market/v1/profile"
+  api_user_orders_url: "https://api.warframe.market/v2/orders/user"
 
 config :rate_limiter,
   algorithm: RateLimiter.LeakyBucket,
