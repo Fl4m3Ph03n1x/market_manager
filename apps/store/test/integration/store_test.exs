@@ -38,7 +38,8 @@ defmodule StoreTest do
           "token" => "a_token"
         },
         "user" => %{
-          "ingame_name" => "fl4m3",
+          "ingame_name" => "Fl4m3",
+          "slug" => "fl4m3",
           "patreon?" => false
         }
       })
@@ -330,7 +331,7 @@ defmodule StoreTest do
     test "returns :ok if login data was saved successfully" do
       # Arrange
       auth = Authorization.new(%{"cookie" => "new_cookie", "token" => "new_token"})
-      user = User.new(%{"ingame_name" => "ph03n1x", "patreon?" => true})
+      user = User.new(%{"ingame_name" => "Ph03n1x", "slug" => "ph03n1x", "patreon?" => true})
 
       # Act & Assert
       assert Store.save_login_data(auth, user) == :ok
@@ -339,7 +340,7 @@ defmodule StoreTest do
 
       assert Jason.decode!(content) ==
                %{
-                 "user" => %{"ingame_name" => "ph03n1x", "patreon?" => true},
+                 "user" => %{"ingame_name" => "Ph03n1x", "slug" => "ph03n1x", "patreon?" => true},
                  "authorization" => %{"cookie" => "new_cookie", "token" => "new_token"}
                }
     end
@@ -369,7 +370,7 @@ defmodule StoreTest do
     test "returns login data" do
       # Arrange
       auth = Authorization.new(%{"cookie" => "a_cookie", "token" => "a_token"})
-      user = User.new(%{"ingame_name" => "fl4m3", "patreon?" => false})
+      user = User.new(%{"ingame_name" => "Fl4m3", "slug" => "fl4m3", "patreon?" => false})
 
       # Act & Assert
       assert Store.get_login_data() == {:ok, {auth, user}}
