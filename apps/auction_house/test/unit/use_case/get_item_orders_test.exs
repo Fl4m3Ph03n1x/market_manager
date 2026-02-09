@@ -9,7 +9,7 @@ defmodule AuctionHouse.Impl.UseCase.GetItemOrdersTest do
   alias Shared.Data.OrderInfo
   alias Shared.Data.OrderInfo.User
 
-  @search_url Application.compile_env!(:auction_house, :api_search_url)
+  @search_url Application.compile_env!(:auction_house, :api_item_orders_url)
 
   describe "start/2" do
     test "makes request" do
@@ -27,7 +27,7 @@ defmodule AuctionHouse.Impl.UseCase.GetItemOrdersTest do
       deps =
         %{
           get: fn url, req, _next ->
-            assert url == "#{@search_url}/despoil/orders"
+            assert url == "#{@search_url}/despoil"
 
             assert req.metadata == %Metadata{
                      notify: [self()],
@@ -68,58 +68,65 @@ defmodule AuctionHouse.Impl.UseCase.GetItemOrdersTest do
         headers: nil,
         body: """
         {
-          "payload": {
-              "orders": [
-                  {
-                      "visible": true,
-                      "quantity": 1,
-                      "creation_date": "2016-01-22T21:18:19.000+00:00",
-                      "user": {
-                          "reputation": 87,
-                          "locale": "en",
-                          "avatar": "user/avatar/56a293b3d3ffb60a43942be4.png?2b19ae420608cd7b816d931eb62db438",
-                          "ingame_name": "JeyciKon",
-                          "last_seen": "2025-06-17T02:34:40.464+00:00",
-                          "slug": "jeycikon",
-                          "crossplay": true,
-                          "platform": "pc",
-                          "id": "56a293b3d3ffb60a43942be4",
-                          "region": "en",
-                          "status": "offline"
-                      },
-                      "last_update": "2024-02-10T19:19:04.000+00:00",
-                      "platinum": 22,
-                      "order_type": "sell",
-                      "id": "56a29c9bd3ffb60a4b3d32d3",
-                      "mod_rank": 0,
-                      "region": "en"
-                  },
-                  {
-                      "visible": true,
-                      "creation_date": "2016-07-21T09:00:36.000+00:00",
-                      "quantity": 1,
-                      "user": {
-                          "reputation": 259,
-                          "locale": "en",
-                          "avatar": "user/avatar/55cbd976e77989320127aee2.png?5f4395ca16bc4bc35f7624dddc579cca",
-                          "ingame_name": "nellone",
-                          "last_seen": "2025-06-15T03:05:59.608+00:00",
-                          "slug": "nellone",
-                          "crossplay": true,
-                          "platform": "pc",
-                          "id": "55cbd976e77989320127aee2",
-                          "region": "en",
-                          "status": "ingame"
-                      },
-                      "last_update": "2025-04-13T00:59:28.000+00:00",
-                      "platinum": 20,
-                      "order_type": "sell",
-                      "id": "57908f34d3ffb61fc81374a9",
-                      "mod_rank": 0,
-                      "region": "en"
-                  }
-              ]
-          }
+          "apiVersion": "0.22.7",
+          "data": [
+            {
+              "id": "598bd5b10f3139463a86b6af",
+              "type": "sell",
+              "platinum": 22,
+              "quantity": 1,
+              "perTrade": 1,
+              "rank": 0,
+              "visible": true,
+              "createdAt": "2017-08-10T03:40:33Z",
+              "updatedAt": "2026-01-29T02:51:53Z",
+              "itemId": "54e644ffe779897594fa68d2",
+              "user": {
+                "id": "5962ff05d3ffb64d46e3c47f",
+                "ingameName": "JeyciKon",
+                "slug": "jeycikon",
+                "reputation": 2,
+                "platform": "pc",
+                "crossplay": true,
+                "locale": "pt",
+                "status": "offline",
+                "activity": {
+                  "type": "UNKNOWN",
+                  "details": "unknown"
+                },
+                "lastSeen": "2026-02-06T05:46:21Z"
+              }
+            },
+            {
+              "id": "59e9058dd3ffb666afc7942e",
+              "type": "sell",
+              "platinum": 20,
+              "quantity": 4,
+              "perTrade": 1,
+              "rank": 0,
+              "visible": true,
+              "createdAt": "2017-10-19T20:05:33Z",
+              "updatedAt": "2025-07-17T23:09:06Z",
+              "itemId": "54e644ffe779897594fa68d2",
+              "user": {
+                "id": "5663dab9b66f834eda2ede97",
+                "ingameName": "nellone",
+                "slug": "nellone",
+                "avatar": "user/avatar/5663dab9b66f834eda2ede97.png?63e97e14c2369b394cf660f9be64339f",
+                "reputation": 205,
+                "platform": "pc",
+                "crossplay": true,
+                "locale": "en",
+                "status": "ingame",
+                "activity": {
+                  "type": "UNKNOWN",
+                  "details": "unknown"
+                },
+                "lastSeen": "2026-02-06T06:15:52Z"
+              }
+            }
+          ],
+          "error": null
         }
         """
       }
@@ -128,7 +135,13 @@ defmodule AuctionHouse.Impl.UseCase.GetItemOrdersTest do
                {:ok, "Despoil",
                 [
                   %OrderInfo{
-                    user: %User{status: :offline, ingame_name: "JeyciKon", platform: :pc, crossplay: true},
+                    user: %User{
+                      status: :offline,
+                      ingame_name: "JeyciKon",
+                      platform: :pc,
+                      crossplay: true,
+                      slug: "jeycikon"
+                    },
                     platinum: 22,
                     order_type: :sell,
                     visible: true
@@ -138,7 +151,8 @@ defmodule AuctionHouse.Impl.UseCase.GetItemOrdersTest do
                       status: :ingame,
                       ingame_name: "nellone",
                       platform: :pc,
-                      crossplay: true
+                      crossplay: true,
+                      slug: "nellone"
                     },
                     platinum: 20,
                     order_type: :sell,
@@ -153,7 +167,7 @@ defmodule AuctionHouse.Impl.UseCase.GetItemOrdersTest do
         request_args: request.args,
         headers: %{},
         body: """
-        {"payload": {"orders": []}}
+        {"data": []}
         """
       }
 

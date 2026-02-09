@@ -95,7 +95,7 @@ defmodule AuctionHouse do
 
   Example:
   ```
-  > AuctionHouse.get_user_orders("Fl4m3")
+  > AuctionHouse.get_user_orders("fl4m3")
   > :ok
 
   The received messages will one of the following formats:
@@ -116,8 +116,8 @@ defmodule AuctionHouse do
   - {:get_user_orders, {:error, {reason, err}}}
   ```
   """
-  @spec get_user_orders(Type.username()) :: Type.get_user_orders_response()
-  defdelegate get_user_orders(username), to: Server
+  @spec get_user_orders(Type.username_slug()) :: Type.get_user_orders_response()
+  defdelegate get_user_orders(username_slug), to: Server
 
   @doc """
   Authenticates the user with the auction house and saves the session.
@@ -134,7 +134,7 @@ defmodule AuctionHouse do
 
   The received messages will one of the following formats:
 
-  - {:login, {:ok, { %Authorization{cookie: "a_cookie", token: "a_token"}, %User{patreon?: false, ingame_name: "fl4m3"}}}}
+  - {:login, {:ok, { %Authorization{cookie: "a_cookie", token: "a_token"}, %User{patreon?: false, slug: "f4lm3", ingame_name: "Fl4m3"}}}}
   - {:login, {:error, {reason, err}}}
 
   ```

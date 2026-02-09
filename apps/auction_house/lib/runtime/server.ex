@@ -24,9 +24,9 @@ defmodule AuctionHouse.Runtime.Server do
   def get_item_orders(item_name),
     do: GenServer.cast(__MODULE__, {:get_item_orders, item_name, self()})
 
-  @spec get_user_orders(Type.username()) :: Type.get_user_orders_response()
-  def get_user_orders(username),
-    do: GenServer.cast(__MODULE__, {:get_user_orders, username, self()})
+  @spec get_user_orders(Type.username_slug()) :: Type.get_user_orders_response()
+  def get_user_orders(username_slug),
+    do: GenServer.cast(__MODULE__, {:get_user_orders, username_slug, self()})
 
   @spec place_order(Order.t()) :: Type.place_order_response()
   def place_order(order), do: GenServer.cast(__MODULE__, {:place_order, order, self()})
@@ -87,10 +87,10 @@ defmodule AuctionHouse.Runtime.Server do
     {:noreply, state}
   end
 
-  def handle_cast({:get_user_orders, username, from}, state) do
+  def handle_cast({:get_user_orders, username_slug, from}, state) do
     :get_user_orders
     |> Metadata.new([from])
-    |> Request.new(%{username: username})
+    |> Request.new(%{username_slug: username_slug})
     |> GetUserOrders.start()
 
     {:noreply, state}

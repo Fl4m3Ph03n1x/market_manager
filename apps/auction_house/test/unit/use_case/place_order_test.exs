@@ -8,7 +8,7 @@ defmodule AuctionHouse.Impl.UseCase.PlaceOrderTest do
   alias Jason
   alias Shared.Data.{Authorization, Order, PlacedOrder}
 
-  @url Application.compile_env!(:auction_house, :api_base_url)
+  @url Application.compile_env!(:auction_house, :api_order_url)
 
   describe "start/2" do
     test "makes request" do
@@ -99,38 +99,20 @@ defmodule AuctionHouse.Impl.UseCase.PlaceOrderTest do
         headers: %{},
         body: """
         {
-        "payload": {
-          "order": {
-              "visible": true,
-              "order_type": "sell",
-              "quantity": 1,
-              "mod_rank": 0,
-              "region": "en",
-              "last_update": "2024-08-12T08:28:26.898+00:00",
-              "platform": "pc",
-              "platinum": 20,
-              "item": {
-                  "sub_icon": null,
-                  "mod_max_rank": 3,
-                  "icon_format": "port",
-                  "thumb": "items/images/en/thumbs/despoil.2633a2c7793d85b21d22cb4c4a0b70cf.128x128.png",
-                  "url_name": "despoil",
-                  "icon": "items/images/en/despoil.2633a2c7793d85b21d22cb4c4a0b70cf.png",
-                  "id": "54e644ffe779897594fa68cd",
-                  "tags": [
-                      "mod",
-                      "rare",
-                      "warframe",
-                      "nekros"
-                  ],
-                  "en": {
-                      "item_name": "Despoil"
-                  }
-              },
-              "creation_date": "2024-08-12T08:28:26.898+00:00",
-              "id": "66b9c7aa6b17410a57974e4b"
-          }
-        }
+          "apiVersion": "0.22.7",
+          "data": {
+            "id": "66b9c7aa6b17410a57974e4b",
+            "type": "sell",
+            "platinum": 11,
+            "quantity": 1,
+            "perTrade": 1,
+            "rank": 0,
+            "visible": true,
+            "createdAt": "2026-02-05T15:17:18Z",
+            "updatedAt": "2026-02-05T15:17:18Z",
+            "itemId": "54e644ffe779897594fa68cd"
+          },
+          "error": null
         }
         """
       }
@@ -143,31 +125,17 @@ defmodule AuctionHouse.Impl.UseCase.PlaceOrderTest do
                 }}
     end
 
-    test "returns error if there is no order id", %{request: req} do
-      response = %Response{
-        metadata: req.metadata,
-        request_args: req.args,
-        headers: %{},
-        body: """
-        {"payload": {"order": {}}}
-        """
-      }
-
-      assert PlaceOrder.finish(response) ==
-               {:error, {:missing_id, %{"payload" => %{"order" => %{}}}}}
-    end
-
     test "returns error if there is no order", %{request: req} do
       response = %Response{
         metadata: req.metadata,
         request_args: req.args,
         headers: %{},
         body: """
-              {"payload": {}}
+              {"data": {}}
         """
       }
 
-      assert PlaceOrder.finish(response) == {:error, {:missing_order, %{"payload" => %{}}}}
+      assert PlaceOrder.finish(response) == {:error, {:missing_order, %{"data" => %{}}}}
     end
 
     test "returns error if it fails to decode", %{request: req} do

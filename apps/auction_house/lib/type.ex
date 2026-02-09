@@ -11,7 +11,7 @@ defmodule AuctionHouse.Type do
 
   @type item_id :: String.t()
   @type item_name :: String.t()
-  @type username :: String.t()
+  @type username_slug :: String.t()
   @type reason :: atom()
   @type state :: %{
           user: User.t() | nil,

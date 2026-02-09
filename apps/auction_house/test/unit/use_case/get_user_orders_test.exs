@@ -18,14 +18,14 @@ defmodule AuctionHouse.Impl.UseCase.GetUserOrdersTest do
           send?: false
         },
         args: %{
-          username: "Fl4m3"
+          username_slug: "fl4m3"
         }
       }
 
       deps =
         %{
           get: fn url, req, _next ->
-            assert url == "#{@api_user_orders_url}/Fl4m3"
+            assert url == "#{@api_user_orders_url}/fl4m3"
 
             assert req.metadata == %Metadata{
                      notify: [self()],
@@ -33,7 +33,7 @@ defmodule AuctionHouse.Impl.UseCase.GetUserOrdersTest do
                      send?: true
                    }
 
-            assert req.args.username == "Fl4m3"
+            assert req.args.username_slug == "fl4m3"
 
             :ok
           end
@@ -53,7 +53,7 @@ defmodule AuctionHouse.Impl.UseCase.GetUserOrdersTest do
             send?: true
           },
           args: %{
-            username: "Fl4m3"
+            username_slug: "fl4m3"
           }
         }
       }

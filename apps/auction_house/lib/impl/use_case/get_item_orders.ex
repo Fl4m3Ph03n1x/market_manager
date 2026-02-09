@@ -11,7 +11,7 @@ defmodule AuctionHouse.Impl.UseCase.GetItemOrders do
 
   @behaviour UseCase
 
-  @search_url Application.compile_env!(:auction_house, :api_search_url)
+  @item_orders_url Application.compile_env!(:auction_house, :api_item_orders_url)
 
   @default_deps %{
     get: &HttpAsyncClient.get/3
@@ -49,13 +49,19 @@ defmodule AuctionHouse.Impl.UseCase.GetItemOrders do
   ###########
 
   @spec build_get_orders_url(Type.item_name()) :: url()
-  defp build_get_orders_url(item_name),
-    do: URI.encode(@search_url <> "/" <> Recase.to_snake(item_name) <> "/orders")
+  defp build_get_orders_url(item_name) do
+    slug_name =
+      item_name
+      |> Recase.to_snake()
+      |> String.downcase()
+
+    URI.encode(@item_orders_url <> "/" <> slug_name)
+  end
 
   @spec parse_order_info(orders_json :: map()) :: [OrderInfo.t()]
   defp parse_order_info(orders_json) do
     orders_json
-    |> get_in(["payload", "orders"])
+    |> Map.get("data")
     |> Enum.map(&OrderInfo.new/1)
   end
 end

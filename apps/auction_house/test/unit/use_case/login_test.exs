@@ -255,7 +255,7 @@ defmodule AuctionHouse.Impl.UseCase.LoginTest do
     test "parses response correctly and returns auth and user" do
       response = %Response{
         body: """
-        {"payload": {"user": {"ingame_name": "Fl4m3Ph03n1x",  "linked_accounts": {"patreon_profile": false}}}}
+        {"payload": {"user": {"ingame_name": "Fl4m3Ph03n1x", "slug": "fl4m3ph03n1x", "linked_accounts": {"patreon_profile": false}}}}
         """,
         headers: %{
           "Content-Type" => "application/json",
@@ -292,6 +292,7 @@ defmodule AuctionHouse.Impl.UseCase.LoginTest do
                   },
                   %User{
                     ingame_name: "Fl4m3Ph03n1x",
+                    slug: "fl4m3ph03n1x",
                     patreon?: false
                   }
                 }}
@@ -429,7 +430,7 @@ defmodule AuctionHouse.Impl.UseCase.LoginTest do
     test "returns error if it fails to parse patreon" do
       response = %Response{
         body: """
-        {"payload": {"user": {"ingame_name": "Fl4m3Ph03n1x",  "linked_accounts": {} }}}
+        {"payload": {"user": {"ingame_name": "Fl4m3Ph03n1x", "slug": "fl4m3ph03n1x", "linked_accounts": {} }}}
         """,
         headers: %{
           "Content-Type" => "application/json",
@@ -457,6 +458,39 @@ defmodule AuctionHouse.Impl.UseCase.LoginTest do
 
       assert Login.finish(response) ==
                {:error, {:missing_patreon, Jason.decode!(response.body)}}
+    end
+
+    test "returns error if it fails to parse slug" do
+      response = %Response{
+        body: """
+        {"payload": {"user": {"ingame_name": "Fl4m3Ph03n1x", "patreon_profile": true, "linked_accounts": {} }}}
+        """,
+        headers: %{
+          "Content-Type" => "application/json",
+          "Set-Cookie" =>
+            "JWT=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzaWQiOiJjR3ROWFUzaVR4bEg4UHh0M2pFN3NEN1kzQ3dwc0NLWCIsImNzcmZfdG9rZW4iOiIxOGQ4ZWMzODI0YzAzMjkzZjM1NjQ4OTA1OThhYjI5MDgyNWY0OTkyIiwiZXhwIjoxNzI3NzAxNDk4LCJpYXQiOjE3MjI1MTc0OTgsImlzcyI6Imp3dCIsImF1ZCI6Imp3dCIsImF1dGhfdHlwZSI6ImNvb2tpZSIsInNlY3VyZSI6dHJ1ZSwiand0X2lkZW50aXR5IjoiZXhqaGVEM1JhdVVLb0NOVUszdm11VW9kenBPT0t0bUIiLCJsb2dpbl91YSI6ImInaGFja25leS8xLjE3LjEnIiwibG9naW5faXAiOiJiJzE0Ny4xNjEuNjYuMzcnIn0.jWskOWec-x9pGtFHzB11LpUbynMMg-ARp2CgNx6VWJU; Domain=.warframe.market; Expires=Mon, 30-Sep-2024 13:04:58 GMT; Secure; HttpOnly; Path=/; SameSite=Lax"
+        },
+        metadata: %Metadata{
+          notify: [self()],
+          send?: true,
+          operation: :login
+        },
+        request_args: %{
+          credentials: %Credentials{
+            password: "1234",
+            email: "test@email.com"
+          },
+          authorization: %Authorization{
+            token:
+              "##2263dcc167c732ca1b54566e0c1ffb66d8e13e2ed59d113967f7fb5e119fed0f813bf7b98c9777c2f5eafd0ab5f6fdc9ad5a3a44d8b585c07ebdf0af1be310b1",
+            cookie:
+              "JWT=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzaWQiOiJXN2Q2UUVCTldWMGcxdklOQmdJWVJhWkNFSXZvanpnbyIsImNzcmZfdG9rZW4iOiJjZDhkZWI4MmFjNDg2ZDcwMTgyZWQzODU5OWJmMzRkNDA4NGNjNmEyIiwiZXhwIjoxNzI3Njk0MTM4LCJpYXQiOjE3MjI1MTAxMzgsImlzcyI6Imp3dCIsImF1ZCI6Imp3dCIsImF1dGhfdHlwZSI6ImNvb2tpZSJ9.uAXHKlhVE8vhFoz7uBYCqMfka7VIluYLmOiAVS7YByk"
+          }
+        }
+      }
+
+      assert Login.finish(response) ==
+               {:error, {:missing_slug, Jason.decode!(response.body)}}
     end
   end
 end

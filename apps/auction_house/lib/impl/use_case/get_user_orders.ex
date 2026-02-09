@@ -26,8 +26,8 @@ defmodule AuctionHouse.Impl.UseCase.GetUserOrders do
 
   @impl UseCase
   @spec start(Request.t(), deps()) :: any()
-  def start(%Request{args: %{username: username}} = request, %{get: async_get} \\ @default_deps) do
-    username
+  def start(%Request{args: %{username_slug: username_slug}} = request, %{get: async_get} \\ @default_deps) do
+    username_slug
     |> build_user_orders_url()
     |> async_get.(Request.finish(request), &finish/1)
   end
@@ -44,9 +44,9 @@ defmodule AuctionHouse.Impl.UseCase.GetUserOrders do
   # Private #
   ###########
 
-  @spec build_user_orders_url(Type.username()) :: url()
-  defp build_user_orders_url(username),
-    do: URI.encode(@api_user_orders_url <> "/" <> username)
+  @spec build_user_orders_url(Type.username_slug()) :: url()
+  defp build_user_orders_url(username_slug),
+    do: URI.encode(@api_user_orders_url <> "/" <> username_slug)
 
   @spec parse_user_order_info(orders_json :: map()) :: [PlacedOrder.t()]
   defp parse_user_order_info(orders_json) do

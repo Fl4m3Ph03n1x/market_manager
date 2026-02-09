@@ -47,7 +47,7 @@ defmodule Manager.Saga.Deactivate do
       ) do
     case auction_house.get_saved_login() do
       {:ok, {_auth, %User{} = user}} ->
-        auction_house.get_user_orders(user.ingame_name)
+        auction_house.get_user_orders(user.slug)
         updated_state = Map.put(state, :user, user)
 
         send(from, {:deactivate, {:ok, :get_user_orders}})

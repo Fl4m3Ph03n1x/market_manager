@@ -87,10 +87,11 @@ defmodule AuctionHouse.Impl.UseCase.Login do
     with {:ok, decoded_body} <- validate_body(body),
          {:ok, updated_cookie} <- parse_cookie(headers),
          {:ok, ingame_name} <- parse_ingame_name(decoded_body),
+         {:ok, slug} <- parse_slug(decoded_body),
          {:ok, patreon?} <- parse_patreon(decoded_body) do
       {:ok,
        {Authorization.new(%{"cookie" => updated_cookie, "token" => token}),
-        User.new(%{"ingame_name" => ingame_name, "patreon?" => patreon?})}}
+        User.new(%{"ingame_name" => ingame_name, "slug" => slug, "patreon?" => patreon?})}}
     end
   end
 
@@ -149,8 +150,7 @@ defmodule AuctionHouse.Impl.UseCase.Login do
     end
   end
 
-  @spec parse_ingame_name(body :: map) ::
-          {:ok, String.t()} | {:error, :missing_ingame_name, map()}
+  @spec parse_ingame_name(body()) :: {:ok, String.t()} | {:error, :missing_ingame_name, body()}
   defp parse_ingame_name(body) do
     case get_in(body, ["payload", "user", "ingame_name"]) do
       nil ->
@@ -158,6 +158,17 @@ defmodule AuctionHouse.Impl.UseCase.Login do
 
       name ->
         {:ok, name}
+    end
+  end
+
+  @spec parse_slug(body()) :: {:ok, String.t()} | {:error, :missing_slug, body()}
+  defp parse_slug(body) do
+    case get_in(body, ["payload", "user", "slug"]) do
+      nil ->
+        {:error, {:missing_slug, body}}
+
+      slug ->
+        {:ok, slug}
     end
   end
 end

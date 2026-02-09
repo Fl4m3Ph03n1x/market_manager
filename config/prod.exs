@@ -23,8 +23,8 @@ config :store,
   syndicates: ["priv", "syndicates.json"]
 
 config :auction_house,
-  api_search_url: "https://api.warframe.market/v1/items",
-  api_base_url: "https://api.warframe.market/v1/profile/orders",
+  api_item_orders_url: "https://api.warframe.market/v2/orders/item",
+  api_order_url: "https://api.warframe.market/v2/order",
   market_signin_url: "https://warframe.market/auth/signin",
   api_signin_url: "https://api.warframe.market/v1/auth/signin",
   api_user_orders_url: "https://api.warframe.market/v2/orders/user"
