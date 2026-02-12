@@ -5,14 +5,14 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.38.2">
-    <meta name="project" content="Market Manager v2.1.9">
+    <meta name="project" content="Market Manager v2.2.1">
 
 
-    <title>RateLimiter.LeakyBucket — Market Manager v2.1.9</title>
+    <title>RateLimiter.LeakyBucket — Market Manager v2.2.1</title>
 
     <link rel="stylesheet" href="dist/html-elixir-KV3YOVJ3.css" />
 
-    <script defer src="dist/sidebar_items-4288A184.js"></script>
+    <script defer src="dist/sidebar_items-1F56A3E4.js"></script>
     <script defer src="docs_config.js"></script>
     <script defer src="dist/html-DPJLHKSM.js"></script>
 
@@ -41,7 +41,7 @@
 Market Manager
         </a>
         <div class="sidebar-projectVersion" translate="no">
-          v2.1.9
+          v2.2.1
         </div>
       </div>
     </div>
@@ -80,7 +80,7 @@ Market Manager
   <div class="heading-with-actions top-heading">
     <h1>
       <span translate="no">RateLimiter.LeakyBucket</span> 
-      <small class="app-vsn" translate="no">(Market Manager v2.1.9)</small>
+      <small class="app-vsn" translate="no">(Market Manager v2.2.1)</small>
 
     </h1>
 
@@ -95,11 +95,11 @@ Market Manager
     <section id="moduledoc">
 <p>A leaky bucket rate limiter is one where the input into it may be variable and can fluctuate, but the output will be
 at a consistent rate and within the configured limits:
-<a href="https://akoutmos.com/post/rate-limiting-with-genservers/">https://akoutmos.com/post/rate-limiting-with-genservers/</a></p><p>The application using this Limiter, must itself launch the Task.Supervisor that is used:application</p><pre><code class="makeup elixir" translate="no"><span class="n">children</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p" data-group-id="9986403303-1">[</span><span class="w">
-  </span><span class="p" data-group-id="9986403303-2">{</span><span class="nc">Task.Supervisor</span><span class="p">,</span><span class="w"> </span><span class="ss">name</span><span class="p">:</span><span class="w"> </span><span class="nc">RateLimiter.TaskSupervisor</span><span class="p" data-group-id="9986403303-2">}</span><span class="w">
-</span><span class="p" data-group-id="9986403303-1">]</span><span class="w">
+<a href="https://akoutmos.com/post/rate-limiting-with-genservers/">https://akoutmos.com/post/rate-limiting-with-genservers/</a></p><p>The application using this Limiter, must itself launch the Task.Supervisor that is used:application</p><pre><code class="makeup elixir" translate="no"><span class="n">children</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p" data-group-id="0934510293-1">[</span><span class="w">
+  </span><span class="p" data-group-id="0934510293-2">{</span><span class="nc">Task.Supervisor</span><span class="p">,</span><span class="w"> </span><span class="ss">name</span><span class="p">:</span><span class="w"> </span><span class="nc">RateLimiter.TaskSupervisor</span><span class="p" data-group-id="0934510293-2">}</span><span class="w">
+</span><span class="p" data-group-id="0934510293-1">]</span><span class="w">
 
-</span><span class="nc">Supervisor</span><span class="o">.</span><span class="n">init</span><span class="p" data-group-id="9986403303-3">(</span><span class="n">children</span><span class="p">,</span><span class="w"> </span><span class="ss">strategy</span><span class="p">:</span><span class="w"> </span><span class="ss">:one_for_one</span><span class="p" data-group-id="9986403303-3">)</span></code></pre>
+</span><span class="nc">Supervisor</span><span class="o">.</span><span class="n">init</span><span class="p" data-group-id="0934510293-3">(</span><span class="n">children</span><span class="p">,</span><span class="w"> </span><span class="ss">strategy</span><span class="p">:</span><span class="w"> </span><span class="ss">:one_for_one</span><span class="p" data-group-id="0934510293-3">)</span></code></pre>
     </section>
 
 </div>

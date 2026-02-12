@@ -5,14 +5,14 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.38.2">
-    <meta name="project" content="Market Manager v2.1.9">
+    <meta name="project" content="Market Manager v2.2.1">
 
 
-    <title>README — Market Manager v2.1.9</title>
+    <title>README — Market Manager v2.2.1</title>
 
     <link rel="stylesheet" href="dist/html-elixir-KV3YOVJ3.css" />
 
-    <script defer src="dist/sidebar_items-4288A184.js"></script>
+    <script defer src="dist/sidebar_items-1F56A3E4.js"></script>
     <script defer src="docs_config.js"></script>
     <script defer src="dist/html-DPJLHKSM.js"></script>
 
@@ -41,7 +41,7 @@
 Market Manager
         </a>
         <div class="sidebar-projectVersion" translate="no">
-          v2.1.9
+          v2.2.1
         </div>
       </div>
     </div>
@@ -117,7 +117,8 @@ Furthermore, your credentials <strong>are not transmitted anywhere</strong>, so 
       shared--&gt;manager;
       shared--&gt;store;
       shared--&gt;web_interface;
-      shared--&gt;auction_house;</code></pre><ul><li><code class="inline">web_interface</code> is a Phoenix application that holds all the code for the front-end. Works as the client.</li><li><code class="inline">manager</code> is the core of the application, the entry point for all user requests. It talks to the rest of the layers.</li><li><code class="inline">auction_house</code> is the app responsible for understanding and making requests to the given auction house. In this case, warframe market.</li><li><code class="inline">store</code> is the persistency layer. It saves your data and remembers what is being sold or not.</li><li><code class="inline">shared</code> is a library that holds the domain model entities of the entire project. </li></ul><p>For more information, feel free to read the README file of each application.</p><p>A previous version of MarketManager also had a <code class="inline">cli</code> application interfacing with <code class="inline">manager</code>. This can still be seen in the <code class="inline">v1</code> branch, which is being saved for posterity: <a href="https://github.com/Fl4m3Ph03n1x/market_manager/tree/v1">https://github.com/Fl4m3Ph03n1x/market_manager/tree/v1</a></p><p>Do note that <code class="inline">v1</code> was the alpha release and is no longer being supported. It is still a very good resource for applications with CLI interfaces though.</p>
+      shared--&gt;auction_house;
+      auction_house--&gt;rate_limiter;</code></pre><ul><li><code class="inline">web_interface</code> is a Phoenix application that holds all the code for the front-end. Works as the client.</li><li><code class="inline">manager</code> is the core of the application, the entry point for all user requests. It talks to the rest of the layers.</li><li><code class="inline">auction_house</code> is the app responsible for understanding and making requests to the given auction house. In this case, warframe market.</li><li><code class="inline">store</code> is the persistency layer. It saves your data and remembers what is being sold or not.</li><li><code class="inline">shared</code> is a library that holds the domain model entities of the entire project. </li><li><code class="inline">rate_limiter</code> is a library focused on limiting the rate at which requests are made to the market, to avoid being blocked.</li></ul><p>For more information, feel free to read the README file of each application.</p><p>A previous version of MarketManager also had a <code class="inline">cli</code> application interfacing with <code class="inline">manager</code>. This can still be seen in the <code class="inline">v1</code> branch, which is being saved for posterity: <a href="https://github.com/Fl4m3Ph03n1x/market_manager/tree/v1">https://github.com/Fl4m3Ph03n1x/market_manager/tree/v1</a></p><p>Do note that <code class="inline">v1</code> was the alpha release and is no longer being supported. It is still a very good resource for applications with CLI interfaces though.</p>
 
 </div>
 

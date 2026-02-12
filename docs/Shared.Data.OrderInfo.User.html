@@ -5,14 +5,14 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.38.2">
-    <meta name="project" content="Market Manager v2.1.9">
+    <meta name="project" content="Market Manager v2.2.1">
 
 
-    <title>Shared.Data.OrderInfo.User — Market Manager v2.1.9</title>
+    <title>Shared.Data.OrderInfo.User — Market Manager v2.2.1</title>
 
     <link rel="stylesheet" href="dist/html-elixir-KV3YOVJ3.css" />
 
-    <script defer src="dist/sidebar_items-4288A184.js"></script>
+    <script defer src="dist/sidebar_items-1F56A3E4.js"></script>
     <script defer src="docs_config.js"></script>
     <script defer src="dist/html-DPJLHKSM.js"></script>
 
@@ -41,7 +41,7 @@
 Market Manager
         </a>
         <div class="sidebar-projectVersion" translate="no">
-          v2.1.9
+          v2.2.1
         </div>
       </div>
     </div>
@@ -80,7 +80,7 @@ Market Manager
   <div class="heading-with-actions top-heading">
     <h1>
       <span translate="no">Shared.Data.OrderInfo.User</span> 
-      <small class="app-vsn" translate="no">(Market Manager v2.1.9)</small>
+      <small class="app-vsn" translate="no">(Market Manager v2.2.1)</small>
 
     </h1>
 
@@ -95,17 +95,19 @@ Market Manager
     <section id="moduledoc">
 <p>Represents the account information for a warframe.market User who has an order
 posted. The current format is the following:</p><pre><code class="json">&quot;user&quot;: {
-    &quot;reputation&quot;: 1977,
-    &quot;locale&quot;: &quot;en&quot;,
-    &quot;avatar&quot;: &quot;user/avatar/5678a156cbfa8f02c9b814c3.png?0d832d1017240078ecf4bdeb0d08a101&quot;,
-    &quot;ingame_name&quot;: &quot;fl4m3&quot;,
-    &quot;last_seen&quot;: &quot;2025-01-13T04:21:53.899+00:00&quot;,
-    &quot;crossplay&quot;: false,
-    &quot;platform&quot;: &quot;pc&quot;,
-    &quot;id&quot;: &quot;5678a156cbfa8f02c9b814c3&quot;,
-    &quot;region&quot;: &quot;en&quot;,
-    &quot;status&quot;: &quot;online&quot;
-}</code></pre><p>We only take some of the information, no all.
+  &quot;id&quot;: &quot;5962ff05d3ffb64d46e3c47f&quot;,
+  &quot;ingameName&quot;: &quot;JeyciKon&quot;,
+  &quot;slug&quot;: &quot;jeycikon&quot;,
+  &quot;reputation&quot;: 2,
+  &quot;platform&quot;: &quot;pc&quot;,
+  &quot;crossplay&quot;: true,
+  &quot;locale&quot;: &quot;pt&quot;,
+  &quot;status&quot;: &quot;ingame&quot;,
+  &quot;activity&quot;: {
+    &quot;type&quot;: &quot;UNKNOWN&quot;,
+    &quot;details&quot;: &quot;unknown&quot;
+  }
+}</code></pre><p>We only take some of the information, not all.
 PC Players with crossplay active can trade with any platform (except Nintendo switch).
 <a href="https://www.warframe.com/crossprogression">https://www.warframe.com/crossprogression</a></p>
     </section>
@@ -143,6 +145,14 @@ PC Players with crossplay active can trade with any platform (except Nintendo sw
     <div class="summary-row">
       <div class="summary-signature">
         <a href="#t:platform/0" data-no-tooltip="" translate="no">platform()</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:slug/0" data-no-tooltip="" translate="no">slug()</a>
 
       </div>
 
@@ -211,7 +221,7 @@ PC Players with crossplay active can trade with any platform (except Nintendo sw
       <h1 class="signature" translate="no">crossplay()</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/order_info/user.ex#L33" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/order_info/user.ex#L36" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -239,7 +249,7 @@ PC Players with crossplay active can trade with any platform (except Nintendo sw
       <h1 class="signature" translate="no">ingame_name()</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/order_info/user.ex#L30" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/order_info/user.ex#L32" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -267,7 +277,7 @@ PC Players with crossplay active can trade with any platform (except Nintendo sw
       <h1 class="signature" translate="no">platform()</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/order_info/user.ex#L32" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/order_info/user.ex#L35" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -285,6 +295,34 @@ PC Players with crossplay active can trade with any platform (except Nintendo sw
 
   </section>
 </section>
+<section class="detail" id="t:slug/0">
+
+  <div class="detail-header">
+    <a href="#t:slug/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">slug()</h1>
+
+
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/order_info/user.ex#L33" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> slug() :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()</pre>
+
+      </div>
+
+
+  </section>
+</section>
 <section class="detail" id="t:status/0">
 
   <div class="detail-header">
@@ -295,7 +333,7 @@ PC Players with crossplay active can trade with any platform (except Nintendo sw
       <h1 class="signature" translate="no">status()</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/order_info/user.ex#L31" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/order_info/user.ex#L34" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -323,7 +361,7 @@ PC Players with crossplay active can trade with any platform (except Nintendo sw
       <h1 class="signature" translate="no">t()</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/order_info/user.ex#L42" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/order_info/user.ex#L46" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -338,6 +376,7 @@ PC Players with crossplay active can trade with any platform (except Nintendo sw
   crossplay: <a href="#t:crossplay/0">crossplay</a>(),
   ingame_name: <a href="#t:ingame_name/0">ingame_name</a>(),
   platform: <a href="#t:platform/0">platform</a>(),
+  slug: <a href="#t:slug/0">slug</a>(),
   status: <a href="#t:status/0">status</a>()
 }</pre>
 
@@ -356,7 +395,7 @@ PC Players with crossplay active can trade with any platform (except Nintendo sw
       <h1 class="signature" translate="no">user()</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/order_info/user.ex#L35" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/order_info/user.ex#L38" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -368,7 +407,8 @@ PC Players with crossplay active can trade with any platform (except Nintendo sw
       <div class="specs">
 
           <pre translate="no"><span class="attribute">@type</span> user() :: %{
-  required(ingame_name :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  required(ingameName :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  required(slug :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
   required(status :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
   required(platform :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
   required(crossplay :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()
@@ -401,7 +441,7 @@ PC Players with crossplay active can trade with any platform (except Nintendo sw
       <h1 class="signature" translate="no">new(user)</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/order_info/user.ex#L59" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/order_info/user.ex#L64" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
