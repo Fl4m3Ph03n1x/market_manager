@@ -50,7 +50,7 @@ defmodule Shared.Data.OrderInfo do
 
   @type order_info :: %{
           (visible :: String.t()) => boolean(),
-          (order_type :: String.t()) => String.t(),
+          (type :: String.t()) => String.t(),
           (platinum :: String.t()) => pos_integer(),
           (user :: String.t()) => __MODULE__.User.user()
         }
@@ -67,7 +67,7 @@ defmodule Shared.Data.OrderInfo do
   defguardp is_valid_order_type(order_type)
             when is_binary(order_type) and (order_type == "sell" or order_type == "buy")
 
-  @spec new(order_info) :: __MODULE__.t()
+  @spec new(order_info()) :: __MODULE__.t()
   def new(
         %{
           "visible" => visible,

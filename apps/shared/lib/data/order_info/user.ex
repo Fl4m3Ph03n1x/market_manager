@@ -36,7 +36,7 @@ defmodule Shared.Data.OrderInfo.User do
   @type crossplay :: boolean()
 
   @type user :: %{
-          (ingame_name :: String.t()) => String.t(),
+          (ingameName :: String.t()) => String.t(),
           (slug :: String.t()) => String.t(),
           (status :: String.t()) => String.t(),
           (platform :: String.t()) => String.t(),
