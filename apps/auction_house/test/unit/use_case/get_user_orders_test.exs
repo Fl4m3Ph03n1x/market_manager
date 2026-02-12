@@ -7,7 +7,7 @@ defmodule AuctionHouse.Impl.UseCase.GetUserOrdersTest do
   alias AuctionHouse.Impl.UseCase.Data.{Metadata, Request, Response}
   alias Jason
 
-  @api_profile_url Application.compile_env!(:auction_house, :api_profile_url)
+  @api_user_orders_url Application.compile_env!(:auction_house, :api_user_orders_url)
 
   describe "start/2" do
     test "makes request" do
@@ -18,14 +18,14 @@ defmodule AuctionHouse.Impl.UseCase.GetUserOrdersTest do
           send?: false
         },
         args: %{
-          username: "Fl4m3"
+          username_slug: "fl4m3"
         }
       }
 
       deps =
         %{
           get: fn url, req, _next ->
-            assert url == "#{@api_profile_url}/Fl4m3/orders"
+            assert url == "#{@api_user_orders_url}/fl4m3"
 
             assert req.metadata == %Metadata{
                      notify: [self()],
@@ -33,7 +33,7 @@ defmodule AuctionHouse.Impl.UseCase.GetUserOrdersTest do
                      send?: true
                    }
 
-            assert req.args.username == "Fl4m3"
+            assert req.args.username_slug == "fl4m3"
 
             :ok
           end
@@ -53,7 +53,7 @@ defmodule AuctionHouse.Impl.UseCase.GetUserOrdersTest do
             send?: true
           },
           args: %{
-            username: "Fl4m3"
+            username_slug: "fl4m3"
           }
         }
       }
@@ -66,71 +66,34 @@ defmodule AuctionHouse.Impl.UseCase.GetUserOrdersTest do
         headers: %{},
         body: """
         {
-        "payload": {
-        "sell_orders": [
-        {
-        "order_type": "sell",
-        "region": "en",
-        "mod_rank": 0,
-        "id": "66a601d2adc83a241a38ede3",
-        "platform": "pc",
-        "item": {
-          "id": "54e0c9eee7798903744178a7",
-          "sub_icon": null,
-          "url_name": "counter_pulse",
-          "tags": [
-            "mod",
-            "rare",
-            "warframe",
-            "mag"
+          "apiVersion": "0.22.7",
+          "data": [
+            {
+              "id": "66a601d2adc83a241a38ede3",
+              "type": "sell",
+              "platinum": 2,
+              "quantity": 21,
+              "perTrade": 1,
+              "rank": 0,
+              "visible": true,
+              "createdAt": "2025-12-04T22:13:20Z",
+              "updatedAt": "2026-01-03T23:41:56Z",
+              "itemId": "54e0c9eee7798903744178a7"
+            },
+            {
+              "id": "66a601e1adc83a2414deabcd",
+              "type": "sell",
+              "platinum": 3,
+              "quantity": 21,
+              "perTrade": 1,
+              "rank": 0,
+              "visible": true,
+              "createdAt": "2025-12-04T22:13:48Z",
+              "updatedAt": "2026-01-03T23:41:55Z",
+              "itemId": "5526aec0e779896af9418259"
+            }
           ],
-          "thumb": "items/images/en/thumbs/counter_pulse.7f88af7ba65853e9e371265203a77526.128x128.png",
-          "icon": "items/images/en/counter_pulse.7f88af7ba65853e9e371265203a77526.png",
-          "mod_max_rank": 3,
-          "icon_format": "port",
-          "en": {
-            "item_name": "Counter Pulse"
-          }
-        },
-        "creation_date": "2024-07-28T08:31:14.099+00:00",
-        "last_update": "2024-07-30T16:32:20.594+00:00",
-        "quantity": 1,
-        "visible": true,
-        "platinum": 17
-        },
-        {
-        "order_type": "sell",
-        "region": "en",
-        "mod_rank": 0,
-        "id": "66a601e1adc83a2414deabcd",
-        "platform": "pc",
-        "item": {
-          "id": "5526aec0e779896af9418259",
-          "sub_icon": null,
-          "url_name": "fracturing_crush",
-          "tags": [
-            "mod",
-            "rare",
-            "warframe",
-            "mag"
-          ],
-          "thumb": "items/images/en/thumbs/fracturing_crush.c5cfd74639913a1d6e95631afdbcb475.128x128.png",
-          "icon": "items/images/en/fracturing_crush.c5cfd74639913a1d6e95631afdbcb475.png",
-          "mod_max_rank": 3,
-          "icon_format": "port",
-          "en": {
-            "item_name": "Fracturing Crush"
-          }
-        },
-        "creation_date": "2024-07-28T08:31:29.275+00:00",
-        "last_update": "2024-08-04T16:55:14.261+00:00",
-        "quantity": 1,
-        "visible": true,
-        "platinum": 14
-        }
-        ],
-        "buy_orders": []
-        }
+          "error": null
         }
         """
       }
@@ -156,10 +119,9 @@ defmodule AuctionHouse.Impl.UseCase.GetUserOrdersTest do
         headers: %{},
         body: """
         {
-        "payload": {
-        "sell_orders": [],
-        "buy_orders": []
-        }
+          "apiVersion": "0.22.7",
+          "data": [],
+          "error": null
         }
         """
       }

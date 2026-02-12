@@ -10,7 +10,7 @@ defmodule AuctionHouse.Impl.UseCase.DeleteOrder do
 
   @behaviour UseCase
 
-  @url Application.compile_env!(:auction_house, :api_base_url)
+  @url Application.compile_env!(:auction_house, :api_order_url)
 
   @default_deps %{
     delete: &HttpAsyncClient.delete/4

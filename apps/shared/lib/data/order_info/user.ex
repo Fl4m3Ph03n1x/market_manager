@@ -5,20 +5,22 @@ defmodule Shared.Data.OrderInfo.User do
 
   ```json
   "user": {
-      "reputation": 1977,
-      "locale": "en",
-      "avatar": "user/avatar/5678a156cbfa8f02c9b814c3.png?0d832d1017240078ecf4bdeb0d08a101",
-      "ingame_name": "fl4m3",
-      "last_seen": "2025-01-13T04:21:53.899+00:00",
-      "crossplay": false,
-      "platform": "pc",
-      "id": "5678a156cbfa8f02c9b814c3",
-      "region": "en",
-      "status": "online"
+    "id": "5962ff05d3ffb64d46e3c47f",
+    "ingameName": "JeyciKon",
+    "slug": "jeycikon",
+    "reputation": 2,
+    "platform": "pc",
+    "crossplay": true,
+    "locale": "pt",
+    "status": "ingame",
+    "activity": {
+      "type": "UNKNOWN",
+      "details": "unknown"
+    }
   }
   ```
 
-  We only take some of the information, no all.
+  We only take some of the information, not all.
   PC Players with crossplay active can trade with any platform (except Nintendo switch).
   https://www.warframe.com/crossprogression
   """
@@ -28,12 +30,14 @@ defmodule Shared.Data.OrderInfo.User do
   alias Shared.Utils.Structs
 
   @type ingame_name :: String.t()
+  @type slug :: String.t()
   @type status :: :online | :offline | :ingame
   @type platform :: :pc
   @type crossplay :: boolean()
 
   @type user :: %{
-          (ingame_name :: String.t()) => String.t(),
+          (ingameName :: String.t()) => String.t(),
+          (slug :: String.t()) => String.t(),
           (status :: String.t()) => String.t(),
           (platform :: String.t()) => String.t(),
           (crossplay :: String.t()) => boolean()
@@ -43,6 +47,7 @@ defmodule Shared.Data.OrderInfo.User do
     @typedoc "Account information of an User"
 
     field(:ingame_name, ingame_name())
+    field(:slug, slug())
     field(:status, status())
     field(:platform, platform())
     field(:crossplay, crossplay())
@@ -58,18 +63,21 @@ defmodule Shared.Data.OrderInfo.User do
   @spec new(user) :: __MODULE__.t()
   def new(
         %{
-          "ingame_name" => ingame_name,
+          "ingameName" => ingame_name,
+          "slug" => slug,
           "status" => status,
           "platform" => platform,
           "crossplay" => crossplay
         } = user
       )
-      when is_binary(ingame_name) and is_valid_status(status) and is_valid_platform(platform) and
+      when is_binary(ingame_name) and is_binary(slug) and is_valid_status(status) and
+             is_valid_platform(platform) and
              is_boolean(crossplay) do
     updated_user =
       user
       |> Map.put("status", String.to_atom(status))
       |> Map.put("platform", String.to_atom(platform))
+      |> Map.put("ingame_name", ingame_name)
 
     Structs.string_map_to_struct(updated_user, __MODULE__)
   end

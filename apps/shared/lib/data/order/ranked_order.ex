@@ -7,6 +7,7 @@ defmodule Shared.Data.Order.RankedOrder do
 
   import Shared.Utils.ExtraGuards
 
+  alias Jason
   alias Shared.Utils.Structs
 
   @type item_id :: String.t()
@@ -24,7 +25,7 @@ defmodule Shared.Data.Order.RankedOrder do
             (mod_rank :: String.t()) => non_neg_integer
           }
 
-  @derive Jason.Encoder
+  # @derive Jason.Encoder
   typedstruct enforce: true do
     @typedoc "An order."
 
@@ -48,4 +49,20 @@ defmodule Shared.Data.Order.RankedOrder do
       when is_binary(order_type) and is_binary(item_id) and is_pos_integer(platinum) and
              is_pos_integer(quantity) and is_non_neg_integer(mod_rank),
       do: Structs.string_map_to_struct(order, __MODULE__)
+
+  defimpl Jason.Encoder, for: __MODULE__ do
+    def encode(order, opts) do
+      data =
+        %{
+          itemId: order.item_id,
+          type: order.order_type,
+          visible: true,
+          platinum: order.platinum,
+          quantity: order.quantity,
+          rank: order.mod_rank
+        }
+
+      Jason.Encode.map(data, opts)
+    end
+  end
 end

@@ -61,7 +61,7 @@ defmodule Manager.Saga.Activate do
       ) do
     with {:ok, {_auth, %User{} = user}} <- auction_house.get_saved_login(),
          :ok <- store.activate_syndicates(syndicates_with_strategy),
-         :ok <- auction_house.get_user_orders(user.ingame_name) do
+         :ok <- auction_house.get_user_orders(user.slug) do
       updated_state = Map.put(state, :user, user)
 
       send(from, {:activate, {:ok, :get_user_orders}})

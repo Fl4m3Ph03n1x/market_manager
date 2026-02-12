@@ -21,7 +21,6 @@ defmodule Shared.Data.Order.SimpleOrder do
           (quantity :: String.t()) => pos_integer()
         }
 
-  @derive Jason.Encoder
   typedstruct enforce: true do
     @typedoc "An order."
 
@@ -43,4 +42,19 @@ defmodule Shared.Data.Order.SimpleOrder do
       when is_binary(order_type) and is_binary(item_id) and
              is_pos_integer(platinum) and is_pos_integer(quantity),
       do: Structs.string_map_to_struct(order, __MODULE__)
+
+  defimpl Jason.Encoder, for: __MODULE__ do
+    def encode(order, opts) do
+      data =
+        %{
+          itemId: order.item_id,
+          type: order.order_type,
+          visible: true,
+          platinum: order.platinum,
+          quantity: order.quantity
+        }
+
+      Jason.Encode.map(data, opts)
+    end
+  end
 end

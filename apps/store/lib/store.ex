@@ -74,13 +74,13 @@ defmodule Store do
 
   > Store.save_login_data(
     %Authorization{token: "a_token", cookie: "a_cookie"},
-    %User{ingame_name: "username", patreon?: false}
+    %User{ingame_name: "Username", slug: "username", patreon?: false}
   )
   :ok
 
   > Store.save_login_data(
     %Authorization{token: "a_token", cookie: "a_cookie"},
-    %User{ingame_name: "username", patreon?: false}
+    %User{ingame_name: "Username",  slug: "username", patreon?: false}
   )
   {:error, :enoent}
   ```
@@ -113,7 +113,7 @@ defmodule Store do
   > Store.get_login_data()
   {:ok, {
     %Authorization{token: "a_token", cookie: "a_cookie"},
-    %User{ingame_name: "username", patreon?: false}
+    %User{ingame_name: "Username", slug: "username", patreon?: false}
   }}
 
   > Store.get_login_data()

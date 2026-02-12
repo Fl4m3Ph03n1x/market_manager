@@ -27,3 +27,6 @@ test_setup/
 
 # Dialyzer
 /.elixir_ls/
+
+# Expert LSP
+.expert/

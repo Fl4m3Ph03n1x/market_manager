@@ -8,7 +8,7 @@ defmodule AuctionHouse.Impl.UseCase.DeleteOrderTest do
   alias Jason
   alias Shared.Data.{Authorization, PlacedOrder}
 
-  @url Application.compile_env!(:auction_house, :api_base_url)
+  @url Application.compile_env!(:auction_house, :api_order_url)
 
   describe "start/2" do
     test "makes request" do
@@ -88,7 +88,22 @@ defmodule AuctionHouse.Impl.UseCase.DeleteOrderTest do
         metadata: request.metadata,
         headers: %{},
         body: """
-        {{"payload": {"order_id": "66b9d5cf6b17410a639e2284"}}
+        {
+          "apiVersion": "0.22.7",
+          "data": {
+            "id": "693207daaffbfaaa4e2474e5",
+            "type": "sell",
+            "platinum": 2,
+            "quantity": 21,
+            "perTrade": 1,
+            "rank": 0,
+            "visible": false,
+            "createdAt": "2025-12-04T22:14:50Z",
+            "updatedAt": "2026-01-03T23:41:58Z",
+            "itemId": "675c5ee47b18977f6e6453f6"
+          },
+          "error": null
+        }
         """
       }
 

@@ -7,20 +7,23 @@ defmodule Shared.Data.OrderInfo.UserTest do
 
   test "new/1 returns OrderInfo User" do
     data = %{
-      "avatar" => "user/avatar/5678a156cbfa8f02c9b814c3.png?0d832d1017240078ecf4bdeb0d08a101",
-      "crossplay" => false,
-      "id" => "5678a156cbfa8f02c9b814c3",
-      "ingame_name" => "fl4m3",
-      "last_seen" => "2025-01-13T04:21:53.899+00:00",
-      "locale" => "en",
+      "id" => "5962ff05d3ffb64d46e3c47f",
+      "ingameName" => "Fl4m3",
+      "slug" => "fl4m3",
+      "reputation" => 2,
       "platform" => "pc",
-      "region" => "en",
-      "reputation" => 1977,
-      "status" => "online"
+      "crossplay" => false,
+      "locale" => "pt",
+      "status" => "online",
+      "activity" => %{
+        "type" => "UNKNOWN",
+        "details" => "unknown"
+      }
     }
 
     assert User.new(data) == %User{
-             ingame_name: "fl4m3",
+             ingame_name: "Fl4m3",
+             slug: "fl4m3",
              status: :online,
              platform: :pc,
              crossplay: false

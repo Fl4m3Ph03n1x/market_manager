@@ -6,20 +6,20 @@ defmodule WebInterface.Persistence.Syndicate do
 
   require Logger
 
-  alias Shared.Data.Syndicate
+  alias Shared.Data.Syndicate, as: SyndicateData
   alias WebInterface.Persistence
 
   @typep syndicate_id :: String.t()
   @typep key :: atom()
 
-  @spec get_syndicates(Persistence.table()) :: {:ok, [Syndicate.t()]} | {:error, any}
+  @spec get_syndicates(Persistence.table()) :: {:ok, [SyndicateData.t()]} | {:error, any}
   def get_syndicates(table \\ Persistence.default_table()) do
     with {:ok, table_ref} <- table.recover.(table.name) do
       table.get.(table_ref, :syndicates, [])
     end
   end
 
-  @spec get_all_syndicates_by_id([syndicate_id()], Persistence.table()) :: {:ok, [Syndicate.t()]} | {:error, any}
+  @spec get_all_syndicates_by_id([syndicate_id()], Persistence.table()) :: {:ok, [SyndicateData.t()]} | {:error, any}
   def get_all_syndicates_by_id(ids, table \\ Persistence.default_table()) do
     valid_ids = Enum.filter(ids, fn id -> id != "" end)
 
@@ -35,7 +35,7 @@ defmodule WebInterface.Persistence.Syndicate do
     end
   end
 
-  @spec get_syndicate_by_id(String.t(), Persistence.table()) :: {:ok, Syndicate.t()} | {:error, any}
+  @spec get_syndicate_by_id(String.t(), Persistence.table()) :: {:ok, SyndicateData.t()} | {:error, any}
   def get_syndicate_by_id(id, table \\ Persistence.default_table()) do
     with {:ok, table_ref} <- table.recover.(table.name),
          {:ok, syndicates} <- table.get.(table_ref, :syndicates, []) do
@@ -48,7 +48,7 @@ defmodule WebInterface.Persistence.Syndicate do
     end
   end
 
-  @spec deactivate_syndicates([Syndicate.t()], Persistence.table()) :: :ok | [{:error, any}]
+  @spec deactivate_syndicates([SyndicateData.t()], Persistence.table()) :: :ok | [{:error, any}]
   def deactivate_syndicates(syndicates, table \\ Persistence.default_table()) do
     syndicates
     |> Enum.map(&deactivate_syndicate(&1, table))
@@ -59,7 +59,7 @@ defmodule WebInterface.Persistence.Syndicate do
     end
   end
 
-  @spec activate_syndicates([Syndicate.t()], Persistence.table()) :: :ok | [{:error, any}]
+  @spec activate_syndicates([SyndicateData.t()], Persistence.table()) :: :ok | [{:error, any}]
   def activate_syndicates(syndicates, table \\ Persistence.default_table()) do
     syndicates
     |> Enum.map(&activate_syndicate(&1, table))
@@ -70,13 +70,13 @@ defmodule WebInterface.Persistence.Syndicate do
     end
   end
 
-  @spec activate_syndicate(Syndicate.t(), Persistence.table()) :: :ok | {:error, any}
+  @spec activate_syndicate(SyndicateData.t(), Persistence.table()) :: :ok | {:error, any}
   def activate_syndicate(syndicate, table \\ Persistence.default_table()), do: set_syndicate(syndicate, true, table)
 
-  @spec deactivate_syndicate(Syndicate.t(), Persistence.table()) :: :ok | {:error, any}
+  @spec deactivate_syndicate(SyndicateData.t(), Persistence.table()) :: :ok | {:error, any}
   def deactivate_syndicate(syndicate, table \\ Persistence.default_table()), do: set_syndicate(syndicate, false, table)
 
-  @spec set_syndicate(Syndicate.t(), boolean(), Persistence.table()) :: :ok | {:error, any}
+  @spec set_syndicate(SyndicateData.t(), boolean(), Persistence.table()) :: :ok | {:error, any}
   defp set_syndicate(syndicate, value, table) do
     with {:ok, table_ref} <- table.recover.(table.name),
          {:ok, active_syndicates} <- table.get.(table_ref, :active_syndicates, nil),
@@ -86,7 +86,7 @@ defmodule WebInterface.Persistence.Syndicate do
     end
   end
 
-  @spec update_active_syndicates([Syndicate.t()], Syndicate.t(), boolean()) :: MapSet.t()
+  @spec update_active_syndicates([SyndicateData.t()], SyndicateData.t(), boolean()) :: map()
   defp update_active_syndicates(active_syndicates, syndicate, value) do
     cond do
       is_nil(active_syndicates) and not value -> MapSet.new()
@@ -96,7 +96,7 @@ defmodule WebInterface.Persistence.Syndicate do
     end
   end
 
-  @spec syndicate_active?(Syndicate.t(), Persistence.table()) :: boolean()
+  @spec syndicate_active?(SyndicateData.t(), Persistence.table()) :: boolean()
   def syndicate_active?(syndicate, table \\ Persistence.default_table()) do
     with {:ok, table_ref} <- table.recover.(table.name),
          {:ok, active_syndicates} <-
@@ -117,7 +117,7 @@ defmodule WebInterface.Persistence.Syndicate do
     end
   end
 
-  @spec get_active_syndicates(Persistence.table()) :: {:ok, [Syndicate.t()]} | {:error, any()}
+  @spec get_active_syndicates(Persistence.table()) :: {:ok, [SyndicateData.t()]} | {:error, any()}
   def get_active_syndicates(table \\ Persistence.default_table()) do
     with {:ok, table_ref} <- table.recover.(table.name),
          {:ok, syndicates} <- table.get.(table_ref, :active_syndicates, []) do
@@ -125,7 +125,7 @@ defmodule WebInterface.Persistence.Syndicate do
     end
   end
 
-  @spec get_inactive_syndicates(Persistence.table()) :: {:ok, [Syndicate.t()]} | {:error, any()}
+  @spec get_inactive_syndicates(Persistence.table()) :: {:ok, [SyndicateData.t()]} | {:error, any()}
   def get_inactive_syndicates(table \\ Persistence.default_table()) do
     with {:ok, table_ref} <- table.recover.(table.name),
          {:ok, all_syndicates} <- table.get.(table_ref, :syndicates, []),
@@ -134,23 +134,23 @@ defmodule WebInterface.Persistence.Syndicate do
     end
   end
 
-  @spec set_selected_active_syndicates([Syndicate.t()], Persistence.table()) :: :ok | {:error, any()}
+  @spec set_selected_active_syndicates([SyndicateData.t()], Persistence.table()) :: :ok | {:error, any()}
   def set_selected_active_syndicates(syndicates, table \\ Persistence.default_table()) when is_list(syndicates),
     do: set_selection(syndicates, :active_syndicates, table)
 
-  @spec get_selected_active_syndicates(Persistence.table()) :: {:ok, [Syndicate.t()]} | {:error, any()}
+  @spec get_selected_active_syndicates(Persistence.table()) :: {:ok, [SyndicateData.t()]} | {:error, any()}
   def get_selected_active_syndicates(table \\ Persistence.default_table()), do: get_selection(:active_syndicates, table)
 
-  @spec set_selected_inactive_syndicates([Syndicate.t()], Persistence.table()) :: :ok | {:error, any()}
+  @spec set_selected_inactive_syndicates([SyndicateData.t()], Persistence.table()) :: :ok | {:error, any()}
   def set_selected_inactive_syndicates(syndicates, table \\ Persistence.default_table()) when is_list(syndicates),
     do: set_selection(syndicates, :inactive_syndicates, table)
 
-  @spec get_selected_inactive_syndicates(Persistence.table()) :: {:ok, [Syndicate.t()]} | {:error, any()}
+  @spec get_selected_inactive_syndicates(Persistence.table()) :: {:ok, [SyndicateData.t()]} | {:error, any()}
   def get_selected_inactive_syndicates(table \\ Persistence.default_table()) do
     get_selection(:inactive_syndicates, table)
   end
 
-  @spec set_selection([Syndicate.t()], key(), Persistence.table()) :: :ok | {:error, any()}
+  @spec set_selection([SyndicateData.t()], key(), Persistence.table()) :: :ok | {:error, any()}
   defp set_selection(syndicates, key, table) do
     with {:ok, table_ref} <- table.recover.(table.name),
          {:ok, _updated_table} <- table.put.(table_ref, String.to_atom("selected_#{key}"), syndicates) do
@@ -158,7 +158,7 @@ defmodule WebInterface.Persistence.Syndicate do
     end
   end
 
-  @spec get_selection(key(), Persistence.table()) :: {:ok, [Syndicate.t()]} | {:error, any()}
+  @spec get_selection(key(), Persistence.table()) :: {:ok, [SyndicateData.t()]} | {:error, any()}
   defp get_selection(key, table) do
     case table.recover.(table.name) do
       {:ok, table_ref} -> table.get.(table_ref, String.to_atom("selected_#{key}"), [])

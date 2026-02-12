@@ -5,14 +5,14 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.38.2">
-    <meta name="project" content="Market Manager v2.1.9">
+    <meta name="project" content="Market Manager v2.2.1">
 
 
-    <title>Shared.Data.OrderInfo — Market Manager v2.1.9</title>
+    <title>Shared.Data.OrderInfo — Market Manager v2.2.1</title>
 
     <link rel="stylesheet" href="dist/html-elixir-KV3YOVJ3.css" />
 
-    <script defer src="dist/sidebar_items-4288A184.js"></script>
+    <script defer src="dist/sidebar_items-1F56A3E4.js"></script>
     <script defer src="docs_config.js"></script>
     <script defer src="dist/html-DPJLHKSM.js"></script>
 
@@ -41,7 +41,7 @@
 Market Manager
         </a>
         <div class="sidebar-projectVersion" translate="no">
-          v2.1.9
+          v2.2.1
         </div>
       </div>
     </div>
@@ -80,7 +80,7 @@ Market Manager
   <div class="heading-with-actions top-heading">
     <h1>
       <span translate="no">Shared.Data.OrderInfo</span> 
-      <small class="app-vsn" translate="no">(Market Manager v2.1.9)</small>
+      <small class="app-vsn" translate="no">(Market Manager v2.2.1)</small>
 
     </h1>
 
@@ -95,27 +95,31 @@ Market Manager
     <section id="moduledoc">
 <p>Represents information about current orders from warframe market.
 Here is the structure of a typical order in JSON:</p><pre><code class="json">{
-    &quot;creation_date&quot;: &quot;2017-09-19T02:01:29.000+00:00&quot;,
-    &quot;visible&quot;: true,
-    &quot;quantity&quot;: 1,
-    &quot;user&quot;: {
-        &quot;reputation&quot;: 1977,
-        &quot;locale&quot;: &quot;en&quot;,
-        &quot;avatar&quot;: &quot;user/avatar/5678a156cbfa8f02c9b814c3.png?0d832d1017240078ecf4bdeb0d08a101&quot;,
-        &quot;ingame_name&quot;: &quot;fl4m3&quot;,
-        &quot;last_seen&quot;: &quot;2025-01-13T04:21:53.899+00:00&quot;,
-        &quot;crossplay&quot;: false,
-        &quot;platform&quot;: &quot;pc&quot;,
-        &quot;id&quot;: &quot;5678a156cbfa8f02c9b814c3&quot;,
-        &quot;region&quot;: &quot;en&quot;,
-        &quot;status&quot;: &quot;online&quot;
+  &quot;id&quot;: &quot;598bd5b10f3139463a86b6af&quot;,
+  &quot;type&quot;: &quot;sell&quot;,
+  &quot;platinum&quot;: 22,
+  &quot;quantity&quot;: 1,
+  &quot;perTrade&quot;: 1,
+  &quot;rank&quot;: 0,
+  &quot;visible&quot;: true,
+  &quot;createdAt&quot;: &quot;2017-08-10T03:40:33Z&quot;,
+  &quot;updatedAt&quot;: &quot;2026-01-29T02:51:53Z&quot;,
+  &quot;itemId&quot;: &quot;54e644ffe779897594fa68d2&quot;,
+  &quot;user&quot;: {
+    &quot;id&quot;: &quot;5962ff05d3ffb64d46e3c47f&quot;,
+    &quot;ingameName&quot;: &quot;JeyciKon&quot;,
+    &quot;slug&quot;: &quot;jeycikon&quot;,
+    &quot;reputation&quot;: 2,
+    &quot;platform&quot;: &quot;pc&quot;,
+    &quot;crossplay&quot;: true,
+    &quot;locale&quot;: &quot;pt&quot;,
+    &quot;status&quot;: &quot;ingame&quot;,
+    &quot;activity&quot;: {
+      &quot;type&quot;: &quot;UNKNOWN&quot;,
+      &quot;details&quot;: &quot;unknown&quot;
     },
-    &quot;last_update&quot;: &quot;2019-11-24T01:58:58.000+00:00&quot;,
-    &quot;platinum&quot;: 18,
-    &quot;order_type&quot;: &quot;sell&quot;,
-    &quot;id&quot;: &quot;59c07a790f31396e83ed709b&quot;,
-    &quot;mod_rank&quot;: 0,
-    &quot;region&quot;: &quot;en&quot;
+    &quot;lastSeen&quot;: &quot;2026-02-06T05:46:21Z&quot;
+  }
 }</code></pre><p>Where the user is defined by OrderInfo.User.</p>
     </section>
 
@@ -220,7 +224,7 @@ Here is the structure of a typical order in JSON:</p><pre><code class="json">{
       <h1 class="signature" translate="no">order_info()</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/order_info.ex#L47" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/order_info.ex#L51" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -233,7 +237,7 @@ Here is the structure of a typical order in JSON:</p><pre><code class="json">{
 
           <pre translate="no"><span class="attribute">@type</span> order_info() :: %{
   required(visible :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>(),
-  required(order_type :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  required(type :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
   required(platinum :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>(),
   required(user :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="Shared.Data.OrderInfo.User.html#t:user/0">Shared.Data.OrderInfo.User.user</a>()
 }</pre>
@@ -253,7 +257,7 @@ Here is the structure of a typical order in JSON:</p><pre><code class="json">{
       <h1 class="signature" translate="no">order_type()</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/order_info.ex#L43" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/order_info.ex#L47" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -281,7 +285,7 @@ Here is the structure of a typical order in JSON:</p><pre><code class="json">{
       <h1 class="signature" translate="no">platinum()</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/order_info.ex#L44" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/order_info.ex#L48" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -309,7 +313,7 @@ Here is the structure of a typical order in JSON:</p><pre><code class="json">{
       <h1 class="signature" translate="no">t()</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/order_info.ex#L54" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/order_info.ex#L58" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -342,7 +346,7 @@ Here is the structure of a typical order in JSON:</p><pre><code class="json">{
       <h1 class="signature" translate="no">user()</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/order_info.ex#L45" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/order_info.ex#L49" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -370,7 +374,7 @@ Here is the structure of a typical order in JSON:</p><pre><code class="json">{
       <h1 class="signature" translate="no">visible()</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/order_info.ex#L42" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/order_info.ex#L46" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -410,7 +414,7 @@ Here is the structure of a typical order in JSON:</p><pre><code class="json">{
       <h1 class="signature" translate="no">new(order_info)</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/order_info.ex#L67" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/order_info.ex#L71" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 

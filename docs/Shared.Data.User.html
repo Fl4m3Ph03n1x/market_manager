@@ -5,14 +5,14 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.38.2">
-    <meta name="project" content="Market Manager v2.1.9">
+    <meta name="project" content="Market Manager v2.2.1">
 
 
-    <title>Shared.Data.User — Market Manager v2.1.9</title>
+    <title>Shared.Data.User — Market Manager v2.2.1</title>
 
     <link rel="stylesheet" href="dist/html-elixir-KV3YOVJ3.css" />
 
-    <script defer src="dist/sidebar_items-4288A184.js"></script>
+    <script defer src="dist/sidebar_items-1F56A3E4.js"></script>
     <script defer src="docs_config.js"></script>
     <script defer src="dist/html-DPJLHKSM.js"></script>
 
@@ -41,7 +41,7 @@
 Market Manager
         </a>
         <div class="sidebar-projectVersion" translate="no">
-          v2.1.9
+          v2.2.1
         </div>
       </div>
     </div>
@@ -80,7 +80,7 @@ Market Manager
   <div class="heading-with-actions top-heading">
     <h1>
       <span translate="no">Shared.Data.User</span> 
-      <small class="app-vsn" translate="no">(Market Manager v2.1.9)</small>
+      <small class="app-vsn" translate="no">(Market Manager v2.2.1)</small>
 
     </h1>
 
@@ -121,6 +121,14 @@ Market Manager
     <div class="summary-row">
       <div class="summary-signature">
         <a href="#t:patreon?/0" data-no-tooltip="" translate="no">patreon?()</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:slug/0" data-no-tooltip="" translate="no">slug()</a>
 
       </div>
 
@@ -181,7 +189,7 @@ Market Manager
       <h1 class="signature" translate="no">ingame_name()</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/user.ex#L10" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/user.ex#L11" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -209,7 +217,7 @@ Market Manager
       <h1 class="signature" translate="no">patreon?()</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/user.ex#L11" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/user.ex#L13" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -227,17 +235,17 @@ Market Manager
 
   </section>
 </section>
-<section class="detail" id="t:t/0">
+<section class="detail" id="t:slug/0">
 
   <div class="detail-header">
-    <a href="#t:t/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+    <a href="#t:slug/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
       <i class="ri-link-m" aria-hidden="true"></i>
     </a>
     <div class="heading-with-actions">
-      <h1 class="signature" translate="no">t()</h1>
+      <h1 class="signature" translate="no">slug()</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/user.ex#L21" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/user.ex#L12" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -248,7 +256,39 @@ Market Manager
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@type</span> t() :: %Shared.Data.User{ingame_name: <a href="#t:ingame_name/0">ingame_name</a>(), patreon?: <a href="#t:patreon?/0">patreon?</a>()}</pre>
+          <pre translate="no"><span class="attribute">@type</span> slug() :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="t:t/0">
+
+  <div class="detail-header">
+    <a href="#t:t/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">t()</h1>
+
+
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/user.ex#L24" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> t() :: %Shared.Data.User{
+  ingame_name: <a href="#t:ingame_name/0">ingame_name</a>(),
+  patreon?: <a href="#t:patreon?/0">patreon?</a>(),
+  slug: <a href="#t:slug/0">slug</a>()
+}</pre>
 
       </div>
 
@@ -265,7 +305,7 @@ Market Manager
       <h1 class="signature" translate="no">user()</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/user.ex#L13" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/user.ex#L15" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -279,9 +319,10 @@ Market Manager
           <pre translate="no"><span class="attribute">@type</span> user() ::
   %{
     required(ingame_name :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+    required(slug :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
     required(patreon? :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()
   }
-  | [ingame_name: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(), patreon?: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()]</pre>
+  | [ingame_name: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(), slug: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(), patreon?: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()]</pre>
 
       </div>
 
@@ -310,7 +351,7 @@ Market Manager
       <h1 class="signature" translate="no">new(user)</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/user.ex#L29" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/user.ex#L33" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 

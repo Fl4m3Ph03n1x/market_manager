@@ -7,6 +7,7 @@ defmodule AuctionHouse.Impl.HttpAsyncClient do
 
   require Logger
 
+  alias Jason
   alias Shared.Data.Authorization
   alias AuctionHouse.Impl.UseCase.Data.{Request, Response}
   alias RateLimiter
@@ -153,7 +154,7 @@ defmodule AuctionHouse.Impl.HttpAsyncClient do
     do: {:ok, body, headers}
 
   defp parse({:ok, %HTTPoison.Response{status_code: status, body: error_body}})
-       when status in [400, 429, 503, 520] do
+       when status in [400, 404, 429, 503, 520] do
     {:error, map_error(error_body)}
   end
 
@@ -171,6 +172,9 @@ defmodule AuctionHouse.Impl.HttpAsyncClient do
           | :invalid_email
           | :unknown_server_error
           | :slow_down
+          | :url_not_found
+          | :unknown_error
+          | :unknown_format_error
   defp map_error(~s({"error": {"item_id": ["app.form.invalid"]}})), do: :invalid_item_id
 
   defp map_error(~s({"error": {"_form": ["app.post_order.already_created_no_duplicates"]}})),
@@ -196,8 +200,31 @@ defmodule AuctionHouse.Impl.HttpAsyncClient do
   # block us, in order to force us to slow down.
   defp map_error("error code: 1015"), do: :slow_down
 
-  defp map_error(html) when is_binary(html) do
-    Logger.error("AuctionHouse.map_error/1 received an unknown error: #{html}")
-    :unknown_error
+  defp map_error(error_body) when is_binary(error_body) do
+    case Jason.decode(error_body) do
+      {:ok, %{"error" => reason}} when is_binary(reason) ->
+        if valid_uri?(reason) do
+          Logger.error("URL not found. Please review the API: #{error_body}")
+          :url_not_found
+        else
+          Logger.error("AuctionHouse.map_error/1 received an unknown error: #{error_body}")
+          :unknown_error
+        end
+
+      {:ok, _reason} ->
+        Logger.error("AuctionHouse.map_error/1 received error with unknown format error: #{error_body}")
+        :unknown_format_error
+
+      {:error, _reason} = error ->
+        Logger.error("Failed to decode error message: #{inspect(error)}")
+    end
+  end
+
+  @spec valid_uri?(url()) :: boolean()
+  defp valid_uri?(url) do
+    uri = URI.parse(url)
+
+    uri.scheme == "https" and uri.host =~ "api.warframe.market" and uri.authority =~ "api.warframe.market" and
+      uri.port == 443 and (uri.path =~ "GET" or uri.path =~ "POST")
   end
 end

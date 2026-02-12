@@ -11,7 +11,7 @@ defmodule AuctionHouse.Impl.UseCase.PlaceOrder do
 
   @behaviour UseCase
 
-  @url Application.compile_env!(:auction_house, :api_base_url)
+  @url Application.compile_env!(:auction_house, :api_order_url)
 
   @default_deps %{
     post: &HttpAsyncClient.post/5
@@ -61,9 +61,7 @@ defmodule AuctionHouse.Impl.UseCase.PlaceOrder do
   defp check_authorization(%Authorization{}), do: :ok
   defp check_authorization(_auth), do: {:error, :missing_authorization}
 
-  @spec get_id(body()) ::
-          {:ok, String.t() | Type.item_id()} | {:error, {:missing_id | :missing_order, body()}}
-  defp get_id(%{"payload" => %{"order" => %{"id" => id}}}), do: {:ok, id}
-  defp get_id(%{"payload" => %{"order" => _order}} = data), do: {:error, {:missing_id, data}}
+  @spec get_id(body()) :: {:ok, String.t() | Type.item_id()} | {:error, {:missing_order, body()}}
+  defp get_id(%{"data" => %{"id" => id}}), do: {:ok, id}
   defp get_id(data), do: {:error, {:missing_order, data}}
 end

@@ -211,7 +211,7 @@ defmodule MarketManager.Store.FileSystemTest do
     test "returns :ok if write was successful", %{paths: paths} = deps do
       # Arrange
       auth = Authorization.new(%{"cookie" => "a_cookie", "token" => "a_token"})
-      user = User.new(%{"ingame_name" => "fl4m3", "patreon?" => false})
+      user = User.new(%{"ingame_name" => "Fl4m3", "slug" => "fl4m3", "patreon?" => false})
 
       write_fn = fn filename, content ->
         assert filename == Path.join(paths[:setup])
@@ -228,7 +228,7 @@ defmodule MarketManager.Store.FileSystemTest do
     test "returns error if write to file failed", %{paths: paths} = deps do
       # Arrange
       auth = Authorization.new(%{"cookie" => "a_cookie", "token" => "a_token"})
-      user = User.new(%{"ingame_name" => "fl4m3", "patreon?" => false})
+      user = User.new(%{"ingame_name" => "Fl4m3", "slug" => "fl4m3", "patreon?" => false})
 
       write_fn = fn filename, content ->
         assert filename == Path.join(paths[:setup])
@@ -251,13 +251,13 @@ defmodule MarketManager.Store.FileSystemTest do
     test "returns login_data if read succeeded", %{paths: paths} = deps do
       # Arrange
       auth = Authorization.new(%{"cookie" => "a_cookie", "token" => "a_token"})
-      user = User.new(%{"ingame_name" => "fl4m3", "patreon?" => false})
+      user = User.new(%{"ingame_name" => "Fl4m3", "slug" => "fl4m3", "patreon?" => false})
 
       read_fn = fn filename ->
         assert filename == Path.join(paths[:setup])
 
         {:ok,
-         "{\"authorization\":{\"cookie\":\"a_cookie\",\"token\":\"a_token\"},\"user\":{\"ingame_name\":\"fl4m3\",\"patreon?\":false}}"}
+         "{\"authorization\":{\"cookie\":\"a_cookie\",\"token\":\"a_token\"},\"user\":{\"ingame_name\":\"Fl4m3\",\"slug\":\"fl4m3\",\"patreon?\":false}}"}
       end
 
       deps = Map.put(deps, :io, %{read: read_fn})
@@ -273,7 +273,7 @@ defmodule MarketManager.Store.FileSystemTest do
         assert filename == Path.join(paths[:setup])
 
         {:ok,
-         "{\"authorization\":{\"cookie\": null,\"token\":\"a_token\"},\"user\":{\"ingame_name\":\"fl4m3\",\"patreon?\":false}}"}
+         "{\"authorization\":{\"cookie\": null,\"token\":\"a_token\"},\"user\":{\"ingame_name\":\"Fl4m3\",\"slug\":\"fl4m3\",\"patreon?\":false}}"}
       end
 
       deps = Map.put(deps, :io, %{read: read_fn})
@@ -289,7 +289,7 @@ defmodule MarketManager.Store.FileSystemTest do
         assert filename == Path.join(paths[:setup])
 
         {:ok,
-         "{\"authorization\":{\"cookie\": \"a_cookie\",\"token\": null},\"user\":{\"ingame_name\":\"fl4m3\",\"patreon?\":false}}"}
+         "{\"authorization\":{\"cookie\": \"a_cookie\",\"token\": null},\"user\":{\"ingame_name\":\"Fl4m3\",\"slug\":\"fl4m3\",\"patreon?\":false}}"}
       end
 
       deps = Map.put(deps, :io, %{read: read_fn})
@@ -304,7 +304,7 @@ defmodule MarketManager.Store.FileSystemTest do
         assert filename == Path.join(paths[:setup])
 
         {:ok,
-         "{\"authorization\":{\"cookie\": \"a_cookie\",\"token\": \"a_token\"},\"user\":{\"ingame_name\": null,\"patreon?\":false}}"}
+         "{\"authorization\":{\"cookie\": \"a_cookie\",\"token\": \"a_token\"},\"user\":{\"ingame_name\": null,\"slug\": null,\"patreon?\":false}}"}
       end
 
       deps = Map.put(deps, :io, %{read: read_fn})
@@ -319,7 +319,7 @@ defmodule MarketManager.Store.FileSystemTest do
         assert filename == Path.join(paths[:setup])
 
         {:ok,
-         "{\"authorization\":{\"cookie\": \"a_cookie\",\"token\": \"a_token\"},\"user\":{\"ingame_name\": \"fl4m3\",\"patreon?\": null}}"}
+         "{\"authorization\":{\"cookie\": \"a_cookie\",\"token\": \"a_token\"},\"user\":{\"ingame_name\": \"Fl4m3\",\"slug\":\"fl4m3\",\"patreon?\": null}}"}
       end
 
       deps = Map.put(deps, :io, %{read: read_fn})
@@ -332,7 +332,7 @@ defmodule MarketManager.Store.FileSystemTest do
       # Arrange
       read_fn = fn filename ->
         assert filename == Path.join(paths[:setup])
-        {:ok, "{\"user\":{\"ingame_name\": \"fl4m3\",\"patreon?\": false}}"}
+        {:ok, "{\"user\":{\"ingame_name\": \"Fl4m3\",\"slug\":\"fl4m3\",\"patreon?\": false}}"}
       end
 
       deps = Map.put(deps, :io, %{read: read_fn})
