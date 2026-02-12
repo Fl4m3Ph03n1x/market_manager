@@ -7,10 +7,10 @@ defmodule AuctionHouse.Impl.HttpAsyncClient do
 
   require Logger
 
+  alias Jason
   alias Shared.Data.Authorization
   alias AuctionHouse.Impl.UseCase.Data.{Request, Response}
   alias RateLimiter
-  alias Jason
 
   @static_headers [
     {"Accept", "application/json"},

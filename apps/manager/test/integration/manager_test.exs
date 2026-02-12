@@ -1009,43 +1009,6 @@ defmodule Manager.WorkerTest do
 
       bypass = Bypass.open(port: 8082)
       credentials = Credentials.new("an_email", "a_password")
-      # user = User.new(%{"ingame_name" => "Fl4m3", "slug" => "fl4m3", "patreon?" => false})
-
-      # Bypass.stub(bypass, "GET", "/auth/signin", fn conn ->
-      #   body = """
-      #   <!DOCTYPE html>
-      #   <html lang=en>
-      #   <head>
-      #   <meta charset="UTF-8">
-      #   <meta name="csrf-token" content="##2263dcc167c732ca1b54566e0c1ffb66d8e13e2ed59d113967f7fb5e119fed0f813bf7b98c9777c2f5eafd0ab5f6fdc9ad5a3a44d8b585c07ebdf0af1be310b1">
-      #   <link rel="canonical" href="https://warframe.market/auth/signin">
-      #   <link rel="alternate" hreflang="en" href="https://warframe.market/auth/signin">
-      #   <link rel="manifest" href="/manifest.json">
-      #   <body>
-      #   </body>
-      #   </script>
-      #   </html>
-      #   """
-
-      #   conn
-      #   |> Plug.Conn.put_resp_header(
-      #     "Set-Cookie",
-      #     "JWT=old_cookie; Domain=.warframe.market; Expires=Tue, 21-Mar-2023 15:16:03 GMT; Secure; HttpOnly; Path=/; SameSite=Lax"
-      #   )
-      #   |> Plug.Conn.resp(200, body)
-      # end)
-
-      # Bypass.stub(bypass, "POST", "/v1/auth/signin", fn conn ->
-      #   body =
-      #     "{\"payload\": {\"user\": {\"has_mail\": true, \"written_reviews\": 0, \"region\": \"en\", \"banned\": false, \"anonymous\": false, \"role\": \"user\", \"reputation\": 84, \"ingame_name\": \"Fl4m3Ph03n1x\", \"platform\": \"pc\", \"unread_messages\": 0, \"background\": null, \"check_code\": \"66BAPR88DLLZ\", \"avatar\": \"user/avatar/584d425cd3ffb630c3f9df42.png?0a8ad917dc66b85aa69520d70a31dafb\", \"verification\": true, \"linked_accounts\": {\"steam_profile\": true, \"patreon_profile\": false, \"xbox_profile\": false, \"discord_profile\": false, \"github_profile\": false}, \"id\": \"584d425cd3ffb630c3f9df42\", \"locale\": \"en\"}}}"
-
-      #   conn
-      #   |> Plug.Conn.put_resp_header(
-      #     "Set-Cookie",
-      #     "JWT=new_cookie; Domain=.warframe.market; Expires=Tue, 21-Mar-2023 14:41:06 GMT; Secure; HttpOnly; Path=/; SameSite=Lax"
-      #   )
-      #   |> Plug.Conn.resp(200, body)
-      # end)
 
       _manager_pid = start_supervised(ManagerSupervisor)
       :ok = Manager.login(credentials, false)
@@ -1053,7 +1016,6 @@ defmodule Manager.WorkerTest do
       assert_receive({:login, {:ok, %User{patreon?: false, ingame_name: "Fl4m3", slug: "fl4m3"}}}, @timeout)
 
       %{
-        # user: user,
         bypass: bypass
       }
     end
