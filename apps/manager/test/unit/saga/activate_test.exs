@@ -24,7 +24,7 @@ defmodule Manager.Saga.ActivateTest do
       syndicates_with_strategy = %{new_loka: :top_five_average, perrin_sequence: :top_three_average}
       from = self()
       authorization = %Authorization{token: "a_token", cookie: "a_cookie"}
-      user = %User{ingame_name: "username", patreon?: false}
+      user = %User{ingame_name: "Username", slug: "username", patreon?: false}
 
       %{
         syndicates_with_strategy: syndicates_with_strategy,
@@ -59,7 +59,7 @@ defmodule Manager.Saga.ActivateTest do
           [
             get_saved_login: fn -> {:ok, {auth, user}} end,
             get_user_orders: fn a_user ->
-              assert a_user == user.ingame_name
+              assert a_user == user.slug
               :ok
             end
           ]
@@ -143,7 +143,7 @@ defmodule Manager.Saga.ActivateTest do
     setup do
       syndicates_with_strategy = %{new_loka: :top_five_average, perrin_sequence: :top_three_average}
       from = self()
-      user = %User{ingame_name: "username", patreon?: false}
+      user = %User{ingame_name: "Username", slug: "username", patreon?: false}
 
       %{
         syndicates_with_strategy: syndicates_with_strategy,
