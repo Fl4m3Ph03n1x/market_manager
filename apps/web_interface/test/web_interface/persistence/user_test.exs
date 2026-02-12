@@ -13,7 +13,7 @@ defmodule WebInterface.Persistence.UserTest do
     end
 
     test "returns true if there is a user set" do
-      UserStore.set_user(User.new(ingame_name: "username", patreon?: false))
+      UserStore.set_user(User.new(ingame_name: "Username", slug: "username", patreon?: false))
 
       assert UserStore.has_user?()
 
@@ -28,7 +28,7 @@ defmodule WebInterface.Persistence.UserTest do
     end
 
     test "returns the set user" do
-      user = User.new(ingame_name: "username", patreon?: false)
+      user = User.new(ingame_name: "Username", slug: "username", patreon?: false)
       :ok = UserStore.set_user(user)
 
       {:ok, fetched_user} = UserStore.get_user()
@@ -40,7 +40,7 @@ defmodule WebInterface.Persistence.UserTest do
 
   describe "set_user" do
     test "sets the user correctly" do
-      user = User.new(ingame_name: "username", patreon?: false)
+      user = User.new(ingame_name: "Username", slug: "slug", patreon?: false)
       :ok = UserStore.set_user(user)
 
       {:ok, fetched_user} = UserStore.get_user()
