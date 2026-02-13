@@ -16,7 +16,7 @@ defmodule WebInterface.Desktop.MenuBar do
         <hr />
         <item onclick="quit">Quit</item>
       </menu>
-      
+
       <menu label="Extra">
         <item onclick="browser">Open Browser</item>
       </menu>
