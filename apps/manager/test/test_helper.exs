@@ -24,7 +24,13 @@ defmodule Helpers do
 
   @default_order_info %{
     "visible" => true,
-    "user" => %{"platform" => "pc", "status" => "ingame", "ingameName" => "some_user", "slug" => "some_user", "crossplay" => false},
+    "user" => %{
+      "platform" => "pc",
+      "status" => "ingame",
+      "ingameName" => "some_user",
+      "slug" => "some_user",
+      "crossplay" => false
+    },
     "type" => "sell",
     "platinum" => 15
   }
