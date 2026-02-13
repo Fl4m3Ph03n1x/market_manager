@@ -444,5 +444,34 @@
       "60e5b8fc4794450053e99941",
       "60e5b8fd4794450053e99947"
     ]
+  },
+  {
+    "id": "the_hex",
+    "name": "The Hex",
+    "catalog": [
+      "675c5edc7b18977f6e6453f4",
+      "675c5ed17b18977f6e6453f2",
+      "675c59247b18977f6e6453e8",
+      "675c59297b18977f6e6453ea",
+      "675c5ee47b18977f6e6453f6"
+    ]
+  },
+  {
+    "id": "the_zariman",
+    "name": "The Zariman",
+    "catalog": [
+      "62a2baebfbd62c00450b71d9",
+      "626a197af40db600660a1d87",
+      "62a2baebfbd62c00450b71d8",
+      "626a1978f40db600660a1d7b"
+    ]
+  },
+  {
+    "id": "conjunction_survival",
+    "name": "Conjunction Survival",
+    "catalog": [
+      "63886517e7c988007b5bd512",
+      "63886516e7c988007b5bd50b"
+    ]
   }
 ]

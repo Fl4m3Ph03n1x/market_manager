@@ -1349,5 +1349,82 @@
     "id": "6604a653dbdd5c1673781db7",
     "min_price": 14,
     "default_price": 16
+  },
+  {
+    "name": "Arcane Bellicose",
+    "id": "675c5edc7b18977f6e6453f4",
+    "min_price": 2,
+    "default_price": 3,
+    "quantity": 17
+  },
+  {
+    "name": "Arcane Camisado",
+    "id": "675c5ed17b18977f6e6453f2",
+    "min_price": 2,
+    "default_price": 3,
+    "quantity": 17
+  },
+  {
+    "name": "Arcane Crepuscular",
+    "id": "675c59247b18977f6e6453e8",
+    "min_price": 2,
+    "default_price": 3,
+    "quantity": 17
+  },
+  {
+    "name": "Arcane Impetus",
+    "id": "675c59297b18977f6e6453ea",
+    "min_price": 2,
+    "default_price": 3,
+    "quantity": 17
+  },
+  {
+    "name": "Arcane Truculence",
+    "id": "675c5ee47b18977f6e6453f6",
+    "min_price": 2,
+    "default_price": 3,
+    "quantity": 17
+  },
+  {
+    "name": "Molt Augmented",
+    "id": "62a2baebfbd62c00450b71d9",
+    "min_price": 2,
+    "default_price": 3,
+    "quantity": 13
+  },
+  {
+    "name": "Molt Efficiency",
+    "id": "626a197af40db600660a1d87",
+    "min_price": 2,
+    "default_price": 3,
+    "quantity": 17
+  },
+  {
+    "name": "Molt Reconstruct",
+    "id": "62a2baebfbd62c00450b71d8",
+    "min_price": 2,
+    "default_price": 3,
+    "quantity": 15
+  },
+  {
+    "name": "Molt Vigor",
+    "id": "626a1978f40db600660a1d7b",
+    "min_price": 2,
+    "default_price": 3,
+    "quantity": 26
+  },
+  {
+    "name": "Arcane Blessing",
+    "id": "63886517e7c988007b5bd512",
+    "min_price": 2,
+    "default_price": 3,
+    "quantity": 21
+  },
+  {
+    "name": "Arcane Rise",
+    "id": "63886516e7c988007b5bd50b",
+    "min_price": 2,
+    "default_price": 3,
+    "quantity": 21
   }
 ]
