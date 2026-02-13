@@ -528,6 +528,12 @@
     "default_price": 16
   },
   {
+    "name": "Conductive Sphere",
+    "id": "67db60859cec3e52e62523f2",
+    "min_price": 14,
+    "default_price": 16
+  },
+  {
     "name": "Spellbound Harvest",
     "id": "5ea087d3c160d001303f9eda",
     "min_price": 14,
@@ -1075,6 +1081,12 @@
     "default_price": 16
   },
   {
+    "name": "Coil Recharge",
+    "id": "66fd67dc3a826eccf651cd4f",
+    "min_price": 14,
+    "default_price": 16
+  },
+  {
     "name": "Rift Haven",
     "id": "5ce7fd87d23a3b00908c420e",
     "min_price": 14,
@@ -1351,6 +1363,12 @@
     "default_price": 16
   },
   {
+    "name": "Aegis Gale",
+    "id": "66fd67d13a826eccf651cd4d",
+    "min_price": 14,
+    "default_price": 16
+  },
+  {
     "name": "Arcane Bellicose",
     "id": "675c5edc7b18977f6e6453f4",
     "min_price": 2,
@@ -1384,6 +1402,104 @@
     "min_price": 2,
     "default_price": 3,
     "quantity": 17
+  },
+  {
+    "name": "Melee Doughty",
+    "id": "675c5cd97b18977f6e6453f0",
+    "min_price": 2,
+    "default_price": 3,
+    "quantity": 17
+  },
+  {
+    "name": "Primary Crux",
+    "id": "675c59347b18977f6e6453ec",
+    "min_price": 2,
+    "default_price": 3,
+    "quantity": 17
+  },
+  {
+    "name": "Secondary Enervate",
+    "id": "675c5cd07b18977f6e6453ee",
+    "min_price": 2,
+    "default_price": 3,
+    "quantity": 17
+  },
+  {
+    "name": "Cascadia Accuracy",
+    "id": "62af145e5d2dab0054229040",
+    "min_price": 2,
+    "default_price": 3,
+    "quantity": 26
+  },
+  {
+    "name": "Cascadia Empowered",
+    "id": "62af145c5d2dab0054229038",
+    "min_price": 2,
+    "default_price": 3,
+    "quantity": 17
+  },
+  {
+    "name": "Cascadia Flare",
+    "id": "62af145d5d2dab005422903c",
+    "min_price": 2,
+    "default_price": 3,
+    "quantity": 24
+  },
+  {
+    "name": "Cascadia Overcharge",
+    "id": "626a197bf40db600660a1d8b",
+    "min_price": 2,
+    "default_price": 3,
+    "quantity": 13
+  },
+  {
+    "name": "Emergence Dissipate",
+    "id": "626a1978f40db600660a1d7a",
+    "min_price": 2,
+    "default_price": 3,
+    "quantity": 13
+  },
+  {
+    "name": "Emergence Renewed",
+    "id": "626a1979f40db600660a1d81",
+    "min_price": 2,
+    "default_price": 3,
+    "quantity": 17
+  },
+  {
+    "name": "Emergence Savior",
+    "id": "626a197bf40db600660a1d88",
+    "min_price": 2,
+    "default_price": 3,
+    "quantity": 26
+  },
+  {
+    "name": "Eternal Eradicate",
+    "id": "626a197af40db600660a1d83",
+    "min_price": 2,
+    "default_price": 3,
+    "quantity": 26
+  },
+  {
+    "name": "Eternal Logistics",
+    "id": "62a2baebfbd62c00450b71db",
+    "min_price": 2,
+    "default_price": 3,
+    "quantity": 15
+  },
+  {
+    "name": "Eternal Onslaught",
+    "id": "62a2b833a554aa00a86de35c",
+    "min_price": 2,
+    "default_price": 3,
+    "quantity": 24
+  },
+  {
+    "name": "Fractalized Reset",
+    "id": "62af145c5d2dab005422903a",
+    "min_price": 2,
+    "default_price": 3,
+    "quantity": 26
   },
   {
     "name": "Molt Augmented",
@@ -1423,6 +1539,20 @@
   {
     "name": "Arcane Rise",
     "id": "63886516e7c988007b5bd50b",
+    "min_price": 2,
+    "default_price": 3,
+    "quantity": 21
+  },
+  {
+    "name": "Primary Frostbite",
+    "id": "63886516e7c988007b5bd50a",
+    "min_price": 2,
+    "default_price": 3,
+    "quantity": 21
+  },
+  {
+    "name": "Conjuction Voltage",
+    "id": "63886516e7c988007b5bd509",
     "min_price": 2,
     "default_price": 3,
     "quantity": 21
