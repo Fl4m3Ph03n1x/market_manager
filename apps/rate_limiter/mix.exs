@@ -14,10 +14,22 @@ defmodule RateLimiter.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       deps: deps(),
       test_coverage: [tool: ExCoveralls],
-      preferred_cli_env: preferred_cli_env(),
       aliases: aliases()
     ]
   end
+
+  def cli,
+    do: [
+      preferred_envs: [
+        "test.unit": :test,
+        "test.integration": :test,
+        coveralls: :test,
+        "coveralls.detail": :test,
+        "coveralls.post": :test,
+        "coveralls.html": :test,
+        "coveralls.github": :test
+      ]
+    ]
 
   # Run "mix help compile.app" to learn about applications.
   def application do
@@ -38,17 +50,6 @@ defmodule RateLimiter.MixProject do
 
   defp elixirc_paths(:test), do: ["test/support", "lib"]
   defp elixirc_paths(_), do: ["lib"]
-
-  defp preferred_cli_env,
-    do: [
-      "test.unit": :test,
-      "test.integration": :test,
-      coveralls: :test,
-      "coveralls.detail": :test,
-      "coveralls.post": :test,
-      "coveralls.html": :test,
-      "coveralls.github": :test
-    ]
 
   defp aliases,
     do: [

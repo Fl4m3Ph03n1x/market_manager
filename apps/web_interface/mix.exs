@@ -15,10 +15,20 @@ defmodule WebInterface.MixProject do
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps(),
-      test_coverage: [tool: ExCoveralls],
-      preferred_cli_env: preferred_cli_env()
+      test_coverage: [tool: ExCoveralls]
     ]
   end
+
+  def cli,
+    do: [
+      preferred_envs: [
+        coveralls: :test,
+        "coveralls.detail": :test,
+        "coveralls.post": :test,
+        "coveralls.html": :test,
+        "coveralls.github": :test
+      ]
+    ]
 
   # Configuration for the OTP application.
   #
@@ -61,15 +71,6 @@ defmodule WebInterface.MixProject do
       {:shared, in_umbrella: true}
     ]
   end
-
-  defp preferred_cli_env,
-    do: [
-      coveralls: :test,
-      "coveralls.detail": :test,
-      "coveralls.post": :test,
-      "coveralls.html": :test,
-      "coveralls.github": :test
-    ]
 
   # Aliases are shortcuts or tasks specific to the current project.
   #
