@@ -12,10 +12,20 @@ defmodule Shared.MixProject do
       elixir: "~> 1.18",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      test_coverage: [tool: ExCoveralls],
-      preferred_cli_env: preferred_cli_env()
+      test_coverage: [tool: ExCoveralls]
     ]
   end
+
+  def cli,
+    do: [
+      preferred_envs: [
+        coveralls: :test,
+        "coveralls.detail": :test,
+        "coveralls.post": :test,
+        "coveralls.html": :test,
+        "coveralls.github": :test
+      ]
+    ]
 
   # Run "mix help compile.app" to learn about applications.
   def application do
@@ -36,13 +46,4 @@ defmodule Shared.MixProject do
       {:gradient, github: "esl/gradient", only: [:dev, :test], runtime: false}
     ]
   end
-
-  defp preferred_cli_env,
-    do: [
-      coveralls: :test,
-      "coveralls.detail": :test,
-      "coveralls.post": :test,
-      "coveralls.html": :test,
-      "coveralls.github": :test
-    ]
 end

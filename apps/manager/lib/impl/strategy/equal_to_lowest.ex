@@ -17,12 +17,13 @@ defmodule Manager.Impl.Strategy.EqualToLowest do
   end
 
   @impl StrategyInterface
-  def info, do:
-    Strategy.new(
-      name: "Equal to lowest",
-      id: StrategyInterface.module_to_id(__MODULE__),
-      description: "Gets the lowest price for the given item and uses it."
-    )
+  def info,
+    do:
+      Strategy.new(
+        name: "Equal to lowest",
+        id: StrategyInterface.module_to_id(__MODULE__),
+        description: "Gets the lowest price for the given item and uses it."
+      )
 
   @spec platinum(OrderInfo.t()) :: pos_integer
   defp platinum(order), do: order.platinum

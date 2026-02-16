@@ -18,12 +18,13 @@ defmodule Manager.Impl.Strategy.TopFiveAverage do
   end
 
   @impl StrategyInterface
-  def info, do:
-    Strategy.new(
-      name: "Top 5 Average",
-      id: StrategyInterface.module_to_id(__MODULE__),
-      description: "Gets the 5 lowest prices for the given item and calculates the average."
-    )
+  def info,
+    do:
+      Strategy.new(
+        name: "Top 5 Average",
+        id: StrategyInterface.module_to_id(__MODULE__),
+        description: "Gets the 5 lowest prices for the given item and calculates the average."
+      )
 
   @spec platinum(OrderInfo.t()) :: pos_integer
   defp platinum(order), do: order.platinum

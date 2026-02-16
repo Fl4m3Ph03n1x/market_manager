@@ -17,12 +17,13 @@ defmodule Manager.Impl.Strategy.LowestMinusOne do
   end
 
   @impl StrategyInterface
-  def info, do:
-    Strategy.new(
-      name: "Lowest minus one",
-      id: StrategyInterface.module_to_id(__MODULE__),
-      description: "Gets the lowest price for the given item and beats it by 1."
-    )
+  def info,
+    do:
+      Strategy.new(
+        name: "Lowest minus one",
+        id: StrategyInterface.module_to_id(__MODULE__),
+        description: "Gets the lowest price for the given item and beats it by 1."
+      )
 
   @spec platinum_minus_one(OrderInfo.t()) :: pos_integer
   defp platinum_minus_one(%OrderInfo{platinum: platinum}) when platinum <= 1, do: 1

@@ -13,12 +13,13 @@ defmodule Manager.Impl.Strategy do
   ##########
 
   @spec module_to_id(module) :: atom
-  def module_to_id(module_name), do:
-    module_name
-    |> Module.split()
-    |> List.last()
-    |> Macro.underscore()
-    |> String.to_atom()
+  def module_to_id(module_name),
+    do:
+      module_name
+      |> Module.split()
+      |> List.last()
+      |> Macro.underscore()
+      |> String.to_atom()
 
   @spec id_to_module(atom) :: module
   def id_to_module(id) do

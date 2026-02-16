@@ -940,6 +940,7 @@ defmodule Manager.WorkerTest do
               assert Map.get(decoded_request, "rank") == 0
               assert Map.get(decoded_request, "type") == "sell"
               assert Map.get(decoded_request, "visible") == true
+
               """
               {
                 "apiVersion": "0.22.7",
@@ -1022,12 +1023,12 @@ defmodule Manager.WorkerTest do
 
     test "deactivate some syndicates that are active and reactivates the remaining ones", %{bypass: bypass} do
       Bypass.expect(bypass, "GET", "/v2/orders/user/fl4m3", fn conn ->
+        # "itemId": "54a74454e779892d5e5155f5" -> "Scattered Justice"
+        # "itemId": "54a74455e779892d5e5156b9" -> "Justice Blades"
+        # "itemId": "54a74454e779892d5e515664" -> "Gilded Truth"
+        # "itemId": "54a74454e779892d5e515645" -> "Blade of Truth"
+        # "itemId": "54a74454e779892d5e5155ee" -> "Entropy Flight"
         body =
-          # "itemId": "54a74454e779892d5e5155f5" -> "Scattered Justice"
-          # "itemId": "54a74455e779892d5e5156b9" -> "Justice Blades"
-          # "itemId": "54a74454e779892d5e515664" -> "Gilded Truth"
-          # "itemId": "54a74454e779892d5e515645" -> "Blade of Truth"
-          # "itemId": "54a74454e779892d5e5155ee" -> "Entropy Flight"
           """
           {
             "apiVersion": "0.22.7",
@@ -1316,97 +1317,97 @@ defmodule Manager.WorkerTest do
 
       Bypass.expect_once(bypass, "GET", "/v2/orders/item/entropy_flight", fn conn ->
         body =
-        """
-        {
-          "apiVersion": "0.22.7",
-          "data": [
-            {
-              "id": "5b585b07f3a59e042c03cf24",
-              "type": "sell",
-              "platinum": 14,
-              "quantity": 1,
-              "perTrade": 1,
-              "rank": 0,
-              "visible": true,
-              "createdAt": "2018-07-25T11:12:07Z",
-              "updatedAt": "2021-02-06T17:06:03Z",
-              "itemId": "54a74454e779892d5e5155ee",
-              "user": {
-                "id": "5b5855dd047f250441454198",
-                "ingameName": "alikis",
-                "slug": "alikis",
-                "avatar": "user/avatar/5b5855dd047f250441454198.png?04fc1fd688d560f1a70db92e7dfd5bfe",
-                "reputation": 7,
-                "platform": "pc",
-                "crossplay": true,
-                "locale": "en",
-                "status": "ingame",
-                "activity": {
-                  "type": "UNKNOWN",
-                  "details": "unknown"
-                },
-                "lastSeen": "2026-02-12T02:24:46Z"
+          """
+          {
+            "apiVersion": "0.22.7",
+            "data": [
+              {
+                "id": "5b585b07f3a59e042c03cf24",
+                "type": "sell",
+                "platinum": 14,
+                "quantity": 1,
+                "perTrade": 1,
+                "rank": 0,
+                "visible": true,
+                "createdAt": "2018-07-25T11:12:07Z",
+                "updatedAt": "2021-02-06T17:06:03Z",
+                "itemId": "54a74454e779892d5e5155ee",
+                "user": {
+                  "id": "5b5855dd047f250441454198",
+                  "ingameName": "alikis",
+                  "slug": "alikis",
+                  "avatar": "user/avatar/5b5855dd047f250441454198.png?04fc1fd688d560f1a70db92e7dfd5bfe",
+                  "reputation": 7,
+                  "platform": "pc",
+                  "crossplay": true,
+                  "locale": "en",
+                  "status": "ingame",
+                  "activity": {
+                    "type": "UNKNOWN",
+                    "details": "unknown"
+                  },
+                  "lastSeen": "2026-02-12T02:24:46Z"
+                }
+              },
+              {
+                "id": "5d287a9249d0a800955d5fc0",
+                "type": "sell",
+                "platinum": 15,
+                "quantity": 1,
+                "perTrade": 1,
+                "rank": 3,
+                "visible": true,
+                "createdAt": "2019-07-12T12:18:26Z",
+                "updatedAt": "2026-02-04T15:27:33Z",
+                "itemId": "54a74454e779892d5e5155ee",
+                "user": {
+                  "id": "5c6a8a5024e70a06bb24f217",
+                  "ingameName": "iRobot396",
+                  "slug": "irobot396",
+                  "reputation": 13,
+                  "platform": "pc",
+                  "crossplay": true,
+                  "locale": "en",
+                  "status": "ingame",
+                  "activity": {
+                    "type": "UNKNOWN",
+                    "details": "unknown"
+                  },
+                  "lastSeen": "2026-02-12T11:13:27Z"
+                }
+              },
+              {
+                "id": "5f7e2984fb02fe027ba66363",
+                "type": "sell",
+                "platinum": 100,
+                "quantity": 3,
+                "perTrade": 1,
+                "rank": 3,
+                "visible": true,
+                "createdAt": "2020-10-07T20:48:04Z",
+                "updatedAt": "2023-09-14T03:45:36Z",
+                "itemId": "54a74454e779892d5e5155ee",
+                "user": {
+                  "id": "5b34e9633048b2074d1f329a",
+                  "ingameName": "-AoD-choobie",
+                  "slug": "aod-choobie",
+                  "avatar": "user/avatar/5b34e9633048b2074d1f329a.png?b08ea71aa1121c7c8a121a26e7bc1bc9",
+                  "reputation": 3778,
+                  "platform": "pc",
+                  "crossplay": true,
+                  "locale": "en",
+                  "status": "ingame",
+                  "activity": {
+                    "type": "UNKNOWN",
+                    "details": "unknown"
+                  },
+                  "lastSeen": "2026-02-12T07:17:05Z"
+                }
               }
-            },
-            {
-              "id": "5d287a9249d0a800955d5fc0",
-              "type": "sell",
-              "platinum": 15,
-              "quantity": 1,
-              "perTrade": 1,
-              "rank": 3,
-              "visible": true,
-              "createdAt": "2019-07-12T12:18:26Z",
-              "updatedAt": "2026-02-04T15:27:33Z",
-              "itemId": "54a74454e779892d5e5155ee",
-              "user": {
-                "id": "5c6a8a5024e70a06bb24f217",
-                "ingameName": "iRobot396",
-                "slug": "irobot396",
-                "reputation": 13,
-                "platform": "pc",
-                "crossplay": true,
-                "locale": "en",
-                "status": "ingame",
-                "activity": {
-                  "type": "UNKNOWN",
-                  "details": "unknown"
-                },
-                "lastSeen": "2026-02-12T11:13:27Z"
-              }
-            },
-            {
-              "id": "5f7e2984fb02fe027ba66363",
-              "type": "sell",
-              "platinum": 100,
-              "quantity": 3,
-              "perTrade": 1,
-              "rank": 3,
-              "visible": true,
-              "createdAt": "2020-10-07T20:48:04Z",
-              "updatedAt": "2023-09-14T03:45:36Z",
-              "itemId": "54a74454e779892d5e5155ee",
-              "user": {
-                "id": "5b34e9633048b2074d1f329a",
-                "ingameName": "-AoD-choobie",
-                "slug": "aod-choobie",
-                "avatar": "user/avatar/5b34e9633048b2074d1f329a.png?b08ea71aa1121c7c8a121a26e7bc1bc9",
-                "reputation": 3778,
-                "platform": "pc",
-                "crossplay": true,
-                "locale": "en",
-                "status": "ingame",
-                "activity": {
-                  "type": "UNKNOWN",
-                  "details": "unknown"
-                },
-                "lastSeen": "2026-02-12T07:17:05Z"
-              }
-            }
-          ],
-          "error": null
-        }
-        """
+            ],
+            "error": null
+          }
+          """
 
         conn
         |> Plug.Conn.put_resp_header(
@@ -1428,13 +1429,13 @@ defmodule Manager.WorkerTest do
         decoded_request_body = Jason.decode!(json_request_body)
 
         assert decoded_request_body == %{
-          "itemId" => "54a74454e779892d5e5155ee",
-          "type" => "sell",
-          "visible" => true,
-          "platinum" => 14,
-          "quantity" => 1,
-          "rank" => 0
-        }
+                 "itemId" => "54a74454e779892d5e5155ee",
+                 "type" => "sell",
+                 "visible" => true,
+                 "platinum" => 14,
+                 "quantity" => 1,
+                 "rank" => 0
+               }
 
         response =
           """
@@ -1532,7 +1533,10 @@ defmodule Manager.WorkerTest do
       _manager_pid = start_supervised(ManagerSupervisor)
       :ok = Manager.login(credentials, false)
 
-      assert_receive({:login, {:ok, %User{patreon?: false, ingame_name: "Fl4m3Ph03n1x", slug: "fl4m3ph03n1x"}}}, @timeout)
+      assert_receive(
+        {:login, {:ok, %User{patreon?: false, ingame_name: "Fl4m3Ph03n1x", slug: "fl4m3ph03n1x"}}},
+        @timeout
+      )
     end
 
     test "logs in user correctly when there is previous login data", %{credentials: credentials} do

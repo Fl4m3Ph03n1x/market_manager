@@ -13,10 +13,23 @@ defmodule Store.MixProject do
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       test_coverage: [tool: ExCoveralls],
-      preferred_cli_env: preferred_cli_env(),
       aliases: aliases()
     ]
   end
+
+  def cli,
+    do: [
+      preferred_envs: [
+        "test.unit": :test,
+        "test.integration": :test,
+        "test.watch": :test,
+        coveralls: :test,
+        "coveralls.detail": :test,
+        "coveralls.post": :test,
+        "coveralls.html": :test,
+        "coveralls.github": :test
+      ]
+    ]
 
   def application do
     [
@@ -33,18 +46,6 @@ defmodule Store.MixProject do
       {:mix_test_watch, "~> 1.0", only: [:dev, :test], runtime: false}
     ]
   end
-
-  defp preferred_cli_env,
-    do: [
-      "test.unit": :test,
-      "test.integration": :test,
-      "test.watch": :test,
-      coveralls: :test,
-      "coveralls.detail": :test,
-      "coveralls.post": :test,
-      "coveralls.html": :test,
-      "coveralls.github": :test
-    ]
 
   defp aliases,
     do: [

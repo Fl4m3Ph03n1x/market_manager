@@ -9,7 +9,7 @@ defmodule Shared.Data.Product do
 
   import Shared.Utils.ExtraGuards
 
-  alias Shared.Utils.Structs
+  alias Jason
 
   @type id :: String.t()
   @type name :: String.t()
@@ -18,27 +18,30 @@ defmodule Shared.Data.Product do
   @type quantity :: pos_integer()
   @type rank :: non_neg_integer() | String.t()
 
-  @type product ::
-          %{
-            (name :: String.t()) => String.t(),
-            (id :: String.t()) => String.t(),
-            (min_price :: String.t()) => pos_integer(),
-            (default_price :: String.t()) => pos_integer(),
-            (quantity :: String.t()) => pos_integer(),
-            (rank :: String.t()) => non_neg_integer() | String.t()
-          }
-          | %{
-              (name :: String.t()) => String.t(),
-              (id :: String.t()) => String.t(),
-              (min_price :: String.t()) => pos_integer(),
-              (default_price :: String.t()) => pos_integer()
-            }
-          | [
-              name: String.t(),
-              id: String.t(),
-              min_price: pos_integer(),
-              default_price: pos_integer()
-            ]
+  @type mod_without_rank :: %{
+          (name :: String.t()) => String.t(),
+          (id :: String.t()) => String.t(),
+          (min_price :: String.t()) => pos_integer(),
+          (default_price :: String.t()) => pos_integer(),
+          (rank :: String.t()) => String.t()
+        }
+
+  @type mod :: %{
+          (name :: String.t()) => String.t(),
+          (id :: String.t()) => String.t(),
+          (min_price :: String.t()) => pos_integer(),
+          (default_price :: String.t()) => pos_integer()
+        }
+
+  @type arcane :: %{
+          (name :: String.t()) => String.t(),
+          (id :: String.t()) => String.t(),
+          (min_price :: String.t()) => pos_integer(),
+          (default_price :: String.t()) => pos_integer(),
+          (quantity :: String.t()) => pos_integer()
+        }
+
+  @type product :: mod() | mod_without_rank() | arcane()
 
   @derive Jason.Encoder
   typedstruct enforce: true do
@@ -53,20 +56,42 @@ defmodule Shared.Data.Product do
   end
 
   @spec new(product()) :: __MODULE__.t()
-  def new(
-        %{
-          "name" => name,
-          "id" => id,
-          "min_price" => min_price,
-          "default_price" => default_price,
-          "rank" => rank
-        } = product
-      )
+  def new(%{
+        "name" => name,
+        "id" => id,
+        "min_price" => min_price,
+        "default_price" => default_price,
+        "rank" => "n/a"
+      })
       when is_binary(name) and is_binary(id) and is_pos_integer(min_price) and
-             is_pos_integer(default_price) and (is_non_neg_integer(rank) or is_binary(rank)) do
-    product
-    |> Map.put("quantity", 1)
-    |> Structs.string_map_to_struct(__MODULE__)
+             is_pos_integer(default_price) do
+    %__MODULE__{
+      name: name,
+      id: id,
+      min_price: min_price,
+      default_price: default_price,
+      quantity: 1,
+      rank: "n/a"
+    }
+  end
+
+  def new(%{
+        "name" => name,
+        "id" => id,
+        "min_price" => min_price,
+        "default_price" => default_price,
+        "quantity" => quantity
+      })
+      when is_binary(name) and is_binary(id) and is_pos_integer(min_price) and
+             is_pos_integer(default_price) and is_pos_integer(quantity) do
+    %__MODULE__{
+      name: name,
+      id: id,
+      min_price: min_price,
+      default_price: default_price,
+      quantity: quantity,
+      rank: 0
+    }
   end
 
   def new(%{
@@ -77,19 +102,13 @@ defmodule Shared.Data.Product do
       })
       when is_binary(name) and is_binary(id) and is_pos_integer(min_price) and
              is_pos_integer(default_price) do
-    __MODULE__.new(%{
-      "name" => name,
-      "id" => id,
-      "min_price" => min_price,
-      "default_price" => default_price,
-      "quantity" => 1,
-      "rank" => 0
-    })
-  end
-
-  def new([name: name, id: id, min_price: min_price, default_price: default_price] = product)
-      when is_binary(name) and is_binary(id) and is_pos_integer(min_price) and
-             is_pos_integer(default_price) do
-    struct(__MODULE__, product ++ [quantity: 1, rank: 0])
+    %__MODULE__{
+      name: name,
+      id: id,
+      min_price: min_price,
+      default_price: default_price,
+      quantity: 1,
+      rank: 0
+    }
   end
 end
