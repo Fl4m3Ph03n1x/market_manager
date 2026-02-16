@@ -5,12 +5,24 @@ defmodule Shared.Data.Order do
   information.
   """
 
-  alias __MODULE__.{RankedOrder, SimpleOrder}
+  alias __MODULE__.{ArcaneOrder, RankedOrder, SimpleOrder}
 
-  @type order :: RankedOrder.ranked_order() | SimpleOrder.simple_order()
-  @type t :: SimpleOrder.t() | RankedOrder.t()
+  @type order ::
+          RankedOrder.ranked_order() | SimpleOrder.simple_order() | ArcaneOrder.arcane_order()
+  @type t :: SimpleOrder.t() | RankedOrder.t() | ArcaneOrder.t()
 
   @spec new(order) :: t()
+  def new(
+        %{
+          "item_id" => _item_id,
+          "order_type" => _order_type,
+          "platinum" => _platinum,
+          "quantity" => _quantity,
+          "per_trade" => _per_trade
+        } = order
+      ),
+      do: ArcaneOrder.new(order)
+
   def new(
         %{
           "item_id" => _item_id,

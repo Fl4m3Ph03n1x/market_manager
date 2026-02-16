@@ -1459,132 +1459,151 @@
     "id": "62af145e5d2dab0054229040",
     "min_price": 2,
     "default_price": 3,
-    "quantity": 26
+    "quantity": 26,
+    "per_trade": 1
   },
   {
     "name": "Cascadia Empowered",
     "id": "62af145c5d2dab0054229038",
     "min_price": 2,
     "default_price": 3,
-    "quantity": 17
+    "quantity": 17,
+    "per_trade": 1
   },
   {
     "name": "Cascadia Flare",
     "id": "62af145d5d2dab005422903c",
     "min_price": 2,
     "default_price": 3,
-    "quantity": 24
+    "quantity": 24,
+    "per_trade": 1
   },
   {
     "name": "Cascadia Overcharge",
     "id": "626a197bf40db600660a1d8b",
     "min_price": 2,
     "default_price": 3,
-    "quantity": 13
+    "quantity": 13,
+    "per_trade": 1
   },
   {
     "name": "Emergence Dissipate",
     "id": "626a1978f40db600660a1d7a",
     "min_price": 2,
     "default_price": 3,
-    "quantity": 13
+    "quantity": 13,
+    "per_trade": 1
   },
   {
     "name": "Emergence Renewed",
     "id": "626a1979f40db600660a1d81",
     "min_price": 2,
     "default_price": 3,
-    "quantity": 17
+    "quantity": 17,
+    "per_trade": 1
   },
   {
     "name": "Emergence Savior",
     "id": "626a197bf40db600660a1d88",
     "min_price": 2,
     "default_price": 3,
-    "quantity": 26
+    "quantity": 26,
+    "per_trade": 1
   },
   {
     "name": "Eternal Eradicate",
     "id": "626a197af40db600660a1d83",
     "min_price": 2,
     "default_price": 3,
-    "quantity": 26
+    "quantity": 26,
+    "per_trade": 1
   },
   {
     "name": "Eternal Logistics",
     "id": "62a2baebfbd62c00450b71db",
     "min_price": 2,
     "default_price": 3,
-    "quantity": 15
+    "quantity": 15,
+    "per_trade": 1
   },
   {
     "name": "Eternal Onslaught",
     "id": "62a2b833a554aa00a86de35c",
     "min_price": 2,
     "default_price": 3,
-    "quantity": 24
+    "quantity": 24,
+    "per_trade": 1
   },
   {
     "name": "Fractalized Reset",
     "id": "62af145c5d2dab005422903a",
     "min_price": 2,
     "default_price": 3,
-    "quantity": 26
+    "quantity": 26,
+    "per_trade": 1
   },
   {
     "name": "Molt Augmented",
     "id": "62a2baebfbd62c00450b71d9",
     "min_price": 2,
     "default_price": 3,
-    "quantity": 13
+    "quantity": 13,
+    "per_trade": 1
   },
   {
     "name": "Molt Efficiency",
     "id": "626a197af40db600660a1d87",
     "min_price": 2,
     "default_price": 3,
-    "quantity": 17
+    "quantity": 17,
+    "per_trade": 1
   },
   {
     "name": "Molt Reconstruct",
     "id": "62a2baebfbd62c00450b71d8",
     "min_price": 2,
     "default_price": 3,
-    "quantity": 15
+    "quantity": 15,
+    "per_trade": 1
   },
   {
     "name": "Molt Vigor",
     "id": "626a1978f40db600660a1d7b",
     "min_price": 2,
     "default_price": 3,
-    "quantity": 26
+    "quantity": 26,
+    "per_trade": 1
   },
   {
     "name": "Arcane Blessing",
     "id": "63886517e7c988007b5bd512",
     "min_price": 2,
     "default_price": 3,
-    "quantity": 21
+    "quantity": 21,
+    "per_trade": 1
   },
   {
     "name": "Arcane Rise",
     "id": "63886516e7c988007b5bd50b",
     "min_price": 2,
     "default_price": 3,
-    "quantity": 21
+    "quantity": 21,
+    "per_trade": 1
   },
   {
     "name": "Primary Frostbite",
     "id": "63886516e7c988007b5bd50a",
     "min_price": 2,
     "default_price": 3,
-    "quantity": 21
+    "quantity": 21,
+    "per_trade": 1
   },
   {
     "name": "Conjunction Voltage",
     "id": "63886516e7c988007b5bd509",
     "min_price": 2,
     "default_price": 3,
-    "quantity": 21
+    "quantity": 21,
+    "per_trade": 1
   }
 ]

@@ -297,22 +297,32 @@ defmodule Manager.Saga.Activate do
     do: length(total_products)
 
   @spec build_order(Product.t(), price()) :: Order.t()
-  defp build_order(%Product{rank: "n/a"} = product, price),
-    do:
-      Order.new(%{
-        "order_type" => "sell",
-        "item_id" => product.id,
-        "platinum" => price,
-        "quantity" => product.quantity
-      })
+  defp build_order(%Product{rank: "n/a"} = product, price) do
+    Order.new(%{
+      "order_type" => "sell",
+      "item_id" => product.id,
+      "platinum" => price,
+      "quantity" => product.quantity
+    })
+  end
 
-  defp build_order(%Product{} = product, price),
-    do:
-      Order.new(%{
-        "order_type" => "sell",
-        "item_id" => product.id,
-        "platinum" => price,
-        "quantity" => product.quantity,
-        "mod_rank" => product.rank
-      })
+  defp build_order(%Product{per_trade: per_trade} = product, price) when not is_nil(per_trade) do
+    Order.new(%{
+      "order_type" => "sell",
+      "item_id" => product.id,
+      "platinum" => price,
+      "quantity" => product.quantity,
+      "per_trade" => product.per_trade
+    })
+  end
+
+  defp build_order(%Product{} = product, price) do
+    Order.new(%{
+      "order_type" => "sell",
+      "item_id" => product.id,
+      "platinum" => price,
+      "quantity" => product.quantity,
+      "mod_rank" => product.rank
+    })
+  end
 end

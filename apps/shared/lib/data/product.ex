@@ -16,6 +16,7 @@ defmodule Shared.Data.Product do
   @type min_price :: pos_integer()
   @type default_price :: pos_integer()
   @type quantity :: pos_integer()
+  @type per_trade :: pos_integer()
   @type rank :: non_neg_integer() | String.t()
 
   @type mod_without_rank :: %{
@@ -38,21 +39,23 @@ defmodule Shared.Data.Product do
           (id :: String.t()) => String.t(),
           (min_price :: String.t()) => pos_integer(),
           (default_price :: String.t()) => pos_integer(),
-          (quantity :: String.t()) => pos_integer()
+          (quantity :: String.t()) => pos_integer(),
+          (per_trade :: String.t()) => pos_integer()
         }
 
   @type product :: mod() | mod_without_rank() | arcane()
 
   @derive Jason.Encoder
-  typedstruct enforce: true do
+  typedstruct do
     @typedoc "Product details"
 
-    field(:name, name())
-    field(:id, id())
-    field(:min_price, min_price())
-    field(:default_price, default_price())
-    field(:quantity, quantity())
-    field(:rank, rank())
+    field(:name, name(), enforce: true)
+    field(:id, id(), enforce: true)
+    field(:min_price, min_price(), enforce: true)
+    field(:default_price, default_price(), enforce: true)
+    field(:quantity, quantity(), enforce: true)
+    field(:rank, rank(), enforce: true)
+    field(:per_trade, per_trade())
   end
 
   @spec new(product()) :: __MODULE__.t()
@@ -80,17 +83,20 @@ defmodule Shared.Data.Product do
         "id" => id,
         "min_price" => min_price,
         "default_price" => default_price,
-        "quantity" => quantity
+        "quantity" => quantity,
+        "per_trade" => per_trade
       })
       when is_binary(name) and is_binary(id) and is_pos_integer(min_price) and
-             is_pos_integer(default_price) and is_pos_integer(quantity) do
+             is_pos_integer(default_price) and is_pos_integer(quantity) and
+             is_pos_integer(per_trade) do
     %__MODULE__{
       name: name,
       id: id,
       min_price: min_price,
       default_price: default_price,
       quantity: quantity,
-      rank: 0
+      rank: 0,
+      per_trade: per_trade
     }
   end
 
