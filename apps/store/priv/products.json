@@ -1369,6 +1369,36 @@
     "default_price": 16
   },
   {
+    "name": "Dark Propagation",
+    "id": "667238a28ba7c81b70d02cba",
+    "min_price": 14,
+    "default_price": 16
+  },
+  {
+    "name": "Razor Mortar",
+    "id": "685d4fdbf41598dddb4cc2f8",
+    "min_price": 14,
+    "default_price": 16
+  },
+  {
+    "name": "Reverse Rotorswell",
+    "id": "68efbab189984fb97a33aa37",
+    "min_price": 14,
+    "default_price": 16
+  },
+  {
+    "name": "Spectral Spirit",
+    "id": "667238d78ba7c81b70d02cbe",
+    "min_price": 14,
+    "default_price": 16
+  },
+  {
+    "name": "Temporal Artillery",
+    "id": "667238bc8ba7c81b70d02cbc",
+    "min_price": 14,
+    "default_price": 16
+  },
+  {
     "name": "Arcane Bellicose",
     "id": "675c5edc7b18977f6e6453f4",
     "min_price": 2,
