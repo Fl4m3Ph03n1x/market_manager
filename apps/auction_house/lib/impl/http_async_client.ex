@@ -160,6 +160,8 @@ defmodule AuctionHouse.Impl.HttpAsyncClient do
 
   defp parse({:ok, %HTTPoison.Response{status_code: 500}}), do: {:error, :internal_server_error}
 
+  defp parse({:ok, %HTTPoison.Response{status_code: 502}}), do: {:error, :bad_gateway}
+
   defp parse({:error, %HTTPoison.Error{id: _id, reason: reason}}), do: {:error, reason}
 
   @spec map_error(body()) ::
