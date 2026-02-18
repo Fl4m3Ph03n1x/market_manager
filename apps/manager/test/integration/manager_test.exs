@@ -387,7 +387,7 @@ defmodule Manager.WorkerTest do
       # get current user orders
       Bypass.expect(bypass, "GET", "/v2/orders/user/fl4m3", fn conn ->
         # "itemId": "54e644ffe779897594fa68d2" -> Abating Link
-        # "itemId": "5ecd08d704d55c0806f85348" -> Abundant Mutation
+
         body =
           """
           {
@@ -404,18 +404,6 @@ defmodule Manager.WorkerTest do
                 "createdAt": "2026-02-12T10:44:42Z",
                 "updatedAt": "2026-02-12T10:44:42Z",
                 "itemId": "54e644ffe779897594fa68d2"
-              },
-              {
-                "id": "698daf27a7a2008a73b1c164",
-                "type": "sell",
-                "platinum": 17,
-                "quantity": 1,
-                "perTrade": 1,
-                "rank": 0,
-                "visible": true,
-                "createdAt": "2026-02-12T10:44:55Z",
-                "updatedAt": "2026-02-12T10:44:55Z",
-                "itemId": "5ecd08d704d55c0806f85348"
               }
             ],
             "error": null
