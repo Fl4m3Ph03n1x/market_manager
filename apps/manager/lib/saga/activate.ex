@@ -24,7 +24,7 @@ defmodule Manager.Saga.Activate do
     auction_house: AuctionHouse
   }
 
-  @non_patreon_order_limit 100
+  @non_patreon_order_limit Application.compile_env!(:manager, :non_patreon_order_limit)
 
   ##########
   # Client #
@@ -209,6 +209,7 @@ defmodule Manager.Saga.Activate do
     orders_placed =
       product_prices
       |> Enum.to_list()
+      |> Enum.uniq_by(fn {product, _price} -> product.id end)
       |> Enum.sort(fn {_product_1, price_1}, {_product_2, price_2} ->
         price_1 >= price_2
       end)
@@ -273,6 +274,11 @@ defmodule Manager.Saga.Activate do
     else
       {:noreply, updated_state}
     end
+  end
+
+  def handle_info({:activate, {:error, _msg}} = error, %{from: from} = state) do
+    send(from, error)
+    {:noreply, state}
   end
 
   ###########

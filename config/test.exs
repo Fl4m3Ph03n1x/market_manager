@@ -26,3 +26,6 @@ config :auction_house,
 config :rate_limiter,
   algorithm: RateLimiter.LeakyBucket,
   requests_per_second: 100
+
+config :manager,
+  non_patreon_order_limit: 5

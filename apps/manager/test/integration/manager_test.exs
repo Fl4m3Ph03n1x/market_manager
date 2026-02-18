@@ -991,6 +991,587 @@ defmodule Manager.WorkerTest do
       assert Manager.active_syndicates() ==
                {:ok, %{steel_meridian: :top_five_average, arbiters_of_hexis: :top_three_average}}
     end
+
+    test "activates a syndicate with less items if user already has sell orders placed", %{bypass: bypass} do
+      # get current user orders
+      Bypass.expect(bypass, "GET", "/v2/orders/user/fl4m3", fn conn ->
+        # "itemId": "54e644ffe779897594fa68d2" -> Abating Link
+        # "itemId": "5ecd08d704d55c0806f85348" -> Abundant Mutation
+        body =
+          """
+          {
+            "apiVersion": "0.22.7",
+            "data": [
+              {
+                "id": "698daf1a6a51e1b3b0f87014",
+                "type": "sell",
+                "platinum": 15,
+                "quantity": 1,
+                "perTrade": 1,
+                "rank": 0,
+                "visible": false,
+                "createdAt": "2026-02-12T10:44:42Z",
+                "updatedAt": "2026-02-12T10:44:42Z",
+                "itemId": "54e644ffe779897594fa68d2"
+              },
+              {
+                "id": "698daf27a7a2008a73b1c164",
+                "type": "sell",
+                "platinum": 17,
+                "quantity": 1,
+                "perTrade": 1,
+                "rank": 0,
+                "visible": false,
+                "createdAt": "2026-02-12T10:44:55Z",
+                "updatedAt": "2026-02-12T10:44:55Z",
+                "itemId": "5ecd08d704d55c0806f85348"
+              }
+            ],
+            "error": null
+          }
+          """
+
+        conn
+        |> Conn.put_resp_header(
+          "Set-Cookie",
+          "JWT=old_cookie; Domain=.warframe.market; Expires=Tue, 21-Mar-2023 15:16:03 GMT; Secure; HttpOnly; Path=/; SameSite=Lax"
+        )
+        |> Conn.put_resp_header("content-type", "application/json")
+        |> Conn.resp(200, body)
+      end)
+
+      # get current sell order for item
+      Bypass.expect_once(bypass, "GET", "/v2/orders/item/scattered_justice", fn conn ->
+        body =
+          """
+          {
+            "apiVersion": "0.22.7",
+            "data": [
+              {
+                "id": "57ddaebfd3ffb614b4c30a26",
+                "type": "sell",
+                "platinum": 8,
+                "quantity": 1,
+                "perTrade": 1,
+                "rank": 0,
+                "visible": true,
+                "createdAt": "2016-09-17T20:59:43Z",
+                "updatedAt": "2025-05-26T16:44:40Z",
+                "itemId": "54a74454e779892d5e5155f5",
+                "user": {
+                  "id": "55e4a699e7798970d227aee2",
+                  "ingameName": "AdeptFly",
+                  "slug": "adeptfly",
+                  "avatar": "user/avatar/55e4a699e7798970d227aee2.png?8508d4b5c7e15fe6eb06f5c658e1df19",
+                  "reputation": 71,
+                  "platform": "pc",
+                  "crossplay": true,
+                  "locale": "en",
+                  "status": "ingame",
+                  "activity": {
+                    "type": "UNKNOWN",
+                    "details": "unknown"
+                  },
+                  "lastSeen": "2026-02-11T03:45:47Z"
+                }
+              },
+              {
+                "id": "592bc664d3ffb66d942ad31d",
+                "type": "sell",
+                "platinum": 34,
+                "quantity": 1,
+                "perTrade": 1,
+                "rank": 3,
+                "visible": true,
+                "createdAt": "2017-05-29T06:57:40Z",
+                "updatedAt": "2026-02-02T21:35:51Z",
+                "itemId": "54a74454e779892d5e5155f5",
+                "user": {
+                  "id": "573c35c80f313929c8886c79",
+                  "ingameName": "-Gh0stMan-",
+                  "slug": "gh0stman",
+                  "reputation": 19,
+                  "platform": "pc",
+                  "crossplay": true,
+                  "locale": "en",
+                  "status": "ingame",
+                  "activity": {
+                    "type": "UNKNOWN",
+                    "details": "unknown"
+                  },
+                  "lastSeen": "2026-02-10T21:31:15Z"
+                }
+              },
+              {
+                "id": "59c07a790f31396e83ed709b",
+                "type": "sell",
+                "platinum": 18,
+                "quantity": 992,
+                "perTrade": 1,
+                "rank": 0,
+                "visible": true,
+                "createdAt": "2017-09-19T02:01:29Z",
+                "updatedAt": "2025-06-21T04:03:42Z",
+                "itemId": "54a74454e779892d5e5155f5",
+                "user": {
+                  "id": "5678a156cbfa8f02c9b814c3",
+                  "ingameName": "Ealirinineomh",
+                  "slug": "ealirinineomh",
+                  "avatar": "user/avatar/5678a156cbfa8f02c9b814c3.png?0d832d1017240078ecf4bdeb0d08a101",
+                  "reputation": 2124,
+                  "platform": "pc",
+                  "crossplay": true,
+                  "locale": "en",
+                  "status": "ingame",
+                  "activity": {
+                    "type": "UNKNOWN",
+                    "details": "unknown"
+                  },
+                  "lastSeen": "2026-02-11T07:21:03Z"
+                }
+              }
+            ],
+            "error": null
+          }
+          """
+
+        conn
+        |> Plug.Conn.put_resp_header(
+          "Set-Cookie",
+          "JWT=old_cookie; Domain=.warframe.market; Expires=Tue, 21-Mar-2023 15:16:03 GMT; Secure; HttpOnly; Path=/; SameSite=Lax"
+        )
+        |> Conn.put_resp_header("content-type", "application/json")
+        |> Plug.Conn.resp(200, body)
+      end)
+
+      # get current sell order for item
+      Bypass.expect_once(bypass, "GET", "/v2/orders/item/justice_blades", fn conn ->
+        body =
+          """
+          {
+            "apiVersion": "0.22.7",
+            "data": [
+              {
+                "id": "57ddaed40f313914d250cd87",
+                "type": "sell",
+                "platinum": 8,
+                "quantity": 1,
+                "perTrade": 1,
+                "rank": 0,
+                "visible": true,
+                "createdAt": "2016-09-17T21:00:04Z",
+                "updatedAt": "2025-05-26T16:45:24Z",
+                "itemId": "54a74455e779892d5e5156b9",
+                "user": {
+                  "id": "55e4a699e7798970d227aee2",
+                  "ingameName": "AdeptFly",
+                  "slug": "adeptfly",
+                  "avatar": "user/avatar/55e4a699e7798970d227aee2.png?8508d4b5c7e15fe6eb06f5c658e1df19",
+                  "reputation": 70,
+                  "platform": "pc",
+                  "crossplay": true,
+                  "locale": "en",
+                  "status": "ingame",
+                  "activity": {
+                    "type": "UNKNOWN",
+                    "details": "unknown"
+                  },
+                  "lastSeen": "2026-02-09T03:52:23Z"
+                }
+              },
+              {
+                "id": "592bc66fd3ffb66d8ce464e6",
+                "type": "sell",
+                "platinum": 34,
+                "quantity": 1,
+                "perTrade": 1,
+                "rank": 3,
+                "visible": true,
+                "createdAt": "2017-05-29T06:57:51Z",
+                "updatedAt": "2026-02-02T21:35:34Z",
+                "itemId": "54a74455e779892d5e5156b9",
+                "user": {
+                  "id": "573c35c80f313929c8886c79",
+                  "ingameName": "-Gh0stMan-",
+                  "slug": "gh0stman",
+                  "reputation": 19,
+                  "platform": "pc",
+                  "crossplay": true,
+                  "locale": "en",
+                  "status": "ingame",
+                  "activity": {
+                    "type": "UNKNOWN",
+                    "details": "unknown"
+                  },
+                  "lastSeen": "2026-02-09T15:19:38Z"
+                }
+              },
+              {
+                "id": "598f76440f313951e3167944",
+                "type": "sell",
+                "platinum": 18,
+                "quantity": 999,
+                "perTrade": 1,
+                "rank": 0,
+                "visible": true,
+                "createdAt": "2017-08-12T21:42:28Z",
+                "updatedAt": "2025-06-21T04:03:38Z",
+                "itemId": "54a74455e779892d5e5156b9",
+                "user": {
+                  "id": "5678a156cbfa8f02c9b814c3",
+                  "ingameName": "Ealirinineomh",
+                  "slug": "ealirinineomh",
+                  "avatar": "user/avatar/5678a156cbfa8f02c9b814c3.png?0d832d1017240078ecf4bdeb0d08a101",
+                  "reputation": 2123,
+                  "platform": "pc",
+                  "crossplay": true,
+                  "locale": "en",
+                  "status": "offline",
+                  "activity": {
+                    "type": "UNKNOWN",
+                    "details": "unknown"
+                  },
+                  "lastSeen": "2026-02-09T07:44:15Z"
+                }
+              }
+            ],
+            "error": null
+          }
+          """
+
+        conn
+        |> Plug.Conn.put_resp_header(
+          "Set-Cookie",
+          "JWT=old_cookie; Domain=.warframe.market; Expires=Tue, 21-Mar-2023 15:16:03 GMT; Secure; HttpOnly; Path=/; SameSite=Lax"
+        )
+        |> Conn.put_resp_header("content-type", "application/json")
+        |> Plug.Conn.resp(200, body)
+      end)
+
+      # get current sell order for item
+      Bypass.expect_once(bypass, "GET", "/v2/orders/item/gilded_truth", fn conn ->
+        body =
+          """
+          {
+            "apiVersion": "0.22.7",
+            "data": [
+              {
+                "id": "5f3188fb86284f0106dd9151",
+                "type": "sell",
+                "platinum": 20,
+                "quantity": 1,
+                "perTrade": 1,
+                "rank": 3,
+                "visible": true,
+                "createdAt": "2020-08-10T17:50:51Z",
+                "updatedAt": "2026-02-04T15:33:54Z",
+                "itemId": "54a74454e779892d5e515664",
+                "user": {
+                  "id": "5c6a8a5024e70a06bb24f217",
+                  "ingameName": "iRobot396",
+                  "slug": "irobot396",
+                  "reputation": 13,
+                  "platform": "pc",
+                  "crossplay": true,
+                  "locale": "en",
+                  "status": "offline",
+                  "activity": {
+                    "type": "UNKNOWN",
+                    "details": "unknown"
+                  },
+                  "lastSeen": "2026-02-08T14:27:38Z"
+                }
+              },
+              {
+                "id": "5f7e2649e6527b026b68fe19",
+                "type": "sell",
+                "platinum": 50,
+                "quantity": 1,
+                "perTrade": 1,
+                "rank": 3,
+                "visible": true,
+                "createdAt": "2020-10-07T20:34:17Z",
+                "updatedAt": "2023-09-14T03:48:24Z",
+                "itemId": "54a74454e779892d5e515664",
+                "user": {
+                  "id": "5b34e9633048b2074d1f329a",
+                  "ingameName": "-AoD-choobie",
+                  "slug": "aod-choobie",
+                  "avatar": "user/avatar/5b34e9633048b2074d1f329a.png?b08ea71aa1121c7c8a121a26e7bc1bc9",
+                  "reputation": 3778,
+                  "platform": "pc",
+                  "crossplay": true,
+                  "locale": "en",
+                  "status": "offline",
+                  "activity": {
+                    "type": "UNKNOWN",
+                    "details": "unknown"
+                  },
+                  "lastSeen": "2026-02-09T07:06:36Z"
+                }
+              },
+              {
+                "id": "5f89c2a905bd9703d1396552",
+                "type": "sell",
+                "platinum": 20,
+                "quantity": 97,
+                "perTrade": 1,
+                "rank": 3,
+                "visible": true,
+                "createdAt": "2020-10-16T15:56:25Z",
+                "updatedAt": "2024-10-18T13:49:22Z",
+                "itemId": "54a74454e779892d5e515664",
+                "user": {
+                  "id": "5e3fd7b1f6b99c00ceb3a209",
+                  "ingameName": "murock123",
+                  "slug": "murock123",
+                  "reputation": 20,
+                  "platform": "pc",
+                  "crossplay": true,
+                  "locale": "en",
+                  "status": "offline",
+                  "activity": {
+                    "type": "UNKNOWN",
+                    "details": "unknown"
+                  },
+                  "lastSeen": "2026-02-09T16:14:13Z"
+                }
+              }
+            ],
+            "error": null
+          }
+          """
+
+        conn
+        |> Plug.Conn.put_resp_header(
+          "Set-Cookie",
+          "JWT=old_cookie; Domain=.warframe.market; Expires=Tue, 21-Mar-2023 15:16:03 GMT; Secure; HttpOnly; Path=/; SameSite=Lax"
+        )
+        |> Conn.put_resp_header("content-type", "application/json")
+        |> Plug.Conn.resp(200, body)
+      end)
+
+      # get current sell order for item
+      Bypass.expect_once(bypass, "GET", "/v2/orders/item/blade_of_truth", fn conn ->
+        body =
+          """
+          {
+            "apiVersion": "0.22.7",
+            "data": [
+              {
+                "id": "59f6f221b80847001296269f",
+                "type": "sell",
+                "platinum": 20,
+                "quantity": 1,
+                "perTrade": 1,
+                "rank": 0,
+                "visible": true,
+                "createdAt": "2017-10-30T09:34:25Z",
+                "updatedAt": "2018-07-14T04:45:42Z",
+                "itemId": "54a74454e779892d5e515645",
+                "user": {
+                  "id": "592c48150f31396fd2e2e813",
+                  "ingameName": "..Symbiote.Streak..",
+                  "slug": "symbiote-streak",
+                  "avatar": "user/avatar/592c48150f31396fd2e2e813.png?5a911f9e3ab57097dda337294d5f2f7d",
+                  "reputation": 34,
+                  "platform": "pc",
+                  "crossplay": true,
+                  "locale": "en",
+                  "status": "ingame",
+                  "activity": {
+                    "type": "UNKNOWN",
+                    "details": "unknown"
+                  },
+                  "lastSeen": "2026-02-09T15:54:32Z"
+                }
+              },
+              {
+                "id": "5d4f1064c8c6c90046e4ad01",
+                "type": "sell",
+                "platinum": 24,
+                "quantity": 1,
+                "perTrade": 1,
+                "rank": 3,
+                "visible": true,
+                "createdAt": "2019-08-10T18:43:48Z",
+                "updatedAt": "2026-02-04T15:29:00Z",
+                "itemId": "54a74454e779892d5e515645",
+                "user": {
+                  "id": "5c6a8a5024e70a06bb24f217",
+                  "ingameName": "iRobot396",
+                  "slug": "irobot396",
+                  "reputation": 13,
+                  "platform": "pc",
+                  "crossplay": true,
+                  "locale": "en",
+                  "status": "ingame",
+                  "activity": {
+                    "type": "UNKNOWN",
+                    "details": "unknown"
+                  },
+                  "lastSeen": "2026-02-08T14:27:38Z"
+                }
+              },
+              {
+                "id": "5e7b5825dcc19804ce3de1cb",
+                "type": "sell",
+                "platinum": 15,
+                "quantity": 1,
+                "perTrade": 1,
+                "rank": 3,
+                "visible": true,
+                "createdAt": "2020-03-25T13:09:57Z",
+                "updatedAt": "2026-01-11T13:42:28Z",
+                "itemId": "54a74454e779892d5e515645",
+                "user": {
+                  "id": "5e7532518deffd04432c6cbe",
+                  "ingameName": "LeytoRen",
+                  "slug": "leytoren",
+                  "reputation": 2,
+                  "platform": "pc",
+                  "crossplay": true,
+                  "locale": "en",
+                  "status": "ingame",
+                  "activity": {
+                    "type": "UNKNOWN",
+                    "details": "unknown"
+                  },
+                  "lastSeen": "2026-02-08T22:31:06Z"
+                }
+              }
+            ],
+            "error": null
+          }
+          """
+
+        conn
+        |> Plug.Conn.put_resp_header(
+          "Set-Cookie",
+          "JWT=old_cookie; Domain=.warframe.market; Expires=Tue, 21-Mar-2023 15:16:03 GMT; Secure; HttpOnly; Path=/; SameSite=Lax"
+        )
+        |> Conn.put_resp_header("content-type", "application/json")
+        |> Plug.Conn.resp(200, body)
+      end)
+
+      # post orders online
+      Bypass.expect(bypass, "POST", "/v2/order", fn conn ->
+        {:ok, req_body, _req_conn} = Plug.Conn.read_body(conn)
+        decoded_request = Jason.decode!(req_body)
+
+        response_body =
+          case Map.get(decoded_request, "itemId") do
+            # Scattered Justice
+            "54a74454e779892d5e5155f5" ->
+              assert Map.get(decoded_request, "platinum") == 20
+              assert Map.get(decoded_request, "quantity") == 1
+              assert Map.get(decoded_request, "rank") == 0
+              assert Map.get(decoded_request, "type") == "sell"
+              assert Map.get(decoded_request, "visible") == true
+
+              """
+              {
+                "apiVersion": "0.22.7",
+                "data": {
+                  "id": "698da92fa7a2008a73b1b930",
+                  "type": "sell",
+                  "platinum": 20,
+                  "quantity": 1,
+                  "perTrade": 1,
+                  "rank": 0,
+                  "visible": true,
+                  "createdAt": "2026-02-12T10:19:27Z",
+                  "updatedAt": "2026-02-12T10:19:27Z",
+                  "itemId": "54a74454e779892d5e5155f5"
+                },
+                "error": null
+              }
+              """
+
+            # Blade of Truth
+            "54a74454e779892d5e515645" ->
+              assert Map.get(decoded_request, "platinum") == 20
+              assert Map.get(decoded_request, "quantity") == 1
+              assert Map.get(decoded_request, "rank") == 0
+              assert Map.get(decoded_request, "type") == "sell"
+              assert Map.get(decoded_request, "visible") == true
+
+              """
+              {
+                "apiVersion": "0.22.7",
+                "data": {
+                  "id": "698a1032a7a2008a73ad0d23",
+                  "type": "sell",
+                  "platinum": 20,
+                  "quantity": 1,
+                  "perTrade": 1,
+                  "rank": 0,
+                  "visible": true,
+                  "createdAt": "2026-02-09T16:49:54Z",
+                  "updatedAt": "2026-02-09T16:49:54Z",
+                  "itemId": "54a74454e779892d5e515645"
+                },
+                "error": null
+              }
+              """
+
+            # Justice Blades
+            "54a74455e779892d5e5156b9" ->
+              assert Map.get(decoded_request, "platinum") == 21
+              assert Map.get(decoded_request, "quantity") == 1
+              assert Map.get(decoded_request, "rank") == 0
+              assert Map.get(decoded_request, "type") == "sell"
+              assert Map.get(decoded_request, "visible") == true
+
+              """
+              {
+                "apiVersion": "0.22.7",
+                "data": {
+                  "id": "698a10d86a51e1b3b0f36cd0",
+                  "type": "sell",
+                  "platinum": 21,
+                  "quantity": 1,
+                  "perTrade": 1,
+                  "rank": 0,
+                  "visible": true,
+                  "createdAt": "2026-02-09T16:52:40Z",
+                  "updatedAt": "2026-02-09T16:52:40Z",
+                  "itemId": "54a74455e779892d5e5156b9"
+                },
+                "error": null
+              }
+              """
+
+            _ ->
+              throw("Malformed request body: #{req_body}")
+          end
+
+        conn
+        |> Plug.Conn.put_resp_header(
+          "Set-Cookie",
+          "JWT=old_cookie; Domain=.warframe.market; Expires=Tue, 21-Mar-2023 15:16:03 GMT; Secure; HttpOnly; Path=/; SameSite=Lax"
+        )
+        |> Conn.put_resp_header("content-type", "application/json")
+        |> Plug.Conn.resp(200, response_body)
+      end)
+
+      :ok = Manager.activate(%{steel_meridian: :top_five_average, arbiters_of_hexis: :top_three_average})
+
+      assert_receive({:activate, {:ok, :get_user_orders}}, @timeout)
+      assert_receive({:activate, {:ok, :calculating_item_prices}}, @timeout)
+      assert_receive({:activate, {:ok, {:price_calculated, "Scattered Justice", 20, 1, 4}}}, @timeout)
+      assert_receive({:activate, {:ok, {:price_calculated, "Blade of Truth", 20, 2, 4}}}, @timeout)
+      assert_receive({:activate, {:ok, {:price_calculated, "Gilded Truth", 16, 3, 4}}}, @timeout)
+      assert_receive({:activate, {:ok, {:price_calculated, "Justice Blades", 21, 4, 4}}}, @timeout)
+      assert_receive({:activate, {:ok, :placing_orders}}, @timeout)
+      assert_receive({:activate, {:ok, {:order_placed, "Scattered Justice", 1, 3}}}, @timeout)
+      assert_receive({:activate, {:ok, {:order_placed, "Blade of Truth", 2, 3}}}, @timeout)
+      assert_receive({:activate, {:ok, {:order_placed, "Justice Blades", 3, 3}}}, @timeout)
+      assert_receive({:activate, {:ok, :done}}, @timeout)
+
+      assert Manager.active_syndicates() ==
+               {:ok, %{steel_meridian: :top_five_average, arbiters_of_hexis: :top_three_average}}
+    end
   end
 
   describe "deactivate" do
