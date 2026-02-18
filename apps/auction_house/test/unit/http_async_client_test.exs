@@ -296,6 +296,27 @@ defmodule AuctionHouse.Impl.HttpAsyncClientTest do
       assert_received({:login, {:error, :reason}})
     end
 
+    test "returns correct error for 500" do
+      pid = self()
+
+      request = %Request{
+        metadata: %Metadata{send?: false, notify: [pid], operation: :login},
+        args: %{name: "John"}
+      }
+
+      response =
+        {:ok, %HTTPoison.Response{status_code: 500}}
+
+      response_fn = fn _response ->
+        send(pid, :response_fn_ok)
+        {:ok, nil}
+      end
+
+      assert HttpAsyncClient.handle_response(response, {response_fn, request}) == :ok
+      refute_received(:response_fn_ok)
+      assert_received({:login, {:error, :internal_server_error}})
+    end
+
     test "returns correct error for 502" do
       pid = self()
 
@@ -355,6 +376,27 @@ defmodule AuctionHouse.Impl.HttpAsyncClientTest do
       assert HttpAsyncClient.handle_response(response, {response_fn, request}) == :ok
       refute_received(:response_fn_ok)
       assert_received({:login, {:error, :bad_gateway}})
+    end
+
+    test "returns correct error for 520" do
+      pid = self()
+
+      request = %Request{
+        metadata: %Metadata{send?: false, notify: [pid], operation: :login},
+        args: %{name: "John"}
+      }
+
+      response =
+        {:ok, %HTTPoison.Response{status_code: 520, body: "error code: 520"}}
+
+      response_fn = fn _response ->
+        send(pid, :response_fn_ok)
+        {:ok, nil}
+      end
+
+      assert HttpAsyncClient.handle_response(response, {response_fn, request}) == :ok
+      refute_received(:response_fn_ok)
+      assert_received({:login, {:error, :unknown_server_error}})
     end
   end
 end

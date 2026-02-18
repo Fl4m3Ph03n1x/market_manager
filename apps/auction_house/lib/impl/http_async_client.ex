@@ -177,6 +177,7 @@ defmodule AuctionHouse.Impl.HttpAsyncClient do
           | :url_not_found
           | :unknown_error
           | :unknown_format_error
+          | :unable_to_decode_error
   defp map_error(~s({"error": {"item_id": ["app.form.invalid"]}})), do: :invalid_item_id
 
   defp map_error(~s({"error": {"_form": ["app.post_order.already_created_no_duplicates"]}})),
@@ -219,6 +220,7 @@ defmodule AuctionHouse.Impl.HttpAsyncClient do
 
       {:error, _reason} = error ->
         Logger.error("Failed to decode error message: #{inspect(error)}")
+        :unable_to_decode_error
     end
   end
 
