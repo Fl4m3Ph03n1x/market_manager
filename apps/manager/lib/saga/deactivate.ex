@@ -134,6 +134,15 @@ defmodule Manager.Saga.Deactivate do
     end
   end
 
+  def handle_info({:deactivate, {:error, _msg}} = error, %{from: from} = state) do
+    send(from, error)
+    {:noreply, state}
+  end
+
+  ###########
+  # Private #
+  ###########
+
   @spec get_active_syndicate_ids(module()) :: {:ok, [Syndicate.id()]} | {:error, :file.posix() | Jason.DecodeError.t()}
   defp get_active_syndicate_ids(store) do
     case store.list_active_syndicates() do
