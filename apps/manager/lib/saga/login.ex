@@ -86,6 +86,7 @@ defmodule Manager.Saga.Login do
     {:stop, :normal, state}
   end
 
+  # if we cannot login, there is no point in continuing
   def handle_info({:login, {:error, _reason}} = err, %{from: from} = state) do
     send(from, err)
     {:stop, :normal, state}

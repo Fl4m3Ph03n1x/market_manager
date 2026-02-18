@@ -120,6 +120,12 @@ defmodule Manager.Saga.Activate do
     end
   end
 
+  # if we cannot get user orders, there is no point in continuing
+  def handle_info({:get_user_orders, {:error, _reason}} = error, %{from: from} = state) do
+    send(from, {:activate, error})
+    {:stop, error, state}
+  end
+
   def handle_info(
         {:get_item_orders, {tag, item_name, data}},
         %{
@@ -193,6 +199,13 @@ defmodule Manager.Saga.Activate do
     end
   end
 
+  # if we miss on a item order list, we can still continue
+  # the price will remain nil and be filtered later on
+  def handle_info({:get_item_orders, {:error, _reason}} = error, %{from: from} = state) do
+    send(from, {:activate, error})
+    {:noreply, state}
+  end
+
   def handle_info(
         :all_prices_calculated,
         %{
@@ -222,6 +235,7 @@ defmodule Manager.Saga.Activate do
 
     orders_placed
     |> Map.keys()
+    |> Enum.filter(fn {_product, price} -> not is_nil(price) end)
     |> Enum.map(fn {product, price} -> build_order(product, price) end)
     |> Enum.each(&auction_house.place_order/1)
 
@@ -276,7 +290,8 @@ defmodule Manager.Saga.Activate do
     end
   end
 
-  def handle_info({:activate, {:error, _msg}} = error, %{from: from} = state) do
+  # if we fail to place an order, we can still continue with the others
+  def handle_info({:place_order, {:error, _msg}} = error, %{from: from} = state) do
     send(from, error)
     {:noreply, state}
   end
