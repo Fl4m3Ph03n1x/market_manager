@@ -88,6 +88,12 @@ defmodule Manager.Saga.Deactivate do
     end
   end
 
+  # if we cannot get user orders, there is no point in continuing
+  def handle_info({:get_user_orders, {:error, _reason}} = error, %{from: from} = state) do
+    send(from, {:activate, error})
+    {:stop, error, state}
+  end
+
   def handle_info(
         {:delete_order, {:ok, placed_order}},
         %{
@@ -134,7 +140,8 @@ defmodule Manager.Saga.Deactivate do
     end
   end
 
-  def handle_info({:deactivate, {:error, _msg}} = error, %{from: from} = state) do
+  # if we fail to delete a placed order, we can still continue to delete the others
+  def handle_info({:delete_order, {:error, _msg}} = error, %{from: from} = state) do
     send(from, error)
     {:noreply, state}
   end
