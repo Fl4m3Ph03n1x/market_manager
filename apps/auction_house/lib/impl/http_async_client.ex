@@ -32,6 +32,23 @@ defmodule AuctionHouse.Impl.HttpAsyncClient do
            rate_limiter: module()
          }
 
+  @typep parse_error ::
+           :invalid_item_id
+           | :invalid_email
+           | :wrong_email
+           | :wrong_password
+           | :order_already_placed
+           | :order_non_existent
+           | :item_not_found
+           | :slow_down
+           | :internal_server_error
+           | :bad_gateway
+           | :server_temporary_unavailable
+           | :unknown_server_error
+           | :unable_to_decode_error
+           | :unknown_error
+           | :request_failed
+
   ##########
   # Public #
   ##########
@@ -114,7 +131,7 @@ defmodule AuctionHouse.Impl.HttpAsyncClient do
   end
 
   @spec handle_response(
-          {:ok, HTTPoison.Response.t() | {:error, HTTPoison.Error.t()}},
+          {:ok, HTTPoison.Response.t()} | {:error, HTTPoison.Error.t()},
           {(... -> any()), Request.t()}
         ) :: :ok
   def handle_response(response, {response_fun, %Request{metadata: meta, args: args}}) do
@@ -145,90 +162,76 @@ defmodule AuctionHouse.Impl.HttpAsyncClient do
   ###########
 
   @spec build_headers(String.t(), String.t()) :: [{String.t(), String.t()}]
-  defp build_headers(cookie, token),
-    do: [{"x-csrftoken", token}, {"Cookie", cookie}] ++ @static_headers
+  defp build_headers(cookie, token), do: [{"x-csrftoken", token}, {"Cookie", cookie}] ++ @static_headers
 
-  @spec parse({:ok, HTTPoison.Response.t() | {:error, HTTPoison.Error.t()}}) ::
-          {:ok, body(), headers()} | {:error, reason :: any()}
-  defp parse({:ok, %HTTPoison.Response{status_code: 200, body: body, headers: headers}}),
-    do: {:ok, body, headers}
+  @spec parse({:ok, HTTPoison.Response.t()} | {:error, HTTPoison.Error.t()}) ::
+          {:ok, body(), headers()} | {:error, parse_error()}
+  defp parse({:ok, %HTTPoison.Response{status_code: 200, body: body, headers: headers}}), do: {:ok, body, headers}
 
-  defp parse({:ok, %HTTPoison.Response{status_code: status, body: error_body}})
-       when status in [400, 404, 429, 503, 520] do
-    {:error, map_error(error_body)}
+  defp parse({:ok, %HTTPoison.Response{status_code: 400 = status, body: error_body}}) do
+    case Jason.decode(error_body) do
+      {:ok, %{"error" => %{"inputs" => %{"itemId" => "app.field.invalid"}}}} ->
+        {:error, :invalid_item_id}
+
+      {:ok, %{"error" => %{"email" => ["app.form.invalid"]}}} ->
+        {:error, :invalid_email}
+
+      {:ok, %{"error" => %{"email" => ["app.account.email_not_exist"]}}} ->
+        {:error, :wrong_email}
+
+      {:ok, %{"error" => %{"password" => ["app.account.password_invalid"]}}} ->
+        {:error, :wrong_password}
+
+      {:error, _reason} = error ->
+        Logger.error("Failed to decode error message with status #{status}: #{inspect(error)}")
+        {:error, :unable_to_decode_error}
+    end
   end
+
+  defp parse({:ok, %HTTPoison.Response{status_code: 403 = status, body: error_body}}) do
+    case Jason.decode(error_body) do
+      {:ok, %{"error" => %{"request" => ["app.order.error.exceededOrderLimitSamePrice"]}}} ->
+        {:error, :order_already_placed}
+
+      {:error, _reason} = error ->
+        Logger.error("Failed to decode error message with status #{status}: #{inspect(error)}")
+        {:error, :unable_to_decode_error}
+    end
+  end
+
+  defp parse({:ok, %HTTPoison.Response{status_code: 404 = status, body: error_body}}) do
+    case Jason.decode(error_body) do
+      {:ok, %{"error" => %{"request" => ["app.order.notFound"]}}} ->
+        {:error, :order_non_existent}
+
+      {:ok, %{"error" => %{"request" => ["app.item.notFound"]}}} ->
+        {:error, :item_not_found}
+
+      {:error, _reason} = error ->
+        Logger.error("Failed to decode error message with status #{status}: #{inspect(error)}")
+        {:error, :unable_to_decode_error}
+    end
+  end
+
+  # warframe.market is behind CloudFlare, which will emit this error if we are making too many requests and effectively
+  # block us, in order to force us to slow down.
+  defp parse({:ok, %HTTPoison.Response{status_code: 429}}), do: {:error, :slow_down}
 
   defp parse({:ok, %HTTPoison.Response{status_code: 500}}), do: {:error, :internal_server_error}
 
   defp parse({:ok, %HTTPoison.Response{status_code: 502}}), do: {:error, :bad_gateway}
 
-  defp parse({:error, %HTTPoison.Error{id: _id, reason: reason}}), do: {:error, reason}
+  defp parse({:ok, %HTTPoison.Response{status_code: 503}}), do: {:error, :server_temporary_unavailable}
 
-  @spec map_error(body()) ::
-          :invalid_item_id
-          | :order_already_placed
-          | :order_non_existent
-          | :rank_level_non_applicable
-          | :wrong_password
-          | :wrong_email
-          | :invalid_email
-          | :unknown_server_error
-          | :slow_down
-          | :url_not_found
-          | :unknown_error
-          | :unknown_format_error
-          | :unable_to_decode_error
-  defp map_error(~s({"error": {"item_id": ["app.form.invalid"]}})), do: :invalid_item_id
+  defp parse({:ok, %HTTPoison.Response{status_code: 520}}), do: {:error, :unknown_server_error}
 
-  defp map_error(~s({"error": {"_form": ["app.post_order.already_created_no_duplicates"]}})),
-    do: :order_already_placed
-
-  defp map_error(~s({"error": {"order_id": ["app.delete_order.order_not_exist"]}})),
-    do: :order_non_existent
-
-  defp map_error(~s({"error": {"rank": ["app.form.invalid"]}})),
-    do: :rank_level_non_applicable
-
-  defp map_error(~s({"error": {"password": ["app.account.password_invalid"]}})),
-    do: :wrong_password
-
-  defp map_error(~s({"error": {"email": ["app.account.email_not_exist"]}})),
-    do: :wrong_email
-
-  defp map_error(~s({"error": {"email": ["app.form.invalid"]}})), do: :invalid_email
-
-  defp map_error("error code: 520"), do: :unknown_server_error
-
-  # warframe.market is behind CloudFlare, which will emit this error if we are making too many requests and effectively
-  # block us, in order to force us to slow down.
-  defp map_error("error code: 1015"), do: :slow_down
-
-  defp map_error(error_body) when is_binary(error_body) do
-    case Jason.decode(error_body) do
-      {:ok, %{"error" => reason}} when is_binary(reason) ->
-        if valid_uri?(reason) do
-          Logger.error("URL not found. Please review the API: #{error_body}")
-          :url_not_found
-        else
-          Logger.error("AuctionHouse.map_error/1 received an unknown error: #{error_body}")
-          :unknown_error
-        end
-
-      {:ok, _reason} ->
-        Logger.error("AuctionHouse.map_error/1 received error with unknown format error: #{error_body}")
-        :unknown_format_error
-
-      {:error, _reason} = error ->
-        Logger.error("Failed to decode error message: #{inspect(error)}")
-        :unable_to_decode_error
-    end
+  defp parse({:ok, %HTTPoison.Response{} = error}) do
+    Logger.error("Received error with unknown format: #{inspect(error)}")
+    {:error, :unknown_error}
   end
 
-  @spec valid_uri?(url()) :: boolean()
-  defp valid_uri?(url) do
-    uri = URI.parse(url)
-
-    uri.scheme == "https" and uri.host =~ "api.warframe.market" and uri.authority =~ "api.warframe.market" and
-      uri.port == 443 and (uri.path =~ "GET" or uri.path =~ "POST")
+  defp parse({:error, %HTTPoison.Error{}} = error) do
+    Logger.error("Failed to make request to market: #{inspect(error)}")
+    {:error, :request_failed}
   end
 end
