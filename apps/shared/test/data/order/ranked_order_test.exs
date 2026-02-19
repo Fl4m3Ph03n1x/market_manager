@@ -11,7 +11,7 @@ defmodule Shared.Data.Order.RankedOrderTest do
       "item_id" => "5962ff05d3ffb64d46e3c47f",
       "order_type" => "sell",
       "platinum" => 15,
-      "quantity" => 21,
+      "quantity" => 1,
       "mod_rank" => 0
     }
 
@@ -19,7 +19,7 @@ defmodule Shared.Data.Order.RankedOrderTest do
              item_id: "5962ff05d3ffb64d46e3c47f",
              order_type: "sell",
              platinum: 15,
-             quantity: 21,
+             quantity: 1,
              mod_rank: 0
            }
   end
