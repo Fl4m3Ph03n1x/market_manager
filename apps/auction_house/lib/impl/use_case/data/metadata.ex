@@ -5,7 +5,7 @@ defmodule AuctionHouse.Impl.UseCase.Data.Metadata do
   itself.
 
   Used mostly to notify interested parties of the results of the flow.
-  When the flow is done, the "send?" field should be set to `true` so the handler know it has to send the results back
+  When the flow is done, the "send?" field should be set to `true` so the handler knows it has to send the results back
   to the interested parties.
   """
 
