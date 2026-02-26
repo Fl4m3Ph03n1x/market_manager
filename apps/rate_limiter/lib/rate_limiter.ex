@@ -35,7 +35,7 @@ defmodule RateLimiter do
   def get_requests_per_second, do: @rps
 
   @doc """
-  Calculates the refresh rate, to determine how many requests per second the limiter can made.
+  Calculates the refresh rate, to determine how many requests per second the limiter can make.
   """
   def calculate_refresh_rate(num_requests), do: floor(@milliseconds_in_second / num_requests)
 end
