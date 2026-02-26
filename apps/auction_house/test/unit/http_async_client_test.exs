@@ -38,10 +38,24 @@ defmodule AuctionHouse.Impl.HttpAsyncClientTest do
                       ]
                     ]}
 
-          assert original_req == %Request{
-                   metadata: %Metadata{send?: false, notify: [], operation: :login},
-                   args: %{name: "John"}
-                 }
+          assert original_req.metadata == %Metadata{send?: false, notify: [], operation: :login}
+          assert original_req.args.name == "John"
+          assert original_req.args.retries == 0
+
+          assert original_req.args.call ==
+                   {&PostClient.post/3,
+                    [
+                      "www.warframe.market.com/api/v1",
+                      "{}",
+                      [
+                        {"x-csrftoken", "token"},
+                        {"Cookie", "a_cookie"},
+                        {"Accept", "application/json"},
+                        {"Content-Type", "application/json"}
+                      ]
+                    ]}
+
+          :ok
         end
       end
 
@@ -51,7 +65,7 @@ defmodule AuctionHouse.Impl.HttpAsyncClientTest do
 
       deps = %{client: PostClient, rate_limiter: PostLimiter}
 
-      HttpAsyncClient.post(url, data, req, response_fn, auth, deps)
+      assert HttpAsyncClient.post(url, data, req, response_fn, auth, deps) == :ok
     end
   end
 
@@ -81,10 +95,23 @@ defmodule AuctionHouse.Impl.HttpAsyncClientTest do
                       ]
                     ]}
 
-          assert original_req == %Request{
-                   metadata: %Metadata{send?: false, notify: [], operation: :login},
-                   args: %{name: "John"}
-                 }
+          assert original_req.metadata == %Metadata{send?: false, notify: [], operation: :login}
+          assert original_req.args.name == "John"
+          assert original_req.args.retries == 0
+
+          assert original_req.args.call ==
+                   {&DeleteClient.delete/2,
+                    [
+                      "www.warframe.market.com/api/v1",
+                      [
+                        {"x-csrftoken", "token"},
+                        {"Cookie", "a_cookie"},
+                        {"Accept", "application/json"},
+                        {"Content-Type", "application/json"}
+                      ]
+                    ]}
+
+          :ok
         end
       end
 
@@ -94,7 +121,7 @@ defmodule AuctionHouse.Impl.HttpAsyncClientTest do
 
       deps = %{client: DeleteClient, rate_limiter: DeleteLimiter}
 
-      HttpAsyncClient.delete(url, req, response_fn, auth, deps)
+      assert HttpAsyncClient.delete(url, req, response_fn, auth, deps) == :ok
     end
   end
 
@@ -124,10 +151,23 @@ defmodule AuctionHouse.Impl.HttpAsyncClientTest do
                       ]
                     ]}
 
-          assert original_req == %Request{
-                   metadata: %Metadata{send?: false, notify: [], operation: :login},
-                   args: %{name: "John"}
-                 }
+          assert original_req.metadata == %Metadata{send?: false, notify: [], operation: :login}
+          assert original_req.args.name == "John"
+          assert original_req.args.retries == 0
+
+          assert original_req.args.call ==
+                   {&GetClient1.get/2,
+                    [
+                      "www.warframe.market.com/api/v1",
+                      [
+                        {"x-csrftoken", "token"},
+                        {"Cookie", "a_cookie"},
+                        {"Accept", "application/json"},
+                        {"Content-Type", "application/json"}
+                      ]
+                    ]}
+
+          :ok
         end
       end
 
@@ -135,9 +175,7 @@ defmodule AuctionHouse.Impl.HttpAsyncClientTest do
         def get(_url, _headers), do: {:ok, nil}
       end
 
-      deps = %{client: GetClient1, rate_limiter: GetLimiter1}
-
-      HttpAsyncClient.get(url, req, response_fn, auth, deps)
+      assert HttpAsyncClient.get(url, req, response_fn, auth, %{client: GetClient1, rate_limiter: GetLimiter1}) == :ok
     end
 
     test "calls rate limiter correctly with NO authorization" do
@@ -162,10 +200,17 @@ defmodule AuctionHouse.Impl.HttpAsyncClientTest do
                       ]
                     ]}
 
-          assert original_req == %Request{
-                   metadata: %Metadata{send?: false, notify: [], operation: :login},
-                   args: %{name: "John"}
-                 }
+          assert original_req.metadata == %Metadata{send?: false, notify: [], operation: :login}
+          assert original_req.args.name == "John"
+
+          assert original_req.args.call ==
+                   {&AuctionHouse.Impl.HttpAsyncClientTest.GetClient2.get/2,
+                    [
+                      "www.warframe.market.com/api/v1",
+                      [{"Accept", "application/json"}, {"Content-Type", "application/json"}]
+                    ]}
+
+          assert original_req.args.retries == 0
         end
       end
 
@@ -185,7 +230,19 @@ defmodule AuctionHouse.Impl.HttpAsyncClientTest do
 
       request = %Request{
         metadata: %Metadata{send?: false, notify: [pid], operation: :login},
-        args: %{name: "John"}
+        args: %{
+          name: "John",
+          call:
+            {nil,
+             [
+               "REQUEST_URL",
+               [
+                 {"Accept", "application/json"},
+                 {"Content-Type", "application/json"}
+               ]
+             ]},
+          retries: 0
+        }
       }
 
       response =
@@ -214,14 +271,26 @@ defmodule AuctionHouse.Impl.HttpAsyncClientTest do
 
       request = %Request{
         metadata: %Metadata{send?: false, notify: [pid], operation: :login},
-        args: %{name: "John"}
+        args: %{
+          name: "John",
+          call:
+            {nil,
+             [
+               "REQUEST_URL",
+               [
+                 {"Accept", "application/json"},
+                 {"Content-Type", "application/json"}
+               ]
+             ]},
+          retries: 3
+        }
       }
 
       response =
         {:ok,
          %HTTPoison.Response{
            status_code: 500,
-           body: "Internal error ocurred",
+           body: "Internal error occurred",
            headers: [
              {"Accept", "application/json"},
              {"Content-Type", "application/json"}
@@ -243,7 +312,19 @@ defmodule AuctionHouse.Impl.HttpAsyncClientTest do
 
       request = %Request{
         metadata: %Metadata{send?: true, notify: [pid], operation: :login},
-        args: %{name: "John"}
+        args: %{
+          name: "John",
+          call:
+            {nil,
+             [
+               "REQUEST_URL",
+               [
+                 {"Accept", "application/json"},
+                 {"Content-Type", "application/json"}
+               ]
+             ]},
+          retries: 0
+        }
       }
 
       response =
@@ -272,7 +353,19 @@ defmodule AuctionHouse.Impl.HttpAsyncClientTest do
 
       request = %Request{
         metadata: %Metadata{send?: false, notify: [pid], operation: :login},
-        args: %{name: "John"}
+        args: %{
+          name: "John",
+          call:
+            {nil,
+             [
+               "REQUEST_URL",
+               [
+                 {"Accept", "application/json"},
+                 {"Content-Type", "application/json"}
+               ]
+             ]},
+          retries: 0
+        }
       }
 
       response =
@@ -301,7 +394,19 @@ defmodule AuctionHouse.Impl.HttpAsyncClientTest do
 
       request = %Request{
         metadata: %Metadata{send?: false, notify: [pid], operation: :place_order},
-        args: %{name: "John"}
+        args: %{
+          name: "John",
+          call:
+            {nil,
+             [
+               "REQUEST_URL",
+               [
+                 {"Accept", "application/json"},
+                 {"Content-Type", "application/json"}
+               ]
+             ]},
+          retries: 0
+        }
       }
 
       response =
@@ -357,7 +462,19 @@ defmodule AuctionHouse.Impl.HttpAsyncClientTest do
 
       request = %Request{
         metadata: %Metadata{send?: false, notify: [pid], operation: :login},
-        args: %{name: "John"}
+        args: %{
+          name: "John",
+          call:
+            {nil,
+             [
+               "REQUEST_URL",
+               [
+                 {"Accept", "application/json"},
+                 {"Content-Type", "application/json"}
+               ]
+             ]},
+          retries: 0
+        }
       }
 
       response =
@@ -382,7 +499,19 @@ defmodule AuctionHouse.Impl.HttpAsyncClientTest do
 
       request = %Request{
         metadata: %Metadata{send?: false, notify: [pid], operation: :login},
-        args: %{name: "John"}
+        args: %{
+          name: "John",
+          call:
+            {nil,
+             [
+               "REQUEST_URL",
+               [
+                 {"Accept", "application/json"},
+                 {"Content-Type", "application/json"}
+               ]
+             ]},
+          retries: 0
+        }
       }
 
       response =
@@ -408,7 +537,19 @@ defmodule AuctionHouse.Impl.HttpAsyncClientTest do
 
       request = %Request{
         metadata: %Metadata{send?: false, notify: [pid], operation: :login},
-        args: %{name: "John"}
+        args: %{
+          name: "John",
+          call:
+            {nil,
+             [
+               "REQUEST_URL",
+               [
+                 {"Accept", "application/json"},
+                 {"Content-Type", "application/json"}
+               ]
+             ]},
+          retries: 0
+        }
       }
 
       response =
@@ -433,7 +574,19 @@ defmodule AuctionHouse.Impl.HttpAsyncClientTest do
 
       request = %Request{
         metadata: %Metadata{send?: false, notify: [pid], operation: :place_order},
-        args: %{name: "John"}
+        args: %{
+          name: "John",
+          call:
+            {nil,
+             [
+               "REQUEST_URL",
+               [
+                 {"Accept", "application/json"},
+                 {"Content-Type", "application/json"}
+               ]
+             ]},
+          retries: 0
+        }
       }
 
       response =
@@ -490,7 +643,19 @@ defmodule AuctionHouse.Impl.HttpAsyncClientTest do
 
       request = %Request{
         metadata: %Metadata{send?: false, notify: [pid], operation: :delete_order},
-        args: %{name: "John"}
+        args: %{
+          name: "John",
+          call:
+            {nil,
+             [
+               "REQUEST_URL",
+               [
+                 {"Accept", "application/json"},
+                 {"Content-Type", "application/json"}
+               ]
+             ]},
+          retries: 0
+        }
       }
 
       response =
@@ -545,7 +710,19 @@ defmodule AuctionHouse.Impl.HttpAsyncClientTest do
 
       request = %Request{
         metadata: %Metadata{send?: false, notify: [pid], operation: :get_item_orders},
-        args: %{name: "John"}
+        args: %{
+          name: "John",
+          call:
+            {nil,
+             [
+               "REQUEST_URL",
+               [
+                 {"Accept", "application/json"},
+                 {"Content-Type", "application/json"}
+               ]
+             ]},
+          retries: 0
+        }
       }
 
       response =
@@ -570,7 +747,19 @@ defmodule AuctionHouse.Impl.HttpAsyncClientTest do
 
       request = %Request{
         metadata: %Metadata{send?: false, notify: [pid], operation: :delete_order},
-        args: %{name: "John"}
+        args: %{
+          name: "John",
+          call:
+            {nil,
+             [
+               "REQUEST_URL",
+               [
+                 {"Accept", "application/json"},
+                 {"Content-Type", "application/json"}
+               ]
+             ]},
+          retries: 3
+        }
       }
 
       response =
@@ -625,7 +814,19 @@ defmodule AuctionHouse.Impl.HttpAsyncClientTest do
 
       request = %Request{
         metadata: %Metadata{send?: false, notify: [pid], operation: :login},
-        args: %{name: "John"}
+        args: %{
+          name: "John",
+          call:
+            {nil,
+             [
+               "REQUEST_URL",
+               [
+                 {"Accept", "application/json"},
+                 {"Content-Type", "application/json"}
+               ]
+             ]},
+          retries: 3
+        }
       }
 
       response =
@@ -645,8 +846,20 @@ defmodule AuctionHouse.Impl.HttpAsyncClientTest do
       pid = self()
 
       request = %Request{
-        metadata: %Metadata{send?: false, notify: [pid], operation: :login},
-        args: %{name: "John"}
+        metadata: %Metadata{send?: true, notify: [pid], operation: :login},
+        args: %{
+          name: "John",
+          call:
+            {nil,
+             [
+               "REQUEST_URL",
+               [
+                 {"Accept", "application/json"},
+                 {"Content-Type", "application/json"}
+               ]
+             ]},
+          retries: 3
+        }
       }
 
       response =
@@ -707,7 +920,19 @@ defmodule AuctionHouse.Impl.HttpAsyncClientTest do
 
       request = %Request{
         metadata: %Metadata{send?: false, notify: [pid], operation: :login},
-        args: %{name: "John"}
+        args: %{
+          name: "John",
+          call:
+            {nil,
+             [
+               "REQUEST_URL",
+               [
+                 {"Accept", "application/json"},
+                 {"Content-Type", "application/json"}
+               ]
+             ]},
+          retries: 3
+        }
       }
 
       response =
@@ -728,7 +953,19 @@ defmodule AuctionHouse.Impl.HttpAsyncClientTest do
 
       request = %Request{
         metadata: %Metadata{send?: false, notify: [pid], operation: :login},
-        args: %{name: "John"}
+        args: %{
+          name: "John",
+          call:
+            {nil,
+             [
+               "REQUEST_URL",
+               [
+                 {"Accept", "application/json"},
+                 {"Content-Type", "application/json"}
+               ]
+             ]},
+          retries: 0
+        }
       }
 
       response =
@@ -749,7 +986,19 @@ defmodule AuctionHouse.Impl.HttpAsyncClientTest do
 
       request = %Request{
         metadata: %Metadata{send?: false, notify: [pid], operation: :login},
-        args: %{name: "John"}
+        args: %{
+          name: "John",
+          call:
+            {nil,
+             [
+               "REQUEST_URL",
+               [
+                 {"Accept", "application/json"},
+                 {"Content-Type", "application/json"}
+               ]
+             ]},
+          retries: 0
+        }
       }
 
       response = {:error, %HTTPoison.Error{}}
@@ -763,5 +1012,202 @@ defmodule AuctionHouse.Impl.HttpAsyncClientTest do
       refute_received(:response_fn_ok)
       assert_received({:login, {:error, :request_failed}})
     end
+
+    test "it retries request again if request failed with correct status_code" do
+      defmodule RateLimiterMock do
+        def make_request(_request_handler, {_original_response_fn, {_fn, original_request}}) do
+          pid = self()
+
+          assert original_request.args.call ==
+                   {nil, ["REQUEST_URL", [{"Accept", "application/json"}, {"Content-Type", "application/json"}]]}
+
+          assert original_request.args.retries == 1
+
+          retry_response =
+            {:ok,
+             %HTTPoison.Response{
+               status_code: 200,
+               body: "{}",
+               headers: [
+                 {"Date", "Thu, 19 Feb 2026 14:27:18 GMT"},
+                 {"Content-Type", "application/json"},
+                 {"Content-Length", "86"},
+                 {"Connection", "keep-alive"},
+                 {"Server", "cloudflare"},
+                 {"strict-transport-security", "max-age=2592000; includeSubDomains; preload"},
+                 {"cf-cache-status", "DYNAMIC"},
+                 {"Nel", "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}"},
+                 {"X-Content-Type-Options", "nosniff"},
+                 {"Report-To",
+                  "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=jM1W3UQCzzzAONX%2B0tLzwGjfhgauYohMDQqfcW9VlGFTHobug4HUOMcVjAgjubStUDtLzSo2QDQAozGF8wdbeflaXuXkvUiX4H8ATe5H0LTyHQ%3D%3D\"}]}"},
+                 {"CF-RAY", "9d0671b70e43034d-MAD"}
+               ],
+               request_url: "https://api.warframe.market/v2/order",
+               request: %HTTPoison.Request{
+                 method: :post,
+                 url: "https://api.warframe.market/v2/order",
+                 headers: [
+                   {"x-csrftoken",
+                    "##e56c26b281c5aad1543b370ab174e33b8137b1475dab87a84d91cffcb85e91ee1d9f065797b61855404458bffec0f6dd97678b65249d10bd36c1c2ed418c8b62"},
+                   {"Cookie",
+                    "JWT=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzaWQiOiJwdkNxdTdsUUFnaFpmNktjNnljSWRPeTVqdlJFN0d6TCIsImNzcmZfdG9rZW4iOiIzMDEzNDQ5ZjY0YmI3OWIzMGNkM2FlZTZiMDdjOTM4ZTNhNGMyNzNjIiwiZXhwIjoxNzc2Njk1MTkwLCJpYXQiOjE3NzE1MTExOTAsImlzcyI6Imp3dCIsImF1ZCI6Imp3dCIsImF1dGhfdHlwZSI6ImNvb2tpZSIsInNlY3VyZSI6dHJ1ZSwiand0X2lkZW50aXR5IjoiTnA5WEJSR0ZIeVJMN2dpZGJVa0lmcGRmbmY5d0FtMmYiLCJsb2dpbl91YSI6ImInaGFja25leS8xLjE3LjEnIiwibG9naW5faXAiOiJiJzc3LjIzMC4yMzcuMTgyJyJ9.fZ0G-g70WTHgpuRiyCV3ORY4406Y6DC-27Wh_lrMvY4"},
+                   {"Accept", "application/json"},
+                   {"Content-Type", "application/json"}
+                 ],
+                 body:
+                   "{\"type\":\"sell\",\"visible\":true,\"platinum\":20,\"rank\":0,\"quantity\":1,\"itemId\":\"1\"}",
+                 params: %{},
+                 options: []
+               }
+             }}
+
+          retry_response_fn = fn _response ->
+            send(pid, :retry_response_fn_ok)
+            {:ok, []}
+          end
+
+          HttpAsyncClient.handle_response(retry_response, {retry_response_fn, original_request}, %{rate_limiter: nil})
+          :ok
+        end
+      end
+
+      pid = self()
+
+      request = %Request{
+        metadata: %Metadata{send?: true, notify: [pid], operation: :get_item_orders},
+        args: %{
+          name: "John",
+          call:
+            {nil,
+             [
+               "REQUEST_URL",
+               [
+                 {"Accept", "application/json"},
+                 {"Content-Type", "application/json"}
+               ]
+             ]},
+          retries: 0
+        }
+      }
+
+      response =
+        {:ok,
+         %HTTPoison.Response{
+           status_code: 429,
+           body:
+             "{\"apiVersion\":\"0.22.7\",\"data\":null,\"error\":{\"inputs\":{\"itemId\":\"app.field.invalid\"}}}\n",
+           headers: [
+             {"Date", "Thu, 19 Feb 2026 14:27:18 GMT"},
+             {"Content-Type", "application/json"},
+             {"Content-Length", "86"},
+             {"Connection", "keep-alive"},
+             {"Server", "cloudflare"},
+             {"strict-transport-security", "max-age=2592000; includeSubDomains; preload"},
+             {"cf-cache-status", "DYNAMIC"},
+             {"Nel", "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}"},
+             {"X-Content-Type-Options", "nosniff"},
+             {"Report-To",
+              "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=jM1W3UQCzzzAONX%2B0tLzwGjfhgauYohMDQqfcW9VlGFTHobug4HUOMcVjAgjubStUDtLzSo2QDQAozGF8wdbeflaXuXkvUiX4H8ATe5H0LTyHQ%3D%3D\"}]}"},
+             {"CF-RAY", "9d0671b70e43034d-MAD"}
+           ],
+           request_url: "https://api.warframe.market/v2/order",
+           request: %HTTPoison.Request{
+             method: :post,
+             url: "https://api.warframe.market/v2/order",
+             headers: [
+               {"x-csrftoken",
+                "##e56c26b281c5aad1543b370ab174e33b8137b1475dab87a84d91cffcb85e91ee1d9f065797b61855404458bffec0f6dd97678b65249d10bd36c1c2ed418c8b62"},
+               {"Cookie",
+                "JWT=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzaWQiOiJwdkNxdTdsUUFnaFpmNktjNnljSWRPeTVqdlJFN0d6TCIsImNzcmZfdG9rZW4iOiIzMDEzNDQ5ZjY0YmI3OWIzMGNkM2FlZTZiMDdjOTM4ZTNhNGMyNzNjIiwiZXhwIjoxNzc2Njk1MTkwLCJpYXQiOjE3NzE1MTExOTAsImlzcyI6Imp3dCIsImF1ZCI6Imp3dCIsImF1dGhfdHlwZSI6ImNvb2tpZSIsInNlY3VyZSI6dHJ1ZSwiand0X2lkZW50aXR5IjoiTnA5WEJSR0ZIeVJMN2dpZGJVa0lmcGRmbmY5d0FtMmYiLCJsb2dpbl91YSI6ImInaGFja25leS8xLjE3LjEnIiwibG9naW5faXAiOiJiJzc3LjIzMC4yMzcuMTgyJyJ9.fZ0G-g70WTHgpuRiyCV3ORY4406Y6DC-27Wh_lrMvY4"},
+               {"Accept", "application/json"},
+               {"Content-Type", "application/json"}
+             ],
+             body: "{\"type\":\"sell\",\"visible\":true,\"platinum\":20,\"rank\":0,\"quantity\":1,\"itemId\":\"1\"}",
+             params: %{},
+             options: []
+           }
+         }}
+
+      response_fn = fn _response ->
+        send(pid, :response_fn_ok)
+        {:ok, nil}
+      end
+
+      assert HttpAsyncClient.handle_response(response, {response_fn, request}, %{rate_limiter: RateLimiterMock}) == :ok
+
+      refute_received(:response_fn_ok)
+      assert_received(:retry_response_fn_ok)
+      assert_received({:get_item_orders, {:ok, []}})
+    end
+
+    # test "does NOT retry request again if request failed with INCORRECT status_code" do
+    #   pid = self()
+
+    #   request = %Request{
+    #     metadata: %Metadata{send?: true, notify: [pid], operation: :get_item_orders},
+    #     args: %{
+    #       name: "John",
+    #       call:
+    #         {nil,
+    #          [
+    #            "REQUEST_URL",
+    #            [
+    #              {"Accept", "application/json"},
+    #              {"Content-Type", "application/json"}
+    #            ]
+    #          ]},
+    #       retries: 0
+    #     }
+    #   }
+
+    #   response =
+    #     {:ok,
+    #      %HTTPoison.Response{
+    #        status_code: 400,
+    #        body:
+    #          "{\"apiVersion\":\"0.22.7\",\"data\":null,\"error\":{\"inputs\":{\"itemId\":\"app.field.invalid\"}}}\n",
+    #        headers: [
+    #          {"Date", "Thu, 19 Feb 2026 14:27:18 GMT"},
+    #          {"Content-Type", "application/json"},
+    #          {"Content-Length", "86"},
+    #          {"Connection", "keep-alive"},
+    #          {"Server", "cloudflare"},
+    #          {"strict-transport-security", "max-age=2592000; includeSubDomains; preload"},
+    #          {"cf-cache-status", "DYNAMIC"},
+    #          {"Nel", "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}"},
+    #          {"X-Content-Type-Options", "nosniff"},
+    #          {"Report-To",
+    #           "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=jM1W3UQCzzzAONX%2B0tLzwGjfhgauYohMDQqfcW9VlGFTHobug4HUOMcVjAgjubStUDtLzSo2QDQAozGF8wdbeflaXuXkvUiX4H8ATe5H0LTyHQ%3D%3D\"}]}"},
+    #          {"CF-RAY", "9d0671b70e43034d-MAD"}
+    #        ],
+    #        request_url: "https://api.warframe.market/v2/order",
+    #        request: %HTTPoison.Request{
+    #          method: :post,
+    #          url: "https://api.warframe.market/v2/order",
+    #          headers: [
+    #            {"x-csrftoken",
+    #             "##e56c26b281c5aad1543b370ab174e33b8137b1475dab87a84d91cffcb85e91ee1d9f065797b61855404458bffec0f6dd97678b65249d10bd36c1c2ed418c8b62"},
+    #            {"Cookie",
+    #             "JWT=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzaWQiOiJwdkNxdTdsUUFnaFpmNktjNnljSWRPeTVqdlJFN0d6TCIsImNzcmZfdG9rZW4iOiIzMDEzNDQ5ZjY0YmI3OWIzMGNkM2FlZTZiMDdjOTM4ZTNhNGMyNzNjIiwiZXhwIjoxNzc2Njk1MTkwLCJpYXQiOjE3NzE1MTExOTAsImlzcyI6Imp3dCIsImF1ZCI6Imp3dCIsImF1dGhfdHlwZSI6ImNvb2tpZSIsInNlY3VyZSI6dHJ1ZSwiand0X2lkZW50aXR5IjoiTnA5WEJSR0ZIeVJMN2dpZGJVa0lmcGRmbmY5d0FtMmYiLCJsb2dpbl91YSI6ImInaGFja25leS8xLjE3LjEnIiwibG9naW5faXAiOiJiJzc3LjIzMC4yMzcuMTgyJyJ9.fZ0G-g70WTHgpuRiyCV3ORY4406Y6DC-27Wh_lrMvY4"},
+    #            {"Accept", "application/json"},
+    #            {"Content-Type", "application/json"}
+    #          ],
+    #          body: "{\"type\":\"sell\",\"visible\":true,\"platinum\":20,\"rank\":0,\"quantity\":1,\"itemId\":\"1\"}",
+    #          params: %{},
+    #          options: []
+    #        }
+    #      }}
+
+    #   response_fn = fn _response ->
+    #     send(pid, :response_fn_ok)
+    #     {:ok, nil}
+    #   end
+
+    #   assert HttpAsyncClient.handle_response(response, {response_fn, request}, %{rate_limiter: RateLimiterMock}) == :ok
+
+    #   refute_received(:response_fn_ok)
+    #   assert_received(:retry_response_fn_ok)
+    #   assert_received({:get_item_orders, {:ok, []}})
+    # end
   end
 end

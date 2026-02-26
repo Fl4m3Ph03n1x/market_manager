@@ -3,6 +3,7 @@ defmodule AuctionHouse.Impl.HttpAsyncClient do
   Asynchronous HTTP client for the auction house. Makes requests to the auction house's API and converts errors into a
   format friendly to the application.
   Uses a rate limiter to avoid overloading the external API.
+  Retries failed requests as well, but with no backoff.
   """
 
   require Logger
@@ -21,6 +22,9 @@ defmodule AuctionHouse.Impl.HttpAsyncClient do
     client: HTTPoison,
     rate_limiter: RateLimiter
   }
+
+  @retryable_status_codes [429, 500, 502, 503, 520]
+  @max_retries 3
 
   @type url :: String.t()
   @type data :: String.t()
@@ -53,14 +57,7 @@ defmodule AuctionHouse.Impl.HttpAsyncClient do
   # Public #
   ##########
 
-  @spec post(
-          url(),
-          data(),
-          Request.t(),
-          RateLimiter.response_function(),
-          Authorization.t(),
-          deps()
-        ) :: :ok
+  @spec post(url(), data(), Request.t(), RateLimiter.response_function(), Authorization.t(), deps()) :: :ok
   def post(
         url,
         data,
@@ -69,19 +66,21 @@ defmodule AuctionHouse.Impl.HttpAsyncClient do
         %Authorization{cookie: cookie, token: token},
         %{rate_limiter: rate_limiter, client: client} \\ @default_deps
       ) do
+    call = {&client.post/3, [url, data, build_headers(cookie, token)]}
+
+    updated_request =
+      request
+      |> Request.put_arg(:call, call)
+      |> Request.put_arg(:response_fun, response_fun)
+      |> Request.put_arg(:retries, 0)
+
     rate_limiter.make_request(
-      {&client.post/3, [url, data, build_headers(cookie, token)]},
-      {&handle_response/2, {response_fun, request}}
+      call,
+      {&handle_response/2, {response_fun, updated_request}}
     )
   end
 
-  @spec delete(
-          url(),
-          Request.t(),
-          RateLimiter.response_function(),
-          Authorization.t(),
-          deps()
-        ) :: :ok
+  @spec delete(url(), Request.t(), RateLimiter.response_function(), Authorization.t(), deps()) :: :ok
   def delete(
         url,
         request,
@@ -89,19 +88,21 @@ defmodule AuctionHouse.Impl.HttpAsyncClient do
         %Authorization{cookie: cookie, token: token},
         %{rate_limiter: rate_limiter, client: client} \\ @default_deps
       ) do
+    call = {&client.delete/2, [url, build_headers(cookie, token)]}
+
+    updated_request =
+      request
+      |> Request.put_arg(:call, call)
+      |> Request.put_arg(:response_fun, response_fun)
+      |> Request.put_arg(:retries, 0)
+
     rate_limiter.make_request(
-      {&client.delete/2, [url, build_headers(cookie, token)]},
-      {&handle_response/2, {response_fun, request}}
+      call,
+      {&handle_response/2, {response_fun, updated_request}}
     )
   end
 
-  @spec get(
-          url(),
-          Request.t(),
-          RateLimiter.response_function(),
-          Authorization.t() | nil,
-          deps()
-        ) :: :ok
+  @spec get(url(), Request.t(), RateLimiter.response_function(), Authorization.t() | nil, deps()) :: :ok
   def get(url, request, response_fun, auth \\ nil, deps \\ @default_deps)
 
   def get(
@@ -111,9 +112,17 @@ defmodule AuctionHouse.Impl.HttpAsyncClient do
         %Authorization{cookie: cookie, token: token},
         %{rate_limiter: rate_limiter, client: client}
       ) do
+    call = {&client.get/2, [url, build_headers(cookie, token)]}
+
+    updated_request =
+      request
+      |> Request.put_arg(:call, call)
+      |> Request.put_arg(:response_fun, response_fun)
+      |> Request.put_arg(:retries, 0)
+
     rate_limiter.make_request(
-      {&client.get/2, [url, build_headers(cookie, token)]},
-      {&handle_response/2, {response_fun, request}}
+      call,
+      {&handle_response/2, {response_fun, updated_request}}
     )
   end
 
@@ -124,21 +133,35 @@ defmodule AuctionHouse.Impl.HttpAsyncClient do
         nil,
         %{rate_limiter: rate_limiter, client: client}
       ) do
+    call = {&client.get/2, [url, @static_headers]}
+
+    updated_request =
+      request
+      |> Request.put_arg(:call, call)
+      |> Request.put_arg(:response_fun, response_fun)
+      |> Request.put_arg(:retries, 0)
+
     rate_limiter.make_request(
-      {&client.get/2, [url, @static_headers]},
-      {&handle_response/2, {response_fun, request}}
+      call,
+      {&handle_response/2, {response_fun, updated_request}}
     )
   end
 
   @spec handle_response(
           {:ok, HTTPoison.Response.t()} | {:error, HTTPoison.Error.t()},
-          {(... -> any()), Request.t()}
-        ) :: :ok
-  def handle_response(response, {response_fun, %Request{metadata: meta, args: args}}) do
+          {(... -> any()), Request.t()},
+          deps()
+        ) ::
+          :ok
+  def handle_response(
+        response,
+        {response_fun, %Request{metadata: meta, args: %{retries: retries, call: call} = args} = request},
+        %{rate_limiter: rate_limiter} \\ @default_deps
+      ) do
     parsed_response = parse(response)
 
-    case elem(parsed_response, 0) do
-      :ok ->
+    cond do
+      request_success?(response) ->
         {:ok, body, headers} = parsed_response
 
         headers_map = Enum.reduce(headers, %{}, fn {key, val}, acc -> Map.put(acc, key, val) end)
@@ -150,7 +173,15 @@ defmodule AuctionHouse.Impl.HttpAsyncClient do
           Enum.each(meta.notify, &send(&1, {meta.operation, result}))
         end
 
-      :error ->
+      not request_success?(response) and retry?(response, retries) ->
+        updated_request = Request.put_arg(request, :retries, retries + 1)
+
+        rate_limiter.make_request(
+          call,
+          {&handle_response/2, {response_fun, updated_request}}
+        )
+
+      true ->
         Enum.each(meta.notify, &send(&1, {meta.operation, parsed_response}))
     end
 
@@ -160,6 +191,17 @@ defmodule AuctionHouse.Impl.HttpAsyncClient do
   ###########
   # Private #
   ###########
+
+  @spec request_success?({:ok, HTTPoison.Response.t()} | {:error, HTTPoison.Error.t()}) :: boolean()
+  defp request_success?({:ok, %HTTPoison.Response{status_code: 200}}), do: true
+  defp request_success?({:ok, %HTTPoison.Response{status_code: _status}}), do: false
+  defp request_success?({:error, %HTTPoison.Error{}}), do: false
+
+  @spec retry?({:ok, HTTPoison.Response.t()} | {:error, HTTPoison.Error.t()}, integer()) :: boolean()
+  defp retry?({:ok, %HTTPoison.Response{status_code: status_code}}, retries)
+       when status_code in @retryable_status_codes and retries < @max_retries, do: true
+
+  defp retry?(_response, _retries), do: false
 
   @spec build_headers(String.t(), String.t()) :: [{String.t(), String.t()}]
   defp build_headers(cookie, token), do: [{"x-csrftoken", token}, {"Cookie", cookie}] ++ @static_headers
