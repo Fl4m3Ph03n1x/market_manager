@@ -24,7 +24,7 @@ defmodule AuctionHouse.Impl.HttpAsyncClient do
   }
 
   @retryable_status_codes [429, 500, 502, 503, 520]
-  @max_retries 3
+  @max_retries 2
 
   @type url :: String.t()
   @type data :: String.t()
