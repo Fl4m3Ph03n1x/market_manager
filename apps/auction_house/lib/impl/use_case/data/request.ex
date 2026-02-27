@@ -17,7 +17,7 @@ defmodule AuctionHouse.Impl.UseCase.Data.Request do
     field(:args, map(), default: %{})
   end
 
-  @spec new(Metadata.t(), args :: map()) :: __MODULE__.t()
+  @spec new(Metadata.t(), args()) :: __MODULE__.t()
   def new(meta, args \\ %{}) when is_struct(meta, Metadata) and is_map(args),
     do: %__MODULE__{
       metadata: meta,
