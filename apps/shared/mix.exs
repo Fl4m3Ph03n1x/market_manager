@@ -4,12 +4,12 @@ defmodule Shared.MixProject do
   def project do
     [
       app: :shared,
-      version: "2.0.0",
+      version: "2.0.1",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
-      elixir: "~> 1.18",
+      elixir: "~> 1.19",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       test_coverage: [tool: ExCoveralls]
