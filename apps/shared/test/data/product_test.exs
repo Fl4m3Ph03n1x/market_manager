@@ -37,7 +37,8 @@ defmodule Shared.Data.ProductTest do
              rank: "n/a"
            }
 
-    # arcane
+    # legacy arcanes
+    # Currently a bug in Warframe.market that forces us to use `per_trade` instead of `quantity` for arcanes, but we want to support both for future-proofing.
     assert Product.new(%{
              "name" => "Molt Vigor",
              "id" => "626a1978f40db600660a1d7b",
@@ -53,6 +54,22 @@ defmodule Shared.Data.ProductTest do
              quantity: 26,
              rank: 0,
              per_trade: 1
+           }
+
+    # arcanes
+    assert Product.new(%{
+             "name" => "Molt Vigor",
+             "id" => "626a1978f40db600660a1d7b",
+             "min_price" => 2,
+             "default_price" => 3,
+             "quantity" => 26
+           }) == %Product{
+             name: "Molt Vigor",
+             id: "626a1978f40db600660a1d7b",
+             min_price: 2,
+             default_price: 3,
+             quantity: 26,
+             rank: 0
            }
   end
 end
