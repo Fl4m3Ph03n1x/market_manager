@@ -21,21 +21,25 @@ defmodule RateLimiter do
   @doc """
   Default implementation for the make_request function of this behaviour. Fetches the limiter of choice from configs.
   """
+  @spec make_request(request_handler(), response_handler()) :: :ok
   def make_request(request_handler, response_handler),
     do: get_rate_limiter().make_request(request_handler, response_handler)
 
   @doc """
   Gets the limiter from the configs at compile time.
   """
+  @spec get_rate_limiter() :: module()
   def get_rate_limiter, do: @algorithm
 
   @doc """
   Gets the requests per second from the configs at compile time.
   """
+  @spec get_requests_per_second() :: non_neg_integer()
   def get_requests_per_second, do: @rps
 
   @doc """
   Calculates the refresh rate, to determine how many requests per second the limiter can make.
   """
+  @spec calculate_refresh_rate(non_neg_integer()) :: non_neg_integer()
   def calculate_refresh_rate(num_requests), do: floor(@milliseconds_in_second / num_requests)
 end
