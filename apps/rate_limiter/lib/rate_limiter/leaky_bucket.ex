@@ -100,7 +100,7 @@ defmodule RateLimiter.LeakyBucket do
 
   def handle_info({:DOWN, _ref, :process, _pid, reason}, state) do
     # Task failed and died
-    Logger.error("Task failed with reason: #{reason}")
+    Logger.error("Task failed with reason: #{inspect(reason)}")
     {:noreply, state}
   end
 
