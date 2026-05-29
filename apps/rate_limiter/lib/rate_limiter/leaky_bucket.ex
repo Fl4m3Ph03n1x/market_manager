@@ -27,6 +27,7 @@ defmodule RateLimiter.LeakyBucket do
   # Public API #
   ##############
 
+  @spec start_link(%{requests_per_second: non_neg_integer()}) :: GenServer.on_start()
   def start_link(opts), do: GenServer.start_link(__MODULE__, opts, name: __MODULE__)
 
   @impl RateLimiter
@@ -66,7 +67,7 @@ defmodule RateLimiter.LeakyBucket do
     do: {:noreply, %{state | send_after_ref: schedule_timer(state.request_queue_poll_rate)}}
 
   def handle_info(:tick, state) do
-    {{:value, {request_handler, response_handler}}, poped_queue} = Qex.pop(state.request_queue)
+    {{:value, {request_handler, response_handler}}, popped_queue} = Qex.pop(state.request_queue)
 
     Task.Supervisor.async_nolink(RateLimiter.TaskSupervisor, fn ->
       {req_fun, args} = request_handler
@@ -79,7 +80,7 @@ defmodule RateLimiter.LeakyBucket do
     {:noreply,
      %{
        state
-       | request_queue: poped_queue,
+       | request_queue: popped_queue,
          request_queue_size: state.request_queue_size - 1,
          send_after_ref: schedule_timer(state.request_queue_poll_rate)
      }}
@@ -107,5 +108,6 @@ defmodule RateLimiter.LeakyBucket do
   # Private #
   ###########
 
+  @spec schedule_timer(non_neg_integer()) :: reference()
   defp schedule_timer(rate), do: Process.send_after(self(), :tick, rate)
 end

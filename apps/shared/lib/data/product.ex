@@ -104,6 +104,25 @@ defmodule Shared.Data.Product do
         "name" => name,
         "id" => id,
         "min_price" => min_price,
+        "quantity" => quantity,
+        "default_price" => default_price
+      })
+      when is_binary(name) and is_binary(id) and is_pos_integer(min_price) and
+             is_pos_integer(default_price) and is_pos_integer(quantity) do
+    %__MODULE__{
+      name: name,
+      id: id,
+      min_price: min_price,
+      default_price: default_price,
+      quantity: quantity,
+      rank: 0
+    }
+  end
+
+  def new(%{
+        "name" => name,
+        "id" => id,
+        "min_price" => min_price,
         "default_price" => default_price
       })
       when is_binary(name) and is_binary(id) and is_pos_integer(min_price) and
