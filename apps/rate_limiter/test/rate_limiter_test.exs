@@ -26,7 +26,7 @@ defmodule RateLimiterTest do
       end
 
       if implementation_started? and Process.alive?(implementation_pid) do
-        GenServer.stop(supervisor_pid)
+        GenServer.stop(implementation_pid)
       end
     end)
 
