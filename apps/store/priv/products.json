@@ -1403,56 +1403,64 @@
     "id": "675c5edc7b18977f6e6453f4",
     "min_price": 2,
     "default_price": 3,
-    "quantity": 17
+    "quantity": 17,
+    "per_trade": 1
   },
   {
     "name": "Arcane Camisado",
     "id": "675c5ed17b18977f6e6453f2",
     "min_price": 2,
     "default_price": 3,
-    "quantity": 17
+    "quantity": 17,
+    "per_trade": 1
   },
   {
     "name": "Arcane Crepuscular",
     "id": "675c59247b18977f6e6453e8",
     "min_price": 2,
     "default_price": 3,
-    "quantity": 17
+    "quantity": 17,
+    "per_trade": 1
   },
   {
     "name": "Arcane Impetus",
     "id": "675c59297b18977f6e6453ea",
     "min_price": 2,
     "default_price": 3,
-    "quantity": 17
+    "quantity": 17,
+    "per_trade": 1
   },
   {
     "name": "Arcane Truculence",
     "id": "675c5ee47b18977f6e6453f6",
     "min_price": 2,
     "default_price": 3,
-    "quantity": 17
+    "quantity": 17,
+    "per_trade": 1
   },
   {
     "name": "Melee Doughty",
     "id": "675c5cd97b18977f6e6453f0",
     "min_price": 2,
     "default_price": 3,
-    "quantity": 17
+    "quantity": 17,
+    "per_trade": 1
   },
   {
     "name": "Primary Crux",
     "id": "675c59347b18977f6e6453ec",
     "min_price": 2,
     "default_price": 3,
-    "quantity": 17
+    "quantity": 17,
+    "per_trade": 1
   },
   {
     "name": "Secondary Enervate",
     "id": "675c5cd07b18977f6e6453ee",
     "min_price": 2,
     "default_price": 3,
-    "quantity": 17
+    "quantity": 17,
+    "per_trade": 1
   },
   {
     "name": "Cascadia Accuracy",
