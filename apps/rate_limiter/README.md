@@ -62,7 +62,7 @@ response_handler =
   {
     fn response, metadata ->
       IO.inspect({response, metadata})
-    end, 
+    end,
     %{source: :example}
   }
 
