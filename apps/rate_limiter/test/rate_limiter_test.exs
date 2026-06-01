@@ -6,19 +6,30 @@ defmodule RateLimiterTest do
   alias RateLimiter
   alias RateLimiter.LeakyBucket
 
-  setup_all do
+  setup do
 
-    supervisor_pid =
+    {supervisor_pid, supervisor_started?} =
       case Task.Supervisor.start_link(name: RateLimiter.TaskSupervisor) do
-        {:ok, pid} -> pid
-        {:error, {:already_started, pid}} -> pid
+        {:ok, pid} -> {pid, true}
+        {:error, {:already_started, pid}} -> {pid, false}
       end
 
-    implementation_pid =
+    {implementation_pid, implementation_started?} =
       case LeakyBucket.start_link(%{requests_per_second: 1}) do
-        {:ok, pid} -> pid
-        {:error, {:already_started, pid}} -> pid
+        {:ok, pid} -> {pid, true}
+        {:error, {:already_started, pid}} -> {pid, false}
       end
+
+
+    on_exit(fn ->
+      if supervisor_started? and Process.alive?(supervisor_pid) do
+        GenServer.stop(supervisor_pid)
+      end
+
+      if implementation_started? and Process.alive?(implementation_pid) do
+        GenServer.stop(supervisor_pid)
+      end
+    end)
 
     %{
       supervisor_pid: supervisor_pid,
@@ -41,14 +52,10 @@ defmodule RateLimiterTest do
       RateLimiter.make_request(request_handler, response_handler)
     end
 
-    Process.sleep(6100)
-
     # Assert that responses are received at the expected intervals
-    assert_received {:response, {:ok, 1}}
-    assert_received {:response, {:ok, 2}}
-    assert_received {:response, {:ok, 3}}
-    assert_received {:response, {:ok, 4}}
-    assert_received {:response, {:ok, 5}}
+    Enum.each(1..5, fn i ->
+      assert_receive {:response, {:ok, ^i}}, 1_500
+    end)
   end
 
   test "handles empty queue correctly", _config do
@@ -67,9 +74,7 @@ defmodule RateLimiterTest do
 
     RateLimiter.make_request(request_handler, response_handler)
 
-    Process.sleep(1100)
-
-    assert_received {:response, :ok}
+    assert_receive {:response, :ok}, 1_100
   end
 
   test "ensure process is not dead if task fails", %{
