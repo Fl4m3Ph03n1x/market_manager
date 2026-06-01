@@ -5,14 +5,14 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.38.2">
-    <meta name="project" content="Market Manager v2.2.1">
+    <meta name="project" content="Market Manager v2.2.5">
 
 
-    <title>API Reference — Market Manager v2.2.1</title>
+    <title>API Reference — Market Manager v2.2.5</title>
 
     <link rel="stylesheet" href="dist/html-elixir-KV3YOVJ3.css" />
 
-    <script defer src="dist/sidebar_items-1F56A3E4.js"></script>
+    <script defer src="dist/sidebar_items-9A261687.js"></script>
     <script defer src="docs_config.js"></script>
     <script defer src="dist/html-DPJLHKSM.js"></script>
 
@@ -41,7 +41,7 @@
 Market Manager
         </a>
         <div class="sidebar-projectVersion" translate="no">
-          v2.2.1
+          v2.2.5
         </div>
       </div>
     </div>
@@ -78,7 +78,7 @@ Market Manager
 
 <div id="top-content">
   <div class="heading-with-actions top-heading">
-    <h1>API Reference <small class="app-vsn">Market Manager v#2.2.1</small></h1>
+    <h1>API Reference <small class="app-vsn">Market Manager v#2.2.5</small></h1>
 
       <a href="https://github.com/Fl4m3Ph03n1x/market_manager" title="View Source" class="icon-action" rel="help">
         <i class="ri-code-s-slash-line" aria-hidden="true"></i>
@@ -109,7 +109,8 @@ into a format the manager understands.</p></div>
 
     <div class="summary-synopsis"><p>Asynchronous HTTP client for the auction house. Makes requests to the auction house's API and converts errors into a
 format friendly to the application.
-Uses a rate limiter to avoid overloading the external API.</p></div>
+Uses a rate limiter to avoid overloading the external API.
+Retries failed requests as well, but with no backoff.</p></div>
 
 </div>
 <div class="summary-row">
@@ -433,6 +434,15 @@ market.</p></div>
     <div class="summary-synopsis"><p>Represents an order to be made to warframe market. There are two types of
 orders thus far, RankedOrders and SimpleOrders. See respective files for more
 information.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Shared.Data.Order.ArcaneOrder.html" translate="no">Shared.Data.Order.ArcaneOrder</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Represents an order to be made to warframe market about an Arcane item.</p></div>
 
 </div>
 <div class="summary-row">

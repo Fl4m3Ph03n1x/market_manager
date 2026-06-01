@@ -5,14 +5,14 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.38.2">
-    <meta name="project" content="Market Manager v2.2.1">
+    <meta name="project" content="Market Manager v2.2.5">
 
 
-    <title>AuctionHouse.Impl.HttpAsyncClient — Market Manager v2.2.1</title>
+    <title>AuctionHouse.Impl.HttpAsyncClient — Market Manager v2.2.5</title>
 
     <link rel="stylesheet" href="dist/html-elixir-KV3YOVJ3.css" />
 
-    <script defer src="dist/sidebar_items-1F56A3E4.js"></script>
+    <script defer src="dist/sidebar_items-9A261687.js"></script>
     <script defer src="docs_config.js"></script>
     <script defer src="dist/html-DPJLHKSM.js"></script>
 
@@ -41,7 +41,7 @@
 Market Manager
         </a>
         <div class="sidebar-projectVersion" translate="no">
-          v2.2.1
+          v2.2.5
         </div>
       </div>
     </div>
@@ -80,7 +80,7 @@ Market Manager
   <div class="heading-with-actions top-heading">
     <h1>
       <span translate="no">AuctionHouse.Impl.HttpAsyncClient</span> 
-      <small class="app-vsn" translate="no">(Market Manager v2.2.1)</small>
+      <small class="app-vsn" translate="no">(Market Manager v2.2.5)</small>
 
     </h1>
 
@@ -95,7 +95,8 @@ Market Manager
     <section id="moduledoc">
 <p>Asynchronous HTTP client for the auction house. Makes requests to the auction house's API and converts errors into a
 format friendly to the application.
-Uses a rate limiter to avoid overloading the external API.</p>
+Uses a rate limiter to avoid overloading the external API.
+Retries failed requests as well, but with no backoff.</p>
     </section>
 
 </div>
@@ -168,7 +169,7 @@ Uses a rate limiter to avoid overloading the external API.</p>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#handle_response/2" data-no-tooltip="" translate="no">handle_response(response, arg)</a>
+        <a href="#handle_response/3" data-no-tooltip="" translate="no">handle_response(response, arg, map \\ %{client: HTTPoison, rate_limiter: RateLimiter})</a>
 
       </div>
 
@@ -205,7 +206,7 @@ Uses a rate limiter to avoid overloading the external API.</p>
       <h1 class="signature" translate="no">body()</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/impl/http_async_client.ex#L27" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/impl/http_async_client.ex#L31" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -233,7 +234,7 @@ Uses a rate limiter to avoid overloading the external API.</p>
       <h1 class="signature" translate="no">data()</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/impl/http_async_client.ex#L26" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/impl/http_async_client.ex#L30" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -261,7 +262,7 @@ Uses a rate limiter to avoid overloading the external API.</p>
       <h1 class="signature" translate="no">headers()</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/impl/http_async_client.ex#L28" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/impl/http_async_client.ex#L32" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -289,7 +290,7 @@ Uses a rate limiter to avoid overloading the external API.</p>
       <h1 class="signature" translate="no">url()</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/impl/http_async_client.ex#L25" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/impl/http_async_client.ex#L29" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -331,7 +332,7 @@ Uses a rate limiter to avoid overloading the external API.</p>
       <h1 class="signature" translate="no">delete(url, request, response_fun, authorization, map \\ %{client: HTTPoison, rate_limiter: RateLimiter})</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/impl/http_async_client.ex#L68" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/impl/http_async_client.ex#L84" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -369,7 +370,7 @@ Uses a rate limiter to avoid overloading the external API.</p>
       <h1 class="signature" translate="no">get(url, request, response_fun, auth \\ nil, deps \\ %{client: HTTPoison, rate_limiter: RateLimiter})</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/impl/http_async_client.ex#L88" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/impl/http_async_client.ex#L106" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -393,17 +394,19 @@ Uses a rate limiter to avoid overloading the external API.</p>
 
   </section>
 </section>
-<section class="detail" id="handle_response/2">
+<section class="detail" id="handle_response/3">
+
+    <span id="handle_response/2"></span>
 
   <div class="detail-header">
-    <a href="#handle_response/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+    <a href="#handle_response/3" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
     </a>
     <div class="heading-with-actions">
-      <h1 class="signature" translate="no">handle_response(response, arg)</h1>
+      <h1 class="signature" translate="no">handle_response(response, arg, map \\ %{client: HTTPoison, rate_limiter: RateLimiter})</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/impl/http_async_client.ex#L120" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/impl/http_async_client.ex#L156" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -415,8 +418,9 @@ Uses a rate limiter to avoid overloading the external API.</p>
       <div class="specs">
 
           <pre translate="no"><span class="attribute">@spec</span> handle_response(
-  {:ok, <a href="https://hexdocs.pm/httpoison/1.8.2/HTTPoison.Response.html#t:t/0">HTTPoison.Response.t</a>() | {:error, <a href="https://hexdocs.pm/httpoison/1.8.2/HTTPoison.Error.html#t:t/0">HTTPoison.Error.t</a>()}},
-  {(... -&gt; <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()), <a href="AuctionHouse.Impl.UseCase.Data.Request.html#t:t/0">AuctionHouse.Impl.UseCase.Data.Request.t</a>()}
+  {:ok, <a href="https://hexdocs.pm/httpoison/1.8.2/HTTPoison.Response.html#t:t/0">HTTPoison.Response.t</a>()} | {:error, <a href="https://hexdocs.pm/httpoison/1.8.2/HTTPoison.Error.html#t:t/0">HTTPoison.Error.t</a>()},
+  {(... -&gt; <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()), <a href="AuctionHouse.Impl.UseCase.Data.Request.html#t:t/0">AuctionHouse.Impl.UseCase.Data.Request.t</a>()},
+  deps()
 ) :: :ok</pre>
 
       </div>
@@ -436,7 +440,7 @@ Uses a rate limiter to avoid overloading the external API.</p>
       <h1 class="signature" translate="no">post(url, data, request, response_fun, authorization, map \\ %{client: HTTPoison, rate_limiter: RateLimiter})</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/impl/http_async_client.ex#L47" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/impl/http_async_client.ex#L61" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 

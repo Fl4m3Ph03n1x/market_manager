@@ -5,14 +5,14 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.38.2">
-    <meta name="project" content="Market Manager v2.2.1">
+    <meta name="project" content="Market Manager v2.2.5">
 
 
-    <title>RateLimiter — Market Manager v2.2.1</title>
+    <title>RateLimiter — Market Manager v2.2.5</title>
 
     <link rel="stylesheet" href="dist/html-elixir-KV3YOVJ3.css" />
 
-    <script defer src="dist/sidebar_items-1F56A3E4.js"></script>
+    <script defer src="dist/sidebar_items-9A261687.js"></script>
     <script defer src="docs_config.js"></script>
     <script defer src="dist/html-DPJLHKSM.js"></script>
 
@@ -41,7 +41,7 @@
 Market Manager
         </a>
         <div class="sidebar-projectVersion" translate="no">
-          v2.2.1
+          v2.2.5
         </div>
       </div>
     </div>
@@ -80,7 +80,7 @@ Market Manager
   <div class="heading-with-actions top-heading">
     <h1>
       <span translate="no">RateLimiter</span> <small>behaviour</small>
-      <small class="app-vsn" translate="no">(Market Manager v2.2.1)</small>
+      <small class="app-vsn" translate="no">(Market Manager v2.2.5)</small>
 
     </h1>
 
@@ -185,7 +185,7 @@ Market Manager
 
       </div>
 
-        <div class="summary-synopsis"><p>Calculates the refresh rate, to determine how many requests per second the limiter can made.</p></div>
+        <div class="summary-synopsis"><p>Calculates the refresh rate, to determine how many requests per second the limiter can make.</p></div>
 
     </div>
 
@@ -462,7 +462,7 @@ Market Manager
       <h1 class="signature" translate="no">calculate_refresh_rate(num_requests)</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/rate_limiter/lib/rate_limiter.ex#L40" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/rate_limiter/lib/rate_limiter.ex#L44" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -471,7 +471,13 @@ Market Manager
 
   <section class="docstring">
 
-<p>Calculates the refresh rate, to determine how many requests per second the limiter can made.</p>
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> calculate_refresh_rate(<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>()) :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>()</pre>
+
+      </div>
+
+<p>Calculates the refresh rate, to determine how many requests per second the limiter can make.</p>
   </section>
 </section>
 <section class="detail" id="get_rate_limiter/0">
@@ -484,7 +490,7 @@ Market Manager
       <h1 class="signature" translate="no">get_rate_limiter()</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/rate_limiter/lib/rate_limiter.ex#L30" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/rate_limiter/lib/rate_limiter.ex#L32" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -492,6 +498,12 @@ Market Manager
   </div>
 
   <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> get_rate_limiter() :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">module</a>()</pre>
+
+      </div>
 
 <p>Gets the limiter from the configs at compile time.</p>
   </section>
@@ -506,7 +518,7 @@ Market Manager
       <h1 class="signature" translate="no">get_requests_per_second()</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/rate_limiter/lib/rate_limiter.ex#L35" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/rate_limiter/lib/rate_limiter.ex#L38" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -514,6 +526,12 @@ Market Manager
   </div>
 
   <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> get_requests_per_second() :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>()</pre>
+
+      </div>
 
 <p>Gets the requests per second from the configs at compile time.</p>
   </section>
@@ -528,7 +546,7 @@ Market Manager
       <h1 class="signature" translate="no">make_request(request_handler, response_handler)</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/rate_limiter/lib/rate_limiter.ex#L24" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/rate_limiter/lib/rate_limiter.ex#L25" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -536,6 +554,12 @@ Market Manager
   </div>
 
   <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> make_request(<a href="#t:request_handler/0">request_handler</a>(), <a href="#t:response_handler/0">response_handler</a>()) :: :ok</pre>
+
+      </div>
 
 <p>Default implementation for the make_request function of this behaviour. Fetches the limiter of choice from configs.</p>
   </section>

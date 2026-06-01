@@ -32,6 +32,7 @@ RateLimiter.LeakyBucket.html
 RateLimiter.html
 Shared.Data.Authorization.html
 Shared.Data.Credentials.html
+Shared.Data.Order.ArcaneOrder.html
 Shared.Data.Order.RankedOrder.html
 Shared.Data.Order.SimpleOrder.html
 Shared.Data.Order.html
@@ -77,8 +78,8 @@ dist/lato-latin-700-normal-2XVSBPG4.woff2
 dist/lato-latin-ext-400-normal-N27NCBWW.woff2
 dist/lato-latin-ext-700-normal-Q2L5DVMW.woff2
 dist/remixicon-QPNJX265.woff2
-dist/search_data-2A0E42BF.js
-dist/sidebar_items-1F56A3E4.js
+dist/search_data-F9A00491.js
+dist/sidebar_items-9A261687.js
 index.html
 readme.html
 search.html
