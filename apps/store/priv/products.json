@@ -1613,5 +1613,110 @@
     "default_price": 3,
     "quantity": 21,
     "per_trade": 1
+  },
+  {
+    "name": "Magus Vigor",
+    "id": "5a0475086c4655012038ddbf",
+    "min_price": 2,
+    "default_price": 3,
+    "quantity": 21,
+    "per_trade": 1
+  },
+  {
+    "name": "Virtuos Null",
+    "id": "5a04750a6c4655012038ddc7",
+    "min_price": 2,
+    "default_price": 4,
+    "quantity": 21,
+    "per_trade": 1
+  },
+  {
+    "name": "Magus Husk",
+    "id": "5a04750c6c4655012038ddca",
+    "min_price": 2,
+    "default_price": 3,
+    "quantity": 21,
+    "per_trade": 1
+  },
+  {
+    "name": "Virtuos Tempo",
+    "id": "5a04750b6c4655012038ddc8",
+    "min_price": 2,
+    "default_price": 4,
+    "quantity": 21,
+    "per_trade": 1
+  },
+  {
+    "name": "Virtuos Fury",
+    "id": "5a04750a6c4655012038ddc6",
+    "min_price": 2,
+    "default_price": 4,
+    "quantity": 17,
+    "per_trade": 1
+  },
+  {
+    "name": "Magus Cloud",
+    "id": "5a04750e6c4655012038ddcf",
+    "min_price": 2,
+    "default_price": 4,
+    "quantity": 13,
+    "per_trade": 1
+  },
+  {
+    "name": "Virtuos Strike",
+    "id": "5a04750c6c4655012038ddcb",
+    "min_price": 2,
+    "default_price": 4,
+    "quantity": 13,
+    "per_trade": 1
+  },
+  {
+    "name": "Magus Cadence",
+    "id": "5a0475076c4655012038ddbe",
+    "min_price": 2,
+    "default_price": 5,
+    "quantity": 13,
+    "per_trade": 1
+  },
+  {
+    "name": "Magus Replenish",
+    "id": "5a04750d6c4655012038ddcc",
+    "min_price": 2,
+    "default_price": 5,
+    "quantity": 13,
+    "per_trade": 1
+  },
+  {
+    "name": "Virtuos Shadow",
+    "id": "5a04750a6c4655012038ddc5",
+    "min_price": 2,
+    "default_price": 5,
+    "quantity": 13,
+    "per_trade": 1
+  },
+  {
+    "name": "Virtuos Ghost",
+    "id": "5a04750e6c4655012038ddd0",
+    "min_price": 2,
+    "default_price": 5,
+    "quantity": 13,
+    "per_trade": 1
+  },
+  {
+    "name": "Magus Elevate",
+    "id": "5a04750e6c4655012038ddce",
+    "min_price": 2,
+    "default_price": 5,
+    "quantity": 13,
+    "per_trade": 1
+  },
+  {
+    "name": "Magus Nourish",
+    "id": "5a0475096c4655012038ddc4",
+    "min_price": 2,
+    "default_price": 5,
+    "quantity": 13,
+    "per_trade": 1
   }
+  
 ]
