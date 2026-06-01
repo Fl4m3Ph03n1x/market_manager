@@ -99,11 +99,11 @@ defmodule RateLimiterTest do
 
     # Task.Supervisor should not die or get replaced.
     assert Process.whereis(RateLimiter.TaskSupervisor) == supervisor_pid
-    refute_received {:DOWN, ^supervisor_ref, :process, ^supervisor_pid, _reason}
+    refute_receive {:DOWN, ^supervisor_ref, :process, ^supervisor_pid, _reason}, 200
 
     # LeakyBucket should not die or get replaced.
     assert Process.whereis(LeakyBucket) == impl_pid
-    refute_received {:DOWN, ^impl_ref, :process, ^impl_pid, _reason}
+    refute_receive {:DOWN, ^impl_ref, :process, ^impl_pid, _reason}, 200
 
     Process.demonitor(supervisor_ref, [:flush])
     Process.demonitor(impl_ref, [:flush])
@@ -158,11 +158,11 @@ defmodule RateLimiterTest do
 
     # Task.Supervisor should not die or get replaced.
     assert Process.whereis(RateLimiter.TaskSupervisor) == supervisor_pid
-    refute_received {:DOWN, ^supervisor_ref, :process, ^supervisor_pid, _reason}
+    refute_receive {:DOWN, ^supervisor_ref, :process, ^supervisor_pid, _reason}, 200
 
     # LeakyBucket should not die or get replaced.
     assert Process.whereis(LeakyBucket) == impl_pid
-    refute_received {:DOWN, ^impl_ref, :process, ^impl_pid, _reason}
+    refute_receive {:DOWN, ^impl_ref, :process, ^impl_pid, _reason}, 200
 
     Process.demonitor(supervisor_ref, [:flush])
     Process.demonitor(impl_ref, [:flush])
