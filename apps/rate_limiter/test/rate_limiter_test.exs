@@ -7,7 +7,9 @@ defmodule RateLimiterTest do
   alias RateLimiter.LeakyBucket
 
   setup do
-
+    # We share the state globally. All instances currently have the same configuration, so the tests currently pass.
+    # In the future, I should probably inject the name of the LeakyBucket GenServer and Task.Supervisor,
+    # so that we can have multiple instances with different configurations running at the same time.
     {supervisor_pid, supervisor_started?} =
       case Task.Supervisor.start_link(name: RateLimiter.TaskSupervisor) do
         {:ok, pid} -> {pid, true}
