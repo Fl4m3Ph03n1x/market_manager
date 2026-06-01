@@ -1,7 +1,7 @@
 defmodule RateLimiterTest do
   @moduledoc false
 
-  use ExUnit.Case
+  use ExUnit.Case, async: false
 
   alias RateLimiter
   alias RateLimiter.LeakyBucket
@@ -93,9 +93,6 @@ defmodule RateLimiterTest do
 
     Process.sleep(1100)
 
-    # Test process should still be the same running process.
-    assert self() == test_pid
-
     # Task.Supervisor should not die or get replaced.
     assert Process.whereis(RateLimiter.TaskSupervisor) == supervisor_pid
     refute_received {:DOWN, ^supervisor_ref, :process, ^supervisor_pid, _reason}
@@ -154,9 +151,6 @@ defmodule RateLimiterTest do
 
     # Wait for final response to ensure all tasks have been processed
     assert_receive {:response, {:ok, 4}}, 6000
-
-    # Test process should still be the same running process.
-    assert self() == test_pid
 
     # Task.Supervisor should not die or get replaced.
     assert Process.whereis(RateLimiter.TaskSupervisor) == supervisor_pid
