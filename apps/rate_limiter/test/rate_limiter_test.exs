@@ -135,10 +135,10 @@ defmodule RateLimiterTest do
              end, %{}}
 
           2 ->
-            {fn _, _ -> throw("a test error") end, []}
+            {fn _, %{} -> throw("a test error") end, %{}}
 
           3 ->
-            {fn _, _ -> raise "a test error" end, []}
+            {fn _, %{} -> raise "a test error" end, %{}}
 
           4 ->
             {fn response, %{} ->
