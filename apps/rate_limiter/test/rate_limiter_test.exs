@@ -20,7 +20,6 @@ defmodule RateLimiterTest do
         {:error, {:already_started, pid}} -> {pid, false}
       end
 
-
     on_exit(fn ->
       if supervisor_started? and Process.alive?(supervisor_pid) do
         GenServer.stop(supervisor_pid)
