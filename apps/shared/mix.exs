@@ -4,12 +4,12 @@ defmodule Shared.MixProject do
   def project do
     [
       app: :shared,
-      version: "2.0.1",
+      version: "2.1.0",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
-      elixir: "~> 1.19",
+      elixir: "~> 1.20",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       test_coverage: [tool: ExCoveralls]
@@ -39,11 +39,7 @@ defmodule Shared.MixProject do
     [
       {:morphix, "~> 0.8.1"},
       {:typed_struct, "~> 0.3.0"},
-      {:jason, "~> 1.4"},
-
-      # Test and Dev
-      {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
-      {:gradient, github: "esl/gradient", only: [:dev, :test], runtime: false}
+      {:jason, "~> 1.4"}
     ]
   end
 end

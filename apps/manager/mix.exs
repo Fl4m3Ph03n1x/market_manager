@@ -9,7 +9,7 @@ defmodule Manager.MixProject do
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
-      elixir: "~> 1.19",
+      elixir: "~> 1.20",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -46,9 +46,7 @@ defmodule Manager.MixProject do
       {:shared, in_umbrella: true},
 
       # Testing and Dev
-      {:mix_test_watch, "~> 1.0", only: [:dev, :test], runtime: false},
-      {:mock, "~> 0.3.0", only: [:dev, :test]},
-      {:gradient, github: "esl/gradient", only: [:dev, :test], runtime: false}
+      {:mock, "~> 0.3.0", only: [:dev, :test]}
     ]
 
   defp elixirc_paths(:test), do: ["test/support", "lib"]
