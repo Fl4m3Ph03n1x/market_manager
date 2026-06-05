@@ -122,18 +122,7 @@ defmodule Manager.Saga.Deactivate do
       )
 
       if all_orders_deleted? do
-        with :ok <- store.deactivate_syndicates(syndicate_ids),
-             {:ok, updated_active_syndicates} <- store.list_active_syndicates() do
-          if Enum.empty?(updated_active_syndicates) do
-            send(from, {:deactivate, {:ok, :done}})
-          else
-            send(from, {:deactivate, {:ok, :reactivating_remaining_syndicates}})
-            # reactivate syndicate with last strategy used
-            SagaSupervisor.activate(updated_active_syndicates, from)
-          end
-
-          {:stop, :normal, state}
-        end
+        handle_all_orders_deleted(from, syndicate_ids, store, state)
       else
         {:noreply, updated_state}
       end
@@ -165,6 +154,21 @@ defmodule Manager.Saga.Deactivate do
     case store.list_products(syndicate_ids) do
       {:ok, products} -> {:ok, Enum.map(products, & &1.id)}
       error -> error
+    end
+  end
+
+  defp handle_all_orders_deleted(from, syndicate_ids, store, state) do
+    with :ok <- store.deactivate_syndicates(syndicate_ids),
+         {:ok, updated_active_syndicates} <- store.list_active_syndicates() do
+      if Enum.empty?(updated_active_syndicates) do
+        send(from, {:deactivate, {:ok, :done}})
+      else
+        send(from, {:deactivate, {:ok, :reactivating_remaining_syndicates}})
+        # reactivate syndicate with last strategy used
+        SagaSupervisor.activate(updated_active_syndicates, from)
+      end
+
+      {:stop, :normal, state}
     end
   end
 end
