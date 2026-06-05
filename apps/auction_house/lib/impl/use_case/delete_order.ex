@@ -3,10 +3,10 @@ defmodule AuctionHouse.Impl.UseCase.DeleteOrder do
   Sends a delete request to the given PlacedOrder. Returns the deleted PlacedOrder if successful.
   """
 
-  alias Shared.Data.PlacedOrder
   alias AuctionHouse.Impl.{HttpAsyncClient, UseCase}
   alias AuctionHouse.Impl.UseCase.Data.{Request, Response}
   alias Shared.Data.Authorization
+  alias Shared.Data.PlacedOrder
 
   @behaviour UseCase
 

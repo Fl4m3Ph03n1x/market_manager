@@ -5,8 +5,8 @@ defmodule Manager do
   and you need to talk to MarketManager, this is who you call, the public API.
   """
 
-  alias Manager.Type
   alias Manager.Runtime.{ManagerSupervisor, SagaSupervisor, Worker}
+  alias Manager.Type
   alias Shared.Data.{Credentials, Strategy, Syndicate}
 
   ##########
