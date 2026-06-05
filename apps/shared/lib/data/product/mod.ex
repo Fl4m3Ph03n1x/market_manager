@@ -9,8 +9,8 @@ defmodule Shared.Data.Product.Mod do
 
   use TypedStruct
 
-  alias Shared.Data.Product
   alias Jason
+  alias Shared.Data.Product
 
   @behaviour Product
 

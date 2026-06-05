@@ -63,11 +63,16 @@ defmodule Manager.PriceAnalystTest do
     test "calculates :top_five_average in a list with elements of different ranks" do
       # Arrange
       order_info = [
-        Helpers.create_order_info(platinum: 50, rank: 5), # 2
-        Helpers.create_order_info(platinum: 55, rank: 3), # 6
-        Helpers.create_order_info(platinum: 60, rank: 4), # 4
-        Helpers.create_order_info(platinum: 5), # 5
-        Helpers.create_order_info(platinum: 2)  # 2
+        # 2
+        Helpers.create_order_info(platinum: 50, rank: 5),
+        # 6
+        Helpers.create_order_info(platinum: 55, rank: 3),
+        # 4
+        Helpers.create_order_info(platinum: 60, rank: 4),
+        # 5
+        Helpers.create_order_info(platinum: 5),
+        # 2
+        Helpers.create_order_info(platinum: 2)
       ]
 
       product = Helpers.create_product(min_price: 1, default_price: 1, type: "arcane", per_trade: 1)

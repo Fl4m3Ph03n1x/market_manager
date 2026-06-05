@@ -4,7 +4,7 @@ defmodule StoreTest do
   use ExUnit.Case, async: false
 
   alias Shared.Data.{Authorization, User}
-  alias Shared.Data.Product.{Mod, Arcane, ModWithoutRank}
+  alias Shared.Data.Product.{Arcane, Mod, ModWithoutRank}
   alias Store
 
   ##########
@@ -310,20 +310,21 @@ defmodule StoreTest do
     test "returns list of all syndicates" do
       {:ok, syndicates} = Store.list_syndicates()
 
-      expected_ids = MapSet.new([
-        :arbiters_of_hexis,
-        :arbitrations,
-        :cephalon_simaris,
-        :cephalon_suda,
-        :new_loka,
-        :perrin_sequence,
-        :red_veil,
-        :steel_meridian,
-        :the_hex,
-        :the_quills,
-        :the_zariman,
-        :conjunction_survival
-      ])
+      expected_ids =
+        MapSet.new([
+          :arbiters_of_hexis,
+          :arbitrations,
+          :cephalon_simaris,
+          :cephalon_suda,
+          :new_loka,
+          :perrin_sequence,
+          :red_veil,
+          :steel_meridian,
+          :the_hex,
+          :the_quills,
+          :the_zariman,
+          :conjunction_survival
+        ])
 
       actual_ids = MapSet.new(Enum.map(syndicates, & &1.id))
 

@@ -8,8 +8,8 @@ defmodule Shared.Data.Product.ModWithoutRank do
 
   use TypedStruct
 
-  alias Shared.Data.Product
   alias Jason
+  alias Shared.Data.Product
 
   @behaviour Product
 

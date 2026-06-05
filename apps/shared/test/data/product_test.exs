@@ -30,7 +30,7 @@ defmodule Shared.Data.ProductTest do
              "min_price" => 50,
              "default_price" => 60,
              "rank" => "n/a",
-              "type" => "mod_without_rank"
+             "type" => "mod_without_rank"
            }) == %ModWithoutRank{
              name: "Astral Autopsy",
              id: "588a789c3cf52c408a2f88dc",
