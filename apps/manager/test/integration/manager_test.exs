@@ -2188,7 +2188,11 @@ defmodule Manager.WorkerTest do
                :arbiters_of_hexis,
                :cephalon_suda,
                :cephalon_simaris,
-               :arbitrations
+               :arbitrations,
+               :the_hex,
+               :the_quills,
+               :the_zariman,
+               :conjunction_survival
              ]
     end
   end

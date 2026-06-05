@@ -3,7 +3,8 @@ defmodule StoreTest do
 
   use ExUnit.Case, async: false
 
-  alias Shared.Data.{Authorization, Product, User}
+  alias Shared.Data.{Authorization, User}
+  alias Shared.Data.Product.{Mod, Arcane, ModWithoutRank}
   alias Store
 
   ##########
@@ -64,13 +65,13 @@ defmodule StoreTest do
   describe "list_products/1" do
     test "returns list of available products from the syndicates with the given ids" do
       # Arrange
-      syndicate_ids = [:cephalon_simaris, :arbitrations]
+      syndicate_ids = [:cephalon_simaris, :the_hex]
 
       # Act & Assert
       assert Store.list_products(syndicate_ids) ==
                {:ok,
                 [
-                  %Product{
+                  %Mod{
                     default_price: 60,
                     id: "5740c1879d238d4a03d28518",
                     min_price: 50,
@@ -78,7 +79,7 @@ defmodule StoreTest do
                     quantity: 1,
                     rank: 0
                   },
-                  %Product{
+                  %Mod{
                     rank: 0,
                     quantity: 1,
                     default_price: 60,
@@ -86,7 +87,7 @@ defmodule StoreTest do
                     id: "554d3f0ce779894445a848f2",
                     name: "Detect Vulnerability"
                   },
-                  %Product{
+                  %Mod{
                     rank: 0,
                     quantity: 1,
                     default_price: 60,
@@ -94,7 +95,7 @@ defmodule StoreTest do
                     id: "5b00231bac0f7e006fd6f7b3",
                     name: "Reawaken"
                   },
-                  %Product{
+                  %Mod{
                     rank: 0,
                     quantity: 1,
                     default_price: 60,
@@ -102,7 +103,7 @@ defmodule StoreTest do
                     id: "5b00231bac0f7e006fd6f7b4",
                     name: "Negate"
                   },
-                  %Product{
+                  %Mod{
                     rank: 0,
                     quantity: 1,
                     default_price: 60,
@@ -110,7 +111,7 @@ defmodule StoreTest do
                     id: "5bc24accb919f2010f7d579a",
                     name: "Ambush"
                   },
-                  %Product{
+                  %Mod{
                     rank: 0,
                     quantity: 1,
                     default_price: 60,
@@ -118,7 +119,7 @@ defmodule StoreTest do
                     id: "5bc24accb919f2010f7d579b",
                     name: "Energy Generator"
                   },
-                  %Product{
+                  %Mod{
                     rank: 0,
                     quantity: 1,
                     default_price: 60,
@@ -126,7 +127,7 @@ defmodule StoreTest do
                     id: "5f533a19d5c36d0157f4b9ff",
                     name: "Botanist"
                   },
-                  %Product{
+                  %Mod{
                     rank: 0,
                     quantity: 1,
                     default_price: 60,
@@ -134,7 +135,7 @@ defmodule StoreTest do
                     id: "56dac8cc5cc639de0a45c52c",
                     name: "Energy Conversion"
                   },
-                  %Product{
+                  %Mod{
                     rank: 0,
                     quantity: 1,
                     default_price: 60,
@@ -142,7 +143,7 @@ defmodule StoreTest do
                     id: "56dac8d25cc639de0a45c52d",
                     name: "Health Conversion"
                   },
-                  %Product{
+                  %ModWithoutRank{
                     default_price: 60,
                     id: "588a789c3cf52c408a2f88dc",
                     min_price: 50,
@@ -150,149 +151,77 @@ defmodule StoreTest do
                     quantity: 1,
                     rank: "n/a"
                   },
-                  %Product{
+                  %Arcane{
+                    default_price: 3,
+                    id: "675c5edc7b18977f6e6453f4",
+                    min_price: 2,
+                    name: "Arcane Bellicose",
+                    quantity: 17,
                     rank: 0,
-                    quantity: 1,
-                    default_price: 11,
-                    min_price: 9,
-                    id: "5bc1ab93b919f200c18c10f0",
-                    name: "Sharpshooter"
+                    per_trade: 1
                   },
-                  %Product{
-                    rank: 0,
-                    quantity: 1,
-                    default_price: 16,
-                    min_price: 14,
-                    id: "5bc1ab94b919f200c18c10f2",
-                    name: "Cautious Shot"
+                  %Arcane{
+                    default_price: 3,
+                    id: "675c5ed17b18977f6e6453f2",
+                    min_price: 2,
+                    name: "Arcane Camisado",
+                    per_trade: 1,
+                    quantity: 17,
+                    rank: 0
                   },
-                  %Product{
-                    rank: 0,
-                    quantity: 1,
-                    default_price: 16,
-                    min_price: 14,
-                    id: "5bc1ab93b919f200c18c10f1",
-                    name: "Power Donation"
+                  %Arcane{
+                    default_price: 3,
+                    id: "675c59247b18977f6e6453e8",
+                    min_price: 2,
+                    name: "Arcane Crepuscular",
+                    per_trade: 1,
+                    quantity: 17,
+                    rank: 0
                   },
-                  %Product{
-                    rank: 0,
-                    quantity: 1,
-                    default_price: 16,
-                    min_price: 15,
-                    id: "5bc1ab92b919f200c18c10ed",
-                    name: "Vigorous Swap"
+                  %Arcane{
+                    default_price: 3,
+                    id: "675c59297b18977f6e6453ea",
+                    min_price: 2,
+                    name: "Arcane Impetus",
+                    per_trade: 1,
+                    quantity: 17,
+                    rank: 0
                   },
-                  %Product{
-                    rank: 0,
-                    quantity: 1,
-                    default_price: 16,
-                    min_price: 15,
-                    id: "5bc1ab92b919f200c18c10ee",
-                    name: "Rolling Guard"
+                  %Arcane{
+                    default_price: 3,
+                    id: "675c5ee47b18977f6e6453f6",
+                    min_price: 2,
+                    name: "Arcane Truculence",
+                    per_trade: 1,
+                    quantity: 17,
+                    rank: 0
                   },
-                  %Product{
-                    rank: 0,
-                    quantity: 1,
-                    default_price: 19,
-                    min_price: 17,
-                    id: "5e7caa01267539063de48c3e",
-                    name: "Preparation"
+                  %Arcane{
+                    default_price: 3,
+                    id: "675c5cd97b18977f6e6453f0",
+                    min_price: 2,
+                    name: "Melee Doughty",
+                    per_trade: 1,
+                    quantity: 17,
+                    rank: 0
                   },
-                  %Product{
-                    rank: 0,
-                    quantity: 1,
-                    default_price: 20,
-                    min_price: 16,
-                    id: "5e7caa01267539063de48c3f",
-                    name: "Aerial Ace"
+                  %Arcane{
+                    default_price: 3,
+                    id: "675c59347b18977f6e6453ec",
+                    min_price: 2,
+                    name: "Primary Crux",
+                    per_trade: 1,
+                    quantity: 17,
+                    rank: 0
                   },
-                  %Product{
-                    rank: 0,
-                    quantity: 1,
-                    default_price: 20,
-                    min_price: 18,
-                    id: "5e7caa01267539063de48c3c",
-                    name: "Mending Shot"
-                  },
-                  %Product{
-                    rank: 0,
-                    quantity: 1,
-                    default_price: 21,
-                    min_price: 19,
-                    id: "5e7caa02267539063de48c40",
-                    name: "Energizing Shot"
-                  },
-                  %Product{
-                    rank: 0,
-                    quantity: 1,
-                    default_price: 16,
-                    min_price: 14,
-                    id: "60e5b9004794450053e9995b",
-                    name: "Galvanized Savvy"
-                  },
-                  %Product{
-                    rank: 0,
-                    quantity: 1,
-                    default_price: 16,
-                    min_price: 15,
-                    id: "60e5b8fd4794450053e99948",
-                    name: "Galvanized Acceleration"
-                  },
-                  %Product{
-                    rank: 0,
-                    quantity: 1,
-                    default_price: 16,
-                    min_price: 14,
-                    id: "60e5b8fb4794450053e9993d",
-                    name: "Galvanized Hell"
-                  },
-                  %Product{
-                    rank: 0,
-                    quantity: 1,
-                    default_price: 16,
-                    min_price: 14,
-                    id: "60e5b8fd4794450053e99944",
-                    name: "Galvanized Aptitude"
-                  },
-                  %Product{
-                    rank: 0,
-                    quantity: 1,
-                    default_price: 16,
-                    min_price: 14,
-                    id: "60e5b9014794450053e99961",
-                    name: "Galvanized Chamber"
-                  },
-                  %Product{
-                    rank: 0,
-                    quantity: 1,
-                    default_price: 16,
-                    min_price: 14,
-                    id: "60e5b8fe4794450053e9994d",
-                    name: "Galvanized Crosshairs"
-                  },
-                  %Product{
-                    rank: 0,
-                    quantity: 1,
-                    default_price: 16,
-                    min_price: 14,
-                    id: "60e5b8ff4794450053e99953",
-                    name: "Galvanized Shot"
-                  },
-                  %Product{
-                    rank: 0,
-                    quantity: 1,
-                    default_price: 17,
-                    min_price: 15,
-                    id: "60e5b8fc4794450053e99941",
-                    name: "Galvanized Diffusion"
-                  },
-                  %Product{
-                    rank: 0,
-                    quantity: 1,
-                    default_price: 17,
-                    min_price: 15,
-                    id: "60e5b8fd4794450053e99947",
-                    name: "Galvanized Scope"
+                  %Arcane{
+                    default_price: 3,
+                    id: "675c5cd07b18977f6e6453ee",
+                    min_price: 2,
+                    name: "Secondary Enervate",
+                    per_trade: 1,
+                    quantity: 17,
+                    rank: 0
                   }
                 ]}
     end
@@ -308,14 +237,14 @@ defmodule StoreTest do
 
       expected =
         {:ok,
-         Product.new(%{
-           "name" => "Looter",
-           "id" => "5740c1879d238d4a03d28518",
-           "min_price" => 50,
-           "default_price" => 60,
-           "quantity" => 1,
-           "rank" => 0
-         })}
+         %Mod{
+           name: "Looter",
+           id: "5740c1879d238d4a03d28518",
+           min_price: 50,
+           default_price: 60,
+           quantity: 1,
+           rank: 0
+         }}
 
       # Assert
       assert actual == expected
@@ -379,36 +308,26 @@ defmodule StoreTest do
 
   describe "list_syndicates/0" do
     test "returns list of all syndicates" do
-      # Act
       {:ok, syndicates} = Store.list_syndicates()
 
-      [arbiters, arbitrations, simaris, suda, new_loka, perrin_sequence, red_veil, steel_meridian] =
-        Enum.sort_by(syndicates, & &1.id)
+      expected_ids = MapSet.new([
+        :arbiters_of_hexis,
+        :arbitrations,
+        :cephalon_simaris,
+        :cephalon_suda,
+        :new_loka,
+        :perrin_sequence,
+        :red_veil,
+        :steel_meridian,
+        :the_hex,
+        :the_quills,
+        :the_zariman,
+        :conjunction_survival
+      ])
 
-      # Assert
-      assert arbiters.id == :arbiters_of_hexis
-      assert arbiters.name == "Arbiters of Hexis"
+      actual_ids = MapSet.new(Enum.map(syndicates, & &1.id))
 
-      assert arbitrations.id == :arbitrations
-      assert arbitrations.name == "Arbitrations"
-
-      assert simaris.id == :cephalon_simaris
-      assert simaris.name == "Cephalon Simaris"
-
-      assert suda.id == :cephalon_suda
-      assert suda.name == "Cephalon Suda"
-
-      assert new_loka.id == :new_loka
-      assert new_loka.name == "New Loka"
-
-      assert perrin_sequence.id == :perrin_sequence
-      assert perrin_sequence.name == "Perrin Sequence"
-
-      assert red_veil.id == :red_veil
-      assert red_veil.name == "Red Veil"
-
-      assert steel_meridian.id == :steel_meridian
-      assert steel_meridian.name == "Steel Meridian"
+      assert MapSet.equal?(actual_ids, expected_ids)
     end
   end
 

@@ -9,11 +9,8 @@ defmodule Manager.Saga.ActivateTest do
   alias Helpers
   alias Manager.Saga.Activate
 
-  alias Shared.Data.{
-    Authorization,
-    Product,
-    User
-  }
+  alias Shared.Data.{Authorization, User}
+  alias Shared.Data.Product.{Arcane, Mod, ModWithoutRank}
 
   alias Store
 
@@ -211,9 +208,9 @@ defmodule Manager.Saga.ActivateTest do
     } do
       products =
         [
-          Helpers.create_product(name: "Abating Link", price: 20),
-          Helpers.create_product(name: "Vampire Leech", price: 17),
-          Helpers.create_product(name: "Pool of Life", price: 14)
+          Helpers.create_product(name: "Astral Autopsy", price: 20, type: "mod_without_rank"),
+          Helpers.create_product(name: "Molt Vigor", price: 17, type: "arcane", per_trade: 1),
+          Helpers.create_product(name: "Pool of Life", price: 14, type: "mod")
         ]
 
       with_mocks([
@@ -266,29 +263,30 @@ defmodule Manager.Saga.ActivateTest do
                      non_patreon_order_limit: limit,
                      order_number_limit: 2,
                      product_prices: %{
-                       %Product{
+                       %ModWithoutRank{
                          rank: "n/a",
                          quantity: 1,
                          default_price: 16,
                          min_price: 15,
                          id: "default_id",
-                         name: "Abating Link"
+                         name: "Astral Autopsy"
                        } => nil,
-                       %Product{
-                         rank: "n/a",
+                       %Mod{
+                         rank: 0,
                          quantity: 1,
                          default_price: 16,
                          min_price: 15,
                          id: "default_id",
                          name: "Pool of Life"
                        } => nil,
-                       %Product{
-                         rank: "n/a",
+                       %Arcane{
+                         rank: 0,
                          quantity: 1,
                          default_price: 16,
                          min_price: 15,
                          id: "default_id",
-                         name: "Vampire Leech"
+                         name: "Molt Vigor",
+                         per_trade: 1
                        } => nil
                      },
                      total_products_count: 3

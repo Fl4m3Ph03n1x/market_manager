@@ -1,7 +1,7 @@
 defmodule Manager.PriceAnalystTest do
   @moduledoc false
 
-  use ExUnit.Case
+  use ExUnit.Case, async: true
 
   alias Helpers
   alias Manager.Impl.PriceAnalyst
@@ -55,6 +55,27 @@ defmodule Manager.PriceAnalystTest do
       # Act
       actual = PriceAnalyst.calculate_price(product, order_info, strategy_id)
       expected = 14
+
+      # Assert
+      assert actual == expected
+    end
+
+    test "calculates :top_five_average in a list with elements of different ranks" do
+      # Arrange
+      order_info = [
+        Helpers.create_order_info(platinum: 50, rank: 5), # 2
+        Helpers.create_order_info(platinum: 55, rank: 3), # 6
+        Helpers.create_order_info(platinum: 60, rank: 4), # 4
+        Helpers.create_order_info(platinum: 5), # 5
+        Helpers.create_order_info(platinum: 2)  # 2
+      ]
+
+      product = Helpers.create_product(min_price: 1, default_price: 1, type: "arcane", per_trade: 1)
+      strategy_id = :top_five_average
+
+      # Act
+      actual = PriceAnalyst.calculate_price(product, order_info, strategy_id)
+      expected = 4
 
       # Assert
       assert actual == expected

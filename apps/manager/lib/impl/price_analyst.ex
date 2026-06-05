@@ -20,7 +20,7 @@ defmodule Manager.Impl.PriceAnalyst do
   def calculate_price(product, all_orders, strategy_id),
     do:
       all_orders
-      |> pre_process_orders()
+      |> pre_process_orders(product)
       |> apply_strategy(strategy_id)
       |> apply_boundaries(product)
 
@@ -45,10 +45,12 @@ defmodule Manager.Impl.PriceAnalyst do
   # Private #
   ###########
 
-  defp pre_process_orders(all_orders),
+  @spec pre_process_orders([OrderInfo.t()], Product.t()) :: [OrderInfo.t()]
+  defp pre_process_orders(all_orders, product),
     do:
       all_orders
       |> Enum.filter(&valid_order?/1)
+      |> Enum.map(&Product.derankify_order(product, &1))
       |> Enum.sort(&price_ascending/2)
 
   @spec valid_order?(OrderInfo.t()) :: boolean
@@ -81,7 +83,11 @@ defmodule Manager.Impl.PriceAnalyst do
   end
 
   @spec apply_boundaries(non_neg_integer(), Product.t()) :: pos_integer()
-  defp apply_boundaries(price, %Product{default_price: default}) when price == 0, do: default
-  defp apply_boundaries(price, %Product{min_price: min}) when price < min, do: min
-  defp apply_boundaries(price, _product) when price > 0, do: price
+  defp apply_boundaries(price, product) do
+    cond do
+      price == 0 -> product.default_price
+      price < product.min_price -> product.min_price
+      true -> price
+    end
+  end
 end

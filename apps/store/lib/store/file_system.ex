@@ -3,7 +3,6 @@ defmodule Store.FileSystem do
   Adapter for the Store port, implements it using the file system.
   """
 
-  require Config
   alias Shared.Data.{Authorization, Product, Strategy, Syndicate, User}
   alias Shared.Utils.{Maps, Tuples}
   alias Store.Type
@@ -37,10 +36,15 @@ defmodule Store.FileSystem do
          {:ok, products} <- read_product_data(products_path, deps),
          {:ok, syndicates} <- read_syndicate_data(syndicates_path, deps) do
       syndicate_ids_set = MapSet.new(syndicate_ids)
-      all_syndicate_ids_set = syndicates |> Enum.map(& &1.id) |> MapSet.new()
+
+      all_syndicate_ids_set =
+        syndicates
+        |> Enum.map(& &1.id)
+        |> MapSet.new()
 
       all_valid_syndicate_ids? =
-        MapSet.union(syndicate_ids_set, all_syndicate_ids_set)
+        syndicate_ids_set
+        |> MapSet.union(all_syndicate_ids_set)
         |> MapSet.equal?(all_syndicate_ids_set)
 
       if all_valid_syndicate_ids? do

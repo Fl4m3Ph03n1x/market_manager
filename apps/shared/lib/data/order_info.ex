@@ -47,11 +47,13 @@ defmodule Shared.Data.OrderInfo do
   @type order_type :: :sell | :buy
   @type platinum :: pos_integer()
   @type user :: __MODULE__.User.t()
+  @type rank :: non_neg_integer()
 
   @type order_info :: %{
           (visible :: String.t()) => boolean(),
           (type :: String.t()) => String.t(),
           (platinum :: String.t()) => pos_integer(),
+          (rank :: String.t()) => non_neg_integer(),
           (user :: String.t()) => __MODULE__.User.user()
         }
 
@@ -61,6 +63,7 @@ defmodule Shared.Data.OrderInfo do
     field(:visible, visible())
     field(:order_type, order_type())
     field(:platinum, platinum())
+    field(:rank, rank())
     field(:user, user())
   end
 
@@ -73,11 +76,12 @@ defmodule Shared.Data.OrderInfo do
           "visible" => visible,
           "type" => order_type,
           "platinum" => platinum,
+          "rank" => rank,
           "user" => user
         } = order_info
       )
       when is_boolean(visible) and is_valid_order_type(order_type) and
-             is_pos_integer(platinum) and is_map(user) do
+             is_pos_integer(platinum) and is_non_neg_integer(rank) and is_map(user) do
     order_info
     |> Map.put("order_type", String.to_atom(order_type))
     |> Structs.string_map_to_struct(__MODULE__)

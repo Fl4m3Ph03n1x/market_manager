@@ -1,7 +1,7 @@
 defmodule Shared.Data.OrderInfoTest do
   @moduledoc false
 
-  use ExUnit.Case
+  use ExUnit.Case, async: true
 
   alias Shared.Data.OrderInfo
   alias Shared.Data.OrderInfo.User
@@ -40,6 +40,7 @@ defmodule Shared.Data.OrderInfoTest do
              visible: true,
              order_type: :sell,
              platinum: 18,
+             rank: 0,
              user: %User{
                ingame_name: "Fl4m3",
                slug: "fl4m3",

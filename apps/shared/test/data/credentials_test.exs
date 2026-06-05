@@ -1,7 +1,7 @@
 defmodule Shared.Data.CredentialsTest do
   @moduledoc false
 
-  use ExUnit.Case
+  use ExUnit.Case, async: true
 
   alias Shared.Data.Credentials
 

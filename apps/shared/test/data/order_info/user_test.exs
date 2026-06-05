@@ -1,7 +1,7 @@
 defmodule Shared.Data.OrderInfo.UserTest do
   @moduledoc false
 
-  use ExUnit.Case
+  use ExUnit.Case, async: true
 
   alias Shared.Data.OrderInfo.User
 
