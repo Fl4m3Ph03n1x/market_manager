@@ -59,7 +59,7 @@ defmodule Store.FileSystem do
       else
         not_found =
           syndicate_ids_set
-          |> MapSet.reject(fn id -> MapSet.member?(all_syndicate_ids_set, id) end)
+          |> MapSet.reject(&MapSet.member?(all_syndicate_ids_set, &1))
           |> MapSet.to_list()
 
         {:error, {:syndicate_not_found, not_found}}
