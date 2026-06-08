@@ -39,6 +39,9 @@ Shared.Data.Order.html
 Shared.Data.OrderInfo.User.html
 Shared.Data.OrderInfo.html
 Shared.Data.PlacedOrder.html
+Shared.Data.Product.Arcane.html
+Shared.Data.Product.Mod.html
+Shared.Data.Product.ModWithoutRank.html
 Shared.Data.Product.html
 Shared.Data.Strategy.html
 Shared.Data.Syndicate.html
@@ -78,8 +81,8 @@ dist/lato-latin-700-normal-2XVSBPG4.woff2
 dist/lato-latin-ext-400-normal-N27NCBWW.woff2
 dist/lato-latin-ext-700-normal-Q2L5DVMW.woff2
 dist/remixicon-QPNJX265.woff2
-dist/search_data-F9A00491.js
-dist/sidebar_items-9A261687.js
+dist/search_data-B8DF44BC.js
+dist/sidebar_items-1CB406DE.js
 index.html
 readme.html
 search.html

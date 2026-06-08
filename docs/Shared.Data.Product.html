@@ -12,7 +12,7 @@
 
     <link rel="stylesheet" href="dist/html-elixir-KV3YOVJ3.css" />
 
-    <script defer src="dist/sidebar_items-9A261687.js"></script>
+    <script defer src="dist/sidebar_items-1CB406DE.js"></script>
     <script defer src="docs_config.js"></script>
     <script defer src="dist/html-DPJLHKSM.js"></script>
 
@@ -51,7 +51,7 @@ Market Manager
 
 <output role="status" id="toast"></output>
 
-<main class="content page-module" id="main" data-type="modules">
+<main class="content page-behaviour" id="main" data-type="modules">
   <div id="content" class="content-inner">
     <div class="top-search">
       <div class="search-settings">
@@ -79,7 +79,7 @@ Market Manager
 <div id="top-content">
   <div class="heading-with-actions top-heading">
     <h1>
-      <span translate="no">Shared.Data.Product</span> 
+      <span translate="no">Shared.Data.Product</span> <small>behaviour</small>
       <small class="app-vsn" translate="no">(Market Manager v2.2.5)</small>
 
     </h1>
@@ -93,9 +93,9 @@ Market Manager
 
 
     <section id="moduledoc">
-<p>A Product is an item we can create a sell order for. Currently we only
-support mods. Products contain warframe.market information about the item, as
-well as default parameters to create sell orders.</p>
+<p>A Product is an item we can create a sell order for. Products contain warframe.market information about the item, as
+well as default parameters to create sell orders.
+The types are used to determine which struct to create when parsing products from the JSON file read from the store.</p>
     </section>
 
 </div>
@@ -206,7 +206,30 @@ well as default parameters to create sell orders.</p>
 
       </div>
 
-        <div class="summary-synopsis"><p>Product details</p></div>
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:type/0" data-no-tooltip="" translate="no">type()</a>
+
+      </div>
+
+    </div>
+
+</div>
+<div class="summary-callbacks summary">
+  <h2>
+    <a href="#callbacks">Callbacks</a>
+  </h2>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:derankify_order/1" data-no-tooltip="" translate="no">derankify_order(t)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Converts a ranked OrderInfo (which came from warframe.market) to its unranked equivalent by adjusting the platinum price based on the rank multiplier.
+The rank multiplier differs from product to product, so this function is implemented in each Product.</p></div>
 
     </div>
 
@@ -218,7 +241,17 @@ well as default parameters to create sell orders.</p>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#new/1" data-no-tooltip="" translate="no">new(map)</a>
+        <a href="#derankify_order/2" data-no-tooltip="" translate="no">derankify_order(product, order)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Helper function to invoke the derankify_order function of the correct Product without having to know which specific struct it is.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#new/1" data-no-tooltip="" translate="no">new(unranked_mod)</a>
 
       </div>
 
@@ -264,7 +297,8 @@ well as default parameters to create sell orders.</p>
   required(min_price :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>(),
   required(default_price :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>(),
   required(quantity :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>(),
-  required(per_trade :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>()
+  required(per_trade :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>(),
+  required(type :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()
 }</pre>
 
       </div>
@@ -282,7 +316,7 @@ well as default parameters to create sell orders.</p>
       <h1 class="signature" translate="no">default_price()</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/product.ex#L17" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/product.ex#L14" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -310,7 +344,7 @@ well as default parameters to create sell orders.</p>
       <h1 class="signature" translate="no">id()</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/product.ex#L14" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/product.ex#L11" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -338,7 +372,7 @@ well as default parameters to create sell orders.</p>
       <h1 class="signature" translate="no">min_price()</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/product.ex#L16" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/product.ex#L13" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -366,7 +400,7 @@ well as default parameters to create sell orders.</p>
       <h1 class="signature" translate="no">mod()</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/product.ex#L30" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/product.ex#L29" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -381,7 +415,8 @@ well as default parameters to create sell orders.</p>
   required(name :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
   required(id :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
   required(min_price :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>(),
-  required(default_price :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>()
+  required(default_price :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>(),
+  required(type :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()
 }</pre>
 
       </div>
@@ -399,7 +434,7 @@ well as default parameters to create sell orders.</p>
       <h1 class="signature" translate="no">mod_without_rank()</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/product.ex#L22" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/product.ex#L20" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -415,7 +450,8 @@ well as default parameters to create sell orders.</p>
   required(id :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
   required(min_price :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>(),
   required(default_price :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>(),
-  required(rank :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()
+  required(rank :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  required(type :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()
 }</pre>
 
       </div>
@@ -433,7 +469,7 @@ well as default parameters to create sell orders.</p>
       <h1 class="signature" translate="no">name()</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/product.ex#L15" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/product.ex#L12" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -461,7 +497,7 @@ well as default parameters to create sell orders.</p>
       <h1 class="signature" translate="no">per_trade()</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/product.ex#L19" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/product.ex#L16" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -489,7 +525,7 @@ well as default parameters to create sell orders.</p>
       <h1 class="signature" translate="no">product()</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/product.ex#L46" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/product.ex#L47" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -517,7 +553,7 @@ well as default parameters to create sell orders.</p>
       <h1 class="signature" translate="no">quantity()</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/product.ex#L18" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/product.ex#L15" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -545,7 +581,7 @@ well as default parameters to create sell orders.</p>
       <h1 class="signature" translate="no">rank()</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/product.ex#L20" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/product.ex#L17" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -584,19 +620,83 @@ well as default parameters to create sell orders.</p>
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@type</span> t() :: %Shared.Data.Product{
-  default_price: <a href="#t:default_price/0">default_price</a>(),
-  id: <a href="#t:id/0">id</a>(),
-  min_price: <a href="#t:min_price/0">min_price</a>(),
-  name: <a href="#t:name/0">name</a>(),
-  per_trade: <a href="#t:per_trade/0">per_trade</a>() | nil,
-  quantity: <a href="#t:quantity/0">quantity</a>(),
-  rank: <a href="#t:rank/0">rank</a>()
-}</pre>
+          <pre translate="no"><span class="attribute">@type</span> t() ::
+  <a href="Shared.Data.Product.Arcane.html#t:t/0">Shared.Data.Product.Arcane.t</a>()
+  | <a href="Shared.Data.Product.Mod.html#t:t/0">Shared.Data.Product.Mod.t</a>()
+  | <a href="Shared.Data.Product.ModWithoutRank.html#t:t/0">Shared.Data.Product.ModWithoutRank.t</a>()</pre>
 
       </div>
 
-<p>Product details</p>
+
+  </section>
+</section>
+<section class="detail" id="t:type/0">
+
+  <div class="detail-header">
+    <a href="#t:type/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">type()</h1>
+
+
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/product.ex#L18" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> type() :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()</pre>
+
+      </div>
+
+
+  </section>
+</section>
+
+    </div>
+  </section>
+
+  <section id="callbacks" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#callbacks">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Callbacks</span>
+    </h1>
+    <div class="callbacks-list">
+<section class="detail" id="c:derankify_order/1">
+
+  <div class="detail-header">
+    <a href="#c:derankify_order/1" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">derankify_order(t)</h1>
+
+
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/product.ex#L55" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> derankify_order(<a href="Shared.Data.OrderInfo.html#t:t/0">Shared.Data.OrderInfo.t</a>()) :: <a href="Shared.Data.OrderInfo.html#t:t/0">Shared.Data.OrderInfo.t</a>()</pre>
+
+      </div>
+
+<p>Converts a ranked OrderInfo (which came from warframe.market) to its unranked equivalent by adjusting the platinum price based on the rank multiplier.
+The rank multiplier differs from product to product, so this function is implemented in each Product.</p>
   </section>
 </section>
 
@@ -611,6 +711,34 @@ well as default parameters to create sell orders.</p>
       <span class="text">Functions</span>
     </h1>
     <div class="functions-list">
+<section class="detail" id="derankify_order/2">
+
+  <div class="detail-header">
+    <a href="#derankify_order/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">derankify_order(product, order)</h1>
+
+
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/product.ex#L61" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> derankify_order(<a href="#t:t/0">t</a>(), <a href="Shared.Data.OrderInfo.html#t:t/0">Shared.Data.OrderInfo.t</a>()) :: <a href="Shared.Data.OrderInfo.html#t:t/0">Shared.Data.OrderInfo.t</a>()</pre>
+
+      </div>
+
+<p>Helper function to invoke the derankify_order function of the correct Product without having to know which specific struct it is.</p>
+  </section>
+</section>
 <section class="detail" id="new/1">
 
   <div class="detail-header">
@@ -618,10 +746,10 @@ well as default parameters to create sell orders.</p>
       <i class="ri-link-m" aria-hidden="true"></i>
     </a>
     <div class="heading-with-actions">
-      <h1 class="signature" translate="no">new(map)</h1>
+      <h1 class="signature" translate="no">new(unranked_mod)</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/product.ex#L62" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/product.ex#L67" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 

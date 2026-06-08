@@ -8,7 +8,7 @@
     <meta name="project" content="Market Manager v2.2.5">
 
 
-    <title>Manager.Saga.Activate — Market Manager v2.2.5</title>
+    <title>Shared.Data.Product.Mod — Market Manager v2.2.5</title>
 
     <link rel="stylesheet" href="dist/html-elixir-KV3YOVJ3.css" />
 
@@ -79,12 +79,12 @@ Market Manager
 <div id="top-content">
   <div class="heading-with-actions top-heading">
     <h1>
-      <span translate="no">Manager.Saga.Activate</span> 
+      <span translate="no">Shared.Data.Product.Mod</span> 
       <small class="app-vsn" translate="no">(Market Manager v2.2.5)</small>
 
     </h1>
 
-      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/manager/lib/saga/activate.ex#L1" title="View Source" class="icon-action" rel="help">
+      <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/product/mod.ex#L1" title="View Source" class="icon-action" rel="help">
         <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         <span class="sr-only">View Source</span>
       </a>
@@ -93,7 +93,9 @@ Market Manager
 
 
     <section id="moduledoc">
-<p>Creates a process that will be responsible for the entire activation flow.</p>
+<p>Represents a Mod with rank.
+Even though these mods have a rank, the rank is not used to calculate the price, so the derankify_order function just returns the order as it is.
+This choice was made because there is no defined algorithm that clearly maps Endo (the resource used to rank up mods) to a specific price adjustment.</p>
     </section>
 
 </div>
@@ -112,9 +114,11 @@ Market Manager
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#t:price/0" data-no-tooltip="" translate="no">price()</a>
+        <a href="#t:t/0" data-no-tooltip="" translate="no">t()</a>
 
       </div>
+
+        <div class="summary-synopsis"><p>Mod details</p></div>
 
     </div>
 
@@ -126,17 +130,7 @@ Market Manager
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#child_spec/1" data-no-tooltip="" translate="no">child_spec(init_arg)</a>
-
-      </div>
-
-        <div class="summary-synopsis"><p>Returns a specification to start this module under a supervisor.</p></div>
-
-    </div>
-
-    <div class="summary-row">
-      <div class="summary-signature">
-        <a href="#start_link/1" data-no-tooltip="" translate="no">start_link(state)</a>
+        <a href="#new/1" data-no-tooltip="" translate="no">new(map)</a>
 
       </div>
 
@@ -155,17 +149,17 @@ Market Manager
       <span class="text">Types</span>
     </h1>
     <div class="types-list">
-<section class="detail" id="t:price/0">
+<section class="detail" id="t:t/0">
 
   <div class="detail-header">
-    <a href="#t:price/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+    <a href="#t:t/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
       <i class="ri-link-m" aria-hidden="true"></i>
     </a>
     <div class="heading-with-actions">
-      <h1 class="signature" translate="no">price()</h1>
+      <h1 class="signature" translate="no">t()</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/manager/lib/saga/activate.ex#L22" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/product/mod.ex#L18" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -176,11 +170,18 @@ Market Manager
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@type</span> price() :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>()</pre>
+          <pre translate="no"><span class="attribute">@type</span> t() :: %Shared.Data.Product.Mod{
+  default_price: <a href="Shared.Data.Product.html#t:default_price/0">Shared.Data.Product.default_price</a>(),
+  id: <a href="Shared.Data.Product.html#t:id/0">Shared.Data.Product.id</a>(),
+  min_price: <a href="Shared.Data.Product.html#t:min_price/0">Shared.Data.Product.min_price</a>(),
+  name: <a href="Shared.Data.Product.html#t:name/0">Shared.Data.Product.name</a>(),
+  quantity: <a href="Shared.Data.Product.html#t:quantity/0">Shared.Data.Product.quantity</a>(),
+  rank: <a href="Shared.Data.Product.html#t:rank/0">Shared.Data.Product.rank</a>()
+}</pre>
 
       </div>
 
-
+<p>Mod details</p>
   </section>
 </section>
 
@@ -195,17 +196,17 @@ Market Manager
       <span class="text">Functions</span>
     </h1>
     <div class="functions-list">
-<section class="detail" id="child_spec/1">
+<section class="detail" id="new/1">
 
   <div class="detail-header">
-    <a href="#child_spec/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+    <a href="#new/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
     </a>
     <div class="heading-with-actions">
-      <h1 class="signature" translate="no">child_spec(init_arg)</h1>
+      <h1 class="signature" translate="no">new(map)</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/manager/lib/saga/activate.ex#L6" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/product/mod.ex#L33" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -214,27 +215,11 @@ Market Manager
 
   <section class="docstring">
 
-<p>Returns a specification to start this module under a supervisor.</p><p>See <a href="https://hexdocs.pm/elixir/Supervisor.html"><code class="inline">Supervisor</code></a>.</p>
-  </section>
-</section>
-<section class="detail" id="start_link/1">
+      <div class="specs">
 
-  <div class="detail-header">
-    <a href="#start_link/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-    </a>
-    <div class="heading-with-actions">
-      <h1 class="signature" translate="no">start_link(state)</h1>
+          <pre translate="no"><span class="attribute">@spec</span> new(<a href="Shared.Data.Product.html#t:mod/0">Shared.Data.Product.mod</a>()) :: <a href="#t:t/0">t</a>()</pre>
 
-
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/manager/lib/saga/activate.ex#L35" class="icon-action" rel="help" aria-label="View Source">
-          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-        </a>
-
-    </div>
-  </div>
-
-  <section class="docstring">
+      </div>
 
 
   </section>
