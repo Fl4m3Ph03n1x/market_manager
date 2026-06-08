@@ -48,12 +48,10 @@ defmodule Shared.Data.Product.Arcane do
         "id" => id,
         "min_price" => min_price,
         "default_price" => default_price,
-        "quantity" => quantity,
-        "per_trade" => per_trade
+        "quantity" => quantity
       })
       when is_binary(name) and is_binary(id) and is_pos_integer(min_price) and
-             is_pos_integer(default_price) and is_pos_integer(quantity) and
-             is_pos_integer(per_trade),
+             is_pos_integer(default_price) and is_pos_integer(quantity),
       do: %__MODULE__{
         name: name,
         id: id,
@@ -61,6 +59,6 @@ defmodule Shared.Data.Product.Arcane do
         default_price: default_price,
         quantity: quantity,
         rank: 0,
-        per_trade: per_trade
+        per_trade: 1
       }
 end

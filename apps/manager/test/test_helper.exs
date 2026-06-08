@@ -18,7 +18,6 @@ defmodule Helpers do
     "id" => "default_id",
     "min_price" => 15,
     "default_price" => 16,
-    "rank" => "n/a",
     "quantity" => 1,
     "type" => "mod_without_rank"
   }

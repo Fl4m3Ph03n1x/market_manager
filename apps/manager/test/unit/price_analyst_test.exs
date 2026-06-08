@@ -75,7 +75,7 @@ defmodule Manager.PriceAnalystTest do
         Helpers.create_order_info(platinum: 2)
       ]
 
-      product = Helpers.create_product(min_price: 1, default_price: 1, type: "arcane", per_trade: 1)
+      product = Helpers.create_product(min_price: 1, default_price: 1, type: "arcane")
       strategy_id = :top_five_average
 
       # Act

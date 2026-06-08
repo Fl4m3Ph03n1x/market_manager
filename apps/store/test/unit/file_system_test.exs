@@ -18,7 +18,6 @@ defmodule MarketManager.Store.FileSystemTest do
           "min_price": 14,
           "default_price": 16,
           "quantity": 1,
-          "rank": 0,
           "type": "mod"
         },
         {
@@ -34,7 +33,6 @@ defmodule MarketManager.Store.FileSystemTest do
           "min_price": 2,
           "default_price": 5,
           "quantity": 13,
-          "per_trade": 1,
           "type": "arcane"
         },
         {
@@ -42,7 +40,6 @@ defmodule MarketManager.Store.FileSystemTest do
           "id": "588a789c3cf52c408a2f88dc",
           "min_price": 50,
           "default_price": 60,
-          "rank": "n/a",
           "type": "mod_without_rank"
         }
       ]

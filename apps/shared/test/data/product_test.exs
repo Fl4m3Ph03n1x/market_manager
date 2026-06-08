@@ -29,7 +29,6 @@ defmodule Shared.Data.ProductTest do
              "id" => "588a789c3cf52c408a2f88dc",
              "min_price" => 50,
              "default_price" => 60,
-             "rank" => "n/a",
              "type" => "mod_without_rank"
            }) == %ModWithoutRank{
              name: "Astral Autopsy",
@@ -47,7 +46,6 @@ defmodule Shared.Data.ProductTest do
              "min_price" => 2,
              "default_price" => 3,
              "quantity" => 26,
-             "per_trade" => 1,
              "type" => "arcane"
            }) == %Arcane{
              name: "Molt Vigor",
