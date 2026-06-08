@@ -50,21 +50,21 @@ defmodule Shared.Data.OrderInfo do
   @type rank :: non_neg_integer()
 
   @type order_info :: %{
-          (visible :: String.t()) => boolean(),
-          (type :: String.t()) => String.t(),
-          (platinum :: String.t()) => pos_integer(),
-          (rank :: String.t()) => non_neg_integer(),
-          (user :: String.t()) => __MODULE__.User.user()
+          required(visible :: String.t()) => boolean(),
+          required(type :: String.t()) => String.t(),
+          required(platinum :: String.t()) => pos_integer(),
+          optional(rank :: String.t()) => non_neg_integer(),
+          required(user :: String.t()) => __MODULE__.User.user()
         }
 
-  typedstruct enforce: true do
+  typedstruct do
     @typedoc "Information about an order"
 
-    field(:visible, visible())
-    field(:order_type, order_type())
-    field(:platinum, platinum())
+    field(:visible, visible(), enforce: true)
+    field(:order_type, order_type(), enforce: true)
+    field(:platinum, platinum(), enforce: true)
     field(:rank, rank())
-    field(:user, user())
+    field(:user, user(), enforce: true)
   end
 
   defguardp is_valid_order_type(order_type)
@@ -82,6 +82,23 @@ defmodule Shared.Data.OrderInfo do
       )
       when is_boolean(visible) and is_valid_order_type(order_type) and
              is_pos_integer(platinum) and is_non_neg_integer(rank) and is_map(user) do
+    order_info
+    |> Map.put("order_type", String.to_atom(order_type))
+    |> Structs.string_map_to_struct(__MODULE__)
+    |> Map.put(:user, User.new(user))
+  end
+
+  @spec new(order_info()) :: __MODULE__.t()
+  def new(
+        %{
+          "visible" => visible,
+          "type" => order_type,
+          "platinum" => platinum,
+          "user" => user
+        } = order_info
+      )
+      when is_boolean(visible) and is_valid_order_type(order_type) and
+             is_pos_integer(platinum) and is_map(user) do
     order_info
     |> Map.put("order_type", String.to_atom(order_type))
     |> Structs.string_map_to_struct(__MODULE__)
