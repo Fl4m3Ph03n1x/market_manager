@@ -4,11 +4,76 @@ defmodule MarketManager.Store.FileSystemTest do
   use ExUnit.Case, async: true
 
   alias Jason
-  alias Shared.Data.{Authorization, Product, Syndicate, User}
+  alias Shared.Data.{Authorization, Syndicate, User}
+  alias Shared.Data.Product.{Arcane, Mod, ModWithoutRank}
   alias Store.FileSystem
 
   setup do
+    products_json =
+      """
+      [
+        {
+          "name": "Gleaming Blight",
+          "id": "54a74454e779892d5e5155d5",
+          "min_price": 14,
+          "default_price": 16,
+          "quantity": 1,
+          "type": "mod"
+        },
+        {
+          "name": "Fracturing Crush",
+          "id": "5526aec0e779896af9418259",
+          "min_price": 14,
+          "default_price": 16,
+          "type": "mod"
+        },
+        {
+          "name": "Magus Nourish",
+          "id": "5a0475096c4655012038ddc4",
+          "min_price": 2,
+          "default_price": 5,
+          "quantity": 13,
+          "type": "arcane"
+        },
+        {
+          "name": "Astral Autopsy",
+          "id": "588a789c3cf52c408a2f88dc",
+          "min_price": 50,
+          "default_price": 60,
+          "type": "mod_without_rank"
+        }
+      ]
+      """
+
+    syndicates_json =
+      """
+      [
+        {
+          "id": "red_veil",
+          "name": "Red Veil",
+          "catalog": ["54a74454e779892d5e5155d5"]
+        },
+        {
+          "id": "perrin_sequence",
+          "name": "Perrin Sequence",
+          "catalog": ["5526aec0e779896af9418259"]
+        },
+        {
+          "id": "the_quills",
+          "name": "The Quills",
+          "catalog": ["5a0475096c4655012038ddc4"]
+        },
+        {
+          "id": "cephalon_simaris",
+          "name": "Cephalon Simaris",
+          "catalog": ["588a789c3cf52c408a2f88dc"]
+        }
+      ]
+      """
+
     %{
+      products_json: products_json,
+      syndicates_json: syndicates_json,
       paths: [
         watch_list: ["watch_list.json"],
         products: ["products.json"],
@@ -20,24 +85,23 @@ defmodule MarketManager.Store.FileSystemTest do
   end
 
   describe "list_products/2" do
-    test "returns list of available products from given syndicate ids", %{paths: paths} = deps do
+    test "returns list of available products from given syndicate ids",
+         %{paths: paths, products_json: products_json, syndicates_json: syndicates_json} = deps do
       # Arrange
       products_filename = Path.join(paths[:products])
       syndicates_filename = Path.join(paths[:syndicates])
 
       read_fn = fn
         ^products_filename ->
-          {:ok,
-           "[{\"name\": \"Gleaming Blight\",\"id\": \"54a74454e779892d5e5155d5\",\"min_price\": 14,\"default_price\": 16,\"quantity\": 1, \"rank\": 0}, {\"name\":\"Fracturing Crush\",\"id\": \"5526aec0e779896af9418259\",\"min_price\": 14,\"default_price\": 16}]"}
+          {:ok, products_json}
 
         ^syndicates_filename ->
-          {:ok,
-           "[{\"id\":\"red_veil\",\"name\":\"Red Veil\",\"catalog\":[\"54a74454e779892d5e5155d5\"]},{\"id\":\"perrin_sequence\",\"name\":\"Perrin Sequence\",\"catalog\":[\"5526aec0e779896af9418259\"]}]"}
+          {:ok, syndicates_json}
       end
 
       deps = Map.put(deps, :io, %{read: read_fn})
 
-      syndicate_ids = [:red_veil, :perrin_sequence]
+      syndicate_ids = [:red_veil, :perrin_sequence, :the_quills, :cephalon_simaris]
 
       # Act
       actual = FileSystem.list_products(syndicate_ids, deps)
@@ -45,7 +109,7 @@ defmodule MarketManager.Store.FileSystemTest do
       expected =
         {:ok,
          [
-           %Product{
+           %Mod{
              id: "54a74454e779892d5e5155d5",
              name: "Gleaming Blight",
              min_price: 14,
@@ -53,13 +117,30 @@ defmodule MarketManager.Store.FileSystemTest do
              quantity: 1,
              rank: 0
            },
-           %Product{
+           %Mod{
              id: "5526aec0e779896af9418259",
              name: "Fracturing Crush",
              min_price: 14,
              default_price: 16,
              quantity: 1,
              rank: 0
+           },
+           %Arcane{
+             id: "5a0475096c4655012038ddc4",
+             name: "Magus Nourish",
+             min_price: 2,
+             default_price: 5,
+             quantity: 13,
+             rank: 0,
+             per_trade: 1
+           },
+           %ModWithoutRank{
+             id: "588a789c3cf52c408a2f88dc",
+             name: "Astral Autopsy",
+             min_price: 50,
+             default_price: 60,
+             rank: "n/a",
+             quantity: 1
            }
          ]}
 
@@ -84,15 +165,15 @@ defmodule MarketManager.Store.FileSystemTest do
       assert actual == expected
     end
 
-    test "returns error if it cannot read syndicates file", %{paths: paths} = deps do
+    test "returns error if it cannot read syndicates file",
+         %{paths: paths, products_json: products_json} = deps do
       # Arrange
       products_filename = Path.join(paths[:products])
       syndicates_filename = Path.join(paths[:syndicates])
 
       read_fn = fn
         ^products_filename ->
-          {:ok,
-           "[{\"name\": \"Gleaming Blight\",\"id\": \"54a74454e779892d5e5155d5\",\"min_price\": 14,\"default_price\": 16,\"quantity\": 1, \"rank\": 0}, {\"name\":\"Fracturing Crush\",\"id\": \"5526aec0e779896af9418259\",\"min_price\": 14,\"default_price\": 16}]"}
+          {:ok, products_json}
 
         ^syndicates_filename ->
           {:error, :enoent}
@@ -109,19 +190,18 @@ defmodule MarketManager.Store.FileSystemTest do
       assert actual == expected
     end
 
-    test "returns error if syndicates are not found", %{paths: paths} = deps do
+    test "returns error if syndicates are not found",
+         %{paths: paths, products_json: products_json, syndicates_json: syndicates_json} = deps do
       # Arrange
       products_filename = Path.join(paths[:products])
       syndicates_filename = Path.join(paths[:syndicates])
 
       read_fn = fn
         ^products_filename ->
-          {:ok,
-           "[{\"name\": \"Gleaming Blight\",\"id\": \"54a74454e779892d5e5155d5\",\"min_price\": 14,\"default_price\": 16,\"quantity\": 1, \"rank\": 0}, {\"name\":\"Fracturing Crush\",\"id\": \"5526aec0e779896af9418259\",\"min_price\": 14,\"default_price\": 16}]"}
+          {:ok, products_json}
 
         ^syndicates_filename ->
-          {:ok,
-           "[{\"id\":\"red_veil\",\"name\":\"Red Veil\",\"catalog\":[\"54a74454e779892d5e5155d5\"]},{\"id\":\"perrin_sequence\",\"name\":\"Perrin Sequence\",\"catalog\":[\"5526aec0e779896af9418259\"]}]"}
+          {:ok, syndicates_json}
       end
 
       deps = Map.put(deps, :io, %{read: read_fn})
@@ -137,13 +217,13 @@ defmodule MarketManager.Store.FileSystemTest do
   end
 
   describe "get_product_by_id/2" do
-    test "returns the product with the given id", %{paths: paths} = deps do
+    test "returns the product with the given id",
+         %{paths: paths, products_json: products_json} = deps do
       # Arrange
       read_fn = fn filename ->
         assert filename == Path.join(paths[:products])
 
-        {:ok,
-         "[{\"name\": \"Gleaming Blight\",\"id\": \"54a74454e779892d5e5155d5\",\"min_price\": 14,\"default_price\": 16,\"quantity\": 1, \"rank\": 0}]"}
+        {:ok, products_json}
       end
 
       deps = Map.put(deps, :io, %{read: read_fn})
@@ -155,14 +235,14 @@ defmodule MarketManager.Store.FileSystemTest do
 
       expected =
         {:ok,
-         Product.new(%{
-           "id" => "54a74454e779892d5e5155d5",
-           "name" => "Gleaming Blight",
-           "min_price" => 14,
-           "default_price" => 16,
-           "quantity" => 1,
-           "rank" => 0
-         })}
+         %Mod{
+           id: "54a74454e779892d5e5155d5",
+           name: "Gleaming Blight",
+           min_price: 14,
+           default_price: 16,
+           quantity: 1,
+           rank: 0
+         }}
 
       # Assert
       assert actual == expected

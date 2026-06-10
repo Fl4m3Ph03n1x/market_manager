@@ -1,7 +1,7 @@
 defmodule Shared.Utils.MapsTest do
   @moduledoc false
 
-  use ExUnit.Case
+  use ExUnit.Case, async: true
 
   alias Shared.Utils.Maps
 

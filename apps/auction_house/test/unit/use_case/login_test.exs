@@ -3,8 +3,8 @@ defmodule AuctionHouse.Impl.UseCase.LoginTest do
 
   use ExUnit.Case, async: true
 
-  alias AuctionHouse.Impl.UseCase.Login
   alias AuctionHouse.Impl.UseCase.Data.{Metadata, Request, Response}
+  alias AuctionHouse.Impl.UseCase.Login
   alias Jason
   alias Shared.Data.{Authorization, Credentials, User}
 

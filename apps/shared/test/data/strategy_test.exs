@@ -1,7 +1,7 @@
 defmodule Shared.Data.StrategyTest do
   @moduledoc false
 
-  use ExUnit.Case
+  use ExUnit.Case, async: true
 
   alias Shared.Data.Strategy
 

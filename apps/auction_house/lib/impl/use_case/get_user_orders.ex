@@ -3,9 +3,9 @@ defmodule AuctionHouse.Impl.UseCase.GetUserOrders do
   Requests all the orders from the user with the given username and parses them.
   """
 
-  alias AuctionHouse.Type
   alias AuctionHouse.Impl.{HttpAsyncClient, UseCase}
   alias AuctionHouse.Impl.UseCase.Data.{Request, Response}
+  alias AuctionHouse.Type
   alias Jason
   alias Shared.Data.PlacedOrder
 

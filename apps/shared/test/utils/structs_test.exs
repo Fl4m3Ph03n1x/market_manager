@@ -1,7 +1,7 @@
 defmodule Shared.Utils.StructsTest do
   @moduledoc false
 
-  use ExUnit.Case
+  use ExUnit.Case, async: true
 
   alias Shared.Utils.Structs
 

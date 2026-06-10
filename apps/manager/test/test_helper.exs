@@ -18,8 +18,8 @@ defmodule Helpers do
     "id" => "default_id",
     "min_price" => 15,
     "default_price" => 16,
-    "rank" => "n/a",
-    "quantity" => 1
+    "quantity" => 1,
+    "type" => "mod_without_rank"
   }
 
   @default_order_info %{
@@ -32,6 +32,7 @@ defmodule Helpers do
       "crossplay" => false
     },
     "type" => "sell",
+    "rank" => 0,
     "platinum" => 15
   }
 
@@ -57,7 +58,7 @@ defmodule Helpers do
       |> Map.merge(Maps.to_string_map(data))
       |> Product.new()
 
-  @spec create_order_info(Keyword.t()) :: Product.t()
+  @spec create_order_info(Keyword.t()) :: OrderInfo.t()
   def create_order_info(data) when is_list(data),
     do:
       @default_order_info

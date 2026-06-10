@@ -144,7 +144,8 @@ defmodule AuctionHouse.Impl.UseCase.GetItemOrdersTest do
                     },
                     platinum: 22,
                     order_type: :sell,
-                    visible: true
+                    visible: true,
+                    rank: 0
                   },
                   %OrderInfo{
                     user: %User{
@@ -156,7 +157,8 @@ defmodule AuctionHouse.Impl.UseCase.GetItemOrdersTest do
                     },
                     platinum: 20,
                     order_type: :sell,
-                    visible: true
+                    visible: true,
+                    rank: 0
                   }
                 ]}
     end

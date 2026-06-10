@@ -8,10 +8,10 @@ defmodule AuctionHouse.Runtime.Server do
 
   require Logger
 
+  alias AuctionHouse.Impl.UseCase.Data.{Metadata, Request}
+  alias AuctionHouse.Impl.UseCase.{DeleteOrder, GetItemOrders, GetUserOrders, Login, PlaceOrder}
   alias AuctionHouse.Type
   alias Shared.Data.{Authorization, Credentials, Order, PlacedOrder, User}
-  alias AuctionHouse.Impl.UseCase.{DeleteOrder, GetItemOrders, GetUserOrders, Login, PlaceOrder}
-  alias AuctionHouse.Impl.UseCase.Data.{Metadata, Request}
 
   ##############
   # Public API #

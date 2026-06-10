@@ -8,10 +8,12 @@ defmodule WebInterface.Application do
   alias Desktop
   alias ETS
   alias Manager
-  alias WebInterface.{Endpoint, PubSub, Telemetry}
   alias WebInterface.Desktop.{MenuBar, WindowUtils}
+  alias WebInterface.Endpoint
   alias WebInterface.Persistence
   alias WebInterface.Persistence.Syndicate, as: SyndicateStore
+  alias WebInterface.PubSub
+  alias WebInterface.Telemetry
 
   @impl true
   def start(_type, _args) do

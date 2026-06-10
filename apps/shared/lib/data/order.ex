@@ -1,8 +1,7 @@
 defmodule Shared.Data.Order do
   @moduledoc """
-  Represents an order to be made to warframe market. There are two types of
-  orders thus far, RankedOrders and SimpleOrders. See respective files for more
-  information.
+  Represents an order to be made to warframe market. There are several types of
+  orders. See respective files for more information.
   """
 
   alias __MODULE__.{ArcaneOrder, RankedOrder, SimpleOrder}

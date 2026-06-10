@@ -3,8 +3,8 @@ defmodule AuctionHouse.Impl.UseCase.GetUserOrdersTest do
 
   use ExUnit.Case, async: true
 
-  alias AuctionHouse.Impl.UseCase.GetUserOrders
   alias AuctionHouse.Impl.UseCase.Data.{Metadata, Request, Response}
+  alias AuctionHouse.Impl.UseCase.GetUserOrders
   alias Jason
 
   @api_user_orders_url Application.compile_env!(:auction_house, :api_user_orders_url)

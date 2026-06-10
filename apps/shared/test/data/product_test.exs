@@ -1,9 +1,10 @@
 defmodule Shared.Data.ProductTest do
   @moduledoc false
 
-  use ExUnit.Case
+  use ExUnit.Case, async: true
 
   alias Shared.Data.Product
+  alias Shared.Data.Product.{Arcane, Mod, ModWithoutRank}
 
   test "new/1 returns a Product" do
     # mod
@@ -11,8 +12,9 @@ defmodule Shared.Data.ProductTest do
              "name" => "Eroding Blight",
              "id" => "54a74454e779892d5e5155a0",
              "min_price" => 14,
-             "default_price" => 16
-           }) == %Product{
+             "default_price" => 16,
+             "type" => "mod"
+           }) == %Mod{
              name: "Eroding Blight",
              id: "54a74454e779892d5e5155a0",
              min_price: 14,
@@ -27,8 +29,8 @@ defmodule Shared.Data.ProductTest do
              "id" => "588a789c3cf52c408a2f88dc",
              "min_price" => 50,
              "default_price" => 60,
-             "rank" => "n/a"
-           }) == %Product{
+             "type" => "mod_without_rank"
+           }) == %ModWithoutRank{
              name: "Astral Autopsy",
              id: "588a789c3cf52c408a2f88dc",
              min_price: 50,
@@ -37,16 +39,15 @@ defmodule Shared.Data.ProductTest do
              rank: "n/a"
            }
 
-    # legacy arcanes
-    # Currently a bug in Warframe.market that forces us to use `per_trade` instead of `quantity` for arcanes, but we want to support both for future-proofing.
+    # Arcanes
     assert Product.new(%{
              "name" => "Molt Vigor",
              "id" => "626a1978f40db600660a1d7b",
              "min_price" => 2,
              "default_price" => 3,
              "quantity" => 26,
-             "per_trade" => 1
-           }) == %Product{
+             "type" => "arcane"
+           }) == %Arcane{
              name: "Molt Vigor",
              id: "626a1978f40db600660a1d7b",
              min_price: 2,
@@ -54,22 +55,6 @@ defmodule Shared.Data.ProductTest do
              quantity: 26,
              rank: 0,
              per_trade: 1
-           }
-
-    # arcanes
-    assert Product.new(%{
-             "name" => "Molt Vigor",
-             "id" => "626a1978f40db600660a1d7b",
-             "min_price" => 2,
-             "default_price" => 3,
-             "quantity" => 26
-           }) == %Product{
-             name: "Molt Vigor",
-             id: "626a1978f40db600660a1d7b",
-             min_price: 2,
-             default_price: 3,
-             quantity: 26,
-             rank: 0
            }
   end
 end

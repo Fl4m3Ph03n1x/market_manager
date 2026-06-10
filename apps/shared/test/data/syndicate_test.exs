@@ -1,7 +1,7 @@
 defmodule Shared.Data.SyndicateTest do
   @moduledoc false
 
-  use ExUnit.Case
+  use ExUnit.Case, async: true
 
   alias Shared.Data.Syndicate
 

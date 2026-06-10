@@ -12,7 +12,7 @@
 
     <link rel="stylesheet" href="dist/html-elixir-KV3YOVJ3.css" />
 
-    <script defer src="dist/sidebar_items-9A261687.js"></script>
+    <script defer src="dist/sidebar_items-1CB406DE.js"></script>
     <script defer src="docs_config.js"></script>
     <script defer src="dist/html-DPJLHKSM.js"></script>
 
@@ -431,9 +431,8 @@ market.</p></div>
 
   </div>
 
-    <div class="summary-synopsis"><p>Represents an order to be made to warframe market. There are two types of
-orders thus far, RankedOrders and SimpleOrders. See respective files for more
-information.</p></div>
+    <div class="summary-synopsis"><p>Represents an order to be made to warframe market. There are several types of
+orders. See respective files for more information.</p></div>
 
 </div>
 <div class="summary-row">
@@ -500,9 +499,40 @@ I don't really need/want to deal with, I opted for this instead.</p></div>
 
   </div>
 
-    <div class="summary-synopsis"><p>A Product is an item we can create a sell order for. Currently we only
-support mods. Products contain warframe.market information about the item, as
-well as default parameters to create sell orders.</p></div>
+    <div class="summary-synopsis"><p>A Product is an item we can create a sell order for. Products contain warframe.market information about the item, as
+well as default parameters to create sell orders.
+The types are used to determine which struct to create when parsing products from the JSON file read from the store.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Shared.Data.Product.Arcane.html" translate="no">Shared.Data.Product.Arcane</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Module representing Arcane products in Warframe.
+It includes functionality to convert ranked Arcane orders to their unranked equivalents for better price comparisons.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Shared.Data.Product.Mod.html" translate="no">Shared.Data.Product.Mod</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Represents a Mod with rank.
+Even though these mods have a rank, the rank is not used to calculate the price, so the derankify_order function just returns the order as it is.
+This choice was made because there is no defined algorithm that clearly maps Endo (the resource used to rank up mods) to a specific price adjustment.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Shared.Data.Product.ModWithoutRank.html" translate="no">Shared.Data.Product.ModWithoutRank</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Represents a mod without rank, i.e. a mod that has &quot;n/a&quot; as its rank.
+This is used for mods that do not have a rank, such as &quot;Astral Autopsy&quot;.</p></div>
 
 </div>
 <div class="summary-row">

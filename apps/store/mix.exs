@@ -4,12 +4,12 @@ defmodule Store.MixProject do
   def project do
     [
       app: :store,
-      version: "5.0.3",
+      version: "5.0.4",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
-      elixir: "~> 1.19",
+      elixir: "~> 1.20",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       test_coverage: [tool: ExCoveralls],
@@ -40,10 +40,7 @@ defmodule Store.MixProject do
   defp deps do
     [
       {:jason, "~> 1.2"},
-      {:shared, in_umbrella: true},
-
-      # Test and Dev
-      {:mix_test_watch, "~> 1.0", only: [:dev, :test], runtime: false}
+      {:shared, in_umbrella: true}
     ]
   end
 

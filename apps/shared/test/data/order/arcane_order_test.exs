@@ -1,7 +1,7 @@
 defmodule Shared.Data.Order.ArcaneOrderTest do
   @moduledoc false
 
-  use ExUnit.Case
+  use ExUnit.Case, async: true
 
   alias Jason
   alias Shared.Data.Order.ArcaneOrder
