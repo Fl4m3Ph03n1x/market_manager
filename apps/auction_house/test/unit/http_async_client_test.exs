@@ -976,7 +976,10 @@ defmodule AuctionHouse.Impl.HttpAsyncClientTest do
         {:ok, nil}
       end
 
-      assert HttpAsyncClient.handle_response(response, {response_fn, request}) == :ok
+      ExUnit.CaptureLog.capture_log(fn ->
+        assert HttpAsyncClient.handle_response(response, {response_fn, request}) == :ok
+      end)
+
       refute_received(:response_fn_ok)
       assert_received({:login, {:error, :unknown_error}})
     end
@@ -1008,7 +1011,10 @@ defmodule AuctionHouse.Impl.HttpAsyncClientTest do
         {:ok, nil}
       end
 
-      assert HttpAsyncClient.handle_response(response, {response_fn, request}) == :ok
+      ExUnit.CaptureLog.capture_log(fn ->
+        assert HttpAsyncClient.handle_response(response, {response_fn, request}) == :ok
+      end)
+
       refute_received(:response_fn_ok)
       assert_received({:login, {:error, :request_failed}})
     end

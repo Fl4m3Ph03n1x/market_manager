@@ -9,14 +9,11 @@ defmodule Manager.Saga.Activate do
   alias Manager.Impl.PriceAnalyst
 
   alias Shared.Data.{
-    Order,
     PlacedOrder,
     User
   }
 
   alias Shared.Data.Product
-  alias Shared.Data.Product.{Arcane, Mod, ModWithoutRank}
-
   alias Store
 
   @type price :: pos_integer()
@@ -238,7 +235,7 @@ defmodule Manager.Saga.Activate do
     orders_placed
     |> Map.keys()
     |> Enum.filter(fn {_product, price} -> not is_nil(price) end)
-    |> Enum.map(fn {product, price} -> build_order(product, price) end)
+    |> Enum.map(fn {product, price} -> Product.to_sell_order!(product, price) end)
     |> Enum.each(&auction_house.place_order/1)
 
     send(from, {:activate, {:ok, :placing_orders}})
@@ -318,34 +315,4 @@ defmodule Manager.Saga.Activate do
 
   defp calculate_order_limit(_placed_orders, total_products, _limit, true),
     do: length(total_products)
-
-  @spec build_order(Product.t(), price()) :: Order.t()
-  defp build_order(%ModWithoutRank{id: id, quantity: quantity}, price) do
-    Order.new(%{
-      "order_type" => "sell",
-      "item_id" => id,
-      "platinum" => price,
-      "quantity" => quantity
-    })
-  end
-
-  defp build_order(%Arcane{id: id, quantity: quantity, per_trade: per_trade}, price) do
-    Order.new(%{
-      "order_type" => "sell",
-      "item_id" => id,
-      "platinum" => price,
-      "quantity" => quantity,
-      "per_trade" => per_trade
-    })
-  end
-
-  defp build_order(%Mod{id: id, quantity: quantity, rank: rank}, price) do
-    Order.new(%{
-      "order_type" => "sell",
-      "item_id" => id,
-      "platinum" => price,
-      "quantity" => quantity,
-      "mod_rank" => rank
-    })
-  end
 end

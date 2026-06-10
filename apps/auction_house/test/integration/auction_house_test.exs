@@ -6,7 +6,7 @@ defmodule AuctionHouseTest do
   alias AuctionHouse
   alias AuctionHouse.Runtime.AuctionSupervisor
   alias Bypass
-  alias Shared.Data.{Authorization, Credentials, Order, OrderInfo, PlacedOrder}
+  alias Shared.Data.{Authorization, Credentials, OrderInfo, PlacedOrder}
   alias Shared.Data.OrderInfo.User
   alias Shared.Data.User, as: UserInfo
 
@@ -142,25 +142,25 @@ defmodule AuctionHouseTest do
         Plug.Conn.resp(conn, 200, response)
       end)
 
-      order =
-        Order.new(%{
-          "order_type" => "sell",
-          "item_id" => "54a74454e779892d5e5155d5",
-          "platinum" => 15,
-          "quantity" => 1,
-          "mod_rank" => 0
-        })
+      sell_order = %{
+        type: "sell",
+        visible: true,
+        platinum: 15,
+        rank: 0,
+        quantity: 1,
+        itemId: "54a74454e779892d5e5155d5"
+      }
 
       auth = %Authorization{cookie: "cookie", token: "token"}
       user = %UserInfo{ingame_name: "Fl4m3", slug: "fl4m3", patreon?: false}
 
       :ok = AuctionHouse.update_login(auth, user)
-      :ok = AuctionHouse.place_order(order)
+      :ok = AuctionHouse.place_order(sell_order)
 
       assert_receive(
         {:place_order,
          {:ok,
-          %Shared.Data.PlacedOrder{
+          %PlacedOrder{
             item_id: "54a74454e779892d5e5155d5",
             order_id: "66b9c7aa6b17410a57974e4b"
           }}},

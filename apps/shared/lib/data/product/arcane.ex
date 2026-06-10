@@ -22,8 +22,6 @@ defmodule Shared.Data.Product.Arcane do
     field(:min_price, Product.min_price())
     field(:default_price, Product.default_price())
     field(:quantity, Product.quantity())
-    field(:rank, Product.rank())
-    field(:per_trade, Product.per_trade())
   end
 
   @rank_conversion %{
@@ -33,14 +31,6 @@ defmodule Shared.Data.Product.Arcane do
     4 => 15,
     5 => 21
   }
-
-  @impl Product
-  def derankify_order(%OrderInfo{platinum: plat, rank: rank} = order) when is_pos_integer(rank) do
-    derankified_price = round(plat / @rank_conversion[rank])
-    %OrderInfo{order | platinum: derankified_price, rank: 0}
-  end
-
-  def derankify_order(%OrderInfo{} = order), do: order
 
   @spec new(Product.arcane()) :: __MODULE__.t()
   def new(%{
@@ -57,8 +47,27 @@ defmodule Shared.Data.Product.Arcane do
         id: id,
         min_price: min_price,
         default_price: default_price,
-        quantity: quantity,
-        rank: 0,
-        per_trade: 1
+        quantity: quantity
       }
+
+  @impl Product
+  def derankify_order(%OrderInfo{platinum: plat, rank: rank} = order) when is_pos_integer(rank) do
+    derankified_price = round(plat / @rank_conversion[rank])
+    %OrderInfo{order | platinum: derankified_price, rank: 0}
+  end
+
+  def derankify_order(%OrderInfo{} = order), do: order
+
+  @impl Product
+  def to_sell_order!(%__MODULE__{} = arcane, sell_price) do
+    %{
+      itemId: arcane.id,
+      type: "sell",
+      visible: true,
+      platinum: sell_price,
+      quantity: arcane.quantity,
+      perTrade: 1,
+      rank: 0
+    }
+  end
 end

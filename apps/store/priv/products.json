@@ -1145,7 +1145,8 @@
     "id": "60e5b8fb4794450053e9993d",
     "min_price": 14,
     "default_price": 16,
-    "type": "mod"
+    "type": "mod",
+    "subtype": "regular"
   },
   {
     "name": "Galvanized Aptitude",
@@ -1180,7 +1181,8 @@
     "id": "60e5b8fc4794450053e99941",
     "min_price": 15,
     "default_price": 17,
-    "type": "mod"
+    "type": "mod",
+    "subtype": "regular"
   },
   {
     "name": "Galvanized Scope",
@@ -1579,7 +1581,8 @@
     "id": "6604a680dbdd5c1673781dbb",
     "min_price": 14,
     "default_price": 16,
-    "type": "mod"
+    "type": "mod",
+    "subtype": "regular"
   },
   {
     "name": "Divine Retribution",

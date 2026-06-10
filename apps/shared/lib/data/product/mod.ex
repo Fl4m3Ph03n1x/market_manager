@@ -15,21 +15,35 @@ defmodule Shared.Data.Product.Mod do
   @behaviour Product
 
   @derive Jason.Encoder
-  typedstruct enforce: true do
+  typedstruct do
     @typedoc "Mod details"
 
-    field(:name, Product.name())
-    field(:id, Product.id())
-    field(:min_price, Product.min_price())
-    field(:default_price, Product.default_price())
-    field(:quantity, Product.quantity())
-    field(:rank, Product.rank())
+    field(:name, Product.name(), enforce: true)
+    field(:id, Product.id(), enforce: true)
+    field(:min_price, Product.min_price(), enforce: true)
+    field(:default_price, Product.default_price(), enforce: true)
+    field(:subtype, Product.subtype())
   end
 
-  @impl Product
-  def derankify_order(order), do: order
-
   @spec new(Product.mod()) :: __MODULE__.t()
+  def new(%{
+        "name" => name,
+        "id" => id,
+        "min_price" => min_price,
+        "default_price" => default_price,
+        "subtype" => subtype
+      })
+      when is_binary(name) and is_binary(id) and is_pos_integer(min_price) and
+             is_pos_integer(default_price) and is_valid_subtype(subtype) do
+    %__MODULE__{
+      name: name,
+      id: id,
+      min_price: min_price,
+      default_price: default_price,
+      subtype: subtype
+    }
+  end
+
   def new(%{
         "name" => name,
         "id" => id,
@@ -42,7 +56,33 @@ defmodule Shared.Data.Product.Mod do
       name: name,
       id: id,
       min_price: min_price,
-      default_price: default_price,
+      default_price: default_price
+    }
+  end
+
+  @impl Product
+  def derankify_order(order), do: order
+
+  @impl Product
+  def to_sell_order!(%__MODULE__{subtype: subtype} = mod, sell_price)
+      when is_valid_subtype(subtype) do
+    %{
+      itemId: mod.id,
+      type: "sell",
+      visible: true,
+      platinum: sell_price,
+      quantity: 1,
+      rank: 0,
+      subtype: subtype
+    }
+  end
+
+  def to_sell_order!(%__MODULE__{} = mod, sell_price) do
+    %{
+      itemId: mod.id,
+      type: "sell",
+      visible: true,
+      platinum: sell_price,
       quantity: 1,
       rank: 0
     }

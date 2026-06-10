@@ -209,7 +209,7 @@ defmodule Manager.Saga.ActivateTest do
       products =
         [
           Helpers.create_product(name: "Astral Autopsy", price: 20, type: "mod_without_rank"),
-          Helpers.create_product(name: "Molt Vigor", price: 17, type: "arcane", per_trade: 1),
+          Helpers.create_product(name: "Molt Vigor", price: 17, type: "arcane", per_trade: 1, quantity: 10),
           Helpers.create_product(name: "Pool of Life", price: 14, type: "mod")
         ]
 
@@ -264,29 +264,23 @@ defmodule Manager.Saga.ActivateTest do
                      order_number_limit: 2,
                      product_prices: %{
                        %ModWithoutRank{
-                         rank: "n/a",
-                         quantity: 1,
                          default_price: 16,
                          min_price: 15,
                          id: "default_id",
                          name: "Astral Autopsy"
                        } => nil,
                        %Mod{
-                         rank: 0,
-                         quantity: 1,
                          default_price: 16,
                          min_price: 15,
                          id: "default_id",
                          name: "Pool of Life"
                        } => nil,
                        %Arcane{
-                         rank: 0,
-                         quantity: 1,
+                         quantity: 10,
                          default_price: 16,
                          min_price: 15,
                          id: "default_id",
-                         name: "Molt Vigor",
-                         per_trade: 1
+                         name: "Molt Vigor"
                        } => nil
                      },
                      total_products_count: 3

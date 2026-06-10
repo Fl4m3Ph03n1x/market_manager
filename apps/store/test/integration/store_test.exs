@@ -75,69 +75,51 @@ defmodule StoreTest do
                     default_price: 60,
                     id: "5740c1879d238d4a03d28518",
                     min_price: 50,
-                    name: "Looter",
-                    quantity: 1,
-                    rank: 0
+                    name: "Looter"
                   },
                   %Mod{
-                    rank: 0,
-                    quantity: 1,
                     default_price: 60,
                     min_price: 50,
                     id: "554d3f0ce779894445a848f2",
                     name: "Detect Vulnerability"
                   },
                   %Mod{
-                    rank: 0,
-                    quantity: 1,
                     default_price: 60,
                     min_price: 50,
                     id: "5b00231bac0f7e006fd6f7b3",
                     name: "Reawaken"
                   },
                   %Mod{
-                    rank: 0,
-                    quantity: 1,
                     default_price: 60,
                     min_price: 50,
                     id: "5b00231bac0f7e006fd6f7b4",
                     name: "Negate"
                   },
                   %Mod{
-                    rank: 0,
-                    quantity: 1,
                     default_price: 60,
                     min_price: 50,
                     id: "5bc24accb919f2010f7d579a",
                     name: "Ambush"
                   },
                   %Mod{
-                    rank: 0,
-                    quantity: 1,
                     default_price: 60,
                     min_price: 50,
                     id: "5bc24accb919f2010f7d579b",
                     name: "Energy Generator"
                   },
                   %Mod{
-                    rank: 0,
-                    quantity: 1,
                     default_price: 60,
                     min_price: 50,
                     id: "5f533a19d5c36d0157f4b9ff",
                     name: "Botanist"
                   },
                   %Mod{
-                    rank: 0,
-                    quantity: 1,
                     default_price: 60,
                     min_price: 50,
                     id: "56dac8cc5cc639de0a45c52c",
                     name: "Energy Conversion"
                   },
                   %Mod{
-                    rank: 0,
-                    quantity: 1,
                     default_price: 60,
                     min_price: 50,
                     id: "56dac8d25cc639de0a45c52d",
@@ -147,81 +129,63 @@ defmodule StoreTest do
                     default_price: 60,
                     id: "588a789c3cf52c408a2f88dc",
                     min_price: 50,
-                    name: "Astral Autopsy",
-                    quantity: 1,
-                    rank: "n/a"
+                    name: "Astral Autopsy"
                   },
                   %Arcane{
                     default_price: 3,
                     id: "675c5edc7b18977f6e6453f4",
                     min_price: 2,
                     name: "Arcane Bellicose",
-                    quantity: 17,
-                    rank: 0,
-                    per_trade: 1
+                    quantity: 17
                   },
                   %Arcane{
                     default_price: 3,
                     id: "675c5ed17b18977f6e6453f2",
                     min_price: 2,
                     name: "Arcane Camisado",
-                    per_trade: 1,
-                    quantity: 17,
-                    rank: 0
+                    quantity: 17
                   },
                   %Arcane{
                     default_price: 3,
                     id: "675c59247b18977f6e6453e8",
                     min_price: 2,
                     name: "Arcane Crepuscular",
-                    per_trade: 1,
-                    quantity: 17,
-                    rank: 0
+                    quantity: 17
                   },
                   %Arcane{
                     default_price: 3,
                     id: "675c59297b18977f6e6453ea",
                     min_price: 2,
                     name: "Arcane Impetus",
-                    per_trade: 1,
-                    quantity: 17,
-                    rank: 0
+                    quantity: 17
                   },
                   %Arcane{
                     default_price: 3,
                     id: "675c5ee47b18977f6e6453f6",
                     min_price: 2,
                     name: "Arcane Truculence",
-                    per_trade: 1,
-                    quantity: 17,
-                    rank: 0
+                    quantity: 17
                   },
                   %Arcane{
                     default_price: 3,
                     id: "675c5cd97b18977f6e6453f0",
                     min_price: 2,
                     name: "Melee Doughty",
-                    per_trade: 1,
-                    quantity: 17,
-                    rank: 0
+                    quantity: 17
                   },
                   %Arcane{
                     default_price: 3,
                     id: "675c59347b18977f6e6453ec",
                     min_price: 2,
                     name: "Primary Crux",
-                    per_trade: 1,
-                    quantity: 17,
-                    rank: 0
+                    quantity: 17
                   },
                   %Arcane{
                     default_price: 3,
                     id: "675c5cd07b18977f6e6453ee",
                     min_price: 2,
                     name: "Secondary Enervate",
-                    per_trade: 1,
-                    quantity: 17,
-                    rank: 0
+                    quantity: 17
                   }
                 ]}
     end
@@ -241,9 +205,7 @@ defmodule StoreTest do
            name: "Looter",
            id: "5740c1879d238d4a03d28518",
            min_price: 50,
-           default_price: 60,
-           quantity: 1,
-           rank: 0
+           default_price: 60
          }}
 
       # Assert
