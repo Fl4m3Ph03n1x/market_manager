@@ -7,7 +7,7 @@ defmodule AuctionHouse do
 
   alias AuctionHouse.Runtime.{AuctionSupervisor, Server}
   alias AuctionHouse.Type
-  alias Shared.Data.{Authorization, Credentials, Order, PlacedOrder, User}
+  alias Shared.Data.{Authorization, Credentials, PlacedOrder, Product, User}
   alias Supervisor
 
   #######
@@ -20,25 +20,26 @@ defmodule AuctionHouse do
 
   Example:
   ```
-  > alias Shared.Data.{Order, PlacedOrder}
-  > order = Order.new(%{
-    "item_id" => "54e644ffe779897594fa68cd",
-    "mod_rank" => 0,
-    "order_type" => "sell",
-    "platinum" => 20,
-    "quantity" => 1
-  })
+  > alias Shared.Data.PlacedOrder
+  > order = %{
+      type: "sell",
+      visible: true,
+      platinum: 15,
+      rank: 0,
+      quantity: 1,
+      itemId: "5cb04868fc2db2068006980e"
+    }
 
   > AuctionHouse.place_order(order)
   :ok
 
   The received messages will have one of the following formats:
 
-  - {:place_order, {:ok, %PlacedOrder{item_id: "54a74454e779892d5e5155d5", order_id: "66b9c7aa6b17410a57974e4b"}}}
+  - {:place_order, {:ok, %PlacedOrder{item_id: "5cb04868fc2db2068006980e", order_id: "66b9c7aa6b17410a57974e4b"}}}
   - {:place_order, {:error, {reason, err}}}
   ```
   """
-  @spec place_order(Order.t()) :: Type.place_order_response()
+  @spec place_order(Product.sell_order()) :: Type.place_order_response()
   defdelegate place_order(order), to: Server
 
   @doc """
