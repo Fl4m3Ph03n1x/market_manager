@@ -5,14 +5,14 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.38.2">
-    <meta name="project" content="Market Manager v2.2.5">
+    <meta name="project" content="Market Manager v2.2.6">
 
 
-    <title>AuctionHouse — Market Manager v2.2.5</title>
+    <title>AuctionHouse — Market Manager v2.2.6</title>
 
     <link rel="stylesheet" href="dist/html-elixir-KV3YOVJ3.css" />
 
-    <script defer src="dist/sidebar_items-1CB406DE.js"></script>
+    <script defer src="dist/sidebar_items-2EF61568.js"></script>
     <script defer src="docs_config.js"></script>
     <script defer src="dist/html-DPJLHKSM.js"></script>
 
@@ -41,7 +41,7 @@
 Market Manager
         </a>
         <div class="sidebar-projectVersion" translate="no">
-          v2.2.5
+          v2.2.6
         </div>
       </div>
     </div>
@@ -80,7 +80,7 @@ Market Manager
   <div class="heading-with-actions top-heading">
     <h1>
       <span translate="no">AuctionHouse</span> 
-      <small class="app-vsn" translate="no">(Market Manager v2.2.5)</small>
+      <small class="app-vsn" translate="no">(Market Manager v2.2.6)</small>
 
     </h1>
 
@@ -228,7 +228,7 @@ Synchronous call, will only fail if this service is down.</p></div>
       <h1 class="signature" translate="no">delete_order(order)</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/auction_house.ex#L66" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/auction_house.ex#L67" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -246,18 +246,18 @@ Synchronous call, will only fail if this service is down.</p></div>
 
 <p>Deletes an order from warframe market asynchronously.
 Notifies invoking process asynchronously with placed order or with error.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="kn">alias</span><span class="w"> </span><span class="nc">Shared.Data.PlacedOrder</span><span class="w">
-</span><span class="o">&gt;</span><span class="w"> </span><span class="n">placed_order</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">PlacedOrder</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="2899125348-1">(</span><span class="p" data-group-id="2899125348-2">%{</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="n">placed_order</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">PlacedOrder</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="0173336649-1">(</span><span class="p" data-group-id="0173336649-2">%{</span><span class="w">
     </span><span class="s">&quot;item_id&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;54e644ffe779897594fa68cd&quot;</span><span class="p">,</span><span class="w">
     </span><span class="s">&quot;order_id&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;626127cbc984ac033cd2bbd2&quot;</span><span class="w">
-</span><span class="p" data-group-id="2899125348-2">}</span><span class="p" data-group-id="2899125348-1">)</span><span class="w">
+</span><span class="p" data-group-id="0173336649-2">}</span><span class="p" data-group-id="0173336649-1">)</span><span class="w">
 
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">AuctionHouse</span><span class="o">.</span><span class="n">delete_order</span><span class="p" data-group-id="2899125348-3">(</span><span class="n">placed_order</span><span class="p" data-group-id="2899125348-3">)</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">AuctionHouse</span><span class="o">.</span><span class="n">delete_order</span><span class="p" data-group-id="0173336649-3">(</span><span class="n">placed_order</span><span class="p" data-group-id="0173336649-3">)</span><span class="w">
 </span><span class="ss">:ok</span><span class="w">
 
 </span><span class="nc">The</span><span class="w"> </span><span class="n">received</span><span class="w"> </span><span class="n">messages</span><span class="w"> </span><span class="n">will</span><span class="w"> </span><span class="n">one</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">following</span><span class="w"> </span><span class="ss">formats</span><span class="p">:</span><span class="w">
 
-</span><span class="o">-</span><span class="w"> </span><span class="p" data-group-id="2899125348-4">{</span><span class="ss">:delete_order</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="2899125348-5">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="2899125348-6">%</span><span class="nc" data-group-id="2899125348-6">PlacedOrder</span><span class="p" data-group-id="2899125348-6">{</span><span class="ss">item_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;54e644ffe779897594fa68cd&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">order_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;626127cbc984ac033cd2bbd2&quot;</span><span class="p" data-group-id="2899125348-6">}</span><span class="p" data-group-id="2899125348-5">}</span><span class="p" data-group-id="2899125348-4">}</span><span class="w">
-</span><span class="o">-</span><span class="w"> </span><span class="p" data-group-id="2899125348-7">{</span><span class="ss">:delete_order</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="2899125348-8">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="2899125348-9">{</span><span class="n">reason</span><span class="p">,</span><span class="w"> </span><span class="n">err</span><span class="p" data-group-id="2899125348-9">}</span><span class="p" data-group-id="2899125348-8">}</span><span class="p" data-group-id="2899125348-7">}</span></code></pre>
+</span><span class="o">-</span><span class="w"> </span><span class="p" data-group-id="0173336649-4">{</span><span class="ss">:delete_order</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="0173336649-5">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="0173336649-6">%</span><span class="nc" data-group-id="0173336649-6">PlacedOrder</span><span class="p" data-group-id="0173336649-6">{</span><span class="ss">item_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;54e644ffe779897594fa68cd&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">order_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;626127cbc984ac033cd2bbd2&quot;</span><span class="p" data-group-id="0173336649-6">}</span><span class="p" data-group-id="0173336649-5">}</span><span class="p" data-group-id="0173336649-4">}</span><span class="w">
+</span><span class="o">-</span><span class="w"> </span><span class="p" data-group-id="0173336649-7">{</span><span class="ss">:delete_order</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="0173336649-8">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="0173336649-9">{</span><span class="n">reason</span><span class="p">,</span><span class="w"> </span><span class="n">err</span><span class="p" data-group-id="0173336649-9">}</span><span class="p" data-group-id="0173336649-8">}</span><span class="p" data-group-id="0173336649-7">}</span></code></pre>
   </section>
 </section>
 <section class="detail" id="get_item_orders/1">
@@ -270,7 +270,7 @@ Notifies invoking process asynchronously with placed order or with error.</p><p>
       <h1 class="signature" translate="no">get_item_orders(item_name)</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/auction_house.ex#L90" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/auction_house.ex#L91" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -292,14 +292,14 @@ name into a format that the external party can understand.
 Notifies invoking process asynchronously with a list of OrderInfo or with error.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="kn">alias</span><span class="w"> </span><span class="nc">Shared.Data.OrderInfo</span><span class="w">
 </span><span class="o">&gt;</span><span class="w"> </span><span class="n">item_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Despoil&quot;</span><span class="w">
 
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">AuctionHouse</span><span class="o">.</span><span class="n">get_item_orders</span><span class="p" data-group-id="3557154574-1">(</span><span class="n">item_name</span><span class="p" data-group-id="3557154574-1">)</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">AuctionHouse</span><span class="o">.</span><span class="n">get_item_orders</span><span class="p" data-group-id="9505035332-1">(</span><span class="n">item_name</span><span class="p" data-group-id="9505035332-1">)</span><span class="w">
 </span><span class="o">&gt;</span><span class="w"> </span><span class="ss">:ok</span><span class="w">
 
 </span><span class="nc">The</span><span class="w"> </span><span class="n">received</span><span class="w"> </span><span class="n">messages</span><span class="w"> </span><span class="n">will</span><span class="w"> </span><span class="n">one</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">following</span><span class="w"> </span><span class="ss">formats</span><span class="p">:</span><span class="w">
 
-</span><span class="o">-</span><span class="w"> </span><span class="p" data-group-id="3557154574-2">{</span><span class="ss">:get_item_orders</span><span class="p">,</span><span class="w">  </span><span class="p" data-group-id="3557154574-3">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Despoil&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3557154574-4">[</span><span class="p" data-group-id="3557154574-5">%</span><span class="nc" data-group-id="3557154574-5">OrderInfo</span><span class="p" data-group-id="3557154574-5">{</span><span class="s">&quot;visible&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="no">true</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;order_type&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;sell&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;platform&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;pc&quot;</span><span class="p">,</span><span class="w">
-  </span><span class="s">&quot;platinum&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="mi">20</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;user&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p" data-group-id="3557154574-6">%</span><span class="nc" data-group-id="3557154574-6">OrderInfo.User</span><span class="p" data-group-id="3557154574-6">{</span><span class="s">&quot;ingame_name&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;user_name_1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;status&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;ingame&quot;</span><span class="p" data-group-id="3557154574-6">}</span><span class="p" data-group-id="3557154574-5">}</span><span class="p" data-group-id="3557154574-4">]</span><span class="p" data-group-id="3557154574-3">}</span><span class="w">
-</span><span class="o">-</span><span class="w"> </span><span class="p" data-group-id="3557154574-7">{</span><span class="ss">:get_item_orders</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3557154574-8">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Despoil&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3557154574-9">{</span><span class="n">reason</span><span class="p">,</span><span class="w"> </span><span class="n">err</span><span class="p" data-group-id="3557154574-9">}</span><span class="p" data-group-id="3557154574-8">}</span><span class="p" data-group-id="3557154574-7">}</span></code></pre>
+</span><span class="o">-</span><span class="w"> </span><span class="p" data-group-id="9505035332-2">{</span><span class="ss">:get_item_orders</span><span class="p">,</span><span class="w">  </span><span class="p" data-group-id="9505035332-3">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Despoil&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="9505035332-4">[</span><span class="p" data-group-id="9505035332-5">%</span><span class="nc" data-group-id="9505035332-5">OrderInfo</span><span class="p" data-group-id="9505035332-5">{</span><span class="s">&quot;visible&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="no">true</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;order_type&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;sell&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;platform&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;pc&quot;</span><span class="p">,</span><span class="w">
+  </span><span class="s">&quot;platinum&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="mi">20</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;user&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p" data-group-id="9505035332-6">%</span><span class="nc" data-group-id="9505035332-6">OrderInfo.User</span><span class="p" data-group-id="9505035332-6">{</span><span class="s">&quot;ingame_name&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;user_name_1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;status&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;ingame&quot;</span><span class="p" data-group-id="9505035332-6">}</span><span class="p" data-group-id="9505035332-5">}</span><span class="p" data-group-id="9505035332-4">]</span><span class="p" data-group-id="9505035332-3">}</span><span class="w">
+</span><span class="o">-</span><span class="w"> </span><span class="p" data-group-id="9505035332-7">{</span><span class="ss">:get_item_orders</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="9505035332-8">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Despoil&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="9505035332-9">{</span><span class="n">reason</span><span class="p">,</span><span class="w"> </span><span class="n">err</span><span class="p" data-group-id="9505035332-9">}</span><span class="p" data-group-id="9505035332-8">}</span><span class="p" data-group-id="9505035332-7">}</span></code></pre>
   </section>
 </section>
 <section class="detail" id="get_saved_login/0">
@@ -312,7 +312,7 @@ Notifies invoking process asynchronously with a list of OrderInfo or with error.
       <h1 class="signature" translate="no">get_saved_login()</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/auction_house.ex#L181" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/auction_house.ex#L182" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -328,15 +328,15 @@ Notifies invoking process asynchronously with a list of OrderInfo or with error.
       </div>
 
 <p>Returns the authorization and user directly from state.
-Synchronous call, will only fail if this service is down.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="kn">alias</span><span class="w"> </span><span class="nc">Shared.Data</span><span class="o">.</span><span class="p" data-group-id="5150590863-1">{</span><span class="nc">Authorization</span><span class="p">,</span><span class="w"> </span><span class="nc">User</span><span class="p" data-group-id="5150590863-1">}</span><span class="w">
-</span><span class="o">&gt;</span><span class="w"> </span><span class="n">auth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Authorization</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="5150590863-2">(</span><span class="s">&quot;a_cookie&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;a_token&quot;</span><span class="p" data-group-id="5150590863-2">)</span><span class="w">
-</span><span class="o">&gt;</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">User</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="5150590863-3">(</span><span class="s">&quot;fl4m3&quot;</span><span class="p">,</span><span class="w"> </span><span class="no">false</span><span class="p" data-group-id="5150590863-3">)</span><span class="w">
+Synchronous call, will only fail if this service is down.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="kn">alias</span><span class="w"> </span><span class="nc">Shared.Data</span><span class="o">.</span><span class="p" data-group-id="5653295698-1">{</span><span class="nc">Authorization</span><span class="p">,</span><span class="w"> </span><span class="nc">User</span><span class="p" data-group-id="5653295698-1">}</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="n">auth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Authorization</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="5653295698-2">(</span><span class="s">&quot;a_cookie&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;a_token&quot;</span><span class="p" data-group-id="5653295698-2">)</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">User</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="5653295698-3">(</span><span class="s">&quot;fl4m3&quot;</span><span class="p">,</span><span class="w"> </span><span class="no">false</span><span class="p" data-group-id="5653295698-3">)</span><span class="w">
 
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">AuctionHouse</span><span class="o">.</span><span class="n">get_saved_login</span><span class="p" data-group-id="5150590863-4">(</span><span class="p" data-group-id="5150590863-4">)</span><span class="w">
-</span><span class="p" data-group-id="5150590863-5">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="5150590863-6">{</span><span class="p" data-group-id="5150590863-7">%</span><span class="nc" data-group-id="5150590863-7">Authorization</span><span class="p" data-group-id="5150590863-7">{</span><span class="p" data-group-id="5150590863-7">}</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="5150590863-8">%</span><span class="nc" data-group-id="5150590863-8">User</span><span class="p" data-group-id="5150590863-8">{</span><span class="p" data-group-id="5150590863-8">}</span><span class="p" data-group-id="5150590863-6">}</span><span class="p" data-group-id="5150590863-5">}</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">AuctionHouse</span><span class="o">.</span><span class="n">get_saved_login</span><span class="p" data-group-id="5653295698-4">(</span><span class="p" data-group-id="5653295698-4">)</span><span class="w">
+</span><span class="p" data-group-id="5653295698-5">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="5653295698-6">{</span><span class="p" data-group-id="5653295698-7">%</span><span class="nc" data-group-id="5653295698-7">Authorization</span><span class="p" data-group-id="5653295698-7">{</span><span class="p" data-group-id="5653295698-7">}</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="5653295698-8">%</span><span class="nc" data-group-id="5653295698-8">User</span><span class="p" data-group-id="5653295698-8">{</span><span class="p" data-group-id="5653295698-8">}</span><span class="p" data-group-id="5653295698-6">}</span><span class="p" data-group-id="5653295698-5">}</span><span class="w">
 
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">AuctionHouse</span><span class="o">.</span><span class="n">get_saved_login</span><span class="p" data-group-id="5150590863-9">(</span><span class="p" data-group-id="5150590863-9">)</span><span class="w">
-</span><span class="p" data-group-id="5150590863-10">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:reason</span><span class="p" data-group-id="5150590863-10">}</span></code></pre>
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">AuctionHouse</span><span class="o">.</span><span class="n">get_saved_login</span><span class="p" data-group-id="5653295698-9">(</span><span class="p" data-group-id="5653295698-9">)</span><span class="w">
+</span><span class="p" data-group-id="5653295698-10">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:reason</span><span class="p" data-group-id="5653295698-10">}</span></code></pre>
   </section>
 </section>
 <section class="detail" id="get_user_orders/1">
@@ -349,7 +349,7 @@ Synchronous call, will only fail if this service is down.</p><p>Example:</p><pre
       <h1 class="signature" translate="no">get_user_orders(username_slug)</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/auction_house.ex#L120" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/auction_house.ex#L121" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -366,25 +366,25 @@ Synchronous call, will only fail if this service is down.</p><p>Example:</p><pre
       </div>
 
 <p>Gets all warframe market sell orders for the given user.
-Notifies invoking process asynchronously with a list of user PlacedOrders or with error.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="nc">AuctionHouse</span><span class="o">.</span><span class="n">get_user_orders</span><span class="p" data-group-id="8296785073-1">(</span><span class="s">&quot;fl4m3&quot;</span><span class="p" data-group-id="8296785073-1">)</span><span class="w">
+Notifies invoking process asynchronously with a list of user PlacedOrders or with error.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="nc">AuctionHouse</span><span class="o">.</span><span class="n">get_user_orders</span><span class="p" data-group-id="2595312048-1">(</span><span class="s">&quot;fl4m3&quot;</span><span class="p" data-group-id="2595312048-1">)</span><span class="w">
 </span><span class="o">&gt;</span><span class="w"> </span><span class="ss">:ok</span><span class="w">
 
 </span><span class="nc">The</span><span class="w"> </span><span class="n">received</span><span class="w"> </span><span class="n">messages</span><span class="w"> </span><span class="n">will</span><span class="w"> </span><span class="n">one</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">following</span><span class="w"> </span><span class="ss">formats</span><span class="p">:</span><span class="w">
 
-</span><span class="o">-</span><span class="w"> </span><span class="p" data-group-id="8296785073-2">{</span><span class="ss">:get_user_orders</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="8296785073-3">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w">
-  </span><span class="p" data-group-id="8296785073-4">[</span><span class="w">
-    </span><span class="p" data-group-id="8296785073-5">%</span><span class="nc" data-group-id="8296785073-5">PlacedOrder</span><span class="p" data-group-id="8296785073-5">{</span><span class="w">
+</span><span class="o">-</span><span class="w"> </span><span class="p" data-group-id="2595312048-2">{</span><span class="ss">:get_user_orders</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="2595312048-3">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w">
+  </span><span class="p" data-group-id="2595312048-4">[</span><span class="w">
+    </span><span class="p" data-group-id="2595312048-5">%</span><span class="nc" data-group-id="2595312048-5">PlacedOrder</span><span class="p" data-group-id="2595312048-5">{</span><span class="w">
       </span><span class="ss">order_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;66058313a9630600302d4889&quot;</span><span class="p">,</span><span class="w">
       </span><span class="ss">item_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;55108594e77989728d5100c6&quot;</span><span class="w">
-    </span><span class="p" data-group-id="8296785073-5">}</span><span class="p">,</span><span class="w">
-    </span><span class="p" data-group-id="8296785073-6">%</span><span class="nc" data-group-id="8296785073-6">PlacedOrder</span><span class="p" data-group-id="8296785073-6">{</span><span class="w">
+    </span><span class="p" data-group-id="2595312048-5">}</span><span class="p">,</span><span class="w">
+    </span><span class="p" data-group-id="2595312048-6">%</span><span class="nc" data-group-id="2595312048-6">PlacedOrder</span><span class="p" data-group-id="2595312048-6">{</span><span class="w">
       </span><span class="ss">order_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;6605832ea96306003657a90d&quot;</span><span class="p">,</span><span class="w">
       </span><span class="ss">item_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;54e644ffe779897594fa68d2&quot;</span><span class="w">
-    </span><span class="p" data-group-id="8296785073-6">}</span><span class="w">
-  </span><span class="p" data-group-id="8296785073-4">]</span><span class="w">
-</span><span class="p" data-group-id="8296785073-3">}</span><span class="p" data-group-id="8296785073-2">}</span><span class="w">
+    </span><span class="p" data-group-id="2595312048-6">}</span><span class="w">
+  </span><span class="p" data-group-id="2595312048-4">]</span><span class="w">
+</span><span class="p" data-group-id="2595312048-3">}</span><span class="p" data-group-id="2595312048-2">}</span><span class="w">
 
-</span><span class="o">-</span><span class="w"> </span><span class="p" data-group-id="8296785073-7">{</span><span class="ss">:get_user_orders</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="8296785073-8">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="8296785073-9">{</span><span class="n">reason</span><span class="p">,</span><span class="w"> </span><span class="n">err</span><span class="p" data-group-id="8296785073-9">}</span><span class="p" data-group-id="8296785073-8">}</span><span class="p" data-group-id="8296785073-7">}</span></code></pre>
+</span><span class="o">-</span><span class="w"> </span><span class="p" data-group-id="2595312048-7">{</span><span class="ss">:get_user_orders</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="2595312048-8">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="2595312048-9">{</span><span class="n">reason</span><span class="p">,</span><span class="w"> </span><span class="n">err</span><span class="p" data-group-id="2595312048-9">}</span><span class="p" data-group-id="2595312048-8">}</span><span class="p" data-group-id="2595312048-7">}</span></code></pre>
   </section>
 </section>
 <section class="detail" id="login/1">
@@ -397,7 +397,7 @@ Notifies invoking process asynchronously with a list of user PlacedOrders or wit
       <h1 class="signature" translate="no">login(credentials)</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/auction_house.ex#L143" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/auction_house.ex#L144" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -414,16 +414,16 @@ Notifies invoking process asynchronously with a list of user PlacedOrders or wit
 
 <p>Authenticates the user with the auction house and saves the session.
 Must be invoked every time the application is launched.
-Notifies invoking process asynchronously with user information or with error.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="kn">alias</span><span class="w"> </span><span class="nc">Shared.Data</span><span class="o">.</span><span class="p" data-group-id="8154036647-1">{</span><span class="nc">Authorization</span><span class="p">,</span><span class="w"> </span><span class="nc">Credentials</span><span class="p">,</span><span class="w"> </span><span class="nc">User</span><span class="p" data-group-id="8154036647-1">}</span><span class="w">
-</span><span class="o">&gt;</span><span class="w"> </span><span class="n">credentials</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Credentials</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="8154036647-2">(</span><span class="s">&quot;the_username&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;the_password&quot;</span><span class="p" data-group-id="8154036647-2">)</span><span class="w">
+Notifies invoking process asynchronously with user information or with error.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="kn">alias</span><span class="w"> </span><span class="nc">Shared.Data</span><span class="o">.</span><span class="p" data-group-id="5428665957-1">{</span><span class="nc">Authorization</span><span class="p">,</span><span class="w"> </span><span class="nc">Credentials</span><span class="p">,</span><span class="w"> </span><span class="nc">User</span><span class="p" data-group-id="5428665957-1">}</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="n">credentials</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Credentials</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="5428665957-2">(</span><span class="s">&quot;the_username&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;the_password&quot;</span><span class="p" data-group-id="5428665957-2">)</span><span class="w">
 
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">AuctionHouse</span><span class="o">.</span><span class="n">login</span><span class="p" data-group-id="8154036647-3">(</span><span class="n">credentials</span><span class="p" data-group-id="8154036647-3">)</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">AuctionHouse</span><span class="o">.</span><span class="n">login</span><span class="p" data-group-id="5428665957-3">(</span><span class="n">credentials</span><span class="p" data-group-id="5428665957-3">)</span><span class="w">
 </span><span class="ss">:ok</span><span class="w">
 
 </span><span class="nc">The</span><span class="w"> </span><span class="n">received</span><span class="w"> </span><span class="n">messages</span><span class="w"> </span><span class="n">will</span><span class="w"> </span><span class="n">one</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">following</span><span class="w"> </span><span class="ss">formats</span><span class="p">:</span><span class="w">
 
-</span><span class="o">-</span><span class="w"> </span><span class="p" data-group-id="8154036647-4">{</span><span class="ss">:login</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="8154036647-5">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="8154036647-6">{</span><span class="w"> </span><span class="p" data-group-id="8154036647-7">%</span><span class="nc" data-group-id="8154036647-7">Authorization</span><span class="p" data-group-id="8154036647-7">{</span><span class="ss">cookie</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;a_cookie&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">token</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;a_token&quot;</span><span class="p" data-group-id="8154036647-7">}</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="8154036647-8">%</span><span class="nc" data-group-id="8154036647-8">User</span><span class="p" data-group-id="8154036647-8">{</span><span class="ss">patreon?</span><span class="p">:</span><span class="w"> </span><span class="no">false</span><span class="p">,</span><span class="w"> </span><span class="ss">slug</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;f4lm3&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">ingame_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Fl4m3&quot;</span><span class="p" data-group-id="8154036647-8">}</span><span class="p" data-group-id="8154036647-6">}</span><span class="p" data-group-id="8154036647-5">}</span><span class="p" data-group-id="8154036647-4">}</span><span class="w">
-</span><span class="o">-</span><span class="w"> </span><span class="p" data-group-id="8154036647-9">{</span><span class="ss">:login</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="8154036647-10">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="8154036647-11">{</span><span class="n">reason</span><span class="p">,</span><span class="w"> </span><span class="n">err</span><span class="p" data-group-id="8154036647-11">}</span><span class="p" data-group-id="8154036647-10">}</span><span class="p" data-group-id="8154036647-9">}</span><span class="w">
+</span><span class="o">-</span><span class="w"> </span><span class="p" data-group-id="5428665957-4">{</span><span class="ss">:login</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="5428665957-5">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="5428665957-6">{</span><span class="w"> </span><span class="p" data-group-id="5428665957-7">%</span><span class="nc" data-group-id="5428665957-7">Authorization</span><span class="p" data-group-id="5428665957-7">{</span><span class="ss">cookie</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;a_cookie&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">token</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;a_token&quot;</span><span class="p" data-group-id="5428665957-7">}</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="5428665957-8">%</span><span class="nc" data-group-id="5428665957-8">User</span><span class="p" data-group-id="5428665957-8">{</span><span class="ss">patreon?</span><span class="p">:</span><span class="w"> </span><span class="no">false</span><span class="p">,</span><span class="w"> </span><span class="ss">slug</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;f4lm3&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">ingame_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Fl4m3&quot;</span><span class="p" data-group-id="5428665957-8">}</span><span class="p" data-group-id="5428665957-6">}</span><span class="p" data-group-id="5428665957-5">}</span><span class="p" data-group-id="5428665957-4">}</span><span class="w">
+</span><span class="o">-</span><span class="w"> </span><span class="p" data-group-id="5428665957-9">{</span><span class="ss">:login</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="5428665957-10">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="5428665957-11">{</span><span class="n">reason</span><span class="p">,</span><span class="w"> </span><span class="n">err</span><span class="p" data-group-id="5428665957-11">}</span><span class="p" data-group-id="5428665957-10">}</span><span class="p" data-group-id="5428665957-9">}</span><span class="w">
 </span></code></pre>
   </section>
 </section>
@@ -437,7 +437,7 @@ Notifies invoking process asynchronously with user information or with error.</p
       <h1 class="signature" translate="no">logout()</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/auction_house.ex#L195" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/auction_house.ex#L196" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -454,7 +454,7 @@ Notifies invoking process asynchronously with user information or with error.</p
 
 <p>Deletes the current session and user data from the this application.
 Does not interact with the External AuctionHouse, this is a local operation only.
-Will only fail if this service is down.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="nc">AuctionHouse</span><span class="o">.</span><span class="n">logout</span><span class="p" data-group-id="3266288500-1">(</span><span class="p" data-group-id="3266288500-1">)</span><span class="w">
+Will only fail if this service is down.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="nc">AuctionHouse</span><span class="o">.</span><span class="n">logout</span><span class="p" data-group-id="7174303303-1">(</span><span class="p" data-group-id="7174303303-1">)</span><span class="w">
 </span><span class="ss">:ok</span></code></pre>
   </section>
 </section>
@@ -468,7 +468,7 @@ Will only fail if this service is down.</p><p>Example:</p><pre><code class="make
       <h1 class="signature" translate="no">place_order(order)</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/auction_house.ex#L42" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/auction_house.ex#L43" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -479,27 +479,29 @@ Will only fail if this service is down.</p><p>Example:</p><pre><code class="make
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@spec</span> place_order(<a href="Shared.Data.Order.html#t:t/0">Shared.Data.Order.t</a>()) :: <a href="AuctionHouse.Type.html#t:place_order_response/0">AuctionHouse.Type.place_order_response</a>()</pre>
+          <pre translate="no"><span class="attribute">@spec</span> place_order(<a href="Shared.Data.Product.html#t:sell_order/0">Shared.Data.Product.sell_order</a>()) ::
+  <a href="AuctionHouse.Type.html#t:place_order_response/0">AuctionHouse.Type.place_order_response</a>()</pre>
 
       </div>
 
 <p>Places an order in warframe market.
-Notifies invoking process asynchronously with placed order or with error.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="kn">alias</span><span class="w"> </span><span class="nc">Shared.Data</span><span class="o">.</span><span class="p" data-group-id="0278899260-1">{</span><span class="nc">Order</span><span class="p">,</span><span class="w"> </span><span class="nc">PlacedOrder</span><span class="p" data-group-id="0278899260-1">}</span><span class="w">
-</span><span class="o">&gt;</span><span class="w"> </span><span class="n">order</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Order</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="0278899260-2">(</span><span class="p" data-group-id="0278899260-3">%{</span><span class="w">
-  </span><span class="s">&quot;item_id&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;54e644ffe779897594fa68cd&quot;</span><span class="p">,</span><span class="w">
-  </span><span class="s">&quot;mod_rank&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
-  </span><span class="s">&quot;order_type&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;sell&quot;</span><span class="p">,</span><span class="w">
-  </span><span class="s">&quot;platinum&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="mi">20</span><span class="p">,</span><span class="w">
-  </span><span class="s">&quot;quantity&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="mi">1</span><span class="w">
-</span><span class="p" data-group-id="0278899260-3">}</span><span class="p" data-group-id="0278899260-2">)</span><span class="w">
+Notifies invoking process asynchronously with placed order or with error.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="kn">alias</span><span class="w"> </span><span class="nc">Shared.Data.PlacedOrder</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="n">order</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p" data-group-id="9559969382-1">%{</span><span class="w">
+    </span><span class="ss">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;sell&quot;</span><span class="p">,</span><span class="w">
+    </span><span class="ss">visible</span><span class="p">:</span><span class="w"> </span><span class="no">true</span><span class="p">,</span><span class="w">
+    </span><span class="ss">platinum</span><span class="p">:</span><span class="w"> </span><span class="mi">15</span><span class="p">,</span><span class="w">
+    </span><span class="ss">rank</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+    </span><span class="ss">quantity</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+    </span><span class="ss">itemId</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;5cb04868fc2db2068006980e&quot;</span><span class="w">
+  </span><span class="p" data-group-id="9559969382-1">}</span><span class="w">
 
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">AuctionHouse</span><span class="o">.</span><span class="n">place_order</span><span class="p" data-group-id="0278899260-4">(</span><span class="n">order</span><span class="p" data-group-id="0278899260-4">)</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">AuctionHouse</span><span class="o">.</span><span class="n">place_order</span><span class="p" data-group-id="9559969382-2">(</span><span class="n">order</span><span class="p" data-group-id="9559969382-2">)</span><span class="w">
 </span><span class="ss">:ok</span><span class="w">
 
 </span><span class="nc">The</span><span class="w"> </span><span class="n">received</span><span class="w"> </span><span class="n">messages</span><span class="w"> </span><span class="n">will</span><span class="w"> </span><span class="n">have</span><span class="w"> </span><span class="n">one</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">following</span><span class="w"> </span><span class="ss">formats</span><span class="p">:</span><span class="w">
 
-</span><span class="o">-</span><span class="w"> </span><span class="p" data-group-id="0278899260-5">{</span><span class="ss">:place_order</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="0278899260-6">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="0278899260-7">%</span><span class="nc" data-group-id="0278899260-7">PlacedOrder</span><span class="p" data-group-id="0278899260-7">{</span><span class="ss">item_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;54a74454e779892d5e5155d5&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">order_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;66b9c7aa6b17410a57974e4b&quot;</span><span class="p" data-group-id="0278899260-7">}</span><span class="p" data-group-id="0278899260-6">}</span><span class="p" data-group-id="0278899260-5">}</span><span class="w">
-</span><span class="o">-</span><span class="w"> </span><span class="p" data-group-id="0278899260-8">{</span><span class="ss">:place_order</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="0278899260-9">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="0278899260-10">{</span><span class="n">reason</span><span class="p">,</span><span class="w"> </span><span class="n">err</span><span class="p" data-group-id="0278899260-10">}</span><span class="p" data-group-id="0278899260-9">}</span><span class="p" data-group-id="0278899260-8">}</span></code></pre>
+</span><span class="o">-</span><span class="w"> </span><span class="p" data-group-id="9559969382-3">{</span><span class="ss">:place_order</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="9559969382-4">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="9559969382-5">%</span><span class="nc" data-group-id="9559969382-5">PlacedOrder</span><span class="p" data-group-id="9559969382-5">{</span><span class="ss">item_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;5cb04868fc2db2068006980e&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">order_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;66b9c7aa6b17410a57974e4b&quot;</span><span class="p" data-group-id="9559969382-5">}</span><span class="p" data-group-id="9559969382-4">}</span><span class="p" data-group-id="9559969382-3">}</span><span class="w">
+</span><span class="o">-</span><span class="w"> </span><span class="p" data-group-id="9559969382-6">{</span><span class="ss">:place_order</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="9559969382-7">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="9559969382-8">{</span><span class="n">reason</span><span class="p">,</span><span class="w"> </span><span class="n">err</span><span class="p" data-group-id="9559969382-8">}</span><span class="p" data-group-id="9559969382-7">}</span><span class="p" data-group-id="9559969382-6">}</span></code></pre>
   </section>
 </section>
 <section class="detail" id="update_login/2">
@@ -512,7 +514,7 @@ Notifies invoking process asynchronously with placed order or with error.</p><p>
       <h1 class="signature" translate="no">update_login(auth, user)</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/auction_house.ex#L161" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/auction_house/lib/auction_house.ex#L162" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -530,11 +532,11 @@ Notifies invoking process asynchronously with placed order or with error.</p><p>
 
 <p>Feeds the authorization information directly to the AuctionHouse. Used when
 the login data is being recovered from a past login to update the this service's state.
-Synchronous call, will only fail if this service is down.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="kn">alias</span><span class="w"> </span><span class="nc">Shared.Data</span><span class="o">.</span><span class="p" data-group-id="6684779333-1">{</span><span class="nc">Authorization</span><span class="p">,</span><span class="w"> </span><span class="nc">User</span><span class="p" data-group-id="6684779333-1">}</span><span class="w">
-</span><span class="o">&gt;</span><span class="w"> </span><span class="n">auth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Authorization</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="6684779333-2">(</span><span class="s">&quot;a_cookie&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;a_token&quot;</span><span class="p" data-group-id="6684779333-2">)</span><span class="w">
-</span><span class="o">&gt;</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">User</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="6684779333-3">(</span><span class="s">&quot;fl4m3&quot;</span><span class="p">,</span><span class="w"> </span><span class="no">false</span><span class="p" data-group-id="6684779333-3">)</span><span class="w">
+Synchronous call, will only fail if this service is down.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="kn">alias</span><span class="w"> </span><span class="nc">Shared.Data</span><span class="o">.</span><span class="p" data-group-id="7106691154-1">{</span><span class="nc">Authorization</span><span class="p">,</span><span class="w"> </span><span class="nc">User</span><span class="p" data-group-id="7106691154-1">}</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="n">auth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Authorization</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="7106691154-2">(</span><span class="s">&quot;a_cookie&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;a_token&quot;</span><span class="p" data-group-id="7106691154-2">)</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">User</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="7106691154-3">(</span><span class="s">&quot;fl4m3&quot;</span><span class="p">,</span><span class="w"> </span><span class="no">false</span><span class="p" data-group-id="7106691154-3">)</span><span class="w">
 
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">AuctionHouse</span><span class="o">.</span><span class="n">update_login</span><span class="p" data-group-id="6684779333-4">(</span><span class="n">auth</span><span class="p">,</span><span class="w"> </span><span class="n">user</span><span class="p" data-group-id="6684779333-4">)</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">AuctionHouse</span><span class="o">.</span><span class="n">update_login</span><span class="p" data-group-id="7106691154-4">(</span><span class="n">auth</span><span class="p">,</span><span class="w"> </span><span class="n">user</span><span class="p" data-group-id="7106691154-4">)</span><span class="w">
 </span><span class="ss">:ok</span></code></pre>
   </section>
 </section>

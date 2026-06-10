@@ -5,14 +5,14 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.38.2">
-    <meta name="project" content="Market Manager v2.2.5">
+    <meta name="project" content="Market Manager v2.2.6">
 
 
-    <title>Shared.Data.Product — Market Manager v2.2.5</title>
+    <title>Shared.Data.Product — Market Manager v2.2.6</title>
 
     <link rel="stylesheet" href="dist/html-elixir-KV3YOVJ3.css" />
 
-    <script defer src="dist/sidebar_items-1CB406DE.js"></script>
+    <script defer src="dist/sidebar_items-2EF61568.js"></script>
     <script defer src="docs_config.js"></script>
     <script defer src="dist/html-DPJLHKSM.js"></script>
 
@@ -41,7 +41,7 @@
 Market Manager
         </a>
         <div class="sidebar-projectVersion" translate="no">
-          v2.2.5
+          v2.2.6
         </div>
       </div>
     </div>
@@ -80,7 +80,7 @@ Market Manager
   <div class="heading-with-actions top-heading">
     <h1>
       <span translate="no">Shared.Data.Product</span> <small>behaviour</small>
-      <small class="app-vsn" translate="no">(Market Manager v2.2.5)</small>
+      <small class="app-vsn" translate="no">(Market Manager v2.2.6)</small>
 
     </h1>
 
@@ -202,6 +202,30 @@ The types are used to determine which struct to create when parsing products fro
 
     <div class="summary-row">
       <div class="summary-signature">
+        <a href="#t:sell_order/0" data-no-tooltip="" translate="no">sell_order()</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:sell_price/0" data-no-tooltip="" translate="no">sell_price()</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:subtype/0" data-no-tooltip="" translate="no">subtype()</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
         <a href="#t:t/0" data-no-tooltip="" translate="no">t()</a>
 
       </div>
@@ -233,6 +257,17 @@ The rank multiplier differs from product to product, so this function is impleme
 
     </div>
 
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:to_sell_order!/2" data-no-tooltip="" translate="no">to_sell_order!(t, sell_price)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>This operation is used when creating sell orders to be posted on warframe.market, as the API expects a JSON body with specific fields.
+The exact fields and their values can differ based on the type of product, so this function is implemented in each Product.</p></div>
+
+    </div>
+
 </div>
 <div class="summary-functions summary">
   <h2>
@@ -254,6 +289,16 @@ The rank multiplier differs from product to product, so this function is impleme
         <a href="#new/1" data-no-tooltip="" translate="no">new(unranked_mod)</a>
 
       </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#to_sell_order!/2" data-no-tooltip="" translate="no">to_sell_order!(product, sell_price)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Helper function to invoke the to_sell_order! function of the correct Product without having to know which specific struct it is.</p></div>
 
     </div>
 
@@ -280,7 +325,7 @@ The rank multiplier differs from product to product, so this function is impleme
       <h1 class="signature" translate="no">arcane()</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/product.ex#L37" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/product.ex#L40" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -297,7 +342,6 @@ The rank multiplier differs from product to product, so this function is impleme
   required(min_price :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>(),
   required(default_price :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>(),
   required(quantity :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>(),
-  required(per_trade :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>(),
   required(type :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()
 }</pre>
 
@@ -400,7 +444,7 @@ The rank multiplier differs from product to product, so this function is impleme
       <h1 class="signature" translate="no">mod()</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/product.ex#L29" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/product.ex#L31" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -416,7 +460,8 @@ The rank multiplier differs from product to product, so this function is impleme
   required(id :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
   required(min_price :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>(),
   required(default_price :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>(),
-  required(type :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()
+  required(type :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  optional(subtype :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()
 }</pre>
 
       </div>
@@ -434,7 +479,7 @@ The rank multiplier differs from product to product, so this function is impleme
       <h1 class="signature" translate="no">mod_without_rank()</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/product.ex#L20" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/product.ex#L23" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -450,7 +495,6 @@ The rank multiplier differs from product to product, so this function is impleme
   required(id :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
   required(min_price :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>(),
   required(default_price :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>(),
-  required(rank :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
   required(type :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()
 }</pre>
 
@@ -525,7 +569,7 @@ The rank multiplier differs from product to product, so this function is impleme
       <h1 class="signature" translate="no">product()</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/product.ex#L47" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/product.ex#L49" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -599,6 +643,90 @@ The rank multiplier differs from product to product, so this function is impleme
 
   </section>
 </section>
+<section class="detail" id="t:sell_order/0">
+
+  <div class="detail-header">
+    <a href="#t:sell_order/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">sell_order()</h1>
+
+
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/product.ex#L21" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> sell_order() :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="t:sell_price/0">
+
+  <div class="detail-header">
+    <a href="#t:sell_price/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">sell_price()</h1>
+
+
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/product.ex#L20" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> sell_price() :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>()</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="t:subtype/0">
+
+  <div class="detail-header">
+    <a href="#t:subtype/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">subtype()</h1>
+
+
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/product.ex#L19" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> subtype() :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()</pre>
+
+      </div>
+
+
+  </section>
+</section>
 <section class="detail" id="t:t/0">
 
   <div class="detail-header">
@@ -609,7 +737,7 @@ The rank multiplier differs from product to product, so this function is impleme
       <h1 class="signature" translate="no">t()</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/product.ex#L49" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/product.ex#L51" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -680,7 +808,7 @@ The rank multiplier differs from product to product, so this function is impleme
       <h1 class="signature" translate="no">derankify_order(t)</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/product.ex#L55" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/product.ex#L57" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -697,6 +825,35 @@ The rank multiplier differs from product to product, so this function is impleme
 
 <p>Converts a ranked OrderInfo (which came from warframe.market) to its unranked equivalent by adjusting the platinum price based on the rank multiplier.
 The rank multiplier differs from product to product, so this function is implemented in each Product.</p>
+  </section>
+</section>
+<section class="detail" id="c:to_sell_order!/2">
+
+  <div class="detail-header">
+    <a href="#c:to_sell_order!/2" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">to_sell_order!(t, sell_price)</h1>
+
+
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/product.ex#L63" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> to_sell_order!(<a href="#t:t/0">t</a>(), <a href="#t:sell_price/0">sell_price</a>()) :: <a href="#t:sell_order/0">sell_order</a>()</pre>
+
+      </div>
+
+<p>This operation is used when creating sell orders to be posted on warframe.market, as the API expects a JSON body with specific fields.
+The exact fields and their values can differ based on the type of product, so this function is implemented in each Product.</p>
   </section>
 </section>
 
@@ -721,7 +878,7 @@ The rank multiplier differs from product to product, so this function is impleme
       <h1 class="signature" translate="no">derankify_order(product, order)</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/product.ex#L61" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/product.ex#L69" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -749,7 +906,7 @@ The rank multiplier differs from product to product, so this function is impleme
       <h1 class="signature" translate="no">new(unranked_mod)</h1>
 
 
-        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/product.ex#L67" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/product.ex#L84" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -765,6 +922,34 @@ The rank multiplier differs from product to product, so this function is impleme
       </div>
 
 
+  </section>
+</section>
+<section class="detail" id="to_sell_order!/2">
+
+  <div class="detail-header">
+    <a href="#to_sell_order!/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">to_sell_order!(product, sell_price)</h1>
+
+
+        <a href="https://github.com/Fl4m3Ph03n1x/market_manager/blob/main/apps/shared/lib/data/product.ex#L78" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> to_sell_order!(<a href="#t:t/0">t</a>(), <a href="#t:sell_price/0">sell_price</a>()) :: <a href="#t:sell_order/0">sell_order</a>()</pre>
+
+      </div>
+
+<p>Helper function to invoke the to_sell_order! function of the correct Product without having to know which specific struct it is.</p>
   </section>
 </section>
 

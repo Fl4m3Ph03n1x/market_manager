@@ -5,14 +5,14 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.38.2">
-    <meta name="project" content="Market Manager v2.2.5">
+    <meta name="project" content="Market Manager v2.2.6">
 
 
-    <title>Store — Market Manager v2.2.5</title>
+    <title>Store — Market Manager v2.2.6</title>
 
     <link rel="stylesheet" href="dist/html-elixir-KV3YOVJ3.css" />
 
-    <script defer src="dist/sidebar_items-1CB406DE.js"></script>
+    <script defer src="dist/sidebar_items-2EF61568.js"></script>
     <script defer src="docs_config.js"></script>
     <script defer src="dist/html-DPJLHKSM.js"></script>
 
@@ -41,7 +41,7 @@
 Market Manager
         </a>
         <div class="sidebar-projectVersion" translate="no">
-          v2.2.5
+          v2.2.6
         </div>
       </div>
     </div>
@@ -80,7 +80,7 @@ Market Manager
   <div class="heading-with-actions top-heading">
     <h1>
       <span translate="no">Store</span> 
-      <small class="app-vsn" translate="no">(Market Manager v2.2.5)</small>
+      <small class="app-vsn" translate="no">(Market Manager v2.2.6)</small>
 
     </h1>
 
@@ -245,11 +245,11 @@ Does not perform validation.</p></div>
 
 <p>Marks the given syndicates as activated with the given strategy.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="kn">alias</span><span class="w"> </span><span class="nc">Shared.Data.Syndicate</span><span class="w">
 
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">activate_syndicates</span><span class="p" data-group-id="3057880450-1">(</span><span class="p" data-group-id="3057880450-2">%{</span><span class="ss">red_veil</span><span class="p">:</span><span class="w"> </span><span class="ss">:top_five_average</span><span class="p">,</span><span class="w"> </span><span class="ss">new_loka</span><span class="p">:</span><span class="w"> </span><span class="ss">:top_five_average</span><span class="p" data-group-id="3057880450-2">}</span><span class="p" data-group-id="3057880450-1">)</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">activate_syndicates</span><span class="p" data-group-id="6859910693-1">(</span><span class="p" data-group-id="6859910693-2">%{</span><span class="ss">red_veil</span><span class="p">:</span><span class="w"> </span><span class="ss">:top_five_average</span><span class="p">,</span><span class="w"> </span><span class="ss">new_loka</span><span class="p">:</span><span class="w"> </span><span class="ss">:top_five_average</span><span class="p" data-group-id="6859910693-2">}</span><span class="p" data-group-id="6859910693-1">)</span><span class="w">
 </span><span class="ss">:ok</span><span class="w">
 
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">activate_syndicates</span><span class="p" data-group-id="3057880450-3">(</span><span class="p" data-group-id="3057880450-4">%{</span><span class="ss">red_veil</span><span class="p">:</span><span class="w"> </span><span class="ss">:top_five_average</span><span class="p">,</span><span class="w"> </span><span class="ss">new_loka</span><span class="p">:</span><span class="w"> </span><span class="ss">:top_five_average</span><span class="p" data-group-id="3057880450-4">}</span><span class="p" data-group-id="3057880450-3">)</span><span class="w">
-</span><span class="p" data-group-id="3057880450-5">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:enoent</span><span class="p" data-group-id="3057880450-5">}</span></code></pre>
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">activate_syndicates</span><span class="p" data-group-id="6859910693-3">(</span><span class="p" data-group-id="6859910693-4">%{</span><span class="ss">red_veil</span><span class="p">:</span><span class="w"> </span><span class="ss">:top_five_average</span><span class="p">,</span><span class="w"> </span><span class="ss">new_loka</span><span class="p">:</span><span class="w"> </span><span class="ss">:top_five_average</span><span class="p" data-group-id="6859910693-4">}</span><span class="p" data-group-id="6859910693-3">)</span><span class="w">
+</span><span class="p" data-group-id="6859910693-5">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:enoent</span><span class="p" data-group-id="6859910693-5">}</span></code></pre>
   </section>
 </section>
 <section class="detail" id="deactivate_syndicates/1">
@@ -280,11 +280,11 @@ Does not perform validation.</p></div>
 
 <p>Removes the syndicates with the given ids from the set of active syndicates.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="kn">alias</span><span class="w"> </span><span class="nc">Shared.Data.Syndicate</span><span class="w">
 
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">deactivate_syndicates</span><span class="p" data-group-id="4948213522-1">(</span><span class="p" data-group-id="4948213522-2">[</span><span class="ss">:red_veil</span><span class="p">,</span><span class="w"> </span><span class="ss">:new_loka</span><span class="p" data-group-id="4948213522-2">]</span><span class="p" data-group-id="4948213522-1">)</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">deactivate_syndicates</span><span class="p" data-group-id="2031391842-1">(</span><span class="p" data-group-id="2031391842-2">[</span><span class="ss">:red_veil</span><span class="p">,</span><span class="w"> </span><span class="ss">:new_loka</span><span class="p" data-group-id="2031391842-2">]</span><span class="p" data-group-id="2031391842-1">)</span><span class="w">
 </span><span class="ss">:ok</span><span class="w">
 
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">deactivate_syndicates</span><span class="p" data-group-id="4948213522-3">(</span><span class="p" data-group-id="4948213522-4">[</span><span class="ss">:red_veil</span><span class="p">,</span><span class="w"> </span><span class="ss">:new_loka</span><span class="p" data-group-id="4948213522-4">]</span><span class="p" data-group-id="4948213522-3">)</span><span class="w">
-</span><span class="p" data-group-id="4948213522-5">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:enoent</span><span class="p" data-group-id="4948213522-5">}</span></code></pre>
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">deactivate_syndicates</span><span class="p" data-group-id="2031391842-3">(</span><span class="p" data-group-id="2031391842-4">[</span><span class="ss">:red_veil</span><span class="p">,</span><span class="w"> </span><span class="ss">:new_loka</span><span class="p" data-group-id="2031391842-4">]</span><span class="p" data-group-id="2031391842-3">)</span><span class="w">
+</span><span class="p" data-group-id="2031391842-5">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:enoent</span><span class="p" data-group-id="2031391842-5">}</span></code></pre>
   </section>
 </section>
 <section class="detail" id="delete_login_data/0">
@@ -312,11 +312,11 @@ Does not perform validation.</p></div>
 
       </div>
 
-<p>Deletes any login information from the storage system.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">delete_login_data</span><span class="p" data-group-id="2340931978-1">(</span><span class="p" data-group-id="2340931978-1">)</span><span class="w">
+<p>Deletes any login information from the storage system.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">delete_login_data</span><span class="p" data-group-id="7357128444-1">(</span><span class="p" data-group-id="7357128444-1">)</span><span class="w">
 </span><span class="ss">:ok</span><span class="w">
 
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">delete_login_data</span><span class="p" data-group-id="2340931978-2">(</span><span class="p" data-group-id="2340931978-2">)</span><span class="w">
-</span><span class="p" data-group-id="2340931978-3">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:enoent</span><span class="p" data-group-id="2340931978-3">}</span></code></pre>
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">delete_login_data</span><span class="p" data-group-id="7357128444-2">(</span><span class="p" data-group-id="7357128444-2">)</span><span class="w">
+</span><span class="p" data-group-id="7357128444-3">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:enoent</span><span class="p" data-group-id="7357128444-3">}</span></code></pre>
   </section>
 </section>
 <section class="detail" id="get_login_data/0">
@@ -344,16 +344,16 @@ Does not perform validation.</p></div>
 
       </div>
 
-<p>Retrieves the user's login data from Storage.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="kn">alias</span><span class="w"> </span><span class="nc">Shared.Data</span><span class="o">.</span><span class="p" data-group-id="5435714695-1">{</span><span class="nc">Authorization</span><span class="p">,</span><span class="w"> </span><span class="nc">User</span><span class="p" data-group-id="5435714695-1">}</span><span class="w">
+<p>Retrieves the user's login data from Storage.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="kn">alias</span><span class="w"> </span><span class="nc">Shared.Data</span><span class="o">.</span><span class="p" data-group-id="7751330043-1">{</span><span class="nc">Authorization</span><span class="p">,</span><span class="w"> </span><span class="nc">User</span><span class="p" data-group-id="7751330043-1">}</span><span class="w">
 
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">get_login_data</span><span class="p" data-group-id="5435714695-2">(</span><span class="p" data-group-id="5435714695-2">)</span><span class="w">
-</span><span class="p" data-group-id="5435714695-3">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="5435714695-4">{</span><span class="w">
-  </span><span class="p" data-group-id="5435714695-5">%</span><span class="nc" data-group-id="5435714695-5">Authorization</span><span class="p" data-group-id="5435714695-5">{</span><span class="ss">token</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;a_token&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">cookie</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;a_cookie&quot;</span><span class="p" data-group-id="5435714695-5">}</span><span class="p">,</span><span class="w">
-  </span><span class="p" data-group-id="5435714695-6">%</span><span class="nc" data-group-id="5435714695-6">User</span><span class="p" data-group-id="5435714695-6">{</span><span class="ss">ingame_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Username&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">slug</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;username&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">patreon?</span><span class="p">:</span><span class="w"> </span><span class="no">false</span><span class="p" data-group-id="5435714695-6">}</span><span class="w">
-</span><span class="p" data-group-id="5435714695-4">}</span><span class="p" data-group-id="5435714695-3">}</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">get_login_data</span><span class="p" data-group-id="7751330043-2">(</span><span class="p" data-group-id="7751330043-2">)</span><span class="w">
+</span><span class="p" data-group-id="7751330043-3">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="7751330043-4">{</span><span class="w">
+  </span><span class="p" data-group-id="7751330043-5">%</span><span class="nc" data-group-id="7751330043-5">Authorization</span><span class="p" data-group-id="7751330043-5">{</span><span class="ss">token</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;a_token&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">cookie</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;a_cookie&quot;</span><span class="p" data-group-id="7751330043-5">}</span><span class="p">,</span><span class="w">
+  </span><span class="p" data-group-id="7751330043-6">%</span><span class="nc" data-group-id="7751330043-6">User</span><span class="p" data-group-id="7751330043-6">{</span><span class="ss">ingame_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Username&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">slug</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;username&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">patreon?</span><span class="p">:</span><span class="w"> </span><span class="no">false</span><span class="p" data-group-id="7751330043-6">}</span><span class="w">
+</span><span class="p" data-group-id="7751330043-4">}</span><span class="p" data-group-id="7751330043-3">}</span><span class="w">
 
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">get_login_data</span><span class="p" data-group-id="5435714695-7">(</span><span class="p" data-group-id="5435714695-7">)</span><span class="w">
-</span><span class="p" data-group-id="5435714695-8">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:enoent</span><span class="p" data-group-id="5435714695-8">}</span></code></pre>
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">get_login_data</span><span class="p" data-group-id="7751330043-7">(</span><span class="p" data-group-id="7751330043-7">)</span><span class="w">
+</span><span class="p" data-group-id="7751330043-8">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:enoent</span><span class="p" data-group-id="7751330043-8">}</span></code></pre>
   </section>
 </section>
 <section class="detail" id="get_product_by_id/1">
@@ -382,25 +382,25 @@ Does not perform validation.</p></div>
 
       </div>
 
-<p>Returns the product with the given id.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="kn">alias</span><span class="w"> </span><span class="nc">Shared.Data</span><span class="o">.</span><span class="p" data-group-id="2488660803-1">{</span><span class="nc">Product</span><span class="p" data-group-id="2488660803-1">}</span><span class="w">
+<p>Returns the product with the given id.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="kn">alias</span><span class="w"> </span><span class="nc">Shared.Data</span><span class="o">.</span><span class="p" data-group-id="0406919575-1">{</span><span class="nc">Product</span><span class="p" data-group-id="0406919575-1">}</span><span class="w">
 
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">get_product_by_id</span><span class="p" data-group-id="2488660803-2">(</span><span class="s">&quot;8ee5b3b0-fa43-4dbc-9363-a52930dc742e&quot;</span><span class="p" data-group-id="2488660803-2">)</span><span class="w">
-</span><span class="p" data-group-id="2488660803-3">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w">
-  </span><span class="p" data-group-id="2488660803-4">%</span><span class="nc" data-group-id="2488660803-4">Product</span><span class="p" data-group-id="2488660803-4">{</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">get_product_by_id</span><span class="p" data-group-id="0406919575-2">(</span><span class="s">&quot;8ee5b3b0-fa43-4dbc-9363-a52930dc742e&quot;</span><span class="p" data-group-id="0406919575-2">)</span><span class="w">
+</span><span class="p" data-group-id="0406919575-3">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w">
+  </span><span class="p" data-group-id="0406919575-4">%</span><span class="nc" data-group-id="0406919575-4">Product</span><span class="p" data-group-id="0406919575-4">{</span><span class="w">
     </span><span class="ss">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Eternal War&quot;</span><span class="p">,</span><span class="w">
     </span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;8ee5b3b0-fa43-4dbc-9363-a52930dc742e&quot;</span><span class="p">,</span><span class="w">
     </span><span class="ss">min_price</span><span class="p">:</span><span class="w"> </span><span class="mi">14</span><span class="p">,</span><span class="w">
     </span><span class="ss">default_price</span><span class="p">:</span><span class="w"> </span><span class="mi">15</span><span class="p">,</span><span class="w">
     </span><span class="ss">quantity</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
     </span><span class="ss">rank</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w">
-  </span><span class="p" data-group-id="2488660803-4">}</span><span class="w">
-</span><span class="p" data-group-id="2488660803-3">}</span><span class="w">
+  </span><span class="p" data-group-id="0406919575-4">}</span><span class="w">
+</span><span class="p" data-group-id="0406919575-3">}</span><span class="w">
 
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">get_product_by_id</span><span class="p" data-group-id="2488660803-5">(</span><span class="s">&quot;non-existent-id&quot;</span><span class="p" data-group-id="2488660803-5">)</span><span class="w">
-</span><span class="p" data-group-id="2488660803-6">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:product_not_found</span><span class="p" data-group-id="2488660803-6">}</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">get_product_by_id</span><span class="p" data-group-id="0406919575-5">(</span><span class="s">&quot;non-existent-id&quot;</span><span class="p" data-group-id="0406919575-5">)</span><span class="w">
+</span><span class="p" data-group-id="0406919575-6">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:product_not_found</span><span class="p" data-group-id="0406919575-6">}</span><span class="w">
 
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">get_product_by_id</span><span class="p" data-group-id="2488660803-7">(</span><span class="s">&quot;8ee5b3b0-fa43-4dbc-9363-a52930dc742e&quot;</span><span class="p" data-group-id="2488660803-7">)</span><span class="w">
-</span><span class="p" data-group-id="2488660803-8">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:enoent</span><span class="p" data-group-id="2488660803-8">}</span></code></pre>
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">get_product_by_id</span><span class="p" data-group-id="0406919575-7">(</span><span class="s">&quot;8ee5b3b0-fa43-4dbc-9363-a52930dc742e&quot;</span><span class="p" data-group-id="0406919575-7">)</span><span class="w">
+</span><span class="p" data-group-id="0406919575-8">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:enoent</span><span class="p" data-group-id="0406919575-8">}</span></code></pre>
   </section>
 </section>
 <section class="detail" id="list_active_syndicates/0">
@@ -430,11 +430,11 @@ Does not perform validation.</p></div>
 
 <p>Returns the syndicates currently active. An active syndicate is a syndicate with orders in <code class="inline">current_orders</code>.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="kn">alias</span><span class="w"> </span><span class="nc">Shared.Data.Syndicate</span><span class="w">
 
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">list_active_syndicates</span><span class="p" data-group-id="4432373432-1">(</span><span class="p" data-group-id="4432373432-1">)</span><span class="w">
-</span><span class="p" data-group-id="4432373432-2">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="4432373432-3">%{</span><span class="ss">red_veil</span><span class="p">:</span><span class="w"> </span><span class="ss">:top_five_average</span><span class="p">,</span><span class="w"> </span><span class="ss">new_loka</span><span class="p">:</span><span class="w"> </span><span class="ss">:top_five_average</span><span class="p" data-group-id="4432373432-3">}</span><span class="p" data-group-id="4432373432-2">}</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">list_active_syndicates</span><span class="p" data-group-id="7379398238-1">(</span><span class="p" data-group-id="7379398238-1">)</span><span class="w">
+</span><span class="p" data-group-id="7379398238-2">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="7379398238-3">%{</span><span class="ss">red_veil</span><span class="p">:</span><span class="w"> </span><span class="ss">:top_five_average</span><span class="p">,</span><span class="w"> </span><span class="ss">new_loka</span><span class="p">:</span><span class="w"> </span><span class="ss">:top_five_average</span><span class="p" data-group-id="7379398238-3">}</span><span class="p" data-group-id="7379398238-2">}</span><span class="w">
 
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">list_active_syndicates</span><span class="p" data-group-id="4432373432-4">(</span><span class="p" data-group-id="4432373432-4">)</span><span class="w">
-</span><span class="p" data-group-id="4432373432-5">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:enoent</span><span class="p" data-group-id="4432373432-5">}</span></code></pre>
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">list_active_syndicates</span><span class="p" data-group-id="7379398238-4">(</span><span class="p" data-group-id="7379398238-4">)</span><span class="w">
+</span><span class="p" data-group-id="7379398238-5">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:enoent</span><span class="p" data-group-id="7379398238-5">}</span></code></pre>
   </section>
 </section>
 <section class="detail" id="list_products/1">
@@ -465,21 +465,21 @@ Does not perform validation.</p></div>
 
 <p>Lists the products for the syndicates with the given ids.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="kn">alias</span><span class="w"> </span><span class="nc">Shared.Data.Product</span><span class="w">
 
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">list_products</span><span class="p" data-group-id="1342500260-1">(</span><span class="p" data-group-id="1342500260-2">[</span><span class="ss">:red_veil</span><span class="p" data-group-id="1342500260-2">]</span><span class="p" data-group-id="1342500260-1">)</span><span class="w">
-</span><span class="p" data-group-id="1342500260-3">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="1342500260-4">[</span><span class="w">
-  </span><span class="p" data-group-id="1342500260-5">%</span><span class="nc" data-group-id="1342500260-5">Product</span><span class="p" data-group-id="1342500260-5">{</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">list_products</span><span class="p" data-group-id="2300563239-1">(</span><span class="p" data-group-id="2300563239-2">[</span><span class="ss">:red_veil</span><span class="p" data-group-id="2300563239-2">]</span><span class="p" data-group-id="2300563239-1">)</span><span class="w">
+</span><span class="p" data-group-id="2300563239-3">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="2300563239-4">[</span><span class="w">
+  </span><span class="p" data-group-id="2300563239-5">%</span><span class="nc" data-group-id="2300563239-5">Product</span><span class="p" data-group-id="2300563239-5">{</span><span class="w">
     </span><span class="ss">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Eternal War&quot;</span><span class="p">,</span><span class="w">
     </span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;8ee5b3b0-fa43-4dbc-9363-a52930dc742e&quot;</span><span class="p">,</span><span class="w">
     </span><span class="ss">min_price</span><span class="p">:</span><span class="w"> </span><span class="mi">14</span><span class="p">,</span><span class="w">
     </span><span class="ss">default_price</span><span class="p">:</span><span class="w"> </span><span class="mi">15</span><span class="p">,</span><span class="w">
     </span><span class="ss">quantity</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
     </span><span class="ss">rank</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w">
-  </span><span class="p" data-group-id="1342500260-5">}</span><span class="p">,</span><span class="w">
+  </span><span class="p" data-group-id="2300563239-5">}</span><span class="p">,</span><span class="w">
   </span><span class="n">...</span><span class="w">
-</span><span class="p" data-group-id="1342500260-4">]</span><span class="p" data-group-id="1342500260-3">}</span><span class="w">
+</span><span class="p" data-group-id="2300563239-4">]</span><span class="p" data-group-id="2300563239-3">}</span><span class="w">
 
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">list_products</span><span class="p" data-group-id="1342500260-6">(</span><span class="p" data-group-id="1342500260-7">[</span><span class="ss">:invalid_syndicate_id</span><span class="p" data-group-id="1342500260-7">]</span><span class="p" data-group-id="1342500260-6">)</span><span class="w">
-</span><span class="p" data-group-id="1342500260-8">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="1342500260-9">{</span><span class="ss">:syndicate_not_found</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="1342500260-10">[</span><span class="ss">:invalid_syndicate_id</span><span class="p" data-group-id="1342500260-10">]</span><span class="p" data-group-id="1342500260-9">}</span><span class="p" data-group-id="1342500260-8">}</span></code></pre>
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">list_products</span><span class="p" data-group-id="2300563239-6">(</span><span class="p" data-group-id="2300563239-7">[</span><span class="ss">:invalid_syndicate_id</span><span class="p" data-group-id="2300563239-7">]</span><span class="p" data-group-id="2300563239-6">)</span><span class="w">
+</span><span class="p" data-group-id="2300563239-8">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="2300563239-9">{</span><span class="ss">:syndicate_not_found</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="2300563239-10">[</span><span class="ss">:invalid_syndicate_id</span><span class="p" data-group-id="2300563239-10">]</span><span class="p" data-group-id="2300563239-9">}</span><span class="p" data-group-id="2300563239-8">}</span></code></pre>
   </section>
 </section>
 <section class="detail" id="list_syndicates/0">
@@ -509,11 +509,11 @@ Does not perform validation.</p></div>
 
 <p>Returns all the syndicates currently stored. The fact a syndicate is stored does not mean it has products, nor orders.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="kn">alias</span><span class="w"> </span><span class="nc">Shared.Data.Syndicate</span><span class="w">
 
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">list_syndicates</span><span class="p" data-group-id="2623320541-1">(</span><span class="p" data-group-id="2623320541-1">)</span><span class="w">
-</span><span class="p" data-group-id="2623320541-2">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="2623320541-3">[</span><span class="p" data-group-id="2623320541-4">%</span><span class="nc" data-group-id="2623320541-4">Syndicate</span><span class="p" data-group-id="2623320541-4">{</span><span class="ss">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Red Veil&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="ss">:red_veil</span><span class="p">,</span><span class="w"> </span><span class="ss">catalog</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="2623320541-5">[</span><span class="p" data-group-id="2623320541-5">]</span><span class="p" data-group-id="2623320541-4">}</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="2623320541-6">%</span><span class="nc" data-group-id="2623320541-6">Syndicate</span><span class="p" data-group-id="2623320541-6">{</span><span class="ss">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;New Loka&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="ss">:new_loka</span><span class="p">,</span><span class="w"> </span><span class="ss">catalog</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="2623320541-7">[</span><span class="p" data-group-id="2623320541-7">]</span><span class="p" data-group-id="2623320541-6">}</span><span class="p" data-group-id="2623320541-3">]</span><span class="p" data-group-id="2623320541-2">}</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">list_syndicates</span><span class="p" data-group-id="6155927867-1">(</span><span class="p" data-group-id="6155927867-1">)</span><span class="w">
+</span><span class="p" data-group-id="6155927867-2">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="6155927867-3">[</span><span class="p" data-group-id="6155927867-4">%</span><span class="nc" data-group-id="6155927867-4">Syndicate</span><span class="p" data-group-id="6155927867-4">{</span><span class="ss">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Red Veil&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="ss">:red_veil</span><span class="p">,</span><span class="w"> </span><span class="ss">catalog</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="6155927867-5">[</span><span class="p" data-group-id="6155927867-5">]</span><span class="p" data-group-id="6155927867-4">}</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="6155927867-6">%</span><span class="nc" data-group-id="6155927867-6">Syndicate</span><span class="p" data-group-id="6155927867-6">{</span><span class="ss">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;New Loka&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="ss">:new_loka</span><span class="p">,</span><span class="w"> </span><span class="ss">catalog</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="6155927867-7">[</span><span class="p" data-group-id="6155927867-7">]</span><span class="p" data-group-id="6155927867-6">}</span><span class="p" data-group-id="6155927867-3">]</span><span class="p" data-group-id="6155927867-2">}</span><span class="w">
 
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">list_syndicates</span><span class="p" data-group-id="2623320541-8">(</span><span class="p" data-group-id="2623320541-8">)</span><span class="w">
-</span><span class="p" data-group-id="2623320541-9">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:enoent</span><span class="p" data-group-id="2623320541-9">}</span></code></pre>
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">list_syndicates</span><span class="p" data-group-id="6155927867-8">(</span><span class="p" data-group-id="6155927867-8">)</span><span class="w">
+</span><span class="p" data-group-id="6155927867-9">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:enoent</span><span class="p" data-group-id="6155927867-9">}</span></code></pre>
   </section>
 </section>
 <section class="detail" id="save_login_data/2">
@@ -543,19 +543,19 @@ Does not perform validation.</p></div>
       </div>
 
 <p>Saves the login information from the user into the storage system.
-Does not perform validation.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="kn">alias</span><span class="w"> </span><span class="nc">Shared.Data</span><span class="o">.</span><span class="p" data-group-id="3908956087-1">{</span><span class="nc">Authorization</span><span class="p">,</span><span class="w"> </span><span class="nc">User</span><span class="p" data-group-id="3908956087-1">}</span><span class="w">
+Does not perform validation.</p><p>Example:</p><pre><code class="makeup elixir" translate="no"><span class="o">&gt;</span><span class="w"> </span><span class="kn">alias</span><span class="w"> </span><span class="nc">Shared.Data</span><span class="o">.</span><span class="p" data-group-id="5645072983-1">{</span><span class="nc">Authorization</span><span class="p">,</span><span class="w"> </span><span class="nc">User</span><span class="p" data-group-id="5645072983-1">}</span><span class="w">
 
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">save_login_data</span><span class="p" data-group-id="3908956087-2">(</span><span class="w">
-  </span><span class="p" data-group-id="3908956087-3">%</span><span class="nc" data-group-id="3908956087-3">Authorization</span><span class="p" data-group-id="3908956087-3">{</span><span class="ss">token</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;a_token&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">cookie</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;a_cookie&quot;</span><span class="p" data-group-id="3908956087-3">}</span><span class="p">,</span><span class="w">
-  </span><span class="p" data-group-id="3908956087-4">%</span><span class="nc" data-group-id="3908956087-4">User</span><span class="p" data-group-id="3908956087-4">{</span><span class="ss">ingame_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Username&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">slug</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;username&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">patreon?</span><span class="p">:</span><span class="w"> </span><span class="no">false</span><span class="p" data-group-id="3908956087-4">}</span><span class="w">
-</span><span class="p" data-group-id="3908956087-2">)</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">save_login_data</span><span class="p" data-group-id="5645072983-2">(</span><span class="w">
+  </span><span class="p" data-group-id="5645072983-3">%</span><span class="nc" data-group-id="5645072983-3">Authorization</span><span class="p" data-group-id="5645072983-3">{</span><span class="ss">token</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;a_token&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">cookie</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;a_cookie&quot;</span><span class="p" data-group-id="5645072983-3">}</span><span class="p">,</span><span class="w">
+  </span><span class="p" data-group-id="5645072983-4">%</span><span class="nc" data-group-id="5645072983-4">User</span><span class="p" data-group-id="5645072983-4">{</span><span class="ss">ingame_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Username&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">slug</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;username&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">patreon?</span><span class="p">:</span><span class="w"> </span><span class="no">false</span><span class="p" data-group-id="5645072983-4">}</span><span class="w">
+</span><span class="p" data-group-id="5645072983-2">)</span><span class="w">
 </span><span class="ss">:ok</span><span class="w">
 
-</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">save_login_data</span><span class="p" data-group-id="3908956087-5">(</span><span class="w">
-  </span><span class="p" data-group-id="3908956087-6">%</span><span class="nc" data-group-id="3908956087-6">Authorization</span><span class="p" data-group-id="3908956087-6">{</span><span class="ss">token</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;a_token&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">cookie</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;a_cookie&quot;</span><span class="p" data-group-id="3908956087-6">}</span><span class="p">,</span><span class="w">
-  </span><span class="p" data-group-id="3908956087-7">%</span><span class="nc" data-group-id="3908956087-7">User</span><span class="p" data-group-id="3908956087-7">{</span><span class="ss">ingame_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Username&quot;</span><span class="p">,</span><span class="w">  </span><span class="ss">slug</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;username&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">patreon?</span><span class="p">:</span><span class="w"> </span><span class="no">false</span><span class="p" data-group-id="3908956087-7">}</span><span class="w">
-</span><span class="p" data-group-id="3908956087-5">)</span><span class="w">
-</span><span class="p" data-group-id="3908956087-8">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:enoent</span><span class="p" data-group-id="3908956087-8">}</span></code></pre>
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">Store</span><span class="o">.</span><span class="n">save_login_data</span><span class="p" data-group-id="5645072983-5">(</span><span class="w">
+  </span><span class="p" data-group-id="5645072983-6">%</span><span class="nc" data-group-id="5645072983-6">Authorization</span><span class="p" data-group-id="5645072983-6">{</span><span class="ss">token</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;a_token&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">cookie</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;a_cookie&quot;</span><span class="p" data-group-id="5645072983-6">}</span><span class="p">,</span><span class="w">
+  </span><span class="p" data-group-id="5645072983-7">%</span><span class="nc" data-group-id="5645072983-7">User</span><span class="p" data-group-id="5645072983-7">{</span><span class="ss">ingame_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Username&quot;</span><span class="p">,</span><span class="w">  </span><span class="ss">slug</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;username&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">patreon?</span><span class="p">:</span><span class="w"> </span><span class="no">false</span><span class="p" data-group-id="5645072983-7">}</span><span class="w">
+</span><span class="p" data-group-id="5645072983-5">)</span><span class="w">
+</span><span class="p" data-group-id="5645072983-8">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:enoent</span><span class="p" data-group-id="5645072983-8">}</span></code></pre>
   </section>
 </section>
 
