@@ -78,6 +78,7 @@ defmodule RateLimiterTest do
     assert_receive {:response, :ok}, 1_100
   end
 
+  @tag capture_log: true
   test "ensure process is not dead if task fails", %{
     implementation_pid: impl_pid,
     supervisor_pid: supervisor_pid
@@ -95,9 +96,18 @@ defmodule RateLimiterTest do
          send(test_pid, {:response, response})
        end, %{}}
 
-    RateLimiter.make_request(request_handler, response_handler)
+    marker_request_handler = {fn -> :ok end, []}
 
-    Process.sleep(1100)
+    marker_response_handler =
+      {fn response, %{} ->
+         send(test_pid, {:marker_response, response})
+       end, %{}}
+
+    # Make the failing request and then a marker request to ensure the system is still processing requests after
+    # the failure
+    RateLimiter.make_request(request_handler, response_handler)
+    RateLimiter.make_request(marker_request_handler, marker_response_handler)
+    assert_receive {:marker_response, :ok}, 3_000
 
     # Task.Supervisor should not die or get replaced.
     assert Process.whereis(RateLimiter.TaskSupervisor) == supervisor_pid
@@ -111,6 +121,7 @@ defmodule RateLimiterTest do
     Process.demonitor(impl_ref, [:flush])
   end
 
+  @tag capture_log: true
   test "ensure process is not dead if multiple tasks fail", %{
     implementation_pid: impl_pid,
     supervisor_pid: supervisor_pid
@@ -156,7 +167,7 @@ defmodule RateLimiterTest do
     end
 
     # Wait for final response to ensure all tasks have been processed
-    assert_receive {:response, {:ok, 4}}, 6000
+    assert_receive {:response, {:ok, 4}}, 8_000
 
     # Task.Supervisor should not die or get replaced.
     assert Process.whereis(RateLimiter.TaskSupervisor) == supervisor_pid

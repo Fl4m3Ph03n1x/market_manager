@@ -49,7 +49,7 @@ defmodule AuctionHouse.Impl.UseCase.PlaceOrder do
   def finish(%Response{body: body, request_args: %{order: order}}) do
     with {:ok, content} <- Jason.decode(body),
          {:ok, id} <- get_id(content) do
-      {:ok, PlacedOrder.new(%{"item_id" => order.item_id, "order_id" => id})}
+      {:ok, PlacedOrder.new(%{"item_id" => order.itemId, "order_id" => id})}
     end
   end
 

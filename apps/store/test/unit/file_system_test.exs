@@ -113,34 +113,26 @@ defmodule MarketManager.Store.FileSystemTest do
              id: "54a74454e779892d5e5155d5",
              name: "Gleaming Blight",
              min_price: 14,
-             default_price: 16,
-             quantity: 1,
-             rank: 0
+             default_price: 16
            },
            %Mod{
              id: "5526aec0e779896af9418259",
              name: "Fracturing Crush",
              min_price: 14,
-             default_price: 16,
-             quantity: 1,
-             rank: 0
+             default_price: 16
            },
            %Arcane{
              id: "5a0475096c4655012038ddc4",
              name: "Magus Nourish",
              min_price: 2,
              default_price: 5,
-             quantity: 13,
-             rank: 0,
-             per_trade: 1
+             quantity: 13
            },
            %ModWithoutRank{
              id: "588a789c3cf52c408a2f88dc",
              name: "Astral Autopsy",
              min_price: 50,
-             default_price: 60,
-             rank: "n/a",
-             quantity: 1
+             default_price: 60
            }
          ]}
 
@@ -239,9 +231,7 @@ defmodule MarketManager.Store.FileSystemTest do
            id: "54a74454e779892d5e5155d5",
            name: "Gleaming Blight",
            min_price: 14,
-           default_price: 16,
-           quantity: 1,
-           rank: 0
+           default_price: 16
          }}
 
       # Assert

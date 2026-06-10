@@ -21,12 +21,7 @@ defmodule Shared.Data.Product.ModWithoutRank do
     field(:id, Product.id())
     field(:min_price, Product.min_price())
     field(:default_price, Product.default_price())
-    field(:quantity, Product.quantity())
-    field(:rank, Product.rank())
   end
-
-  @impl Product
-  def derankify_order(order), do: order
 
   @spec new(Product.mod_without_rank()) :: __MODULE__.t()
   def new(%{
@@ -41,9 +36,21 @@ defmodule Shared.Data.Product.ModWithoutRank do
       name: name,
       id: id,
       min_price: min_price,
-      default_price: default_price,
-      quantity: 1,
-      rank: "n/a"
+      default_price: default_price
+    }
+  end
+
+  @impl Product
+  def derankify_order(order), do: order
+
+  @impl Product
+  def to_sell_order!(%__MODULE__{} = mod, sell_price) do
+    %{
+      itemId: mod.id,
+      type: "sell",
+      visible: true,
+      platinum: sell_price,
+      quantity: 1
     }
   end
 end

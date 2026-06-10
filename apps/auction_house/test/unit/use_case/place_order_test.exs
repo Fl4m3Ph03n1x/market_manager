@@ -6,20 +6,20 @@ defmodule AuctionHouse.Impl.UseCase.PlaceOrderTest do
   alias AuctionHouse.Impl.UseCase.Data.{Metadata, Request, Response}
   alias AuctionHouse.Impl.UseCase.PlaceOrder
   alias Jason
-  alias Shared.Data.{Authorization, Order, PlacedOrder}
+  alias Shared.Data.{Authorization, PlacedOrder}
 
   @url Application.compile_env!(:auction_house, :api_order_url)
 
   describe "start/2" do
     test "makes request" do
-      order =
-        Order.new(%{
-          "item_id" => "54e644ffe779897594fa68cd",
-          "mod_rank" => 0,
-          "order_type" => "sell",
-          "platinum" => 20,
-          "quantity" => 1
-        })
+      sell_order = %{
+        type: "sell",
+        visible: true,
+        platinum: 20,
+        rank: 0,
+        quantity: 1,
+        itemId: "54e644ffe779897594fa68cd"
+      }
 
       auth = %Authorization{
         token:
@@ -35,7 +35,7 @@ defmodule AuctionHouse.Impl.UseCase.PlaceOrderTest do
           send?: false
         },
         args: %{
-          order: order,
+          order: sell_order,
           authorization: auth
         }
       }
@@ -44,7 +44,7 @@ defmodule AuctionHouse.Impl.UseCase.PlaceOrderTest do
         %{
           post: fn url, data, req, _next, auth ->
             assert url == @url
-            assert data == Jason.encode!(order)
+            assert data == Jason.encode!(sell_order)
 
             assert req.metadata == %Metadata{
                      notify: [self()],
@@ -52,7 +52,7 @@ defmodule AuctionHouse.Impl.UseCase.PlaceOrderTest do
                      send?: true
                    }
 
-            assert req.args.order == order
+            assert req.args.order == sell_order
             assert req.args.authorization == auth
 
             :ok
@@ -73,14 +73,14 @@ defmodule AuctionHouse.Impl.UseCase.PlaceOrderTest do
             send?: true
           },
           args: %{
-            order:
-              Order.new(%{
-                "item_id" => "54e644ffe779897594fa68cd",
-                "mod_rank" => 0,
-                "order_type" => "sell",
-                "platinum" => 20,
-                "quantity" => 1
-              }),
+            order: %{
+              type: "sell",
+              visible: true,
+              platinum: 20,
+              rank: 0,
+              quantity: 1,
+              itemId: "54e644ffe779897594fa68cd"
+            },
             authorization: %Authorization{
               token:
                 "##2263dcc167c732ca1b54566e0c1ffb66d8e13e2ed59d113967f7fb5e119fed0f813bf7b98c9777c2f5eafd0ab5f6fdc9ad5a3a44d8b585c07ebdf0af1be310b1",

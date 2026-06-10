@@ -16,32 +16,34 @@ defmodule Shared.Data.Product do
   @type per_trade :: pos_integer()
   @type rank :: non_neg_integer() | String.t()
   @type type :: String.t()
+  @type subtype :: String.t()
+  @type sell_price :: pos_integer()
+  @type sell_order :: map()
 
   @type mod_without_rank :: %{
-          (name :: String.t()) => String.t(),
-          (id :: String.t()) => String.t(),
-          (min_price :: String.t()) => pos_integer(),
-          (default_price :: String.t()) => pos_integer(),
-          (rank :: String.t()) => String.t(),
-          (type :: String.t()) => String.t()
+          required(name :: String.t()) => String.t(),
+          required(id :: String.t()) => String.t(),
+          required(min_price :: String.t()) => pos_integer(),
+          required(default_price :: String.t()) => pos_integer(),
+          required(type :: String.t()) => String.t()
         }
 
   @type mod :: %{
-          (name :: String.t()) => String.t(),
-          (id :: String.t()) => String.t(),
-          (min_price :: String.t()) => pos_integer(),
-          (default_price :: String.t()) => pos_integer(),
-          (type :: String.t()) => String.t()
+          required(name :: String.t()) => String.t(),
+          required(id :: String.t()) => String.t(),
+          required(min_price :: String.t()) => pos_integer(),
+          required(default_price :: String.t()) => pos_integer(),
+          required(type :: String.t()) => String.t(),
+          optional(subtype :: String.t()) => String.t()
         }
 
   @type arcane :: %{
-          (name :: String.t()) => String.t(),
-          (id :: String.t()) => String.t(),
-          (min_price :: String.t()) => pos_integer(),
-          (default_price :: String.t()) => pos_integer(),
-          (quantity :: String.t()) => pos_integer(),
-          (per_trade :: String.t()) => pos_integer(),
-          (type :: String.t()) => String.t()
+          required(name :: String.t()) => String.t(),
+          required(id :: String.t()) => String.t(),
+          required(min_price :: String.t()) => pos_integer(),
+          required(default_price :: String.t()) => pos_integer(),
+          required(quantity :: String.t()) => pos_integer(),
+          required(type :: String.t()) => String.t()
         }
 
   @type product :: mod() | mod_without_rank() | arcane()
@@ -55,12 +57,27 @@ defmodule Shared.Data.Product do
   @callback derankify_order(OrderInfo.t()) :: OrderInfo.t()
 
   @doc """
+  This operation is used when creating sell orders to be posted on warframe.market, as the API expects a JSON body with specific fields.
+  The exact fields and their values can differ based on the type of product, so this function is implemented in each Product.
+  """
+  @callback to_sell_order!(__MODULE__.t(), sell_price()) :: sell_order()
+
+  @doc """
   Helper function to invoke the derankify_order function of the correct Product without having to know which specific struct it is.
   """
   @spec derankify_order(__MODULE__.t(), OrderInfo.t()) :: OrderInfo.t()
   def derankify_order(product, %OrderInfo{} = order) do
     module = product.__struct__
     module.derankify_order(order)
+  end
+
+  @doc """
+  Helper function to invoke the to_sell_order! function of the correct Product without having to know which specific struct it is.
+  """
+  @spec to_sell_order!(__MODULE__.t(), sell_price()) :: sell_order()
+  def to_sell_order!(product, sell_price) do
+    module = product.__struct__
+    module.to_sell_order!(product, sell_price)
   end
 
   @spec new(product()) :: __MODULE__.t()

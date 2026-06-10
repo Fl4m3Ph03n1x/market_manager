@@ -67,9 +67,6 @@ defmodule Shared.Data.OrderInfo do
     field(:user, user(), enforce: true)
   end
 
-  defguardp is_valid_order_type(order_type)
-            when is_binary(order_type) and (order_type == "sell" or order_type == "buy")
-
   @spec new(order_info()) :: __MODULE__.t()
   def new(
         %{

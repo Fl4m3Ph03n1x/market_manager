@@ -11,7 +11,7 @@ defmodule AuctionHouse.Runtime.Server do
   alias AuctionHouse.Impl.UseCase.Data.{Metadata, Request}
   alias AuctionHouse.Impl.UseCase.{DeleteOrder, GetItemOrders, GetUserOrders, Login, PlaceOrder}
   alias AuctionHouse.Type
-  alias Shared.Data.{Authorization, Credentials, Order, PlacedOrder, User}
+  alias Shared.Data.{Authorization, Credentials, PlacedOrder, Product, User}
 
   ##############
   # Public API #
@@ -28,7 +28,7 @@ defmodule AuctionHouse.Runtime.Server do
   def get_user_orders(username_slug),
     do: GenServer.cast(__MODULE__, {:get_user_orders, username_slug, self()})
 
-  @spec place_order(Order.t()) :: Type.place_order_response()
+  @spec place_order(Product.sell_order()) :: Type.place_order_response()
   def place_order(order), do: GenServer.cast(__MODULE__, {:place_order, order, self()})
 
   @spec delete_order(PlacedOrder.t()) :: Type.delete_order_response()
