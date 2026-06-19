@@ -68,28 +68,3 @@ jobs:
 
     - name: Run Dialyzer
       run: mix dialyzer
-
-  release:
-    name: Create Zip file containing the release
-    runs-on: windows-2022
-    env:
-      MIX_ENV: prod
-
-    steps:
-    - uses: actions/checkout@v2
-    - uses: erlef/setup-beam@v1
-      with:
-        elixir-version: '1.20.x'  
-        otp-version: '28.5.x'    
-
-    - name: Install dependencies
-      run: |
-        mix local.hex --force
-        mix local.rebar --force
-        mix deps.get
-
-    - name: Compile
-      run: mix compile
-
-    - name: Build bat file
-      run: mix release 
