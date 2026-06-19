@@ -28,5 +28,8 @@ test_setup/
 # Dialyzer
 /.elixir_ls/
 
-# Expert LSP
-.expert/
+# Dexter LSP
+/.dexter/
+
+# Burrito output
+/burrito_out/
