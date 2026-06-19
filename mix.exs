@@ -1,13 +1,12 @@
 defmodule MarketManager.MixProject do
   use Mix.Project
 
-  alias Bakeware
   alias ExCoveralls
 
   def project,
     do: [
       apps_path: "apps",
-      version: "2.2.6",
+      version: "2.2.7",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       test_coverage: [tool: ExCoveralls],
@@ -41,7 +40,8 @@ defmodule MarketManager.MixProject do
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:excoveralls, "~> 0.18", only: :test},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
-      {:ex_doc, "~> 0.27", only: :dev, runtime: false}
+      {:ex_doc, "~> 0.27", only: :dev, runtime: false},
+      {:burrito, "~> 1.0"}
     ]
 
   defp releases,
@@ -51,23 +51,47 @@ defmodule MarketManager.MixProject do
           web_interface: :permanent,
           runtime_tools: :permanent
         ],
-        steps: [:assemble, :tar, &rename_tar/1],
-        include_executables_for: [:windows]
+        steps: [:assemble, &Burrito.wrap/1, &add_windows_icon/1],
+        burrito: [
+          targets: [
+            windows: [os: :windows, cpu: :x86_64]
+          ]
+        ]
       ]
     ]
 
-  defp rename_tar(release) do
-    tar_folder_path =
-      release.path
-      |> Path.join("../../")
-      |> Path.expand()
+  defp add_windows_icon(%Mix.Release{} = release) do
+    resource_hacker_path =
+      Path.join([
+        System.user_home!(),
+        ".wine",
+        "drive_c",
+        "Program Files (x86)",
+        "Resource Hacker",
+        "ResourceHacker.exe"
+      ])
 
-    tar_path = Path.join(tar_folder_path, "#{release.name}-#{release.version}.tar.gz")
-    new_tar_path = Path.join(tar_folder_path, "application-data.tar.gz")
+    args = [
+      resource_hacker_path,
+      "-open",
+      "burrito_out/market_manager_windows.exe",
+      "-save",
+      "burrito_out/market_manager_#{release.version}.exe",
+      "-action",
+      "addoverwrite",
+      "-res",
+      "apps/web_interface/priv/static/images/resized_logo_5_32x32.ico",
+      "-mask",
+      "ICONGROUP,1,1033"
+    ]
 
-    case File.rename(tar_path, new_tar_path) do
-      :ok -> release
-      err -> err
+    case System.cmd("wine", args, stderr_to_stdout: true) do
+      {output, 0} ->
+        Mix.shell().info(output)
+        release
+
+      {output, exit_code} ->
+        Mix.raise("ResourceHacker failed with exit code #{exit_code}.\n\n#{output}")
     end
   end
 end
