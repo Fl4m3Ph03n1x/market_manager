@@ -1634,6 +1634,34 @@
     "type": "mod"
   },
   {
+    "name": "Kumihimo Loading",
+    "id": "6a33112b58b60af8cd1a0d24",
+    "min_price": 14,
+    "default_price": 16,
+    "type": "mod"
+  },
+  {
+    "name": "Rythm Guard",
+    "id": "6a33113c58b60af8cd1a0d26",
+    "min_price": 14,
+    "default_price": 16,
+    "type": "mod"
+  },
+  {
+    "name": "Reroot Rampage",
+    "id": "6a33111858b60af8cd1a0d22",
+    "min_price": 14,
+    "default_price": 16,
+    "type": "mod"
+  },
+  {
+    "name": "Noctua Swarm",
+    "id": "6a33110258b60af8cd1a0d20",
+    "min_price": 14,
+    "default_price": 16,
+    "type": "mod"
+  },
+  {
     "name": "Arcane Bellicose",
     "id": "675c5edc7b18977f6e6453f4",
     "min_price": 2,
