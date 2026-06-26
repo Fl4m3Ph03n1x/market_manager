@@ -200,6 +200,20 @@ defmodule WebInterface.ActivateLive do
     end
   end
 
+  # TODO: We treat every error as a fatal error, but we need to handle some errors as non-fatal, 
+  # e.g., if we fail to place or get an order, we can still continue with the others
+  def handle_info({:activate, {:error, reason}}, socket) do
+    Logger.error("Activate: Error occurred - #{inspect(reason)}")
+
+    updated_socket =
+      socket
+      |> assign(activation_in_progress: false)
+      |> assign(operation_in_progress?: false)
+      |> assign(message: nil)
+
+    {:noreply, put_flash(updated_socket, :error, "Activation failed, please check the logs for details.")}
+  end
+
   def handle_info(message, socket) do
     Logger.error("Unknown message received: #{inspect(message)}")
 

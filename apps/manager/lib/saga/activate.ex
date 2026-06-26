@@ -121,7 +121,7 @@ defmodule Manager.Saga.Activate do
 
   # if we cannot get user orders, there is no point in continuing
   def handle_info({:get_user_orders, {:error, _reason}} = error, %{from: from} = state) do
-    send(from, {:activate, error})
+    send(from, {:activate, {:error, error}})
     {:stop, error, state}
   end
 
@@ -201,7 +201,7 @@ defmodule Manager.Saga.Activate do
   # if we miss on a item order list, we can still continue
   # the price will remain nil and be filtered later on
   def handle_info({:get_item_orders, {:error, _reason}} = error, %{from: from} = state) do
-    send(from, {:activate, error})
+    send(from, {:activate, {:error, error}})
     {:noreply, state}
   end
 
@@ -291,7 +291,7 @@ defmodule Manager.Saga.Activate do
 
   # if we fail to place an order, we can still continue with the others
   def handle_info({:place_order, {:error, _msg}} = error, %{from: from} = state) do
-    send(from, error)
+    send(from, {:activate, {:error, error}})
     {:noreply, state}
   end
 
