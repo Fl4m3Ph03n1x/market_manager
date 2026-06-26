@@ -93,8 +93,15 @@ defmodule Manager.Saga.Activate do
         order_number_limit = calculate_order_limit(placed_orders, total_products, limit, patreon?)
 
         if order_number_limit == 0 do
-          send(from, {:activate, {:ok, :no_slots_free}})
-          {:stop, :normal, state}
+          case store.deactivate_syndicates(Map.keys(syndicates_with_strategy)) do
+            :ok ->
+              send(from, {:activate, {:ok, :no_slots_free}})
+              {:stop, :normal, state}
+
+            {:error, _reason} = err ->
+              send(from, {:activate, {:error, {:failed_rollback_activation, err}}})
+              {:stop, err, state}
+          end
         else
           product_prices = initiate_product_prices(total_products)
 

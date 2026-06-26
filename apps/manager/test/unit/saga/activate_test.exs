@@ -165,6 +165,11 @@ defmodule Manager.Saga.ActivateTest do
               expected_ids = Map.keys(syndicates_with_strategy)
               assert syndicate_ids == expected_ids
               {:ok, [Helpers.create_product(), Helpers.create_product(), Helpers.create_product()]}
+            end,
+            deactivate_syndicates: fn syndicate_ids ->
+              expected_ids = Map.keys(syndicates_with_strategy)
+              assert syndicate_ids == expected_ids
+              :ok
             end
           ]
         }
@@ -197,6 +202,60 @@ defmodule Manager.Saga.ActivateTest do
                   }}
 
         assert_receive({:activate, {:ok, :no_slots_free}}, @timeout)
+      end
+    end
+
+    test "sends :failed_rollback_activation messages if there is no place for more orders and activation rollback fails",
+         %{
+           syndicates_with_strategy: syndicates_with_strategy,
+           from: from,
+           user: user,
+           limit: limit
+         } do
+      with_mocks([
+        {
+          Store,
+          [],
+          [
+            list_products: fn syndicate_ids ->
+              expected_ids = Map.keys(syndicates_with_strategy)
+              assert syndicate_ids == expected_ids
+              {:ok, [Helpers.create_product(), Helpers.create_product(), Helpers.create_product()]}
+            end,
+            deactivate_syndicates: fn _syndicate_ids ->
+              {:error, :enoent}
+            end
+          ]
+        }
+      ]) do
+        placed_orders = [
+          Helpers.create_placed_order(),
+          Helpers.create_placed_order(),
+          Helpers.create_placed_order(),
+          Helpers.create_placed_order(),
+          Helpers.create_placed_order()
+        ]
+
+        assert Activate.handle_info(
+                 {:get_user_orders, {:ok, placed_orders}},
+                 %{
+                   deps: %{store: Store, auction_house: AuctionHouse},
+                   args: %{syndicates_with_strategy: syndicates_with_strategy},
+                   non_patreon_order_limit: limit,
+                   user: user,
+                   from: from
+                 }
+               ) ==
+                 {:stop, {:error, :enoent},
+                  %{
+                    args: %{syndicates_with_strategy: syndicates_with_strategy},
+                    user: user,
+                    deps: %{store: Store, auction_house: AuctionHouse},
+                    from: from,
+                    non_patreon_order_limit: limit
+                  }}
+
+        assert_receive({:activate, {:error, {:failed_rollback_activation, _}}}, @timeout)
       end
     end
 
