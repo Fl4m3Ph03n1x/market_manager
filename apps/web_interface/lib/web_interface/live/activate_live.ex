@@ -137,6 +137,23 @@ defmodule WebInterface.ActivateLive do
     {:noreply, assign(socket, message: "Activate: Getting user orders.")}
   end
 
+  def handle_info({:activate, {:ok, :no_slots_free}}, socket) do
+    updated_socket =
+      socket
+      |> assign(activation_in_progress: false)
+      |> assign(operation_in_progress?: false)
+      |> assign(message: nil)
+
+    Logger.info("Activate: No free order slots available.")
+
+    {:noreply,
+     put_flash(
+       updated_socket,
+       :info,
+       "No free order slots were available. No new orders were placed."
+     )}
+  end
+
   def handle_info({:activate, {:ok, :calculating_item_prices}}, socket) do
     Logger.info("Activate: Calculating item prices.")
     {:noreply, assign(socket, message: "Activate: Calculating item prices.")}
