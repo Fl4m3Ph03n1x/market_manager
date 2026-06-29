@@ -80,8 +80,9 @@ defmodule WebInterface.LoginLiveTest do
 
         send(view.pid, {:login, {:ok, user}})
 
-        assert_called(UserStore.set_user(user))
+        assert_called(UserStore.has_user?())
         assert_redirect(view, ~p"/activate")
+        assert_called(UserStore.set_user(user))
       end
     end
 
