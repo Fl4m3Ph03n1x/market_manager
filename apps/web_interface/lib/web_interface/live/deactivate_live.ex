@@ -201,117 +201,28 @@ defmodule WebInterface.DeactivateLive do
     end
   end
 
+  def handle_info({:activate, {:error, reason}}, socket) do
+    Logger.error("Deactivate: Reactivation error occurred - #{inspect(reason)}")
+
+     updated_socket =
+      socket
+      |> assign(deactivation_in_progress: false)
+      |> assign(operation_in_progress?: false)
+      |> assign(message: nil)
+
+      {:noreply,
+       put_flash(
+         updated_socket,
+         :error,
+         "The selected syndicates were deactivated, but reactivation of the remaining ones failed. Please check the logs for details."
+       )}
+  end
+
   def handle_info(message, socket) do
     Logger.error("Unknown message received: #{inspect(message)}")
 
     {:noreply, put_flash(socket, :error, "Something unexpected happened, please report it!")}
   end
-
-  # def handle_info({:deactivate, syndicate, {:error, reason} = error}, socket) do
-  #   Logger.error("Unable to deactivate syndicate #{syndicate.name}: #{inspect(error)}")
-
-  #   with {:ok, inactive_syndicates} <- SyndicateStore.get_inactive_syndicates(),
-  #        new_selected_syndicates = inactive_syndicates -- [syndicate],
-  #        :ok <- SyndicateStore.set_selected_inactive_syndicates(new_selected_syndicates) do
-  #     {:noreply,
-  #      put_flash(
-  #        assign(socket, operation_in_progress?: true),
-  #        :error,
-  #        "Unable to deactivate syndicate #{syndicate.name} due to '#{reason}'."
-  #      )}
-  #   else
-  #     err ->
-  #       Logger.error("Failed to retrieve persistence data: #{inspect(err)}")
-
-  #       {:noreply, put_flash(socket, :error, "Multiple errors ocurred, please check the logs.")}
-  #   end
-  # end
-
-  # def handle_info(
-  #       {:deactivate, syndicate, {current_item, total_items, {:error, reason, _item} = error}},
-  #       socket
-  #     ) do
-  #   Logger.error("Order deletion for item of #{syndicate.name} failed: #{inspect(error)}")
-
-  #   updated_socket =
-  #     socket
-  #     |> assign(deactivation_progress: round(current_item / total_items * 100))
-  #     |> put_flash(:error, "Unable to delete an order for #{syndicate.name} due to '#{reason}'.")
-
-  #   {:noreply, updated_socket}
-  # end
-
-  # def handle_info(
-  #       {:deactivate, syndicate, {current_item, total_items, {:ok, %Shared.Data.PlacedOrder{item_id: item_id}}}},
-  #       socket
-  #     ) do
-  #   Logger.info("Order deleted for #{syndicate.name}: #{item_id}")
-
-  #   {:noreply, assign(socket, deactivation_progress: round(current_item / total_items * 100))}
-  # end
-
-  # def handle_info({:deactivate, syndicate, :done}, socket) do
-  #   Logger.info("Deactivation of #{syndicate.name} complete.")
-
-  #   with {:ok, selected_syndicates} <- SyndicateStore.get_selected_inactive_syndicates(),
-  #        {:ok, inactive_syndicates} <- SyndicateStore.get_inactive_syndicates(),
-  #        {:ok, active_syndicates} <- Manager.active_syndicates(),
-  #        new_selected_syndicates =
-  #          Enum.uniq(selected_syndicates ++ inactive_syndicates),
-  #        :ok <- SyndicateStore.set_selected_inactive_syndicates(new_selected_syndicates) do
-  #     missing_syndicates =
-  #       selected_syndicates
-  #       |> MapSet.new()
-  #       |> MapSet.difference(MapSet.new(inactive_syndicates))
-  #       |> MapSet.to_list()
-  #       |> List.flatten()
-
-  #     to_assign =
-  #       if Enum.empty?(missing_syndicates) do
-  #         [deactivation_current_syndicate: nil, deactivation_in_progress: false, operation_in_progress?: false]
-  #       else
-  #         [next_syndicate | _rest] = missing_syndicates
-  #         :ok = Manager.deactivate(next_syndicate)
-  #         [deactivation_current_syndicate: next_syndicate, deactivation_progress: 0]
-  #       end
-
-  #     updated_socket =
-  #       socket
-  #       |> assign(inactive_syndicates: inactive_syndicates)
-  #       |> assign(selected_inactive_syndicates: new_selected_syndicates)
-  #       |> assign(to_assign)
-
-  #     # specially common in the case of timeouts from the auction house
-  #     partial_deactivation? =
-  #       Enum.find(active_syndicates, fn syn -> syn.id == syndicate.id end) != nil
-
-  #     updated_socket =
-  #       if partial_deactivation? do
-  #         Logger.info("Syndicate #{syndicate.name} was only partially deactivated. Try again later!")
-
-  #         put_flash(
-  #           updated_socket,
-  #           :info,
-  #           "Syndicate #{syndicate.name} was only partially deactivated. Try again later!"
-  #         )
-  #       else
-  #         :ok = SyndicateStore.deactivate_syndicate(syndicate)
-  #         updated_socket
-  #       end
-
-  #     {:noreply, updated_socket}
-  #   else
-  #     error ->
-  #       Logger.error("Unable complete syndicate deactivation: #{inspect(error)}")
-  #       {:noreply, socket |> put_flash(:error, "Unable complete syndicate deactivation!")}
-  #   end
-  # end
-
-  # def handle_info(message, socket) do
-  #   Logger.error("Unknown message received: #{inspect(message)}")
-
-  #   {:noreply, socket |> put_flash(:error, "Something unexpected happened, please report it!")}
-  # end
 
   ####################
   # Helper Functions #
