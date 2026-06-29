@@ -204,18 +204,18 @@ defmodule WebInterface.DeactivateLive do
   def handle_info({:activate, {:error, reason}}, socket) do
     Logger.error("Deactivate: Reactivation error occurred - #{inspect(reason)}")
 
-     updated_socket =
+    updated_socket =
       socket
       |> assign(deactivation_in_progress: false)
       |> assign(operation_in_progress?: false)
       |> assign(message: nil)
 
-      {:noreply,
-       put_flash(
-         updated_socket,
-         :error,
-         "The selected syndicates were deactivated, but reactivation of the remaining ones failed. Please check the logs for details."
-       )}
+    {:noreply,
+     put_flash(
+       updated_socket,
+       :error,
+       "The selected syndicates were deactivated, but reactivation of the remaining ones failed. Please check the logs for details."
+     )}
   end
 
   def handle_info(message, socket) do
