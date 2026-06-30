@@ -15,32 +15,17 @@ defmodule WebInterface.Application do
   alias WebInterface.PubSub
   alias WebInterface.Telemetry
 
+  @typep env :: :dev | :test | :prod
+
   @impl true
   def start(_type, _args) do
-    children = [
-      Telemetry,
-      {Phoenix.PubSub, name: PubSub},
-      Endpoint,
-      Manager,
-      %{
-        id: Desktop.Window,
-        start:
-          {Desktop.Window, :start_link,
-           [
-             [
-               app: :web_interface,
-               id: WebInterface,
-               title: "Market Manager",
-               size: WindowUtils.calculate_window_size(0.6, 0.8),
-               menubar: MenuBar,
-               icon: "static/images/resized_logo_5_32x32.png",
-               url: &WebInterface.Endpoint.url/0
-             ]
-           ]},
-        restart: :transient,
-        shutdown: 5_000
-      }
-    ]
+    children =
+      [
+        Telemetry,
+        {Phoenix.PubSub, name: PubSub},
+        Endpoint,
+        Manager
+      ] ++ optional_children(fetch_env())
 
     opts = [strategy: :one_for_one, name: WebInterface.Supervisor]
 
@@ -63,5 +48,34 @@ defmodule WebInterface.Application do
   def config_change(changed, _new, removed) do
     WebInterface.Endpoint.config_change(changed, removed)
     :ok
+  end
+
+  @spec fetch_env :: env()
+  defp fetch_env, do: Application.fetch_env!(:web_interface, :env)
+
+  @spec optional_children(env()) :: [Supervisor.child_spec()]
+  defp optional_children(:test), do: []
+
+  defp optional_children(_) do
+    [
+      %{
+        id: Desktop.Window,
+        start:
+          {Desktop.Window, :start_link,
+           [
+             [
+               app: :web_interface,
+               id: WebInterface,
+               title: "Market Manager",
+               size: WindowUtils.calculate_window_size(0.6, 0.8),
+               menubar: MenuBar,
+               icon: "static/images/resized_logo_5_32x32.png",
+               url: &WebInterface.Endpoint.url/0
+             ]
+           ]},
+        restart: :transient,
+        shutdown: 5_000
+      }
+    ]
   end
 end
