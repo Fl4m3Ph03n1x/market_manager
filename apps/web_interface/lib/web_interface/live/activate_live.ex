@@ -200,7 +200,7 @@ defmodule WebInterface.ActivateLive do
     end
   end
 
-  # TODO: We treat every error as a fatal error, but we need to handle some errors as non-fatal, 
+  # TODO: We treat every error as a fatal error, but we need to handle some errors as non-fatal,
   # e.g., if we fail to place or get an order, we can still continue with the others
   def handle_info({:activate, {:error, reason}}, socket) do
     Logger.error("Activate: Error occurred - #{inspect(reason)}")

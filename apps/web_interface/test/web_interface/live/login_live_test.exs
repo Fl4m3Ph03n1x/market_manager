@@ -6,9 +6,9 @@ defmodule WebInterface.LoginLiveTest do
   import Phoenix.LiveViewTest
   import Mock
 
+  alias Manager
   alias Shared.Data.{Credentials, User}
   alias WebInterface.Persistence.User, as: UserStore
-  alias Manager
 
   describe "frontend events" do
     test "it submits login without remember-me and calls Manager.login/2 with false", %{conn: conn} do

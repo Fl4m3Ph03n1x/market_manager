@@ -6,11 +6,11 @@ defmodule WebInterface.ActivateLiveTest do
   import Phoenix.LiveViewTest
   import Mock
 
+  alias Manager
   alias Shared.Data.{Strategy, Syndicate, User}
   alias WebInterface.Persistence.Strategy, as: StrategyStore
   alias WebInterface.Persistence.Syndicate, as: SyndicateStore
   alias WebInterface.Persistence.User, as: UserStore
-  alias Manager
 
   setup do
     user = User.new(ingame_name: "Fl4m3", slug: "fl4m3", patreon?: false)
