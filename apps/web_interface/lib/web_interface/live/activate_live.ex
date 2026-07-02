@@ -38,7 +38,7 @@ defmodule WebInterface.ActivateLive do
     else
       error ->
         Logger.error("Unable to show deactivation page: #{inspect(error)}")
-        {:error, put_flash(socket, :error, "Unable to show deactivation page!")}
+        {:error, put_flash(socket, :error, "Unable to show activation page!")}
     end
   end
 
@@ -99,32 +99,9 @@ defmodule WebInterface.ActivateLive do
     end
   end
 
-  def handle_event(
-        "change",
-        %{"syndicates" => syndicate_ids, "strategies" => strategy_id},
-        socket
-      ) do
-    with {:ok, strategy} <- StrategyStore.get_strategy_by_id(strategy_id),
-         {:ok, syndicates} <- SyndicateStore.get_all_syndicates_by_id(syndicate_ids),
-         :ok <- StrategyStore.set_selected_strategy(strategy),
-         {:ok, active_syndicates} <- SyndicateStore.get_active_syndicates(),
-         new_selected_syndicates = Enum.uniq(syndicates ++ active_syndicates),
-         :ok <- SyndicateStore.set_selected_active_syndicates(new_selected_syndicates) do
-      {:noreply,
-       assign(socket,
-         selected_strategy: strategy,
-         selected_active_syndicates: new_selected_syndicates
-       )}
-    else
-      err ->
-        Logger.error("Unable to retrieve change data: #{inspect(err)}")
-        {:noreply, put_flash(socket, :error, "Unable to retrieve data!")}
-    end
-  end
-
   def handle_event(event, params, socket) do
     Logger.error("Event: #{inspect(event)} ; #{inspect(params)}")
-    {:noreply, socket}
+    {:noreply, put_flash(socket, :error, "Received unknown event #{inspect(event)}")}
   end
 
   ##################

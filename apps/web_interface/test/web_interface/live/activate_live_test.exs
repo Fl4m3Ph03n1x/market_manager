@@ -3,6 +3,7 @@ defmodule WebInterface.ActivateLiveTest do
 
   use WebInterface.ConnCase, async: false
 
+  import ExUnit.CaptureLog
   import Phoenix.LiveViewTest
   import Mock
 
@@ -55,14 +56,18 @@ defmodule WebInterface.ActivateLiveTest do
   end
 
   describe "frontend events" do
+    setup_with_mocks([
+      {UserStore, [], [get_user: fn -> {:ok, user} end, has_user?: fn -> true end]}
+    ], %{user: user}) do
+      :ok
+    end
+
     test "it executes activate command when button is pressed", %{
       conn: conn,
-      user: user,
       strategies: strategies,
       syndicates: syndicates
     } do
       with_mocks([
-        {UserStore, [], [get_user: fn -> {:ok, user} end, has_user?: fn -> true end]},
         {StrategyStore, [],
          [
            get_strategies: fn -> {:ok, strategies} end,
@@ -100,33 +105,67 @@ defmodule WebInterface.ActivateLiveTest do
           |> form("form", %{"strategy" => strategy_id, "syndicates" => [syndicate_id]})
           |> render_submit()
 
-        assert_called(UserStore.get_user())
-        assert_called(UserStore.has_user?())
-
-        assert_called(StrategyStore.get_strategies())
-        assert_called(StrategyStore.get_selected_strategy())
-        assert_called(StrategyStore.get_strategy_by_id(strategy_id))
-
-        assert_called(SyndicateStore.get_syndicates())
-        assert_called(SyndicateStore.get_active_syndicates())
-        assert_called(SyndicateStore.get_selected_active_syndicates())
-        assert_called(SyndicateStore.get_all_syndicates_by_id([syndicate_id]))
-
-        assert_called(Manager.activate(%{steel_meridian: :lowest_minus_one}))
+        assert_called_exactly(StrategyStore.get_strategy_by_id(strategy_id), 1)
+        assert_called_exactly(SyndicateStore.get_all_syndicates_by_id([syndicate_id]), 1)
+        assert_called_exactly(Manager.activate(%{steel_meridian: :lowest_minus_one}), 1)
         assert html =~ "Activation in progress..."
+      end
+    end
+
+    test "it shows error if execute fails", %{
+      conn: conn,
+      strategies: strategies,
+      syndicates: syndicates
+    } do
+      with_mocks([
+        {StrategyStore, [],
+         [
+           get_strategies: fn -> {:ok, strategies} end,
+           get_selected_strategy: fn ->
+             {:ok, Enum.find(strategies, fn strategy -> strategy.id == :lowest_minus_one end)}
+           end,
+           get_strategy_by_id: fn _id -> {:error, :not_found} end
+         ]},
+        {SyndicateStore, [],
+         [
+           get_syndicates: fn -> {:ok, syndicates} end,
+           get_active_syndicates: fn -> {:ok, []} end,
+           get_selected_active_syndicates: fn ->
+             {:ok, Enum.filter(syndicates, fn syndicate -> syndicate.id == :steel_meridian end)}
+           end
+         ]},
+        {Manager, [], [activate: fn _params -> :ok end]}
+      ]) do
+        strategy_id = Atom.to_string(:lowest_minus_one)
+        syndicate_id = Atom.to_string(:steel_meridian)
+
+        {:ok, view, _html} = live(conn, ~p"/activate")
+
+        log =
+          capture_log(fn ->
+            view
+            |> form("form", %{"strategy" => strategy_id, "syndicates" => [syndicate_id]})
+            |> render_submit()
+          end)
+
+        assert_called_exactly(StrategyStore.get_strategy_by_id(strategy_id), 1)
+
+        assert_not_called(SyndicateStore.get_all_syndicates_by_id(:_))
+        assert_not_called(Manager.activate(:_))
+        
+        assert render(view) =~ "Unable to retrieve data!"
+        assert log =~ "Unable to retrieve data: {:error, :not_found}"
       end
     end
 
     test "it changes syndicates correctly", %{
       conn: conn,
-      user: user,
       strategies: strategies,
       syndicates: syndicates
     } do
       active_syndicates = Enum.filter(syndicates, fn syndicate -> syndicate.id == :red_veil end)
 
       with_mocks([
-        {UserStore, [], [get_user: fn -> {:ok, user} end, has_user?: fn -> true end]},
         {StrategyStore, [],
          [
            get_strategies: fn -> {:ok, strategies} end,
@@ -154,31 +193,67 @@ defmodule WebInterface.ActivateLiveTest do
         |> form("form", %{"syndicates" => change_syndicate_ids})
         |> render_change(%{_target: ["syndicates"]})
 
-        assert_called(UserStore.get_user())
-        assert_called(UserStore.has_user?())
-
-        assert_called(StrategyStore.get_strategies())
-        assert_called(StrategyStore.get_selected_strategy())
-
-        assert_called(SyndicateStore.get_syndicates())
-        assert_called(SyndicateStore.get_active_syndicates())
-        assert_called(SyndicateStore.get_selected_active_syndicates())
-        assert_called(SyndicateStore.get_all_syndicates_by_id(change_syndicate_ids))
-        assert_called(SyndicateStore.set_selected_active_syndicates(change_selected_syndicates ++ active_syndicates))
+        assert_called_exactly(SyndicateStore.get_all_syndicates_by_id(change_syndicate_ids), 1)
+        assert_called_exactly(
+          SyndicateStore.set_selected_active_syndicates(change_selected_syndicates ++ active_syndicates),
+          1
+        )
 
         assert has_element?(view, "input#steel_meridian[checked]")
         assert has_element?(view, "input#red_veil[checked][disabled]")
       end
     end
 
+    test "it shows error if changing syndicates fails", %{
+      conn: conn,
+      strategies: strategies,
+      syndicates: syndicates
+    } do
+      selected_syndicates = Enum.filter(syndicates, fn syndicate -> syndicate.id == :perrin_sequence end)
+
+      with_mocks([
+        {StrategyStore, [],
+         [
+           get_strategies: fn -> {:ok, strategies} end,
+           get_selected_strategy: fn -> {:ok, nil} end
+         ]},
+        {SyndicateStore, [],
+         [
+           get_syndicates: fn -> {:ok, syndicates} end,
+           get_active_syndicates: fn -> {:ok, []} end,
+           get_selected_active_syndicates: fn -> {:ok, selected_syndicates} end,
+           get_all_syndicates_by_id: fn _ids -> {:error, :not_found} end,
+           set_selected_active_syndicates: fn _syndicates -> :ok end
+         ]}
+      ]) do
+        change_syndicate_ids = [Atom.to_string(:steel_meridian)]
+        
+        {:ok, view, _html} = live(conn, ~p"/activate")
+
+        log =
+          capture_log(fn ->
+            view
+            |> form("form", %{"syndicates" => change_syndicate_ids})
+            |> render_change(%{_target: ["syndicates"]})
+          end)
+
+        assert_called_exactly(SyndicateStore.get_all_syndicates_by_id(change_syndicate_ids), 1)
+        assert_not_called(SyndicateStore.set_selected_active_syndicates(:_))
+
+        assert render(view) =~ "Unable to retrieve data!"
+        assert log =~ "Unable to retrieve syndicate data: {:error, :not_found}"
+
+        assert has_element?(view, "input#perrin_sequence[checked]")
+        refute has_element?(view, "input#steel_meridian[checked]")
+      end
+    end
+
     test "it changes strategy correctly", %{
       conn: conn,
-      user: user,
       strategies: strategies,
       syndicates: syndicates
     } do
       with_mocks([
-        {UserStore, [], [get_user: fn -> {:ok, user} end, has_user?: fn -> true end]},
         {StrategyStore, [],
          [
            get_strategies: fn -> {:ok, strategies} end,
@@ -206,23 +281,95 @@ defmodule WebInterface.ActivateLiveTest do
         |> form("form", %{"strategy" => change_strategy_id})
         |> render_change()
 
-        assert_called(UserStore.get_user())
-        assert_called(UserStore.has_user?())
-
-        assert_called(SyndicateStore.get_syndicates())
-        assert_called(SyndicateStore.get_active_syndicates())
-        assert_called(SyndicateStore.get_selected_active_syndicates())
-
-        assert_called(StrategyStore.get_strategies())
-        assert_called(StrategyStore.get_selected_strategy())
-        assert_called(StrategyStore.get_strategy_by_id(change_strategy_id))
-        assert_called(StrategyStore.set_selected_strategy(strategy))
+        assert_called_exactly(StrategyStore.get_strategy_by_id(change_strategy_id), 1)
+        assert_called_exactly(StrategyStore.set_selected_strategy(strategy), 1)
 
         assert has_element?(view, "input#lowest_minus_one[checked]")
+      end
+    end
+
+    test "it shows error if changing strategy fails", %{
+      conn: conn,
+      strategies: strategies,
+      syndicates: syndicates
+    } do
+      selected_strategy = Enum.find(strategies, fn strategy -> strategy.id == :top_three_average end)
+
+      with_mocks([
+        {StrategyStore, [],
+         [
+           get_strategies: fn -> {:ok, strategies} end,
+           get_selected_strategy: fn -> {:ok, selected_strategy} end,
+           get_strategy_by_id: fn _id -> {:error, :not_found} end,
+           set_selected_strategy: fn _strategy -> :ok end
+         ]},
+        {SyndicateStore, [],
+         [
+           get_syndicates: fn -> {:ok, syndicates} end,
+           get_active_syndicates: fn -> {:ok, []} end,
+           get_selected_active_syndicates: fn -> {:ok, []} end
+         ]}
+      ]) do
+        change_strategy_id = Atom.to_string(:lowest_minus_one)
+
+        {:ok, view, _html} = live(conn, ~p"/activate")
+
+        log =
+          capture_log(fn ->
+            view
+            |> form("form", %{"strategy" => change_strategy_id})
+            |> render_change(%{_target: ["strategy"]})
+          end)
+
+        assert_called_exactly(StrategyStore.get_strategy_by_id(change_strategy_id), 1)
+        assert_not_called(StrategyStore.set_selected_strategy(:_))
+
+        assert render(view) =~ "Unable to retrieve data!"
+        assert log =~ "Unable to retrieve strategy data: {:error, :not_found}"
+
+        assert has_element?(view, "input#top_three_average[checked]")
+        refute has_element?(view, "input#lowest_minus_one[checked]")
       end
     end
   end
 
   describe "backend events" do
+    test "it loads activation data on mount", %{
+      conn: conn,
+      user: user,
+      strategies: strategies,
+      syndicates: syndicates
+    } do
+      selected_strategy = Enum.find(strategies, fn strategy -> strategy.id == :lowest_minus_one end)
+      active_syndicates = Enum.filter(syndicates, fn syndicate -> syndicate.id == :red_veil end)
+
+      with_mocks([
+        {UserStore, [], [get_user: fn -> {:ok, user} end, has_user?: fn -> true end]},
+        {StrategyStore, [],
+         [
+           get_strategies: fn -> {:ok, strategies} end,
+           get_selected_strategy: fn -> {:ok, selected_strategy} end
+         ]},
+        {SyndicateStore, [],
+         [
+           get_syndicates: fn -> {:ok, syndicates} end,
+           get_active_syndicates: fn -> {:ok, active_syndicates} end,
+           get_selected_active_syndicates: fn -> {:ok, active_syndicates} end
+         ]}
+      ]) do
+        {:ok, _view, html} = live(conn, ~p"/activate")
+
+        assert_called(UserStore.get_user())
+        assert_called(UserStore.has_user?())
+        assert_called(StrategyStore.get_strategies())
+        assert_called(StrategyStore.get_selected_strategy())
+        assert_called(SyndicateStore.get_syndicates())
+        assert_called(SyndicateStore.get_active_syndicates())
+        assert_called(SyndicateStore.get_selected_active_syndicates())
+
+        assert html =~ "Activating a syndicate will cause the app to create a sell order"
+        assert html =~ "Execute Command"
+      end
+    end
   end
 end
