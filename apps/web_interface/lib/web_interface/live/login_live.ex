@@ -100,9 +100,10 @@ defmodule WebInterface.LoginLive do
   end
 
   def handle_info(message, socket) do
-    socket
-    |> assign(logging_in: false)
-    |> put_flash(:error, "Unknown message received, please check the logs and report it!")
+    socket =
+      socket
+      |> assign(logging_in: false)
+      |> put_flash(:error, "Unknown message received, please check the logs and report it!")
 
     Logger.error("Unknown message received: #{inspect(message)}")
     {:noreply, socket}

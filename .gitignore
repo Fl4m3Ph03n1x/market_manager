@@ -33,3 +33,6 @@ test_setup/
 
 # Burrito output
 /burrito_out/
+
+# OpenCode AI
+opencode.json

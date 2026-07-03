@@ -76,42 +76,26 @@ defmodule Manager.Saga.Activate do
   def handle_info(
         {:get_user_orders, {:ok, placed_orders}},
         %{
-          deps: %{store: store, auction_house: auction_house},
+          deps: %{store: store, auction_house: _auction_house},
           args: %{syndicates_with_strategy: syndicates_with_strategy},
           non_patreon_order_limit: limit,
           user: %User{patreon?: patreon?},
           from: from
         } = state
       ) do
-    products =
-      syndicates_with_strategy
-      |> Map.keys()
-      |> store.list_products()
+    with {:ok, total_products} <- list_relevant_products(syndicates_with_strategy, store),
+         order_number_limit = calculate_order_limit(placed_orders, total_products, limit, patreon?),
+         {:ok, updated_state} <- process_products(order_number_limit, total_products, state) do
+      send(from, {:activate, {:ok, :calculating_item_prices}})
+      {:noreply, updated_state}
+    else
+      {:error, :no_slots_free} ->
+        send(from, {:activate, {:ok, :no_slots_free}})
+        {:stop, :normal, state}
 
-    case products do
-      {:ok, total_products} ->
-        order_number_limit = calculate_order_limit(placed_orders, total_products, limit, patreon?)
-
-        if order_number_limit == 0 do
-          send(from, {:activate, {:ok, :no_slots_free}})
-          {:stop, :normal, state}
-        else
-          product_prices = initiate_product_prices(total_products)
-
-          updated_state =
-            state
-            |> Map.put(:total_products_count, length(total_products))
-            |> Map.put(:product_prices, product_prices)
-            |> Map.put(:order_number_limit, order_number_limit)
-
-          product_prices
-          |> Map.keys()
-          |> Enum.map(& &1.name)
-          |> Enum.each(&auction_house.get_item_orders/1)
-
-          send(from, {:activate, {:ok, :calculating_item_prices}})
-          {:noreply, updated_state}
-        end
+      {:error, {:failed_rollback_activation, err}} ->
+        send(from, {:activate, {:error, {:failed_rollback_activation, err}}})
+        {:stop, err, state}
 
       err ->
         send(from, {:activate, {:error, {:get_item_orders, err}}})
@@ -121,7 +105,7 @@ defmodule Manager.Saga.Activate do
 
   # if we cannot get user orders, there is no point in continuing
   def handle_info({:get_user_orders, {:error, _reason}} = error, %{from: from} = state) do
-    send(from, {:activate, error})
+    send(from, {:activate, {:error, error}})
     {:stop, error, state}
   end
 
@@ -201,7 +185,7 @@ defmodule Manager.Saga.Activate do
   # if we miss on a item order list, we can still continue
   # the price will remain nil and be filtered later on
   def handle_info({:get_item_orders, {:error, _reason}} = error, %{from: from} = state) do
-    send(from, {:activate, error})
+    send(from, {:activate, {:error, error}})
     {:noreply, state}
   end
 
@@ -291,13 +275,69 @@ defmodule Manager.Saga.Activate do
 
   # if we fail to place an order, we can still continue with the others
   def handle_info({:place_order, {:error, _msg}} = error, %{from: from} = state) do
-    send(from, error)
+    send(from, {:activate, {:error, error}})
     {:noreply, state}
   end
 
   ###########
   # Private #
   ###########
+
+  @spec list_relevant_products(map(), module()) :: Store.Type.list_products_response()
+  defp list_relevant_products(syndicates_with_strategy, store) do
+    syndicates_with_strategy
+    |> Map.keys()
+    |> store.list_products()
+  end
+
+  @spec process_products(
+          non_neg_integer(),
+          [Product.t()],
+          %{
+            deps: %{
+              store: module(),
+              auction_house: module()
+            },
+            args: %{
+              syndicates_with_strategy: map()
+            },
+            from: pid(),
+            non_patreon_order_limit: pos_integer(),
+            user: User.t()
+          }
+        ) ::
+          {:ok, map()}
+          | {:error, :no_slots_free}
+          | {:error, {:failed_rollback_activation, Store.Type.deactivate_syndicates_response()}}
+  defp process_products(0, _total_products, %{
+         deps: %{store: store},
+         args: %{syndicates_with_strategy: syndicates_with_strategy}
+       }) do
+    case store.deactivate_syndicates(Map.keys(syndicates_with_strategy)) do
+      :ok ->
+        {:error, :no_slots_free}
+
+      {:error, _reason} = err ->
+        {:error, {:failed_rollback_activation, err}}
+    end
+  end
+
+  defp process_products(order_number_limit, total_products, %{deps: %{auction_house: auction_house}} = state) do
+    product_prices = initiate_product_prices(total_products)
+
+    updated_state =
+      state
+      |> Map.put(:total_products_count, length(total_products))
+      |> Map.put(:product_prices, product_prices)
+      |> Map.put(:order_number_limit, order_number_limit)
+
+    product_prices
+    |> Map.keys()
+    |> Enum.map(& &1.name)
+    |> Enum.each(&auction_house.get_item_orders/1)
+
+    {:ok, updated_state}
+  end
 
   @spec initiate_product_prices([Product.t()]) :: %{Product.t() => nil}
   defp initiate_product_prices(total_products) do

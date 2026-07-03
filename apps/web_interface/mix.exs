@@ -66,6 +66,9 @@ defmodule WebInterface.MixProject do
       {:desktop, "~> 1.5"},
       {:ets, "~> 0.9.0"},
 
+      # Testing and Dev
+      {:mock, "~> 0.3.0", only: [:dev, :test]},
+
       # Umbrella deps
       {:manager, in_umbrella: true},
       {:shared, in_umbrella: true}

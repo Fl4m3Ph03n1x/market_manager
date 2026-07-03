@@ -37,8 +37,8 @@ defmodule WebInterface.ActivateLive do
       {:ok, updated_socket}
     else
       error ->
-        Logger.error("Unable to show deactivation page: #{inspect(error)}")
-        {:error, put_flash(socket, :error, "Unable to show deactivation page!")}
+        Logger.error("Unable to show activation page: #{inspect(error)}")
+        {:error, put_flash(socket, :error, "Unable to show activation page! Please check the logs for details.")}
     end
   end
 
@@ -69,7 +69,7 @@ defmodule WebInterface.ActivateLive do
     else
       err ->
         Logger.error("Unable to retrieve data: #{inspect(err)}")
-        {:noreply, put_flash(socket, :error, "Unable to retrieve data!")}
+        {:noreply, put_flash(socket, :error, "Unable to perform activation! Please check the logs for details.")}
     end
   end
 
@@ -84,7 +84,7 @@ defmodule WebInterface.ActivateLive do
     else
       err ->
         Logger.error("Unable to retrieve syndicate data: #{inspect(err)}")
-        {:noreply, put_flash(socket, :error, "Unable to retrieve data!")}
+        {:noreply, put_flash(socket, :error, "Unable to perform activation! Please check the logs for details.")}
     end
   end
 
@@ -99,32 +99,9 @@ defmodule WebInterface.ActivateLive do
     end
   end
 
-  def handle_event(
-        "change",
-        %{"syndicates" => syndicate_ids, "strategies" => strategy_id},
-        socket
-      ) do
-    with {:ok, strategy} <- StrategyStore.get_strategy_by_id(strategy_id),
-         {:ok, syndicates} <- SyndicateStore.get_all_syndicates_by_id(syndicate_ids),
-         :ok <- StrategyStore.set_selected_strategy(strategy),
-         {:ok, active_syndicates} <- SyndicateStore.get_active_syndicates(),
-         new_selected_syndicates = Enum.uniq(syndicates ++ active_syndicates),
-         :ok <- SyndicateStore.set_selected_active_syndicates(new_selected_syndicates) do
-      {:noreply,
-       assign(socket,
-         selected_strategy: strategy,
-         selected_active_syndicates: new_selected_syndicates
-       )}
-    else
-      err ->
-        Logger.error("Unable to retrieve change data: #{inspect(err)}")
-        {:noreply, put_flash(socket, :error, "Unable to retrieve data!")}
-    end
-  end
-
   def handle_event(event, params, socket) do
     Logger.error("Event: #{inspect(event)} ; #{inspect(params)}")
-    {:noreply, socket}
+    {:noreply, put_flash(socket, :error, "Received unknown event #{inspect(event)}")}
   end
 
   ##################
@@ -135,6 +112,23 @@ defmodule WebInterface.ActivateLive do
   def handle_info({:activate, {:ok, :get_user_orders}}, socket) do
     Logger.info("Activate: Getting user orders.")
     {:noreply, assign(socket, message: "Activate: Getting user orders.")}
+  end
+
+  def handle_info({:activate, {:ok, :no_slots_free}}, socket) do
+    updated_socket =
+      socket
+      |> assign(activation_in_progress: false)
+      |> assign(operation_in_progress?: false)
+      |> assign(message: nil)
+
+    Logger.info("Activate: No free order slots available.")
+
+    {:noreply,
+     put_flash(
+       updated_socket,
+       :info,
+       "No free order slots were available. No new orders were placed."
+     )}
   end
 
   def handle_info({:activate, {:ok, :calculating_item_prices}}, socket) do
@@ -181,6 +175,20 @@ defmodule WebInterface.ActivateLive do
         Logger.error("Unable complete syndicate activation: #{inspect(error)}")
         {:noreply, put_flash(socket, :error, "Unable complete syndicate activation!")}
     end
+  end
+
+  # TODO: We treat every error as a fatal error, but we need to handle some errors as non-fatal,
+  # e.g., if we fail to place or get an order, we can still continue with the others
+  def handle_info({:activate, {:error, reason}}, socket) do
+    Logger.error("Activate: Error occurred - #{inspect(reason)}")
+
+    updated_socket =
+      socket
+      |> assign(activation_in_progress: false)
+      |> assign(operation_in_progress?: false)
+      |> assign(message: nil)
+
+    {:noreply, put_flash(updated_socket, :error, "Activation failed, please check the logs for details.")}
   end
 
   def handle_info(message, socket) do
