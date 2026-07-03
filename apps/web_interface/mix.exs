@@ -4,7 +4,7 @@ defmodule WebInterface.MixProject do
   def project do
     [
       app: :web_interface,
-      version: "2.3.2",
+      version: "2.3.3",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
