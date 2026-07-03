@@ -375,6 +375,146 @@ defmodule WebInterface.ActivateLiveTest do
         assert html =~ "Execute Command"
       end
     end
+
+    test "it updates the activation status and progress while backend messages arrive", %{
+      conn: conn,
+      user: user,
+      strategies: strategies,
+      syndicates: syndicates
+    } do
+      selected_strategy = Enum.find(strategies, fn strategy -> strategy.id == :lowest_minus_one end)
+      selected_syndicates = Enum.filter(syndicates, fn syndicate -> syndicate.id == :steel_meridian end)
+
+      with_mocks([
+        {UserStore, [], [get_user: fn -> {:ok, user} end, has_user?: fn -> true end]},
+        {StrategyStore, [],
+         [
+           get_strategies: fn -> {:ok, strategies} end,
+           get_selected_strategy: fn -> {:ok, selected_strategy} end,
+           get_strategy_by_id: fn _strategy_id -> {:ok, selected_strategy} end
+         ]},
+        {SyndicateStore, [],
+         [
+           get_syndicates: fn -> {:ok, syndicates} end,
+           get_active_syndicates: fn -> {:ok, []} end,
+           get_selected_active_syndicates: fn -> {:ok, []} end,
+           get_all_syndicates_by_id: fn _syndicate_ids -> {:ok, selected_syndicates} end
+         ]},
+        {Manager, [], [activate: fn _params -> :ok end]}
+      ]) do
+        {:ok, view, _html} = live(conn, ~p"/activate")
+
+        view
+        |> form("form", %{"strategy" => "lowest_minus_one", "syndicates" => ["steel_meridian"]})
+        |> render_submit()
+
+        send(view.pid, {:activate, {:ok, :get_user_orders}})
+
+        assert has_element?(view, "p", "Activate: Getting user orders.")
+
+        send(view.pid, {:activate, {:ok, :calculating_item_prices}})
+
+        assert has_element?(view, "p", "Activate: Calculating item prices.")
+
+        send(view.pid, {:activate, {:ok, {:price_calculated, "Rift Haven", 42, 1, 4}}})
+
+        assert has_element?(view, "span", "25")
+
+        send(view.pid, {:activate, {:ok, :placing_orders}})
+
+        assert has_element?(view, "p", "Activate: Placing orders.")
+
+        send(view.pid, {:activate, {:ok, {:order_placed, "Rift Haven", 3, 4}}})
+
+        assert has_element?(view, "span", "75")
+      end
+    end
+
+    test "it persists activated syndicates and returns to the form when activation completes", %{
+      conn: conn,
+      user: user,
+      strategies: strategies,
+      syndicates: syndicates
+    } do
+      selected_strategy = Enum.find(strategies, fn strategy -> strategy.id == :lowest_minus_one end)
+      selected_syndicates = Enum.filter(syndicates, fn syndicate -> syndicate.id == :steel_meridian end)
+
+      with_mocks([
+        {UserStore, [], [get_user: fn -> {:ok, user} end, has_user?: fn -> true end]},
+        {StrategyStore, [],
+         [
+           get_strategies: fn -> {:ok, strategies} end,
+           get_selected_strategy: fn -> {:ok, selected_strategy} end,
+           get_strategy_by_id: fn _strategy_id -> {:ok, selected_strategy} end
+         ]},
+        {SyndicateStore, [],
+         [
+           get_syndicates: fn -> {:ok, syndicates} end,
+           get_active_syndicates: fn -> {:ok, []} end,
+           get_selected_active_syndicates: fn -> {:ok, selected_syndicates} end,
+           get_all_syndicates_by_id: fn _syndicate_ids -> {:ok, selected_syndicates} end,
+           activate_syndicates: fn _syndicates_to_activate -> :ok end,
+           all_syndicates_active?: fn -> {:ok, false} end
+         ]},
+        {Manager, [], [activate: fn _params -> :ok end]}
+      ]) do
+        {:ok, view, _html} = live(conn, ~p"/activate")
+
+        view
+        |> form("form", %{"strategy" => "lowest_minus_one", "syndicates" => ["steel_meridian"]})
+        |> render_submit()
+
+        send(view.pid, {:activate, {:ok, :done}})
+
+        assert has_element?(view, "button", "Execute Command")
+        assert has_element?(view, "input#steel_meridian[checked]")
+        refute has_element?(view, "p", "Activation in progress...")
+        assert_called(Manager.activate(%{steel_meridian: :lowest_minus_one}))
+        assert_called(SyndicateStore.activate_syndicates(selected_syndicates))
+        assert_called(SyndicateStore.all_syndicates_active?())
+      end
+    end
+
+    @tag :capture_log
+    test "it resets the view and shows a flash when activation fails", %{
+      conn: conn,
+      user: user,
+      strategies: strategies,
+      syndicates: syndicates
+    } do
+      selected_strategy = Enum.find(strategies, fn strategy -> strategy.id == :lowest_minus_one end)
+      selected_syndicates = Enum.filter(syndicates, fn syndicate -> syndicate.id == :steel_meridian end)
+
+      with_mocks([
+        {UserStore, [], [get_user: fn -> {:ok, user} end, has_user?: fn -> true end]},
+        {StrategyStore, [],
+         [
+           get_strategies: fn -> {:ok, strategies} end,
+           get_selected_strategy: fn -> {:ok, selected_strategy} end,
+           get_strategy_by_id: fn _strategy_id -> {:ok, selected_strategy} end
+         ]},
+        {SyndicateStore, [],
+         [
+           get_syndicates: fn -> {:ok, syndicates} end,
+           get_active_syndicates: fn -> {:ok, []} end,
+           get_selected_active_syndicates: fn -> {:ok, selected_syndicates} end,
+           get_all_syndicates_by_id: fn _syndicate_ids -> {:ok, selected_syndicates} end
+         ]},
+        {Manager, [], [activate: fn _params -> :ok end]}
+      ]) do
+        {:ok, view, _html} = live(conn, ~p"/activate")
+
+        view
+        |> form("form", %{"strategy" => "lowest_minus_one", "syndicates" => ["steel_meridian"]})
+        |> render_submit()
+
+        send(view.pid, {:activate, {:error, :timeout}})
+
+        assert has_element?(view, "button", "Execute Command")
+        assert render(view) =~ "Activation failed, please check the logs for details."
+        refute has_element?(view, "p", "Activation in progress...")
+      end
+    end
   end
 
   describe "Execute button state" do
