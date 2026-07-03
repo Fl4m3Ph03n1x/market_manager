@@ -153,7 +153,7 @@ defmodule WebInterface.ActivateLiveTest do
         assert_not_called(SyndicateStore.get_all_syndicates_by_id(:_))
         assert_not_called(Manager.activate(:_))
         
-        assert render(view) =~ "Unable to retrieve data!"
+        assert render(view) =~ "Unable to perform activation! Please check the logs for details."
         assert log =~ "Unable to retrieve data: {:error, :not_found}"
       end
     end
@@ -240,7 +240,7 @@ defmodule WebInterface.ActivateLiveTest do
         assert_called_exactly(SyndicateStore.get_all_syndicates_by_id(change_syndicate_ids), 1)
         assert_not_called(SyndicateStore.set_selected_active_syndicates(:_))
 
-        assert render(view) =~ "Unable to retrieve data!"
+        assert render(view) =~ "Unable to perform activation! Please check the logs for details."
         assert log =~ "Unable to retrieve syndicate data: {:error, :not_found}"
 
         assert has_element?(view, "input#perrin_sequence[checked]")
@@ -369,6 +369,124 @@ defmodule WebInterface.ActivateLiveTest do
 
         assert html =~ "Activating a syndicate will cause the app to create a sell order"
         assert html =~ "Execute Command"
+      end
+    end
+  end
+
+  describe "Execute button state" do
+    setup_with_mocks([
+      {UserStore, [], [get_user: fn -> {:ok, user} end, has_user?: fn -> true end]}
+    ], %{user: user}) do
+      :ok
+    end
+
+    test "it disables execute button when no strategy is selected", %{
+      conn: conn,
+      strategies: strategies,
+      syndicates: syndicates
+    } do
+      selected_syndicates = Enum.filter(syndicates, fn syndicate -> syndicate.id == :steel_meridian end)
+
+      with_mocks([
+        {StrategyStore, [],
+         [
+           get_strategies: fn -> {:ok, strategies} end,
+           get_selected_strategy: fn -> {:ok, nil} end
+         ]},
+        {SyndicateStore, [],
+         [
+           get_syndicates: fn -> {:ok, syndicates} end,
+           get_active_syndicates: fn -> {:ok, []} end,
+           get_selected_active_syndicates: fn -> {:ok, selected_syndicates} end
+         ]}
+      ]) do
+        {:ok, view, _html} = live(conn, ~p"/activate")
+
+        assert has_element?(view, "button[disabled]", "Execute Command")
+      end
+    end
+
+    test "it disables execute button when no syndicates are selected", %{
+      conn: conn,
+      strategies: strategies,
+      syndicates: syndicates
+    } do
+      selected_strategy = Enum.find(strategies, fn strategy -> strategy.id == :lowest_minus_one end)
+
+      with_mocks([
+        {StrategyStore, [],
+         [
+           get_strategies: fn -> {:ok, strategies} end,
+           get_selected_strategy: fn -> {:ok, selected_strategy} end
+         ]},
+        {SyndicateStore, [],
+         [
+           get_syndicates: fn -> {:ok, syndicates} end,
+           get_active_syndicates: fn -> {:ok, []} end,
+           get_selected_active_syndicates: fn -> {:ok, []} end
+         ]}
+      ]) do
+        {:ok, view, _html} = live(conn, ~p"/activate")
+
+        assert has_element?(view, "button[disabled]", "Execute Command")
+      end
+    end
+
+    test "it disables execute button when selected syndicates are already active", %{
+      conn: conn,
+      strategies: strategies,
+      syndicates: syndicates
+    } do
+      selected_strategy = Enum.find(strategies, fn strategy -> strategy.id == :lowest_minus_one end)
+      active_syndicates = Enum.filter(syndicates, fn syndicate -> syndicate.id == :steel_meridian end)
+
+      with_mocks([
+        {StrategyStore, [],
+         [
+           get_strategies: fn -> {:ok, strategies} end,
+           get_selected_strategy: fn -> {:ok, selected_strategy} end
+         ]},
+        {SyndicateStore, [],
+         [
+           get_syndicates: fn -> {:ok, syndicates} end,
+           get_active_syndicates: fn -> {:ok, active_syndicates} end,
+           get_selected_active_syndicates: fn -> {:ok, active_syndicates} end
+         ]}
+      ]) do
+        {:ok, view, _html} = live(conn, ~p"/activate")
+
+        assert has_element?(view, "button[disabled]", "Execute Command")
+      end
+    end
+
+    test "it enables execute button when strategy and inactive selected syndicate are present", %{
+      conn: conn,
+      strategies: strategies,
+      syndicates: syndicates
+    } do
+      selected_strategy = Enum.find(strategies, fn strategy -> strategy.id == :lowest_minus_one end)
+      active_syndicates = Enum.filter(syndicates, fn syndicate -> syndicate.id == :red_veil end)
+
+      selected_syndicates =
+        Enum.filter(syndicates, fn syndicate -> syndicate.id in [:red_veil, :steel_meridian] end)
+
+      with_mocks([
+        {StrategyStore, [],
+         [
+           get_strategies: fn -> {:ok, strategies} end,
+           get_selected_strategy: fn -> {:ok, selected_strategy} end
+         ]},
+        {SyndicateStore, [],
+         [
+           get_syndicates: fn -> {:ok, syndicates} end,
+           get_active_syndicates: fn -> {:ok, active_syndicates} end,
+           get_selected_active_syndicates: fn -> {:ok, selected_syndicates} end
+         ]}
+      ]) do
+        {:ok, view, _html} = live(conn, ~p"/activate")
+
+        assert has_element?(view, "button", "Execute Command")
+        refute has_element?(view, "button[disabled]", "Execute Command")
       end
     end
   end

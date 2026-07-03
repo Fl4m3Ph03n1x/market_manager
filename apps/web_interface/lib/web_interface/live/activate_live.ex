@@ -37,8 +37,8 @@ defmodule WebInterface.ActivateLive do
       {:ok, updated_socket}
     else
       error ->
-        Logger.error("Unable to show deactivation page: #{inspect(error)}")
-        {:error, put_flash(socket, :error, "Unable to show activation page!")}
+        Logger.error("Unable to show activation page: #{inspect(error)}")
+        {:error, put_flash(socket, :error, "Unable to show activation page! Please check the logs for details.")}
     end
   end
 
@@ -69,7 +69,7 @@ defmodule WebInterface.ActivateLive do
     else
       err ->
         Logger.error("Unable to retrieve data: #{inspect(err)}")
-        {:noreply, put_flash(socket, :error, "Unable to retrieve data!")}
+        {:noreply, put_flash(socket, :error, "Unable to perform activation! Please check the logs for details.")}
     end
   end
 
@@ -84,7 +84,7 @@ defmodule WebInterface.ActivateLive do
     else
       err ->
         Logger.error("Unable to retrieve syndicate data: #{inspect(err)}")
-        {:noreply, put_flash(socket, :error, "Unable to retrieve data!")}
+        {:noreply, put_flash(socket, :error, "Unable to perform activation! Please check the logs for details.")}
     end
   end
 
