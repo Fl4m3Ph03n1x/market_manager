@@ -56,9 +56,12 @@ defmodule WebInterface.ActivateLiveTest do
   end
 
   describe "frontend events" do
-    setup_with_mocks([
-      {UserStore, [], [get_user: fn -> {:ok, user} end, has_user?: fn -> true end]}
-    ], %{user: user}) do
+    setup_with_mocks(
+      [
+        {UserStore, [], [get_user: fn -> {:ok, user} end, has_user?: fn -> true end]}
+      ],
+      %{user: user}
+    ) do
       :ok
     end
 
@@ -152,7 +155,7 @@ defmodule WebInterface.ActivateLiveTest do
 
         assert_not_called(SyndicateStore.get_all_syndicates_by_id(:_))
         assert_not_called(Manager.activate(:_))
-        
+
         assert render(view) =~ "Unable to perform activation! Please check the logs for details."
         assert log =~ "Unable to retrieve data: {:error, :not_found}"
       end
@@ -194,6 +197,7 @@ defmodule WebInterface.ActivateLiveTest do
         |> render_change(%{_target: ["syndicates"]})
 
         assert_called_exactly(SyndicateStore.get_all_syndicates_by_id(change_syndicate_ids), 1)
+
         assert_called_exactly(
           SyndicateStore.set_selected_active_syndicates(change_selected_syndicates ++ active_syndicates),
           1
@@ -227,7 +231,7 @@ defmodule WebInterface.ActivateLiveTest do
          ]}
       ]) do
         change_syndicate_ids = [Atom.to_string(:steel_meridian)]
-        
+
         {:ok, view, _html} = live(conn, ~p"/activate")
 
         log =
@@ -374,9 +378,12 @@ defmodule WebInterface.ActivateLiveTest do
   end
 
   describe "Execute button state" do
-    setup_with_mocks([
-      {UserStore, [], [get_user: fn -> {:ok, user} end, has_user?: fn -> true end]}
-    ], %{user: user}) do
+    setup_with_mocks(
+      [
+        {UserStore, [], [get_user: fn -> {:ok, user} end, has_user?: fn -> true end]}
+      ],
+      %{user: user}
+    ) do
       :ok
     end
 
