@@ -294,14 +294,21 @@ defmodule Manager.Saga.Activate do
           non_neg_integer(),
           [Product.t()],
           %{
-            deps: Manager.Type.dependencies(),
-            args: %{syndicates_with_strategy: map()}
+            deps: %{
+              store: module(),
+              auction_house: module()
+            },
+            args: %{
+              syndicates_with_strategy: map()
+            },
+            from: pid(),
+            non_patreon_order_limit: pos_integer(),
+            user: User.t()
           }
         ) ::
           {:ok, map()}
           | {:error, :no_slots_free}
           | {:error, {:failed_rollback_activation, Store.Type.deactivate_syndicates_response()}}
-
   defp process_products(0, _total_products, %{
          deps: %{store: store},
          args: %{syndicates_with_strategy: syndicates_with_strategy}
