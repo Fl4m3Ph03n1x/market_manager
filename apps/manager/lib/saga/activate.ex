@@ -76,49 +76,26 @@ defmodule Manager.Saga.Activate do
   def handle_info(
         {:get_user_orders, {:ok, placed_orders}},
         %{
-          deps: %{store: store, auction_house: auction_house},
+          deps: %{store: store, auction_house: _auction_house},
           args: %{syndicates_with_strategy: syndicates_with_strategy},
           non_patreon_order_limit: limit,
           user: %User{patreon?: patreon?},
           from: from
         } = state
       ) do
-    products =
-      syndicates_with_strategy
-      |> Map.keys()
-      |> store.list_products()
+    with {:ok, total_products} <- list_relevant_products(syndicates_with_strategy, store),
+         order_number_limit = calculate_order_limit(placed_orders, total_products, limit, patreon?),
+         {:ok, updated_state} <- process_products(order_number_limit, total_products, state) do
+      send(from, {:activate, {:ok, :calculating_item_prices}})
+      {:noreply, updated_state}
+    else
+      {:error, :no_slots_free} ->
+        send(from, {:activate, {:ok, :no_slots_free}})
+        {:stop, :normal, state}
 
-    case products do
-      {:ok, total_products} ->
-        order_number_limit = calculate_order_limit(placed_orders, total_products, limit, patreon?)
-
-        if order_number_limit == 0 do
-          case store.deactivate_syndicates(Map.keys(syndicates_with_strategy)) do
-            :ok ->
-              send(from, {:activate, {:ok, :no_slots_free}})
-              {:stop, :normal, state}
-
-            {:error, _reason} = err ->
-              send(from, {:activate, {:error, {:failed_rollback_activation, err}}})
-              {:stop, err, state}
-          end
-        else
-          product_prices = initiate_product_prices(total_products)
-
-          updated_state =
-            state
-            |> Map.put(:total_products_count, length(total_products))
-            |> Map.put(:product_prices, product_prices)
-            |> Map.put(:order_number_limit, order_number_limit)
-
-          product_prices
-          |> Map.keys()
-          |> Enum.map(& &1.name)
-          |> Enum.each(&auction_house.get_item_orders/1)
-
-          send(from, {:activate, {:ok, :calculating_item_prices}})
-          {:noreply, updated_state}
-        end
+      {:error, {:failed_rollback_activation, err}} ->
+        send(from, {:activate, {:error, {:failed_rollback_activation, err}}})
+        {:stop, err, state}
 
       err ->
         send(from, {:activate, {:error, {:get_item_orders, err}}})
@@ -305,6 +282,55 @@ defmodule Manager.Saga.Activate do
   ###########
   # Private #
   ###########
+
+  @spec list_relevant_products(map(), module()) :: Store.Type.list_products_response()
+  defp list_relevant_products(syndicates_with_strategy, store) do
+    syndicates_with_strategy
+    |> Map.keys()
+    |> store.list_products()
+  end
+
+  @spec process_products(
+          non_neg_integer(),
+          [Product.t()],
+          %{
+            deps: Manager.Type.dependencies(),
+            args: %{syndicates_with_strategy: map()}
+          }
+        ) ::
+          {:ok, map()}
+          | {:error, :no_slots_free}
+          | {:error, {:failed_rollback_activation, Store.Type.deactivate_syndicates_response()}}
+
+  defp process_products(0, _total_products, %{
+         deps: %{store: store},
+         args: %{syndicates_with_strategy: syndicates_with_strategy}
+       }) do
+    case store.deactivate_syndicates(Map.keys(syndicates_with_strategy)) do
+      :ok ->
+        {:error, :no_slots_free}
+
+      {:error, _reason} = err ->
+        {:error, {:failed_rollback_activation, err}}
+    end
+  end
+
+  defp process_products(order_number_limit, total_products, %{deps: %{auction_house: auction_house}} = state) do
+    product_prices = initiate_product_prices(total_products)
+
+    updated_state =
+      state
+      |> Map.put(:total_products_count, length(total_products))
+      |> Map.put(:product_prices, product_prices)
+      |> Map.put(:order_number_limit, order_number_limit)
+
+    product_prices
+    |> Map.keys()
+    |> Enum.map(& &1.name)
+    |> Enum.each(&auction_house.get_item_orders/1)
+
+    {:ok, updated_state}
+  end
 
   @spec initiate_product_prices([Product.t()]) :: %{Product.t() => nil}
   defp initiate_product_prices(total_products) do
