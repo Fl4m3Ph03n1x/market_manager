@@ -1192,6 +1192,69 @@
     "type": "mod"
   },
   {
+    "name": "Galvanized Elementalist",
+    "id": "66fd6ca03a826eccf651cd86",
+    "min_price": 14,
+    "default_price": 17,
+    "type": "mod"
+  },
+  {
+    "name": "Adaptation",
+    "id": "5bc1ab93b919f200c18c10ef",
+    "min_price": 14,
+    "default_price": 17,
+    "type": "mod"
+  },
+  {
+    "name": "Aerodynamic",
+    "id": "5d8765de7ea27b08950c13c5",
+    "min_price": 14,
+    "default_price": 17,
+    "type": "mod"
+  },
+  {
+    "name": "Combat Discipline",
+    "id": "5d8765de7ea27b08950c13c1",
+    "min_price": 14,
+    "default_price": 17,
+    "type": "mod"
+  },
+  {
+    "name": "Galvanized Reflex",
+    "id": "66fd6c933a826eccf651cd84",
+    "min_price": 14,
+    "default_price": 17,
+    "type": "mod"
+  },
+  {
+    "name": "Galvanized Steel",
+    "id": "66fd6c7b3a826eccf651cd82",
+    "min_price": 14,
+    "default_price": 17,
+    "type": "mod"
+  },
+  {
+    "name": "Melee Guidance",
+    "id": "5d8765df7ea27b08950c13c8",
+    "min_price": 14,
+    "default_price": 17,
+    "type": "mod"
+  },
+  {
+    "name": "Shepherd",
+    "id": "5d8765dd7ea27b08950c13b6",
+    "min_price": 14,
+    "default_price": 17,
+    "type": "mod"
+  },
+  {
+    "name": "Swift Momentum",
+    "id": "5d8765de7ea27b08950c13c0",
+    "min_price": 14,
+    "default_price": 17,
+    "type": "mod"
+  },
+  {
     "name": "Gilded Truth",
     "id": "54a74454e779892d5e515664",
     "min_price": 14,
@@ -1657,6 +1720,69 @@
   {
     "name": "Noctua Swarm",
     "id": "6a33110258b60af8cd1a0d20",
+    "min_price": 14,
+    "default_price": 16,
+    "type": "mod"
+  },
+  {
+    "name": "Cataclysmic Gate",
+    "id": "67db60849cec3e52e62523f0",
+    "min_price": 14,
+    "default_price": 16,
+    "type": "mod"
+  },
+  {
+    "name": "Lingering Transmutation",
+    "id": "68efba8d89984fb97a33aa31",
+    "min_price": 14,
+    "default_price": 16,
+    "type": "mod"
+  },
+  {
+    "name": "Omikujis Fortune",
+    "id": "67db60849cec3e52e62523f1",
+    "min_price": 14,
+    "default_price": 16,
+    "type": "mod"
+  },
+  {
+    "name": "Tharros Lethality",
+    "id": "68efbaa589984fb97a33aa35",
+    "min_price": 14,
+    "default_price": 16,
+    "type": "mod"
+  },
+  {
+    "name": "Volatile Recompense",
+    "id": "685d4fbff41598dddb4cc2f4",
+    "min_price": 14,
+    "default_price": 16,
+    "type": "mod"
+  },
+  {
+    "name": "Jades Judgement",
+    "id": "685d4ff2f41598dddb4cc2fa",
+    "min_price": 14,
+    "default_price": 16,
+    "type": "mod"
+  },
+  {
+    "name": "Fused Crucible",
+    "id": "67db60859cec3e52e62523f3",
+    "min_price": 14,
+    "default_price": 16,
+    "type": "mod"
+  },
+  {
+    "name": "Untime Rift",
+    "id": "68efba9a89984fb97a33aa33",
+    "min_price": 14,
+    "default_price": 16,
+    "type": "mod"
+  },
+  {
+    "name": "Wrecking Wall",
+    "id": "667238fc8ba7c81b70d02cc0",
     "min_price": 14,
     "default_price": 16,
     "type": "mod"
