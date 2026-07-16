@@ -68,7 +68,7 @@ defmodule WebInterface.ActivateLive do
       {:noreply, updated_socket}
     else
       err ->
-        Logger.error("Unable to retrieve data: #{inspect(err)}")
+        Logger.error("Unable to perform activation: #{inspect(err)}")
         {:noreply, put_flash(socket, :error, "Unable to perform activation! Please check the logs for details.")}
     end
   end

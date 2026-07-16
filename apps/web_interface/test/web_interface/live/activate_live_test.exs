@@ -157,7 +157,7 @@ defmodule WebInterface.ActivateLiveTest do
         assert_not_called(Manager.activate(:_))
 
         assert render(view) =~ "Unable to perform activation! Please check the logs for details."
-        assert log =~ "Unable to retrieve data: {:error, :not_found}"
+        assert log =~ "Unable to perform activation: {:error, :not_found}"
       end
     end
 
