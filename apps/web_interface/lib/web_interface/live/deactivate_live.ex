@@ -57,8 +57,8 @@ defmodule WebInterface.DeactivateLive do
       {:noreply, updated_socket}
     else
       err ->
-        Logger.error("Unable to retrieve data: #{inspect(err)}")
-        {:noreply, put_flash(socket, :error, "Unable to retrieve data!")}
+        Logger.error("Unable to perform deactivation: #{inspect(err)}")
+        {:noreply, put_flash(socket, :error, "Unable to perform deactivation! Please check the logs for details.")}
     end
   end
 
@@ -71,8 +71,8 @@ defmodule WebInterface.DeactivateLive do
       {:noreply, assign(socket, selected_inactive_syndicates: new_selected_syndicates)}
     else
       err ->
-        Logger.error("Unable to retrieve change data: #{inspect(err)}")
-        {:noreply, put_flash(socket, :error, "Unable to retrieve data!")}
+        Logger.error("Unable to update syndicates: #{inspect(err)}")
+        {:noreply, put_flash(socket, :error, "Unable to update syndicates!")}
     end
   end
 
@@ -89,7 +89,7 @@ defmodule WebInterface.DeactivateLive do
 
   def handle_event(event, params, socket) do
     Logger.error("Event: #{inspect(event)} ; #{inspect(params)}")
-    {:noreply, socket}
+    {:noreply, put_flash(socket, :error, "Received unknown event #{inspect(event)}")}
   end
 
   ##################
@@ -135,8 +135,8 @@ defmodule WebInterface.DeactivateLive do
       {:noreply, updated_socket}
     else
       error ->
-        Logger.error("Unable complete syndicate deactivation: #{inspect(error)}")
-        {:noreply, put_flash(socket, :error, "Unable complete syndicate deactivation!")}
+        Logger.error("Unable to complete syndicate deactivation: #{inspect(error)}")
+        {:noreply, put_flash(socket, :error, "Unable to complete syndicate deactivation!")}
     end
   end
 
@@ -196,8 +196,8 @@ defmodule WebInterface.DeactivateLive do
       {:noreply, updated_socket}
     else
       error ->
-        Logger.error("Unable complete syndicate deactivation: #{inspect(error)}")
-        {:noreply, put_flash(socket, :error, "Unable complete syndicate deactivation!")}
+        Logger.error("Unable to complete syndicate deactivation: #{inspect(error)}")
+        {:noreply, put_flash(socket, :error, "Unable to complete syndicate deactivation!")}
     end
   end
 
