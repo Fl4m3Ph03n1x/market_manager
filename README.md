@@ -15,41 +15,36 @@
 
 # MarketManager
 
-Makes sell requests in batch to warframe market.
-Used when you want to sell a lot of things or remove them from your list all at once. Specially useful for syndicates 
-because you don't have to buy everything in advance and then sell. You only need to do 3 things:
+MarketManager makes sell requests in batches on Warframe Market. It is useful when you want to sell a large number of
+items or remove them from your listings at once. It is especially useful for syndicates because you do not have to buy
+everything in advance before listing it. You only need to:
 
-- Launch the manager
-- Activate a syndicate(s) you want
+- Launch MarketManager
+- Activate one or more syndicates
 - Sit back and relax
 
-Then, when someone pings you to buy an item, you can go the syndicate, buy it and sell it on the spot.
+When someone asks to buy an item, go to the syndicate, buy it, and sell it immediately.
 
-WarframeMarket (the website) does have a 100 items limit though, so you may want to keep this in mind as you won't be 
-able to activate everything (unless you are a Patreon, in which case the limit does not apply).
+Non-Patreon accounts on Warframe Market (the website) have a limit of 100 listed items. Patreon accounts are not subject to this
+limit. Keep this in mind when activating syndicates; you may not be able to activate everything at once.
 
 # Requirements
 
-This application has no requirements on the user side, as the entire erlang VM and context are bundled together with the 
-application in the zip file.
+The packaged application is a Windows x86_64 release. It includes the Erlang VM and its dependencies, so Erlang and Elixir are not required on the user's machine.
 
-By default the application will open a separate browser window and it will run there using your localhost.
-
-If however, you wish to run the application in windowed mode, you can do so by downloading and installing WebView2 
-support for Edge:
+By default, the application opens a separate browser window and serves the interface from localhost.
+To use the embedded windowed mode instead (like a normal windows application), install WebView2 for Edge:
 
 - <https://developer.microsoft.com/en-us/microsoft-edge/webview2/?form=MA13LH>
 
-After the installation, the application will default to the windowed mode. You can however still use the browser if you 
-wish by going to **Extras -> Open in browser**.
+After installation, the application defaults to windowed mode. You can still open the interface in your browser from **Extras -> Open Browser**.
 
 # User guide
 
-As a user, you will see two windows opening. The **interface** (explained in the next subchapter) and the **terminal**.
-The terminal is there for mostly two things:
+When you launch the application, two windows open: the **interface** and the **terminal**. The terminal is useful for:
 
-- transparency to the user: This way you can see what the application is really doing.
-- debugging: By seeing the logs, you can help contribute with errors. 
+- transparency: you can see what the application is doing;
+- debugging: logs can help diagnose and report errors.
 
 For this reason, I won't be explaining anything about the terminal, although it is important to note that **if you kill
 the terminal (by closing it), you will also kill the application**. This can be useful, in case the apps bugs out, which 
@@ -59,8 +54,7 @@ should be rare.
 
 This section has some basic references and help for users that want to learn how to use the application.
 
-Once you download and extract the contents of the zip file, you can launch the application via the shortcut. 
-(You need to give Windows the necessary permissions, which will pop up)
+Download and launch the application. Windows may ask for permission the first time it runs.
 
 With that out of the day you will be greeted with the login menu:
 
@@ -68,9 +62,8 @@ With that out of the day you will be greeted with the login menu:
 <img src="images/login.png" alt="Logo" width="600"/>
 </p>
 
-It is important to note that the application **does not save your credentials**. We only save an authentication token
-that expires after some time. 
-Furthermore, your credentials **are not transmitted anywhere**, so you don't have to worry about that.
+The application **does not save your credentials**. It stores only an authentication token, which expires after some
+time. Your credentials **are not transmitted anywhere**.
 
 Once the login is done, you can either activate or deactivate a set of syndicates.
 
@@ -87,40 +80,65 @@ Activating and deactivating are both operations that can take a long time, so yo
 
 You can also logout by clicking in your username at the top right corner if you wish.
 
-# Code signing policy
+# Developer guide
 
-Free code signing provided by [SignPath.io](https://about.signpath.io), certificate by [SignPath Foundation](https://signpath.org).
-
-- Authors, reviewers, and approvers: [Fl4m3Ph03n1x](https://github.com/Fl4m3Ph03n1x) (sole maintainer)
-- Privacy policy: This program will not transfer any information to other networked systems unless specifically requested by the user or the person installing or operating it.
-
-# Developer Guide
-
-This guide describes a developer setup for Windows.
+This guide describes a Linux development setup. The CI workflow uses Elixir `1.20.x` and Erlang/OTP `28.5.x`.
+The packaged release currently targets Windows x86_64; Linux is supported for development and local execution.
 
 ## Requirements
 
-- Erlang OTP >= 26: <https://www.erlang.org/downloads>
-- Elixir >= 1.16 (I recommend the installer): <https://elixir-lang.org/install.html#windows>
-- wxWidget: <https://www.wxwidgets.org/downloads/>
-- While it doesn't require a lot of memory to run, it does require a lot of memory to compile, at least 4GB.
-- If using powershell, you need to have permissions to run scripts: `Set-ExecutionPolicy -ExecutionPolicy Bypass`
-- Install chocolatey: <https://chocolatey.org/install>
-- Install bakeware dependencies: `choco install -y zstandard make mingw`
-- Setup powershell environment variables `$env:CC="gcc"` and `$env:MAKE="make"`
-- An editor of your choice. I use VScode with some plugins and the `Fira Code` font: <https://github.com/tonsky/FiraCode>
-- To test the application in Windowed mode, you also need to install WebView2 support for Edge. Refer to the 
-**User Guide** section for more information.
+- Erlang/OTP 28.5.x: <https://www.erlang.org/downloads>
+- Elixir 1.20.x: <https://elixir-lang.org/install.html>
+- At least 4GB of memory for compilation.
+- An editor of your choice. I use VS Code with the `Fira Code` font: <https://github.com/tonsky/FiraCode>
+- Wine, required only when building the Windows release locally: <https://www.winehq.org/>
+- Resource Hacker, required only when building the Windows release locally: <https://www.angusj.com/resourcehacker/>
+
+On Debian or Ubuntu, install the native build and wxWidgets dependencies with:
+
+```bash
+sudo apt update
+sudo apt install build-essential libwxgtk3.2-dev pkg-config zstd wine
+```
+
+For other Linux distributions, install the equivalent packages for GCC, Make, wxWidgets development headers, `pkg-config`,
+Zstandard, and Wine.
+
+If you build the Windows release locally, install Resource Hacker in the default Wine prefix. The release task expects it
+at `~/.wine/drive_c/Program Files (x86)/Resource Hacker/ResourceHacker.exe`.
+
+Download the Windows installer from the [Resource Hacker website](https://www.angusj.com/resourcehacker/), then run it
+with Wine. For example, if the installer is saved in `~/Downloads/reshack_setup.exe`:
+
+```bash
+wine ~/Downloads/reshack_setup.exe
+```
+
+Accept the default installation directory so the release task can find `ResourceHacker.exe`.
 
 ## How to run it
 
 After the initial setup, the following commands are used to get started:
 
-- `mix local.hex` to install / update hex
-- `mix archive.install hex phx_new` to install the Phoenix framework
-- `mix deps.get` fetches and installs all the dependencies
-- `mix test` run all tests
-- `mix test.watch` runs all tests continuously and re-runs them every time a file changes
+Run these commands from the repository root:
+
+- `mix local.hex --force` installs or updates Hex.
+- `mix local.rebar --force` installs the Rebar build tool.
+- `mix deps.get` fetches all dependencies.
+- `mix compile` compiles the umbrella project.
+- `mix test` runs all tests.
+- `mix credo --strict` runs the code-quality checks.
+- `mix dialyzer` runs the type analysis.
+
+To run the Phoenix interface locally, change into `apps/web_interface` and run `MIX_ENV=prod mix phx.server`:
+
+```bash
+cd apps/web_interface
+MIX_ENV=prod mix phx.server
+```
+
+The release definition in `mix.exs` uses Burrito to build a Windows x86_64 executable and adds the application icon
+during the packaging step.
 
 ## Architecture
 
@@ -129,13 +147,13 @@ MarketManager is divided into multiple small applications/libraries, each one wi
 ```mermaid
   graph TD;
       web_interface-->manager;
+      web_interface-->shared;
       manager-->auction_house;
       manager-->store;
-      shared-->manager;
-      shared-->store;
-      shared-->web_interface;
-      shared-->auction_house;
+      manager-->shared;
       auction_house-->rate_limiter;
+      auction_house-->shared;
+      store-->shared;
 ```
 
 - `web_interface` is a Phoenix application that holds all the code for the front-end. Works as the client.
