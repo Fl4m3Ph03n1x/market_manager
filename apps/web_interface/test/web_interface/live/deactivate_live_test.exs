@@ -371,7 +371,7 @@ defmodule WebInterface.DeactivateLiveTest do
 
         send(view.pid, {:deactivate, {:ok, :done}})
 
-        assert render(view) =~ "Unable complete syndicate deactivation!"
+        assert render(view) =~ "Unable to complete syndicate deactivation!"
       end
     end
 
