@@ -87,6 +87,13 @@ Activating and deactivating are both operations that can take a long time, so yo
 
 You can also logout by clicking in your username at the top right corner if you wish.
 
+# Code signing policy
+
+Free code signing provided by [SignPath.io](https://about.signpath.io), certificate by [SignPath Foundation](https://signpath.org).
+
+- Authors, reviewers, and approvers: [Fl4m3Ph03n1x](https://github.com/Fl4m3Ph03n1x) (sole maintainer)
+- Privacy policy: This program will not transfer any information to other networked systems unless specifically requested by the user or the person installing or operating it.
+
 # Developer Guide
 
 This guide describes a developer setup for Windows.
