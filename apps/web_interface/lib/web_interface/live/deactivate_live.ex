@@ -196,8 +196,8 @@ defmodule WebInterface.DeactivateLive do
       {:noreply, updated_socket}
     else
       error ->
-        Logger.error("Unable complete syndicate deactivation: #{inspect(error)}")
-        {:noreply, put_flash(socket, :error, "Unable complete syndicate deactivation!")}
+        Logger.error("Unable to complete syndicate deactivation: #{inspect(error)}")
+        {:noreply, put_flash(socket, :error, "Unable to complete syndicate deactivation!")}
     end
   end
 
