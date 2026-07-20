@@ -4,6 +4,7 @@ defmodule WebInterface.DeactivateLive do
   require Logger
 
   alias Manager
+  alias Phoenix.LiveView
   alias Shared.Data.Syndicate
   alias WebInterface.Persistence.Syndicate, as: SyndicateStore
   alias WebInterface.Persistence.User, as: UserStore
@@ -24,6 +25,8 @@ defmodule WebInterface.DeactivateLive do
           form: to_form(%{"deactivate_syndicates" => []}),
           deactivation_in_progress: false,
           deactivation_progress: 0,
+          last_known_current_progress: 0,
+          last_known_total_progress: 0,
           operation_in_progress?: false,
           selected_button: :deactivate,
           message: nil
@@ -113,8 +116,14 @@ defmodule WebInterface.DeactivateLive do
       ) do
     progress = round(current_progress / total_progress * 100)
 
+    updated_socket =
+      socket
+      |> assign(last_known_current_progress: current_progress)
+      |> assign(last_known_total_progress: total_progress)
+      |> assign(deactivation_progress: progress)
+
     Logger.info("Deactivate: Order deleted for #{item_name}, #{progress}%")
-    {:noreply, assign(socket, deactivation_progress: progress)}
+    {:noreply, updated_socket}
   end
 
   def handle_info({:deactivate, {:ok, :done}}, socket) do
@@ -162,8 +171,14 @@ defmodule WebInterface.DeactivateLive do
   def handle_info({:activate, {:ok, {:price_calculated, item_name, price, current_progress, total_progress}}}, socket) do
     progress = round(current_progress / total_progress * 100)
 
+    updated_socket =
+      socket
+      |> assign(last_known_current_progress: current_progress)
+      |> assign(last_known_total_progress: total_progress)
+      |> assign(deactivation_progress: progress)
+
     Logger.info("Deactivate: Price recalculated for #{item_name}, #{price}p, #{progress}%")
-    {:noreply, assign(socket, deactivation_progress: progress)}
+    {:noreply, updated_socket}
   end
 
   def handle_info({:activate, {:ok, :placing_orders}}, socket) do
@@ -174,8 +189,14 @@ defmodule WebInterface.DeactivateLive do
   def handle_info({:activate, {:ok, {:order_placed, item_name, current_progress, total_progress}}}, socket) do
     progress = round(current_progress / total_progress * 100)
 
+    updated_socket =
+      socket
+      |> assign(last_known_current_progress: current_progress)
+      |> assign(last_known_total_progress: total_progress)
+      |> assign(deactivation_progress: progress)
+
     Logger.info("Deactivate: Order placed for #{item_name}, #{progress}%")
-    {:noreply, assign(socket, deactivation_progress: progress)}
+    {:noreply, updated_socket}
   end
 
   def handle_info({:activate, {:ok, :done}}, socket) do
@@ -201,6 +222,58 @@ defmodule WebInterface.DeactivateLive do
     end
   end
 
+  # Non fatal error, we can continue with the next order
+  def handle_info({:deactivate, {:error, {:delete_order, {:error, _msg}} = reason}}, socket) do
+    Logger.error("Deactivate: Failed to delete an order. Continuing - #{inspect(reason)}")
+
+    {last_progress, progress} = recalculate_progress(socket)
+
+    updated_socket =
+      socket
+      |> assign(message: "Failed to delete an order. Continuing...")
+      |> assign(last_known_current_progress: last_progress)
+      |> assign(deactivation_progress: progress)
+
+    {:noreply,
+     put_flash(updated_socket, :warning, "Failed to delete an item order, please check the logs for details.")}
+  end
+
+  # Non fatal error, we can continue with the next item
+  def handle_info({:activate, {:error, {:get_item_orders, {:error, _reason}} = reason}}, socket) do
+    Logger.error("Deactivate: Failed to get item orders for an item. Continuing - #{inspect(reason)}")
+
+    {last_progress, progress} = recalculate_progress(socket)
+
+    updated_socket =
+      socket
+      |> assign(message: "Failed to fetch item orders while reactivating. Discarding item...")
+      |> assign(last_known_current_progress: last_progress)
+      |> assign(deactivation_progress: progress)
+
+    {:noreply,
+     put_flash(updated_socket, :warning, "Failed to fetch item orders during reactivation, please check the logs for details.")}
+  end
+
+  # Non fatal error, we can continue with the next item
+  def handle_info({:activate, {:error, {:place_order, {:error, _reason}} = reason}}, socket) do
+    Logger.error("Deactivate: Failed to place an order. Continuing - #{inspect(reason)}")
+
+    {last_progress, progress} = recalculate_progress(socket)
+
+    updated_socket =
+      socket
+      |> assign(message: "Failed to place an order while reactivating. Continuing...")
+      |> assign(last_known_current_progress: last_progress)
+      |> assign(deactivation_progress: progress)
+
+    {:noreply,
+     put_flash(
+       updated_socket,
+       :warning,
+       "Failed to place an item order during reactivation, please check the logs for details."
+     )}
+  end
+
   def handle_info({:activate, {:error, reason}}, socket) do
     Logger.error("Deactivate: Reactivation error occurred - #{inspect(reason)}")
 
@@ -208,6 +281,9 @@ defmodule WebInterface.DeactivateLive do
       socket
       |> assign(deactivation_in_progress: false)
       |> assign(operation_in_progress?: false)
+      |> assign(deactivation_progress: 0)
+      |> assign(last_known_current_progress: 0)
+      |> assign(last_known_total_progress: 0)
       |> assign(message: nil)
 
     {:noreply,
@@ -233,4 +309,19 @@ defmodule WebInterface.DeactivateLive do
     do:
       Enum.empty?(selected_syndicates) or
         Enum.sort(selected_syndicates) == Enum.sort(inactive_syndicates)
+
+  @spec recalculate_progress(LiveView.Socket.t()) :: {integer(), integer()}
+  defp recalculate_progress(socket) do
+    last_progress = socket.assigns.last_known_current_progress + 1
+    total_progress = socket.assigns.last_known_total_progress
+
+    progress =
+      if is_integer(total_progress) and total_progress > 0 do
+        round(last_progress / total_progress * 100)
+      else
+        0
+      end
+
+    {last_progress, progress}
+  end
 end
