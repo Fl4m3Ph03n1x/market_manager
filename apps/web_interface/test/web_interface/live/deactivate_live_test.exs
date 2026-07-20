@@ -339,13 +339,11 @@ defmodule WebInterface.DeactivateLiveTest do
         assert has_element?(view, "span", "0")
         assert has_element?(view, "[role=\"alert\"]", "Failed to delete an item order, please check the logs for details.")
 
-
         send(view.pid, {:activate, {:error, {:get_item_orders, {:error, :not_found}}}})
 
         assert has_element?(view, "p", "Failed to fetch item orders while reactivating. Discarding item...")
         assert has_element?(view, "span", "0")
         assert has_element?(view, "[role=\"alert\"]", "Failed to fetch item orders during reactivation, please check the logs for details.")
-
 
         send(view.pid, {:activate, {:error, {:place_order, {:error, :not_found}}}})
 
