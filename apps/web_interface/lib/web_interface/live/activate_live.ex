@@ -165,7 +165,6 @@ defmodule WebInterface.ActivateLive do
       |> assign(last_known_total_progress: total_progress)
       |> assign(activation_progress: progress)
 
-
     Logger.info("Activate: Order placed for #{item_name}, #{progress}%")
     {:noreply, updated_socket}
   end
