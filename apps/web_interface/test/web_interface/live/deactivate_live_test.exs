@@ -285,6 +285,67 @@ defmodule WebInterface.DeactivateLiveTest do
       end
     end
 
+    @tag :capture_log
+    test "it continues deleting orders when deleting an order fails", %{
+      conn: conn,
+      user: user,
+      syndicates: syndicates
+    } do
+      inactive_syndicates = Enum.filter(syndicates, &(&1.id == :steel_meridian))
+      selected_syndicates = Enum.filter(syndicates, &(&1.id == :red_veil))
+
+      with_mocks([
+        {UserStore, [], [get_user: fn -> {:ok, user} end, has_user?: fn -> true end]},
+        {SyndicateStore, [],
+         [
+           get_syndicates: fn -> {:ok, syndicates} end,
+           get_inactive_syndicates: fn -> {:ok, inactive_syndicates} end,
+           get_selected_inactive_syndicates: fn -> {:ok, selected_syndicates} end
+         ]}
+      ]) do
+        {:ok, view, _html} = live(conn, ~p"/deactivate")
+
+        send(view.pid, {:deactivate, {:ok, {:order_deleted, "Rift Haven", 1, 4}}})
+        send(view.pid, {:deactivate, {:error, {:delete_order, {:error, :not_found}}}})
+
+        assert has_element?(view, "p", "Failed to delete an order. Continuing...")
+        assert has_element?(view, "span", "50")
+      end
+    end
+
+    @tag :capture_log
+    test "it continues reactivation when getting item orders or placing an order fails", %{
+      conn: conn,
+      user: user,
+      syndicates: syndicates
+    } do
+      inactive_syndicates = Enum.filter(syndicates, &(&1.id == :steel_meridian))
+      selected_syndicates = Enum.filter(syndicates, &(&1.id == :red_veil))
+
+      with_mocks([
+        {UserStore, [], [get_user: fn -> {:ok, user} end, has_user?: fn -> true end]},
+        {SyndicateStore, [],
+         [
+           get_syndicates: fn -> {:ok, syndicates} end,
+           get_inactive_syndicates: fn -> {:ok, inactive_syndicates} end,
+           get_selected_inactive_syndicates: fn -> {:ok, selected_syndicates} end
+         ]}
+      ]) do
+        {:ok, view, _html} = live(conn, ~p"/deactivate")
+
+        send(view.pid, {:activate, {:ok, {:price_calculated, "Rift Haven", 42, 1, 4}}})
+        send(view.pid, {:activate, {:error, {:get_item_orders, {:error, :not_found}}}})
+
+        assert has_element?(view, "p", "Failed fetch item orders while reactivating. Discarding item...")
+        assert has_element?(view, "span", "50")
+
+        send(view.pid, {:activate, {:error, {:place_order, {:error, :not_found}}}})
+
+        assert has_element?(view, "p", "Failed an order placement while reactivating. Continuing...")
+        assert has_element?(view, "span", "75")
+      end
+    end
+
     test "it persists deactivated syndicates and returns to the form when deactivation completes", %{
       conn: conn,
       user: user,
