@@ -4,6 +4,7 @@ defmodule WebInterface.ActivateLive do
   require Logger
 
   alias Manager
+  alias Phoenix.LiveView
   alias Shared.Data.{Strategy, Syndicate}
   alias WebInterface.Persistence.Strategy, as: StrategyStore
   alias WebInterface.Persistence.Syndicate, as: SyndicateStore
@@ -195,27 +196,27 @@ defmodule WebInterface.ActivateLive do
   def handle_info({:activate, {:error, {:get_item_orders, {:error, _reason}} = reason}}, socket) do
     Logger.error("Activate: Failed to get item orders for an item. Continuing - #{inspect(reason)}")
 
-    progress = round((socket.assigns.last_known_current_progress + 1) / socket.assigns.last_known_total_progress * 100)
+    {last_progress, progress} = recalculate_progress(socket)
 
     updated_socket =
       socket
-      |> assign(message: "Failed fetch item orders. Discarding item...")
-      |> assign(last_known_current_progress: socket.assigns.last_known_current_progress + 1)
+      |> assign(message: "Failed to fetch item orders. Discarding item...")
+      |> assign(last_known_current_progress: last_progress)
       |> assign(activation_progress: progress)
 
-    {:noreply, put_flash(updated_socket, :warning, "Failed item orders, please check the logs for details.")}
+    {:noreply, put_flash(updated_socket, :warning, "Failed to fetch item orders, please check the logs for details.")}
   end
 
   # Non fatal error, we can continue with the next item
   def handle_info({:activate, {:error, {:place_order, {:error, _reason}} = reason}}, socket) do
     Logger.error("Activate: Failed to place an order. Continuing - #{inspect(reason)}")
 
-    progress = round((socket.assigns.last_known_current_progress + 1) / socket.assigns.last_known_total_progress * 100)
+    {last_progress, progress} = recalculate_progress(socket)
 
     updated_socket =
       socket
       |> assign(message: "Failed an order placement. Continuing...")
-      |> assign(last_known_current_progress: socket.assigns.last_known_current_progress + 1)
+      |> assign(last_known_current_progress: last_progress)
       |> assign(activation_progress: progress)
 
     {:noreply, put_flash(updated_socket, :warning, "Failed to place an item order, please check the logs for details.")}
@@ -252,4 +253,19 @@ defmodule WebInterface.ActivateLive do
     do:
       is_nil(strategy) or Enum.empty?(selected_syndicates) or
         Enum.sort(selected_syndicates) == Enum.sort(active_syndicates)
+
+  @spec recalculate_progress(LiveView.Socket.t()) :: {integer(), integer()}
+  defp recalculate_progress(socket) do
+    last_progress = socket.assigns.last_known_current_progress + 1
+    total_progress = socket.assigns.last_known_total_progress
+
+    progress =
+      if is_integer(total_progress) and total_progress > 0 do
+        round(last_progress / total_progress * 100)
+      else
+        0
+      end
+
+    {last_progress, progress}
+  end
 end

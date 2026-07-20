@@ -455,13 +455,55 @@ defmodule WebInterface.ActivateLiveTest do
         send(view.pid, {:activate, {:ok, {:price_calculated, "Rift Haven", 42, 1, 4}}})
         send(view.pid, {:activate, {:error, {:get_item_orders, {:error, :not_found}}}})
 
-        assert has_element?(view, "p", "Failed fetch item orders. Discarding item...")
+        assert has_element?(view, "p", "Failed to fetch item orders. Discarding item...")
         assert has_element?(view, "span", "50")
 
         send(view.pid, {:activate, {:error, {:place_order, {:error, :not_found}}}})
 
         assert has_element?(view, "p", "Failed an order placement. Continuing...")
         assert has_element?(view, "span", "75")
+      end
+    end
+
+    @tag :capture_log
+    test "it continues when getting item orders fails as the first request", %{
+      conn: conn,
+      user: user,
+      strategies: strategies,
+      syndicates: syndicates
+    } do
+      selected_strategy = Enum.find(strategies, fn strategy -> strategy.id == :lowest_minus_one end)
+
+      with_mocks([
+        {UserStore, [], [get_user: fn -> {:ok, user} end, has_user?: fn -> true end]},
+        {StrategyStore, [],
+         [get_strategies: fn -> {:ok, strategies} end, get_selected_strategy: fn -> {:ok, selected_strategy} end]},
+        {SyndicateStore, [],
+         [
+           get_syndicates: fn -> {:ok, syndicates} end,
+           get_active_syndicates: fn -> {:ok, []} end,
+           get_selected_active_syndicates: fn -> {:ok, []} end
+         ]}
+      ]) do
+        {:ok, view, _html} = live(conn, ~p"/activate")
+
+        send(view.pid, {:activate, {:error, {:get_item_orders, {:error, :not_found}}}})
+
+        assert has_element?(view, "p", "Failed to fetch item orders. Discarding item...")
+        assert has_element?(view, "span", "0")
+
+        assert has_element?(view, "[role=\"alert\"]", "Failed to fetch item orders, please check the logs for details.")
+
+        send(view.pid, {:activate, {:error, {:place_order, {:error, :not_found}}}})
+
+        assert has_element?(view, "p", "Failed an order placement. Continuing...")
+        assert has_element?(view, "span", "0")
+
+        assert has_element?(
+                 view,
+                 "[role=\"alert\"]",
+                 "Failed to place an item order, please check the logs for details."
+               )
       end
     end
 
