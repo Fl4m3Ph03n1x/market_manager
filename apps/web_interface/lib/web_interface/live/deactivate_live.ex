@@ -262,7 +262,7 @@ defmodule WebInterface.DeactivateLive do
 
     updated_socket =
       socket
-      |> assign(message: "Failed an order placement while reactivating. Continuing...")
+      |> assign(message: "Failed to place an order while reactivating. Continuing...")
       |> assign(last_known_current_progress: last_progress)
       |> assign(deactivation_progress: progress)
 

@@ -349,7 +349,7 @@ defmodule WebInterface.DeactivateLiveTest do
 
         send(view.pid, {:activate, {:error, {:place_order, {:error, :not_found}}}})
 
-        assert has_element?(view, "p", "Failed an order placement while reactivating. Continuing...")
+        assert has_element?(view, "p", "Failed to place an order while reactivating. Continuing...")
         assert has_element?(view, "span", "0")
         assert has_element?(view, "[role=\"alert\"]", "Failed to place an item order during reactivation, please check the logs for details.")
       end
@@ -383,7 +383,7 @@ defmodule WebInterface.DeactivateLiveTest do
 
         send(view.pid, {:activate, {:error, {:place_order, {:error, :not_found}}}})
 
-        assert has_element?(view, "p", "Failed an order placement while reactivating. Continuing...")
+        assert has_element?(view, "p", "Failed to place an order while reactivating. Continuing...")
         assert has_element?(view, "span", "75")
       end
     end
