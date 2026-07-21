@@ -44,6 +44,7 @@
 ​ 	* Write and pass tests before finalizing.
 ​ 	* Keep `README.md` with setup/run info.
 ​ 	* Store all docs/specs in Markdown.
+​ 	* Everytime `version` changes in `mix.exs`, make sure to also update the version on the coverage badged in `README.md`.
 ​ 	
 ​ 	### Safe Practices
 ​ 	
