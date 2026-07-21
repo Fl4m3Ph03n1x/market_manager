@@ -9,7 +9,7 @@
         <img src="https://github.com/Fl4m3Ph03n1x/market_manager/actions/workflows/master.yml/badge.svg" alt="Build Status"/>
     </a>
     <a href="https://coveralls.io/github/Fl4m3Ph03n1x/market_manager?branch=master">
-        <img src="https://coveralls.io/repos/github/Fl4m3Ph03n1x/market_manager/badge.svg?branch=master" alt="Coverage Status"/>
+        <img src="https://coveralls.io/repos/github/Fl4m3Ph03n1x/market_manager/badge.svg?branch=master&v=2.2.9" alt="Coverage Status"/>
     </a>
 </p>
 
