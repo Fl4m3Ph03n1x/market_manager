@@ -138,6 +138,8 @@ defmodule WebInterface.DeactivateLive do
         |> assign(selected_inactive_syndicates: new_inactive_syndicates)
         |> assign(deactivation_in_progress: false)
         |> assign(operation_in_progress?: false)
+        |> assign(last_known_current_progress: 0)
+        |> assign(last_known_total_progress: 0)
         |> assign(message: nil)
 
       Logger.info("Deactivate: Action completed.")
@@ -211,6 +213,8 @@ defmodule WebInterface.DeactivateLive do
         |> assign(selected_inactive_syndicates: new_inactive_syndicates)
         |> assign(deactivation_in_progress: false)
         |> assign(operation_in_progress?: false)
+        |> assign(last_known_current_progress: 0)
+        |> assign(last_known_total_progress: 0)
         |> assign(message: nil)
 
       Logger.info("Deactivate: Action completed.")
