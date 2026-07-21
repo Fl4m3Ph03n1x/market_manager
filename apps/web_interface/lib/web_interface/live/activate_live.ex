@@ -122,6 +122,8 @@ defmodule WebInterface.ActivateLive do
       socket
       |> assign(activation_in_progress: false)
       |> assign(operation_in_progress?: false)
+      |> assign(last_known_current_progress: 0)
+      |> assign(last_known_total_progress: 0)
       |> assign(message: nil)
 
     Logger.info("Activate: No free order slots available.")
@@ -181,6 +183,8 @@ defmodule WebInterface.ActivateLive do
         |> assign(all_syndicates_active?: all_syndicates_active?)
         |> assign(activation_in_progress: false)
         |> assign(operation_in_progress?: false)
+        |> assign(last_known_current_progress: 0)
+        |> assign(last_known_total_progress: 0)
         |> assign(message: nil)
 
       Logger.info("Activate: Action completed.")
