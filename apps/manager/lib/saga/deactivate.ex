@@ -75,12 +75,10 @@ defmodule Manager.Saga.Deactivate do
       orders_to_delete =
         Enum.filter(placed_orders, fn placed_order -> placed_order.item_id in active_syndicate_product_ids end)
 
-      orders_to_delete_tracker =
-        orders_to_delete
-        |> Enum.map(&{&1, nil})
-        |> Map.new()
-
-      updated_state = Map.put(state, :orders_to_delete_tracker, orders_to_delete_tracker)
+      updated_state =
+        state
+        |> Map.put(:orders_to_delete_count, length(orders_to_delete))
+        |> Map.put(:delete_attempts_completed, 0)
 
       Enum.each(orders_to_delete, &auction_house.delete_order/1)
       send(from, {:deactivate, {:ok, :deleting_orders}})
@@ -100,29 +98,24 @@ defmodule Manager.Saga.Deactivate do
           deps: %{store: store, auction_house: _auction_house},
           args: %{syndicate_ids: syndicate_ids},
           user: _user,
-          orders_to_delete_tracker: orders_to_delete_tracker,
+          orders_to_delete_count: orders_to_delete_count,
+          delete_attempts_completed: delete_attempts_completed,
           from: from
         } = state
       ) do
     with {:ok, product} <- store.get_product_by_id(placed_order.item_id) do
-      updated_tracker = Map.put(orders_to_delete_tracker, placed_order, true)
-      updated_state = Map.put(state, :orders_to_delete_tracker, updated_tracker)
+      updated_delete_attempts_completed = delete_attempts_completed + 1
 
-      deleted_orders_count =
-        updated_tracker
-        |> Map.values()
-        |> Enum.count(&(&1 != nil))
-
-      orders_to_delete_count = orders_to_delete_tracker |> Map.to_list() |> length()
-      all_orders_deleted? = deleted_orders_count == orders_to_delete_count
+      updated_state = Map.put(state, :delete_attempts_completed, updated_delete_attempts_completed)
+      all_orders_deleted? = updated_delete_attempts_completed == orders_to_delete_count
 
       send(
         from,
-        {:deactivate, {:ok, {:order_deleted, product.name, deleted_orders_count, orders_to_delete_count}}}
+        {:deactivate, {:ok, {:order_deleted, product.name, updated_delete_attempts_completed, orders_to_delete_count}}}
       )
 
       if all_orders_deleted? do
-        handle_all_orders_deleted(from, syndicate_ids, store, state)
+        handle_all_orders_deleted(from, syndicate_ids, store, updated_state)
       else
         {:noreply, updated_state}
       end
@@ -130,9 +123,26 @@ defmodule Manager.Saga.Deactivate do
   end
 
   # if we fail to delete a placed order, we can still continue to delete the others
-  def handle_info({:delete_order, {:error, _msg}} = error, %{from: from} = state) do
+  def handle_info(
+        {:delete_order, {:error, _msg}} = error,
+        %{
+          deps: %{store: store, auction_house: _auction_house},
+          args: %{syndicate_ids: syndicate_ids},
+          orders_to_delete_count: orders_to_delete_count,
+          delete_attempts_completed: delete_attempts_completed,
+          from: from
+        } = state
+      ) do
+    updated_delete_attempts_completed = delete_attempts_completed + 1
+    updated_state = Map.put(state, :delete_attempts_completed, updated_delete_attempts_completed)
+
     send(from, {:deactivate, {:error, error}})
-    {:noreply, state}
+
+    if updated_delete_attempts_completed == orders_to_delete_count do
+      handle_all_orders_deleted(from, syndicate_ids, store, updated_state)
+    else
+      {:noreply, updated_state}
+    end
   end
 
   ###########
