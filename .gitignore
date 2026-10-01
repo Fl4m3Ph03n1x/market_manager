@@ -34,8 +34,3 @@ test_setup/
 # Burrito output
 /burrito_out/
 
-# OpenCode AI
-opencode.json
-
-# Ignore agent handover context files
-market_manager_handover.md
