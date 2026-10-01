@@ -37,5 +37,5 @@ test_setup/
 # OpenCode AI
 opencode.json
 
-# Ignore test evaluation context files
-test_evaluation.md
+# Ignore agent handover context files
+market_manager_handover.md
