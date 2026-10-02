@@ -15,15 +15,15 @@
 
 | Item | Value |
 |---|---|
-| Branch | `fixing-auth-v2` at `88bc577 implementation of phases 2 and 3` (2 commits ahead of `master`) |
-| Uncommitted | Phase 4 of the auth rework (`manager` sagas and `Worker`, `web_interface` LiveViews, their tests) and this file |
-| Version | `2.2.9` in `mix.exs`; latest tag `2.2.9`; README badge `v=2.2.9` |
+| Branch | `fixing-auth-v2` at `630d445 mix format` (7 commits ahead of `master`; 2 not pushed: `eaebc2a updated catalog`, `630d445 mix format`) |
+| Uncommitted | This file and the version bump (G): `mix.exs`, the 5 changed apps' `mix.exs`, `README.md`, `config/config.exs` |
+| Version | `2.2.10` in `mix.exs` (uncommitted, decision G); latest tag `2.2.9`; README badge `v=2.2.10`; `user_agent` `MarketManager/2.2.10`. Apps: `shared` 3.0.0, `auction_house` 6.0.0, `store` 6.0.0, `manager` 5.1.0, `web_interface` 2.4.0, `rate_limiter` 1.0.2 (unchanged) |
 | Local toolchain | Elixir 1.20.1, Erlang/OTP 28.3.2 (ASDF) |
 | CI toolchain | Elixir 1.20.x, OTP 28.5.x on `windows-2022` (`.github/workflows/master.yml`) |
-| Compile | `mix compile --warnings-as-errors` (dev and test): clean; `mix credo --strict`: no issues; `mix dialyzer`: passed (2026-10-02). `mix format --check-formatted` fails (not in CI): 3 test files from Phases 1-3 (`auction_house/.../use_case/login_test.exs`, `shared/test/data/authorization_test.exs`, `store/test/unit/file_system_test.exs`) and 3 files with older unformatted lines (`manager/test/unit/saga/deactivate_test.exs`, `web_interface/.../live/deactivate_live.ex`, `web_interface/test/.../deactivate_live_test.exs`). Phase 4 additions are formatted. |
+| Compile | Phase 6 automated re-run at `630d445` (2026-10-02): `mix compile --warnings-as-errors --force` (dev and test): clean; `mix credo --strict`: no issues; `mix dialyzer`: passed; `mix format --check-formatted`: passes (whole project formatted in `630d445`). |
 | Tests | `mix coveralls -u`: **284 passed** across all apps (`shared` 29, `store` 41, `rate_limiter` 5, `auction_house` 84, `manager` 41, `web_interface` 84). Earlier "74 passed" entries counted only the last app's line. |
 | Coverage | **77.2%** total |
-| Active blocker | None for login: auth rework implemented (Phases 1-4; Phase 4 uncommitted) and **confirmed in PROD on 2026-10-02** (Phase 6). Remaining: restore `apps/store/priv/setup.json` and `watch_list.json`, then the version bump (G). |
+| Active blocker | None for login: auth rework implemented (Phases 1-4, committed) and **confirmed in PROD on 2026-10-02** (Phase 6). Version bump (G) applied, uncommitted. Remaining: commit, tag, and release (by the user). |
 | Release build | Last known to fail (see **Known Issues**); not re-verified on 2026-10-01 |
 
 ## Active Blockers
@@ -31,7 +31,7 @@
 1. **PROD login broken; the authentication flow must be reworked.**
    - The website sign-in path (`warframe.market/auth/signin`) is permanently blocked for the app (Cloudflare, 2026-10-02).
    - Replacement verified by hand: header-based v1 sign-in, then `Authorization: Bearer <token>` on v2 calls.
-   - State: **Phases 1-4 implemented and confirmed in PROD (Phase 6, 2026-10-02)** (Phase 1 in `8e10343`, Phases 2-3 in `88bc577`, Phase 4 uncommitted). Pending: restore `apps/store/priv/setup.json` and `watch_list.json` (modified by the PROD check), commit Phase 4, then the version bump (decision G).
+   - State: **Phases 1-4 implemented and confirmed in PROD (Phase 6, 2026-10-02)**. Commits: Phase 1 `8e10343`, Phases 2-3 `88bc577`, Phase 4 `a3f7c52`, store files reset `cb26090` (no token committed; `setup.json` is `{}` and `watch_list.json` is reformatted, both equivalent to `master`). Version bump (decision G) applied, uncommitted; tag and release by the user.
    - Rule: do not implement any fix without explicit user approval.
    - Details: section **Header-Based Authentication (2026-10-02)**, subsection **Rework Plan**, plus background in **PROD Login Blocked by Cloudflare (2026-10-01)**.
 
@@ -258,7 +258,7 @@ Coverage numbers below were re-measured on 2026-10-01 and are unchanged from 202
 
 ### Rework Plan (2026-10-02)
 
-> Status: **Phases 1-4 implemented on 2026-10-02 and confirmed in PROD (Phase 6).** Phase 1 in `8e10343`, Phases 2-3 in `88bc577`, Phase 4 uncommitted. Compile (dev and test, `--warnings-as-errors`), `mix test` (284 passed), `mix credo --strict`, and `mix dialyzer` all pass. Pending: the version bump (G).
+> Status: **Phases 1-4 implemented on 2026-10-02 and confirmed in PROD (Phase 6).** Phase 1 in `8e10343`, Phases 2-3 in `88bc577`, Phase 4 in `a3f7c52`. Compile (dev and test, `--warnings-as-errors`), `mix test` (284 passed), `mix credo --strict`, and `mix dialyzer` all pass. Version bump (G) applied, uncommitted.
 
 Phase 6 PROD check (2026-10-02, `MIX_ENV=prod mix phx.server`, invisible test account):
 
@@ -273,6 +273,8 @@ Phase 6 PROD check (2026-10-02, `MIX_ENV=prod mix phx.server`, invisible test ac
 
 - No errors and no tokens in the logs. The only personal data logged is the email in Phoenix's debug log of the login form event (password `[FILTERED]`); this predates the rework.
 - The PROD build symlinks `_build/prod/lib/store/priv` to the tracked `apps/store/priv`, so a PROD run with "remember me" writes a real token into a tracked file. Restore `setup.json` and `watch_list.json` with `git checkout` before committing.
+
+Phase 6 automated re-run (2026-10-02, after the catalog update `eaebc2a` and `mix format` `630d445`): compile (dev and test, `--warnings-as-errors --force`), `mix test` (284 passed), `mix credo --strict`, `mix dialyzer`, and `mix format --check-formatted` all pass. The manual PROD check was not repeated.
 
 Target flow:
 
@@ -340,7 +342,7 @@ Target flow:
 | R4-2 | Sagas are `restart: :transient`; a non-`:normal` stop restarts and reruns them | **Decided:** both sagas stop with `{:stop, :normal, state}` on `:unauthorized` |
 | R4-3 | Clause order | **Decided:** `:unauthorized` clauses come before the generic `{:place_order, {:error, _}}` / `{:delete_order, {:error, _}}` (sagas) and `{:activate, {:error, reason}}` / `{:deactivate, {:error, reason}}` (LiveViews) clauses |
 | R4-4 | `Manager.logout/0` fails during the session-expired flow | **Decided:** still clear `UserStore` and redirect to `/login`, with an error flash, like `LogoutLive`'s error branch |
-| G | Version bump | **Decided:** umbrella `2.2.9` → **`2.2.10`**; strict semver per changed app; bump only **after Phase 6 is confirmed in PROD**. Update together: `mix.exs` (umbrella), the changed apps' `mix.exs`, the README badge (`v=`), and `user_agent` in `config/config.exs`. Tagging and the Windows release are done by the user. Per-app numbers are proposals to confirm at bump time: `shared` 2.1.0 → 3.0.0 (`Authorization` fields and `new/1` changed incompatibly), `auction_house` 5.1.0 → 6.0.0 (`HttpAsyncClient.post` argument, `Login.sign_in/2` removed, `Login` error values changed), `store` 5.0.6 → 6.0.0 if the saved login format counts as part of its contract (its function signatures are unchanged), `manager` and `web_interface` depending on Phase 4 (new messages are additions → minor). `rate_limiter` unchanged. |
+| G | Version bump | **Done (2026-10-02, uncommitted):** umbrella `2.2.9` → `2.2.10`; `shared` 2.1.0 → 3.0.0, `auction_house` 5.1.0 → 6.0.0, `store` 5.0.6 → 6.0.0 (saved login format counted as contract), `manager` 5.0.5 → 5.1.0, `web_interface` 2.3.4 → 2.4.0, `rate_limiter` unchanged; README badge `v=2.2.10`; `user_agent` `MarketManager/2.2.10`. No inter-app version requirements to update. Tagging and the Windows release are done by the user. |
 
 #### Phase 1 spec (final)
 
@@ -676,6 +678,9 @@ Proceed with B1 only if all three pass. Confirm with the maintainers that the un
   - Implemented Phase 4 as specified: sagas stop with `:normal` on `:unauthorized` and report it; `Worker` `:recover_login` calls `update_login/2`; `ActivateLive`/`DeactivateLive` expire the session (both message shapes in `DeactivateLive`, logout-failure branch); `LoginLive` new messages, `:econnrefused`/`:timeout` removed (`:econnrefused` text reused for `:request_failed`). Tests added in sagas, `manager_test`, and the three LiveViews. 284 tests, 77.2% coverage, credo and dialyzer clean.
   - Phase 6 PROD check passed (all 6 steps); details in **Rework Plan**.
   - Marked the Cloudflare section and Option B as superseded.
+  - Catalog (`eaebc2a`): added Gastro, Prey Of Dynar, Prismatic Companion, Cold Front, Gastroparesis, Infernum, Broods Oversurge to `products.json` and the missing faction augments to `syndicates.json` (IDs from warframe.market `/v2/items`). Open: wiki renames Negation Armor, Sonic Siphon, Teleport Rush vs catalog Negation Swarm, Sonic Fracture, Fatal Teleport.
+  - Ran `mix format` on the whole project (`630d445`); Phase 6 automated checks re-run and passing (284 tests).
+  - Applied decision G (uncommitted): umbrella `2.2.10`, `shared` 3.0.0, `auction_house` 6.0.0, `store` 6.0.0, `manager` 5.1.0, `web_interface` 2.4.0, README badge, `user_agent`. Compile (dev and test), 284 tests, and the format check pass.
 - **2026-10-01:**
   - Renamed from `test_evaluation.md` and restructured for agent use.
   - Added project state, map, working agreements, and known issues.
