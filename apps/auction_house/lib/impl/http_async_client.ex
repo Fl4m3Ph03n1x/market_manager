@@ -15,7 +15,8 @@ defmodule AuctionHouse.Impl.HttpAsyncClient do
 
   @static_headers [
     {"Accept", "application/json"},
-    {"Content-Type", "application/json"}
+    {"Content-Type", "application/json"},
+    {"User-Agent", Application.compile_env!(:auction_house, :user_agent)}
   ]
 
   @default_deps %{
@@ -25,6 +26,7 @@ defmodule AuctionHouse.Impl.HttpAsyncClient do
 
   @retryable_status_codes [429, 500, 502, 503, 520]
   @max_retries 2
+  @max_logged_body_bytes 500
 
   @type url :: String.t()
   @type data :: String.t()
@@ -52,21 +54,32 @@ defmodule AuctionHouse.Impl.HttpAsyncClient do
            | :unable_to_decode_error
            | :unknown_error
            | :request_failed
+           | :unauthorized
+           | :bad_request
+           | :forbidden
+           | :not_found
 
   ##########
   # Public #
   ##########
 
-  @spec post(url(), data(), Request.t(), RateLimiter.response_function(), Authorization.t(), deps()) :: :ok
+  @spec post(
+          url(),
+          data(),
+          Request.t(),
+          RateLimiter.response_function(),
+          Authorization.t() | headers(),
+          deps()
+        ) :: :ok
   def post(
         url,
         data,
         request,
         response_fun,
-        %Authorization{cookie: cookie, token: token},
+        auth,
         %{rate_limiter: rate_limiter, client: client} \\ @default_deps
       ) do
-    call = {&client.post/3, [url, data, build_headers(cookie, token)]}
+    call = {&client.post/3, [url, data, build_headers(auth)]}
 
     updated_request =
       request
@@ -85,10 +98,10 @@ defmodule AuctionHouse.Impl.HttpAsyncClient do
         url,
         request,
         response_fun,
-        %Authorization{cookie: cookie, token: token},
+        %Authorization{} = auth,
         %{rate_limiter: rate_limiter, client: client} \\ @default_deps
       ) do
-    call = {&client.delete/2, [url, build_headers(cookie, token)]}
+    call = {&client.delete/2, [url, build_headers(auth)]}
 
     updated_request =
       request
@@ -109,10 +122,10 @@ defmodule AuctionHouse.Impl.HttpAsyncClient do
         url,
         request,
         response_fun,
-        %Authorization{cookie: cookie, token: token},
+        %Authorization{} = auth,
         %{rate_limiter: rate_limiter, client: client}
       ) do
-    call = {&client.get/2, [url, build_headers(cookie, token)]}
+    call = {&client.get/2, [url, build_headers(auth)]}
 
     updated_request =
       request
@@ -164,7 +177,9 @@ defmodule AuctionHouse.Impl.HttpAsyncClient do
       request_success?(response) ->
         {:ok, body, headers} = parsed_response
 
-        headers_map = Enum.reduce(headers, %{}, fn {key, val}, acc -> Map.put(acc, key, val) end)
+        # header names are case-insensitive and the API mixes their case over HTTP/1.1
+        headers_map =
+          Enum.reduce(headers, %{}, fn {key, val}, acc -> Map.put(acc, String.downcase(key), val) end)
 
         response = Response.new(meta, body, headers_map, args)
         result = response_fun.(response)
@@ -203,8 +218,19 @@ defmodule AuctionHouse.Impl.HttpAsyncClient do
 
   defp retry?(_response, _retries), do: false
 
-  @spec build_headers(String.t(), String.t()) :: [{String.t(), String.t()}]
-  defp build_headers(cookie, token), do: [{"x-csrftoken", token}, {"Cookie", cookie}] ++ @static_headers
+  @spec build_headers(Authorization.t() | headers()) :: headers()
+  defp build_headers(%Authorization{access_token: access_token}),
+    do: [{"Authorization", "Bearer " <> access_token} | @static_headers]
+
+  defp build_headers(headers) when is_list(headers), do: headers ++ @static_headers
+
+  @spec log_error(non_neg_integer(), String.t(), body()) :: :ok
+  defp log_error(status, message, body),
+    do: Logger.error("#{message} with status #{status}: #{truncate(body)}")
+
+  @spec truncate(body()) :: String.t()
+  defp truncate(body),
+    do: body |> binary_part(0, min(byte_size(body), @max_logged_body_bytes)) |> inspect()
 
   @spec parse({:ok, HTTPoison.Response.t()} | {:error, HTTPoison.Error.t()}) ::
           {:ok, body(), headers()} | {:error, parse_error()}
@@ -224,19 +250,29 @@ defmodule AuctionHouse.Impl.HttpAsyncClient do
       {:ok, %{"error" => %{"password" => ["app.account.password_invalid"]}}} ->
         {:error, :wrong_password}
 
-      {:error, _reason} = error ->
-        Logger.error("Failed to decode error message with status #{status}: #{inspect(error)}")
+      {:ok, _unknown_error} ->
+        log_error(status, "Received unknown error", error_body)
+        {:error, :bad_request}
+
+      {:error, _reason} ->
+        log_error(status, "Failed to decode error message", error_body)
         {:error, :unable_to_decode_error}
     end
   end
+
+  defp parse({:ok, %HTTPoison.Response{status_code: 401}}), do: {:error, :unauthorized}
 
   defp parse({:ok, %HTTPoison.Response{status_code: 403 = status, body: error_body}}) do
     case Jason.decode(error_body) do
       {:ok, %{"error" => %{"request" => ["app.order.error.exceededOrderLimitSamePrice"]}}} ->
         {:error, :order_already_placed}
 
-      {:error, _reason} = error ->
-        Logger.error("Failed to decode error message with status #{status}: #{inspect(error)}")
+      {:ok, _unknown_error} ->
+        log_error(status, "Received unknown error", error_body)
+        {:error, :forbidden}
+
+      {:error, _reason} ->
+        log_error(status, "Failed to decode error message", error_body)
         {:error, :unable_to_decode_error}
     end
   end
@@ -249,8 +285,12 @@ defmodule AuctionHouse.Impl.HttpAsyncClient do
       {:ok, %{"error" => %{"request" => ["app.item.notFound"]}}} ->
         {:error, :item_not_found}
 
-      {:error, _reason} = error ->
-        Logger.error("Failed to decode error message with status #{status}: #{inspect(error)}")
+      {:ok, _unknown_error} ->
+        log_error(status, "Received unknown error", error_body)
+        {:error, :not_found}
+
+      {:error, _reason} ->
+        log_error(status, "Failed to decode error message", error_body)
         {:error, :unable_to_decode_error}
     end
   end
@@ -267,8 +307,8 @@ defmodule AuctionHouse.Impl.HttpAsyncClient do
 
   defp parse({:ok, %HTTPoison.Response{status_code: 520}}), do: {:error, :unknown_server_error}
 
-  defp parse({:ok, %HTTPoison.Response{} = error}) do
-    Logger.error("Received error with unknown format: #{inspect(error)}")
+  defp parse({:ok, %HTTPoison.Response{status_code: status, body: body}}) do
+    log_error(status, "Received error with unknown format", body)
     {:error, :unknown_error}
   end
 

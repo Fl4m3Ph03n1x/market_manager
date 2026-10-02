@@ -39,7 +39,6 @@ config :store,
 config :auction_house,
   api_item_orders_url: "http://localhost:8082/v2/orders/item",
   api_order_url: "http://localhost:8082/v2/order",
-  market_signin_url: "http://localhost:8082/auth/signin",
   api_signin_url: "http://localhost:8082/v1/auth/signin",
   api_user_orders_url: "http://localhost:8082/v2/orders/user"
 

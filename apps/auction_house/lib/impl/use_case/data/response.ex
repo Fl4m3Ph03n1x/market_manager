@@ -15,7 +15,7 @@ defmodule AuctionHouse.Impl.UseCase.Data.Response do
   @type headers :: %{String.t() => String.t()}
 
   typedstruct enforce: true do
-    @typedoc "A Response from a 3rd party."
+    @typedoc "A Response from a 3rd party. Header names are lowercase."
 
     field(:metadata, Metadata.t())
     field(:request_args, map(), default: %{})

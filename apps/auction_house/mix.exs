@@ -41,7 +41,6 @@ defmodule AuctionHouse.MixProject do
       {:jason, "~> 1.2"},
       {:recase, "~> 0.7"},
       {:jobs, "~> 0.10.0"},
-      {:floki, "~> 0.34.0"},
       {:shared, in_umbrella: true},
       {:rate_limiter, in_umbrella: true},
 

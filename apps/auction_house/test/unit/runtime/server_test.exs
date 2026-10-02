@@ -29,7 +29,7 @@ defmodule AuctionHouse.Runtime.ServerTest do
   describe "handle_cast/2" do
     test "starts a place order request with the current authorization" do
       order = %{itemId: "item_id", platinum: 10, quantity: 1}
-      authorization = %Authorization{cookie: "a_cookie", token: "a_token"}
+      authorization = %Authorization{access_token: "a_token"}
       state = %{authorization: authorization, user: nil}
       from = self()
 
@@ -53,7 +53,7 @@ defmodule AuctionHouse.Runtime.ServerTest do
 
     test "starts a delete order request with the current authorization" do
       placed_order = %PlacedOrder{item_id: "item_id", order_id: "order_id"}
-      authorization = %Authorization{cookie: "a_cookie", token: "a_token"}
+      authorization = %Authorization{access_token: "a_token"}
       state = %{authorization: authorization, user: nil}
       from = self()
 
@@ -147,7 +147,7 @@ defmodule AuctionHouse.Runtime.ServerTest do
 
   describe "handle_call/3" do
     test "updates both login fields" do
-      authorization = %Authorization{cookie: "a_cookie", token: "a_token"}
+      authorization = %Authorization{access_token: "a_token"}
       user = %User{ingame_name: "Fl4m3", slug: "fl4m3", patreon?: false}
       state = %{authorization: nil, user: nil}
 
@@ -156,7 +156,7 @@ defmodule AuctionHouse.Runtime.ServerTest do
     end
 
     test "returns the saved login without changing state" do
-      authorization = %Authorization{cookie: "a_cookie", token: "a_token"}
+      authorization = %Authorization{access_token: "a_token"}
       user = %User{ingame_name: "Fl4m3", slug: "fl4m3", patreon?: false}
       state = %{authorization: authorization, user: user}
 
@@ -166,7 +166,7 @@ defmodule AuctionHouse.Runtime.ServerTest do
 
     test "clears both login fields on logout" do
       state = %{
-        authorization: %Authorization{cookie: "a_cookie", token: "a_token"},
+        authorization: %Authorization{access_token: "a_token"},
         user: %User{ingame_name: "Fl4m3", slug: "fl4m3", patreon?: false}
       }
 
@@ -183,7 +183,7 @@ defmodule AuctionHouse.Runtime.ServerTest do
     end
 
     test "stores authorization and user after a successful login" do
-      authorization = %Authorization{cookie: "a_cookie", token: "a_token"}
+      authorization = %Authorization{access_token: "a_token"}
       user = %User{ingame_name: "Fl4m3", slug: "fl4m3", patreon?: false}
       state = %{authorization: nil, user: nil}
 
@@ -193,7 +193,7 @@ defmodule AuctionHouse.Runtime.ServerTest do
 
     test "clears a previous login after a failed login" do
       state = %{
-        authorization: %Authorization{cookie: "a_cookie", token: "a_token"},
+        authorization: %Authorization{access_token: "a_token"},
         user: %User{ingame_name: "Fl4m3", slug: "fl4m3", patreon?: false}
       }
 

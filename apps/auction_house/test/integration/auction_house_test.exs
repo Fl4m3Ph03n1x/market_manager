@@ -26,31 +26,17 @@ defmodule AuctionHouseTest do
       bypass: bypass
     } do
       # Arrange
-      Bypass.expect(bypass, "GET", "/auth/signin", fn conn ->
-        body = """
-        <!DOCTYPE html>
-        <html lang=en>
-        <head>
-        <meta charset="UTF-8">
-        <meta name="csrf-token" content="##2263dcc167c732ca1b54566e0c1ffb66d8e13e2ed59d113967f7fb5e119fed0f813bf7b98c9777c2f5eafd0ab5f6fdc9ad5a3a44d8b585c07ebdf0af1be310b1">
-        <link rel="canonical" href="https://warframe.market/auth/signin">
-        <link rel="alternate" hreflang="en" href="https://warframe.market/auth/signin">
-        <link rel="manifest" href="/manifest.json">
-        <body>
-        </body>
-        </script>
-        </html>
-        """
-
-        conn
-        |> Plug.Conn.put_resp_header(
-          "Set-Cookie",
-          "JWT=old_cookie; Domain=.warframe.market; Expires=Tue, 21-Mar-2023 15:16:03 GMT; Secure; HttpOnly; Path=/; SameSite=Lax"
-        )
-        |> Plug.Conn.resp(200, body)
-      end)
-
       Bypass.expect(bypass, "POST", "/v1/auth/signin", fn conn ->
+        {:ok, request_body, conn} = Plug.Conn.read_body(conn)
+
+        assert Plug.Conn.get_req_header(conn, "authorization") == ["JWT"]
+
+        assert Jason.decode!(request_body) == %{
+                 "email" => "an_email",
+                 "password" => "password",
+                 "auth_type" => "header"
+               }
+
         body =
           """
           {
@@ -87,10 +73,7 @@ defmodule AuctionHouseTest do
           """
 
         conn
-        |> Plug.Conn.put_resp_header(
-          "Set-Cookie",
-          "JWT=new_cookie; Domain=.warframe.market; Expires=Tue, 21-Mar-2023 14:41:06 GMT; Secure; HttpOnly; Path=/; SameSite=Lax"
-        )
+        |> Plug.Conn.put_resp_header("authorization", "JWT new_token")
         |> Plug.Conn.resp(200, body)
       end)
 
@@ -105,11 +88,8 @@ defmodule AuctionHouseTest do
       assert_receive(
         {:login,
          {:ok,
-          {%Authorization{
-             token:
-               "##2263dcc167c732ca1b54566e0c1ffb66d8e13e2ed59d113967f7fb5e119fed0f813bf7b98c9777c2f5eafd0ab5f6fdc9ad5a3a44d8b585c07ebdf0af1be310b1",
-             cookie: "JWT=new_cookie"
-           }, %UserInfo{patreon?: false, ingame_name: "Fl4m3Ph03n1x", slug: "fl4m3ph03n1x"}}}},
+          {%Authorization{access_token: "new_token"},
+           %UserInfo{patreon?: false, ingame_name: "Fl4m3Ph03n1x", slug: "fl4m3ph03n1x"}}}},
         3000
       )
     end
@@ -151,7 +131,7 @@ defmodule AuctionHouseTest do
         itemId: "54a74454e779892d5e5155d5"
       }
 
-      auth = %Authorization{cookie: "cookie", token: "token"}
+      auth = %Authorization{access_token: "token"}
       user = %UserInfo{ingame_name: "Fl4m3", slug: "fl4m3", patreon?: false}
 
       :ok = AuctionHouse.update_login(auth, user)
@@ -202,7 +182,7 @@ defmodule AuctionHouseTest do
           "item_id" => "57c73be094b4b0f159ab5e15"
         })
 
-      auth = %Authorization{cookie: "cookie", token: "token"}
+      auth = %Authorization{access_token: "token"}
       user = %UserInfo{ingame_name: "Fl4m3", slug: "fl4m3", patreon?: false}
 
       :ok = AuctionHouse.update_login(auth, user)
@@ -388,7 +368,7 @@ defmodule AuctionHouseTest do
   describe "update_login/2" do
     test "updates server state correctly" do
       # Arrange
-      auth = Authorization.new(%{"cookie" => "a_cookie", "token" => "a_token"})
+      auth = Authorization.new(%{"access_token" => "a_token"})
       user = UserInfo.new(%{"ingame_name" => "Fl4m3", "slug" => "fl4m3", "patreon?" => false})
 
       assert :ok == AuctionHouse.update_login(auth, user)
@@ -398,7 +378,7 @@ defmodule AuctionHouseTest do
   describe "get_saved_login/0" do
     test "returns server state correctly" do
       # Arrange
-      auth = Authorization.new(%{"cookie" => "a_cookie", "token" => "a_token"})
+      auth = Authorization.new(%{"access_token" => "a_token"})
       user = UserInfo.new(%{"ingame_name" => "Fl4m3", "slug" => "fl4m3", "patreon?" => false})
 
       assert :ok == AuctionHouse.update_login(auth, user)

@@ -4,31 +4,22 @@ defmodule AuctionHouse.Impl.UseCase.Login do
   """
 
   alias AuctionHouse.Impl.{HttpAsyncClient, UseCase}
-  alias AuctionHouse.Impl.UseCase.Data.{Metadata, Request, Response}
+  alias AuctionHouse.Impl.UseCase.Data.{Request, Response}
   alias Jason
   alias Shared.Data.{Authorization, User}
 
   @behaviour UseCase
 
-  @market_signin_url Application.compile_env!(:auction_house, :market_signin_url)
   @api_signin_url Application.compile_env!(:auction_house, :api_signin_url)
 
+  @signin_headers [{"Authorization", "JWT"}]
+
   @default_deps %{
-    get: &HttpAsyncClient.get/3,
-    post: &HttpAsyncClient.post/5,
-    parser: &Floki.parse_document/1,
-    finder: &Floki.find/2
+    post: &HttpAsyncClient.post/5
   }
 
-  @typep deps :: %{
-           get: fun(),
-           post: fun(),
-           finder: fun(),
-           parser: fun()
-         }
-  @typep parsed_body :: [String.t()]
+  @typep deps :: %{post: fun()}
   @typep body :: map()
-  @typep cookie :: String.t()
 
   ##########
   # Public #
@@ -36,61 +27,29 @@ defmodule AuctionHouse.Impl.UseCase.Login do
 
   @impl UseCase
   @spec start(Request.t(), deps()) :: any()
-  def start(request, %{get: async_get} \\ @default_deps) do
-    async_get.(@market_signin_url, request, &sign_in/1)
-  end
-
-  @spec sign_in(Response.t(), deps()) :: :ok | {:error, any()}
-  def sign_in(
-        %Response{
-          metadata: meta,
-          body: body,
-          headers: headers,
-          request_args: %{credentials: credentials}
-        },
-        %{post: async_post, parser: parse_document} = deps \\ @default_deps
-      ) do
-    with {:ok, json_credentials} <- Jason.encode(credentials),
-         {:ok, doc} <- parse_document.(body),
-         {:ok, token} <- find_xrfc_token(doc, deps),
-         {:ok, cookie} <- parse_cookie(headers),
-         auth <- %Authorization{cookie: cookie, token: token} do
-      request =
-        meta
-        |> Metadata.mark_to_send()
-        |> Request.new()
-        |> Request.put_arg(:authorization, auth)
-
-      async_post.(
-        @api_signin_url,
-        json_credentials,
-        request,
-        &finish/1,
-        auth
-      )
+  def start(%Request{args: %{credentials: credentials}} = request, %{post: async_post} \\ @default_deps) do
+    with {:ok, signin_body} <-
+           credentials |> Map.from_struct() |> Map.put(:auth_type, "header") |> Jason.encode() do
+      async_post.(@api_signin_url, signin_body, Request.finish(request), &finish/1, @signin_headers)
     end
   end
 
   @impl UseCase
   @spec finish(Response.t()) ::
           {:error,
-           {:missing_jwt, map()}
-           | {:no_cookie_found, map()}
+           {:missing_token, Response.headers()}
+           | {:invalid_token_format, Response.headers()}
            | {:payload_not_found, map()}
            | {:unable_to_decode_body, Jason.DecodeError.t()}}
           | {:ok, {Authorization.t(), User.t()}}
-  def finish(%Response{
-        body: body,
-        headers: headers,
-        request_args: %{authorization: %Authorization{token: token}}
-      }) do
+  def finish(%Response{body: body, headers: headers}) do
     with {:ok, decoded_body} <- validate_body(body),
-         {:ok, updated_cookie} <- parse_cookie(headers),
+         {:ok, access_token} <- parse_access_token(headers),
          {:ok, ingame_name} <- parse_ingame_name(decoded_body),
          {:ok, slug} <- parse_slug(decoded_body),
          {:ok, patreon?} <- parse_patreon(decoded_body) do
       {:ok,
-       {Authorization.new(%{"cookie" => updated_cookie, "token" => token}),
+       {Authorization.new(%{"access_token" => access_token}),
         User.new(%{"ingame_name" => ingame_name, "slug" => slug, "patreon?" => patreon?})}}
     end
   end
@@ -116,28 +75,36 @@ defmodule AuctionHouse.Impl.UseCase.Login do
     end
   end
 
-  @spec find_xrfc_token(parsed_body(), deps()) ::
-          {:ok, String.t()} | {:error, {:xrfc_token_not_found, parsed_body()}}
-  defp find_xrfc_token(doc, %{finder: find_in_document}) do
-    case find_in_document.(doc, "meta[name=\"csrf-token\"]") do
-      [{"meta", [{"name", "csrf-token"}, {"content", token}], []}] -> {:ok, token}
-      _ -> {:error, {:xrfc_token_not_found, doc}}
+  @spec parse_access_token(Response.headers()) ::
+          {:ok, String.t()} | {:error, {:missing_token | :invalid_token_format, Response.headers()}}
+  defp parse_access_token(%{"authorization" => "JWT " <> access_token}) when access_token != "",
+    do: {:ok, access_token}
+
+  defp parse_access_token(%{"authorization" => _value} = headers),
+    do: {:error, {:invalid_token_format, obfuscate(headers)}}
+
+  defp parse_access_token(headers), do: {:error, {:missing_token, obfuscate(headers)}}
+
+  # error tuples can end up in logs, so they must not expose tokens
+  @spec obfuscate(Response.headers()) :: Response.headers()
+  defp obfuscate(headers), do: Map.new(headers, fn {name, value} -> {name, obfuscate(name, value)} end)
+
+  @spec obfuscate(String.t(), String.t()) :: String.t()
+  defp obfuscate("authorization", value) do
+    case String.split(value, " ", parts: 2) do
+      [scheme, _credentials] -> scheme <> " [REDACTED]"
+      [_no_scheme] -> "[REDACTED]"
     end
   end
 
-  @spec parse_cookie(Response.headers()) ::
-          {:ok, cookie()} | {:error, {:no_cookie_found | :missing_jwt, Response.headers()}}
-  defp parse_cookie(%{"Set-Cookie" => val} = headers) do
-    with [cookie | _tail] <- String.split(val, ";"),
-         true <- String.contains?(cookie, "JWT=") do
-      {:ok, cookie}
-    else
-      false -> {:error, {:missing_jwt, headers}}
-      [] -> {:error, {:missing_jwt, headers}}
+  defp obfuscate("set-cookie", value) do
+    case String.split(value, "=", parts: 2) do
+      [cookie_name, _cookie_value] -> cookie_name <> "=[REDACTED]"
+      [_no_name] -> "[REDACTED]"
     end
   end
 
-  defp parse_cookie(headers), do: {:error, {:no_cookie_found, headers}}
+  defp obfuscate(_name, value), do: value
 
   @spec parse_patreon(body()) :: {:ok, boolean} | {:error, :missing_patreon, body()}
   defp parse_patreon(body) do

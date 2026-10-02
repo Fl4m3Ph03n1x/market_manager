@@ -20,7 +20,7 @@ defmodule Manager.Saga.ActivateTest do
     setup do
       syndicates_with_strategy = %{new_loka: :top_five_average, perrin_sequence: :top_three_average}
       from = self()
-      authorization = %Authorization{token: "a_token", cookie: "a_cookie"}
+      authorization = %Authorization{access_token: "a_token"}
       user = %User{ingame_name: "Username", slug: "username", patreon?: false}
 
       %{

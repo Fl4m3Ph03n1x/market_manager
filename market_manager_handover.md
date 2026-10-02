@@ -15,15 +15,15 @@
 
 | Item | Value |
 |---|---|
-| Branch | `fixing-auth-v2` at `576ad73 adding handover file`, same commit as `master` and `origin/master` |
-| Uncommitted | Phase 1 of the auth rework (`shared`, `store`, doc examples in `auction_house.ex`); umbrella compile broken until Phases 2-3 |
+| Branch | `fixing-auth-v2` at `8e10343 implementation of Phase 1 of auth rework` (1 commit ahead of `master`) |
+| Uncommitted | Phases 2-3 of the auth rework (`auction_house`, `config/*.exs`, tests in `auction_house` and `manager`) and this file |
 | Version | `2.2.9` in `mix.exs`; latest tag `2.2.9`; README badge `v=2.2.9` |
 | Local toolchain | Elixir 1.20.1, Erlang/OTP 28.3.2 (ASDF) |
 | CI toolchain | Elixir 1.20.x, OTP 28.5.x on `windows-2022` (`.github/workflows/master.yml`) |
-| Compile | `mix compile --warnings-as-errors`: clean |
-| Tests | `mix coveralls -u`: **74 passed** |
-| Coverage | **76.2%** total |
-| Active blocker | PROD login broken: the website sign-in path is permanently blocked; a header-based replacement is verified but not implemented (see **Active Blockers**) |
+| Compile | `mix compile --warnings-as-errors` (dev and test): clean; `mix credo --strict`: no issues; `mix dialyzer`: passed (2026-10-02) |
+| Tests | `mix coveralls -u`: **271 passed** across all apps (`shared` 29, `store` 41, `rate_limiter` 5, `auction_house` 84, `manager` 38, `web_interface` 74). Earlier "74 passed" entries counted only the last app's line. |
+| Coverage | **76.6%** total |
+| Active blocker | PROD login: header-based sign-in implemented (Phases 1-3, partly uncommitted); not yet checked against PROD; Phase 4 not started (see **Active Blockers**) |
 | Release build | Last known to fail (see **Known Issues**); not re-verified on 2026-10-01 |
 
 ## Active Blockers
@@ -31,7 +31,7 @@
 1. **PROD login broken; the authentication flow must be reworked.**
    - The website sign-in path (`warframe.market/auth/signin`) is permanently blocked for the app (Cloudflare, 2026-10-02).
    - Replacement verified by hand: header-based v1 sign-in, then `Authorization: Bearer <token>` on v2 calls.
-   - State: **Phase 1 implemented (uncommitted); the umbrella does not compile until Phases 2-3 land** (defect D1). Phases 2-6 have open decisions.
+   - State: **Phases 1-3 implemented** (Phase 1 committed in `8e10343`; Phases 2-3 uncommitted). All checks pass. Pending: manual PROD check (Phase 6) and Phase 4, which needs decision D (scope and the session-expired message).
    - Rule: do not implement any fix without explicit user approval.
    - Details: section **Header-Based Authentication (2026-10-02)**, subsection **Rework Plan**, plus background in **PROD Login Blocked by Cloudflare (2026-10-01)**.
 
@@ -81,6 +81,7 @@ mix test apps/auction_house/test/unit/runtime/server_test.exs
 ```
 
 - Run the focused test first and the full umbrella suite last, because apps share runtime processes and mocks.
+- Run tests from the umbrella root (e.g. `mix test apps/auction_house/test`). Running `mix test` inside an app folder fails to compile tests that use `Mock`.
 - Validation order: `mix compile --warnings-as-errors` before `mix dialyzer`.
 - Run Mix commands unsandboxed (see **Known Issues**).
 
@@ -253,7 +254,7 @@ Coverage numbers below were re-measured on 2026-10-01 and are unchanged from 202
 
 ### Rework Plan (2026-10-02)
 
-> Status: **Phase 1 implemented on 2026-10-02 (uncommitted).** `shared` (29 tests) and `store` (41 tests) compile with `--warnings-as-errors` and pass on their own. The umbrella build fails first at `apps/auction_house/lib/impl/use_case/login.ex:57` (`key :cookie not found`) until Phases 2-3 land. Phases 2-6 need explicit user approval.
+> Status: **Phases 1-3 implemented on 2026-10-02.** Phase 1 committed in `8e10343`; Phases 2-3 uncommitted. Compile (dev and test, `--warnings-as-errors`), `mix test` (271 passed), `mix credo --strict`, and `mix dialyzer` all pass. Pending: manual PROD check (Phase 6) and Phase 4 (decision D open).
 
 Target flow:
 
@@ -267,8 +268,8 @@ Target flow:
 | Phase | Scope | Main files |
 |---|---|---|
 | 1 | Data model and storage | `shared/lib/data/authorization.ex`, `shared/lib/data/credentials.ex`, `store/lib/store/file_system.ex`, docs in `store/lib/store.ex` and `auction_house/lib/auction_house.ex` |
-| 2 | HTTP layer | `auction_house/lib/impl/http_async_client.ex` |
-| 3 | Login use case and config | `auction_house/lib/impl/use_case/login.ex`, `config/{dev,test,prod}.exs` (remove `market_signin_url`), `auction_house/README.md` |
+| 2 | HTTP layer | `auction_house/lib/impl/http_async_client.ex`, `auction_house/lib/impl/use_case/data/response.ex` (`@typedoc`), `config/config.exs` and `config/test.exs` (`user_agent`) |
+| 3 | Login use case and config | `auction_house/lib/impl/use_case/login.ex`, `config/{dev,test,prod}.exs` (remove `market_signin_url`), `auction_house/README.md`, `auction_house/mix.exs` (remove Floki) |
 | 4 | Session invalidation | `manager` (delete stored login on 401), `web_interface` (`LoginLive`, redirects) |
 | 5 | Tests | see the per-phase test lists below |
 | 6 | Validation | `mix compile --warnings-as-errors`, `mix test`, `mix credo --strict`, `mix dialyzer`; manual PROD check: log in, small activate and deactivate on the test account, log out, restart with "remember me" |
@@ -286,12 +287,31 @@ Target flow:
 | P1-c | Keyword form of `Authorization.new/1` | **Decided:** drop it |
 | P1-d | Bad stored token in `Store.FileSystem.get_login_data/1` | **Decided:** never raise; return `{:ok, nil}`. Callers must handle that case (they already do; see Phase 1). |
 | P1-e | Redact `Credentials.password` in `inspect/1` | **Decided:** bundle into Phase 1 |
-| B | Error atom for 401, and the user-facing message | Open (e.g. `:unauthorized` / "Your session expired, please log in again.") |
-| C | How sign-in sends `Authorization: JWT` | Open: extra-headers argument on `HttpAsyncClient.post`, a dedicated sign-in function, or other |
+| B | Error atom for 401 | **Decided:** `:unauthorized` for every 401, without decoding the body. The user-facing message belongs to Phase 4 (open). |
+| C | How sign-in sends `Authorization: JWT` | **Decided (C-b):** no sign-in function; `HttpAsyncClient` must stay unaware of warframe.market. `post`'s 5th argument becomes `Authorization.t() \| headers()`; a private `build_headers/1` has two clauses (`%Authorization{}` → `Bearer`, list → `headers ++ @static_headers`). `Login` passes `[{"Authorization", "JWT"}]`. |
+| C1 | Extract the duplicated `call` / `updated_request` / `make_request` block of `post`, `delete`, and `get` into one helper | **Decided:** not now. C-b adds no new copy; focus stays on the rework. |
 | D | Scope of Phase 4 | Open, but **effectively required** because of defect D3 |
-| D6 | Where header names become case-insensitive | Open: lowercase all names in `HttpAsyncClient.handle_response/3`, or a case-insensitive lookup only in `Login` |
-| E | Fix the `CaseClauseError` in `parse/1` (unmatched 400/403/404 JSON) in this change | Open |
-| F | Add a descriptive `User-Agent` in this change | Open |
+| D6 | Where header names become case-insensitive | **Decided (D6-1):** `String.downcase/1` on each name in the success branch of `HttpAsyncClient.handle_response/3`, with a one-line comment on why (names are case-insensitive; the API mixes cases over HTTP/1.1). `Login` then reads `"authorization"`. |
+| E | Fix the `CaseClauseError` in `parse/1` (unmatched 400/403/404 JSON) | **Decided:** include. Valid JSON matching no known error returns `{:error, :bad_request}` (400), `{:error, :forbidden}` (403), or `{:error, :not_found}` (404). Existing specific atoms stay. Names follow HTTP status meanings so `HttpAsyncClient` stays unaware of warframe.market. |
+| F | Descriptive `User-Agent` | **Decided:** include, in `@static_headers`. Format `MarketManager/<version> (+https://github.com/Fl4m3Ph03n1x/market_manager)`; value in `config/config.exs`, updated on each version bump. `config/test.exs` overrides it with a fixed value (e.g. `MarketManager/test`) that tests assert literally. |
+| H | How much of an error response body to log | **Decided:** truncate to 500 bytes. |
+| P2-1 | Decode-failure logs in `parse/1` print the whole body via `Jason.DecodeError.data` | **Decided:** all error logs use the same safe format (status + truncated body) |
+| P2-2 | How to truncate without producing invalid UTF-8 in logs | **Decided:** `binary_part/3` for an exact 500-byte limit, then `inspect/1` |
+| P2-3 | New atoms reach `LoginLive` and the sagas, which do not handle them | **Decided:** Phase 4 requirement (see Phase 4) |
+| P2-4 | Sign-in `Request.args.call` holds email and password | **Decided:** Phase 3 rule: error tuples never include `request_args` or the `Response` |
+| P2-5 | `is_list/1` guard in `build_headers/1` accepts any list | **Decided:** accept; the `headers()` typespec lets Dialyzer catch misuse |
+| P2-6 | Removing `market_signin_url` before `Login` stops reading it breaks compilation | **Decided:** do both in Phase 3, in the same step |
+| P2-7 | Non-JSON 400/403/404 bodies | **Decided:** keep returning `:unable_to_decode_error` |
+| L1 | Remove Floki from `auction_house` deps | **Decided (L1-a):** remove it from `apps/auction_house/mix.exs` only. `web_interface` keeps its declaration unchanged (needed by `Phoenix.LiveViewTest`). |
+| L2 | Errors for a wrong token header | **Decided:** `:missing_token` (no `authorization` header) and `:invalid_token_format` (not `JWT <non-empty>`) |
+| L3 | Do `Login.finish/1` errors carry the response body/headers | **Decided:** keep as today (errors carry body or headers). Open follow-up L3a. |
+| L3a | `{:invalid_token_format, headers}` would carry the `authorization` header, which may hold a usable token, into `LoginLive`'s "Unknown message received" log | **Decided (L3a-3):** keep the header but obfuscate its value in `Login` before returning the error: keep the first word (the scheme) and replace the rest with `[REDACTED]` (`"Bearer eyJ..."` → `"Bearer [REDACTED]"`). A value without a space (e.g. a bare token) becomes `"[REDACTED]"`, because its first word would be the token itself. |
+| L4 | How strictly to match the `JWT ` prefix | **Decided:** exact `"JWT " <> token` |
+| L5 | Does a mock server on `localhost:8082` need updating? | **Resolved:** no tests use an external mock server. The integration tests start their own Bypass server on port 8082 (`auction_house_test.exs`, `manager_test.exs`) and are updated in Phase 5. `config/dev.exs` also points to `localhost:8082`, but neither the repo nor the local checkout contains a server for it (`test_setup/` does not exist). Dev config stays as is. |
+| R1 | `finish/1` carrying over today's head pattern `request_args: %{authorization: ...}` | **Decided:** Phase 3 rule: `finish/1` matches only `%Response{body: body, headers: headers}`; a unit test calls it with `request_args: %{}` |
+| R2 | The lowercase header-name contract (D6-1) is not documented | **Decided:** Phase 2 documents it in `Response`'s `@typedoc`; Phase 3 unit tests build headers with lowercase names only |
+| R3 | `{:missing_token, headers}` can carry a token in `set-cookie` (sign-in without `auth_type: "header"` returns it only there) | **Decided:** obfuscate `set-cookie` too, in both token errors: keep the cookie name, redact the value (`"JWT=eyJ...; Path=/"` → `"JWT=[REDACTED]"`) |
+| P4-a | `LoginLive` handles `:econnrefused` and `:timeout`, which nothing produces; transport errors arrive as `:request_failed` | **Decided:** Phase 4 adds a `LoginLive` clause for `:request_failed` |
 | G | Version bump (`mix.exs` and README badge) | Open |
 
 #### Phase 1 spec (final)
@@ -327,20 +347,100 @@ Phase 1 tests:
 | `apps/store/test/unit/file_system_test.exs` | exact saved JSON with `access_token`; load returns the struct; `null`, `""`, non-string, and missing `access_token` each return `{:ok, nil}` |
 | `apps/store/test/integration/store_test.exs` | fixture and assertions use `access_token` |
 
-#### Phases 2-4 outline
+#### Phase 2 spec (final)
 
-- **Phase 2 (`HttpAsyncClient`):**
-  - `build_headers` sends `Authorization: Bearer <access_token>`, replacing `x-csrftoken` and `Cookie`. Fixed header order, e.g. `[{"Authorization", "Bearer " <> t} | @static_headers]`.
-  - A sign-in path that sends `Authorization: JWT` without an `%Authorization{}` (decision C).
-  - A 401 clause in `parse/1` returning a dedicated error (decision B).
-  - Safe logging: log only the status code and response body, never the full `%HTTPoison.Response{}`.
-- **Phase 3 (`Login`):**
-  - One `POST` to `api_signin_url`. Remove the website `GET`, `find_xrfc_token/2`, `parse_cookie/1`, and the Floki dependencies.
-  - `finish/1` reads the `Authorization` response header case-insensitively (D6), removes `JWT `, and builds `Authorization.new(%{"access_token" => token})`. `parse_ingame_name/1`, `parse_slug/1`, and `parse_patreon/1` are unchanged.
-  - Remove `market_signin_url` from all configs and from the `auction_house` README.
+All changes are in `apps/auction_house/lib/impl/http_async_client.ex` unless noted. `HttpAsyncClient` must stay unaware of warframe.market concepts (sign-in, orders, ...).
+
+Headers:
+
+- `@static_headers`: `Accept`, `Content-Type`, and `{"User-Agent", Application.compile_env!(:auction_house, :user_agent)}` (decision F).
+- Private `build_headers/1`, two clauses:
+  - `%Authorization{access_token: t}` → `[{"Authorization", "Bearer " <> t} | @static_headers]`
+  - `headers when is_list(headers)` → `headers ++ @static_headers` (P2-5 accepted)
+- `post/6`: 5th argument `auth :: Authorization.t() | headers()`, spec updated; the body only changes to call `build_headers(auth)` (decision C-b).
+- `delete/5` and the `%Authorization{}` clause of `get/5` match `%Authorization{} = auth` and call `build_headers(auth)`.
+- The `nil` clause of `get/5` keeps using `@static_headers`, which now include the `User-Agent`.
+
+Response handling:
+
+- `handle_response/3`, success branch: `String.downcase/1` on every header name, with a one-line comment on why (decision D6-1).
+- `apps/auction_house/lib/impl/use_case/data/response.ex`: `@typedoc` states that header names are lowercase (R2).
+- `parse/1`:
+  - New 401 clause before the catch-all: `{:error, :unauthorized}` (decision B). 401 stays out of `@retryable_status_codes`.
+  - 400, 403, 404: valid JSON matching no known error returns `{:error, :bad_request}`, `{:error, :forbidden}`, or `{:error, :not_found}` (decision E). Decode failures keep returning `{:error, :unable_to_decode_error}` (P2-7).
+  - Catch-all keeps returning `{:error, :unknown_error}`.
+  - Every error log (unknown JSON, decode failure, catch-all) logs only the status code and the body truncated to 500 bytes with `binary_part/3` + `inspect/1` (decisions H, P2-1, P2-2). Never log `%HTTPoison.Response{}`, `%Jason.DecodeError{}`, `Request.args.call`, or header lists (D4).
+  - The `{:error, %HTTPoison.Error{}}` clause is unchanged; that struct holds no request data.
+- `@typep parse_error` gains `:unauthorized`, `:bad_request`, `:forbidden`, `:not_found`.
+
+Config:
+
+- `config/config.exs`: `user_agent: "MarketManager/2.2.9 (+https://github.com/Fl4m3Ph03n1x/market_manager)"` in the `:auction_house` block, above `import_config`.
+- `config/test.exs`: `user_agent: "MarketManager/test"` in the existing `:auction_house` block.
+
+Phase 2 tests (`apps/auction_house/test/unit/http_async_client_test.exs`):
+
+| Case | Expected |
+|---|---|
+| `post` with `%Authorization{access_token: "token"}` | exact headers `[{"Authorization", "Bearer token"}, Accept, Content-Type, {"User-Agent", "MarketManager/test"}]` |
+| `post` with `[{"Authorization", "JWT"}]` | exact headers `[{"Authorization", "JWT"}, Accept, Content-Type, User-Agent]` |
+| `delete`, `get` (with auth and with `nil`) | exact header lists including the `User-Agent` |
+| `handle_response/3` success with `{"Authorization", "JWT x"}` | `response_fun` receives `%{"authorization" => "JWT x"}` |
+| 401 | notifies `{op, {:error, :unauthorized}}`; the rate limiter is not called again |
+| 400 / 403 / 404 with unknown JSON | `:bad_request` / `:forbidden` / `:not_found` |
+| 400 with non-JSON body | still `:unable_to_decode_error` |
+| error log with a large body (`ExUnit.CaptureLog`) | logged body is at most 500 bytes; the log contains neither `Bearer` nor the request body |
+| existing fixtures | `%Authorization{access_token: "token"}` |
+
+Validation: Phase 2 cannot be compiled on its own (D1); validate after Phase 3.
+
+#### Phase 3 spec (final)
+
+`AuctionHouse.Impl.UseCase.Login` (`apps/auction_house/lib/impl/use_case/login.ex`):
+
+- `@default_deps`: only `post: &HttpAsyncClient.post/5`. Remove `get`, `parser`, `finder`, `@market_signin_url`, `sign_in/2`, `find_xrfc_token/2`, `parse_cookie/1`, and the `cookie`/`parsed_body` types.
+- `start/2`:
+  - Body: `credentials |> Map.from_struct() |> Map.put(:auth_type, "header")`, JSON-encoded (L-c).
+  - Calls `post.(@api_signin_url, body, Request.finish(request), &finish/1, [{"Authorization", "JWT"}])` (C-b, L-a). `Request.finish/1` is required: `handle_response/3` forwards a successful result only when `metadata.send?` is true, and `Server` creates the metadata with `send?: false`. Errors are forwarded regardless, so forgetting it only breaks successful sign-ins.
+- `finish/1`:
+  - Head matches only `%Response{body: body, headers: headers}`; never `request_args` (R1). A head that does not match raises inside the rate-limiter task, and the caller never gets a reply.
+  - Reads `headers["authorization"]` (lowercase, D6-1/R2):
+    - missing → `{:error, {:missing_token, obfuscated_headers}}`
+    - not exactly `"JWT " <> token` with `token != ""` → `{:error, {:invalid_token_format, obfuscated_headers}}` (L2, L4). Check before `Authorization.new/1`, which raises on `""` (L-b).
+    - otherwise `Authorization.new(%{"access_token" => token})`
+  - Body handling unchanged: `validate_body/1`, `parse_ingame_name/1`, `parse_slug/1`, `parse_patreon/1`, with their current error tuples (L3).
+  - Returns `{:ok, {Authorization.t(), User.t()}}`, the same shape as today.
+- Private header obfuscation, applied to both token errors (L3a-3, R3):
+  - `"authorization"`: keep the first word, redact the rest (`"Bearer eyJ..."` → `"Bearer [REDACTED]"`); a value without a space becomes `"[REDACTED]"`.
+  - `"set-cookie"`: keep the cookie name, redact the value (`"JWT=eyJ...; Path=/"` → `"JWT=[REDACTED]"`).
+  - Other headers unchanged.
+- Error tuples never include `request_args` or the `Response` (P2-4).
+- `@spec finish/1` error union updated: remove `:missing_jwt` and `:no_cookie_found`; add `:missing_token` and `:invalid_token_format`.
+
+Other files:
+
+- `config/dev.exs`, `config/test.exs`, `config/prod.exs`: remove `market_signin_url`, in the same step as the `Login` change (P2-6).
+- `apps/auction_house/README.md`: remove `market_signin_url` from the config example. The rest of that example is outdated but out of scope.
+- `apps/auction_house/mix.exs`: remove `{:floki, "~> 0.34.0"}` (L1-a). `web_interface` keeps its own Floki dependency.
+
+Phase 3 tests:
+
+| File | Cases |
+|---|---|
+| `apps/auction_house/test/unit/use_case/login_test.exs` | `start/2` calls `post` once with the sign-in URL, a body containing `email`, `password`, and `auth_type: "header"`, `send?: true`, and `[{"Authorization", "JWT"}]`; `finish/1` with `request_args: %{}` and `%{"authorization" => "JWT a_token"}` returns `%Authorization{access_token: "a_token"}` and the user; missing header → `:missing_token`; `"Bearer x"`, `"JWT "`, and `"x"` → `:invalid_token_format`; returned headers show `"Bearer [REDACTED]"`, `"[REDACTED]"`, and `"JWT=[REDACTED]"` and never the original values; existing body error cases kept. All headers use lowercase names (R2). |
+| `apps/auction_house/test/integration/auction_house_test.exs` | remove the `GET /auth/signin` stub; the `POST /v1/auth/signin` stub asserts the `authorization: JWT` request header and the `auth_type` body field, and answers with an `authorization: JWT ...` header |
+| `apps/manager/test/integration/manager_test.exs` | remove the single `GET /auth/signin` stub (in the `login` describe); the `POST` stub answers with an `authorization` header; `create_setup_file/0` uses `access_token`. The other `Set-Cookie` response headers in this file belong to order stubs and are irrelevant to auth. |
+| Fixtures in `server_test`, `delete_order_test`, `place_order_test`, `manager/.../activate_test`, `manager/.../login_test` | `%Authorization{access_token: ...}` |
+
+Validation after Phases 2 and 3: `mix compile --warnings-as-errors`, `mix test`, `mix credo --strict`, `mix dialyzer`.
+
+#### Phase 4 outline
+
+- **Phase 3:** see **Phase 3 spec (final)**.
 - **Phase 4 (session invalidation):**
   - On 401 from an authenticated call, delete the stored login and send the user to `/login` with a clear message.
-  - `LoginLive` handles any new error atoms.
+  - `LoginLive` handles the new atoms: `:unauthorized`, `:bad_request`, `:forbidden`, `:not_found` (P2-3), and `:request_failed` (P4-a). Today `:econnrefused` and `:timeout` are handled but never produced, so "no internet" shows "Unknown message received".
+  - `Manager.Saga.Activate` and `Manager.Saga.Deactivate` stop on `:unauthorized` instead of continuing with the remaining orders (P2-3). Today `place_order` errors are treated as recoverable, so every remaining order would fail with 401.
   - Logout only discards the token locally, because sign-out does not revoke v1 tokens.
 - **Phase 5 tests beyond Phase 1:** `http_async_client_test.exs` (Bearer header, 401, header-name case, sign-in headers), `use_case/login_test.exs` (single POST, prefix removal, 400 errors), `auction_house_test.exs` (remove the `GET /auth/signin` stub), `manager/test/unit/saga/login_test.exs` and `manager_test.exs` (new login stubs; 401 deletes the stored login), `login_live_test.exs` (new messages), and fixtures building `%Authorization{cookie:, token:}` in `server_test`, `delete_order_test`, `place_order_test`, and `activate_test`.
 - Not in scope: `GetUserOrders` calls `/v2/orders/user/{slug}` without auth, so it sees only visible orders. Decide separately whether that should change.
@@ -352,9 +452,9 @@ Phase 1 tests:
 | D1 | `HttpAsyncClient` (`post/6`, `delete/5`, `get/5`), `Login`, and about 10 test fixtures match or build `%Authorization{cookie:, token:}` | Compile errors | Land Phases 1-3 together |
 | D2 | The prefix rule is broken: Phase 3 stores `JWT eyJ...` and Phase 2 sends `Bearer JWT eyJ...` | 401 on every call | `@typedoc` rule; Phase 2 test asserts the exact `Bearer` header; Phase 3 test asserts `JWT ` is removed |
 | D3 | `Manager.Saga.Login.handle_continue/2` uses stored login data and **ignores the typed credentials** whenever data exists | An empty, broken, or expired (60 days) token is reused forever; the user cannot log in even with the right password | P1-a/P1-d reject bad tokens on load; Phase 2 maps 401; **Phase 4 deletes stored data on 401** |
-| D4 | The catch-all in `HttpAsyncClient.parse/1` logs `inspect(%HTTPoison.Response{})`. HTTPoison 2.x includes `request`, which holds the request headers (`Authorization: Bearer ...`) and, for sign-in, the body with email and password. Today every 401 goes through this clause. | Tokens and passwords in the terminal and logs | Phase 2 logs only status and body. P1-b/P1-e redact structs. Raw header lists in `Request.args.call` are plain strings, so Phase 2 must never log them. |
-| D5 | `post/6` has no clause for a missing `%Authorization{}`, and `Login.start/2` runs inside the `AuctionHouse.Runtime.Server` process (`handle_cast/2`) | A `FunctionClauseError` crashes the server process, which loses its state and restarts | Phase 2 sign-in path (decision C) |
-| D6 | `handle_response/3` builds `headers_map` with `Map.put`, keeping the server's header-name case; `curl` saw lowercase `authorization` over HTTP/2, hackney uses HTTP/1.1 | `finish/1` cannot find the token, so login fails | Decide where to make the lookup case-insensitive |
+| D4 | The catch-all in `HttpAsyncClient.parse/1` logs `inspect(%HTTPoison.Response{})`. HTTPoison (locked at 1.8.2) includes `request`, which holds the request headers (`Authorization: Bearer ...`) and, for sign-in, the body with email and password. Today every 401 goes through this clause. | Tokens and passwords in the terminal and logs | Phase 2 logs only status and body. P1-b/P1-e redact structs. Raw header lists in `Request.args.call` are plain strings, so Phase 2 must never log them. |
+| D5 | `post/6` has no clause for a missing `%Authorization{}`, and `Login.start/2` runs inside the `AuctionHouse.Runtime.Server` process (`handle_cast/2`) | A `FunctionClauseError` crashes the server process, which loses its state and restarts | Resolved by decision C-b: `Login` passes a header list, which `post` accepts |
+| D6 | `handle_response/3` builds `headers_map` with `Map.put`, keeping the server's header-name case. Over HTTP/1.1 (hackney) the API mixes cases in one response (`Content-Type`, `Set-Cookie` vs `strict-transport-security`, `cf-cache-status`) | `finish/1` cannot find the token, so login fails | Resolved by decision D6-1 |
 | D7 | `http_async_client_test.exs` asserts exact header lists | Brittle tests | Fixed header order in Phase 2 |
 | D8 | With "remember me", `setup.json` stores the token in plain text | The file is a 60-day credential that cannot be revoked (sign-out does not revoke v1 tokens) | Already true with the cookie; document it in the README; out of scope |
 
@@ -528,6 +628,9 @@ Proceed with B1 only if all three pass. Confirm with the maintainers that the un
   - Verified the wrong-password response (400 `app.account.password_invalid`).
   - Added **Rework Plan**: phases, decisions (A and P1-a to P1-e decided; B-G and D6 open), the final Phase 1 spec, and integration defects D1-D8.
   - Implemented Phase 1: `Authorization` (`access_token`, non-empty, redacted `Inspect`), `Credentials` (redacted `password`), `Store.FileSystem.get_login_data/1` (`valid_authorization?/1`), doc examples in `Store` and `AuctionHouse`, and the Phase 1 tests.
+  - Phase 2 decisions B, C (C-b), C1, D6 (D6-1), E, F, H, and P2-1 to P2-7; added **Phase 2 spec (final)**; carried P2-3 into Phase 4 and P2-4/P2-6 into Phase 3.
+  - Phase 3 decisions L1 to L5, R1 to R3, and P4-a; added **Phase 3 spec (final)**; R2 added to Phase 2; `:request_failed` added to Phase 4.
+  - Implemented Phases 2-3 as specified (`HttpAsyncClient`, `Response` typedoc, `Login`, `user_agent` config, `market_signin_url` and Floki removed from `auction_house`) plus tests. Full validation passes: 271 tests, 76.6% coverage, credo and dialyzer clean. Fixed a missing final newline in `authorization.ex` reported by credo.
   - Marked the Cloudflare section and Option B as superseded.
 - **2026-10-01:**
   - Renamed from `test_evaluation.md` and restructured for agent use.
