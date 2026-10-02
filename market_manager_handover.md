@@ -405,7 +405,7 @@ Response handling:
 
 Config:
 
-- `config/config.exs`: `user_agent: "MarketManager/2.2.9 (+https://github.com/Fl4m3Ph03n1x/market_manager)"` in the `:auction_house` block, above `import_config`.
+- `config/config.exs`: `user_agent: "MarketManager/2.2.10 (+https://github.com/Fl4m3Ph03n1x/market_manager)"` in the `:auction_house` block, above `import_config`.
 - `config/test.exs`: `user_agent: "MarketManager/test"` in the existing `:auction_house` block.
 
 Phase 2 tests (`apps/auction_house/test/unit/http_async_client_test.exs`):
