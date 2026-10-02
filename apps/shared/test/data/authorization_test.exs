@@ -5,15 +5,17 @@ defmodule Shared.Data.AuthorizationTest do
 
   alias Shared.Data.Authorization
 
-  test "new/1 returns an Authorization" do
-    assert Authorization.new(%{"cookie" => "a_cookie", "token" => "a_token"}) == %Authorization{
-             cookie: "a_cookie",
-             token: "a_token"
-           }
+  describe "new/1" do
+    test "returns an Authorization" do
+      assert Authorization.new(%{"access_token" => "a_token"}) == %Authorization{access_token: "a_token"}
+    end
 
-    assert Authorization.new(cookie: "a_cookie", token: "a_token") == %Authorization{
-             cookie: "a_cookie",
-             token: "a_token"
-           }
+    test "raises if access_token is empty" do
+      assert_raise FunctionClauseError, fn -> Authorization.new(%{"access_token" => ""}) end
+    end
+  end
+
+  test "inspect/1 hides the access_token" do
+    assert inspect(%Authorization{access_token: "a_token"}) == "#Shared.Data.Authorization<...>"
   end
 end

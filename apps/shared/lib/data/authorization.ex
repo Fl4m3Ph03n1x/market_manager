@@ -7,59 +7,21 @@ defmodule Shared.Data.Authorization do
 
   alias Shared.Utils.Structs
 
-  @type cookie :: String.t()
-  @type token :: String.t()
+  @type access_token :: String.t()
 
-  @type authorization ::
-          %{
-            (cookie :: String.t()) => String.t(),
-            (token :: String.t()) => String.t()
-          }
-          | [cookie: String.t(), token: String.t()]
+  @type authorization :: %{(access_token :: String.t()) => String.t()}
 
   @derive Jason.Encoder
+  @derive {Inspect, except: [:access_token]}
   typedstruct enforce: true do
-    @typedoc "Authorization information for a user"
+    @typedoc "Authorization information for a user. `access_token` is the bare JWT, without any scheme prefix."
 
-    field(:cookie, String.t())
-    field(:token, String.t())
+    field(:access_token, access_token())
   end
 
   @spec new(authorization()) :: __MODULE__.t()
-  def new(%{"cookie" => cookie, "token" => token} = auth)
-      when is_binary(cookie) and is_binary(token) do
+  def new(%{"access_token" => access_token} = auth)
+      when is_binary(access_token) and access_token != "" do
     Structs.string_map_to_struct(auth, __MODULE__)
   end
-
-  def new([cookie: cookie, token: token] = auth)
-      when is_binary(cookie) and is_binary(token),
-      do: struct(__MODULE__, auth)
 end
-
-# defmodule Shared.Data.Authorization do
-#   @moduledoc """
-#   Saves authorization details for a user. It also contains other details.
-#   """
-
-#   alias Shared.Utils.Structs
-
-#   @enforce_keys [:cookie, :token]
-#   defstruct [:cookie, :token]
-
-#   @type authorization :: %{
-#           (cookie :: String.t()) => String.t(),
-#           (token :: String.t()) => String.t()
-#         }
-
-#   @typedoc "Authorization information for a user"
-#   @type t() :: %__MODULE__{
-#           cookie: String.t(),
-#           token: String.t()
-#         }
-
-#   @spec new(authorization()) :: t()
-#   def new(%{"cookie" => cookie, "token" => token} = auth)
-#       when is_binary(cookie) and is_binary(token) do
-#     Structs.string_map_to_struct(auth, __MODULE__)
-#   end
-# end

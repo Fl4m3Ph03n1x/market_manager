@@ -101,7 +101,7 @@ defmodule Store.FileSystem do
       decoded_auth = Map.get(decoded_data, "authorization")
       decoded_user = Map.get(decoded_data, "user")
 
-      if valid_data?(decoded_auth, ["cookie", "token"]) and
+      if valid_authorization?(decoded_auth) and
            valid_data?(decoded_user, ["ingame_name", "patreon?"]) do
         {:ok, {Authorization.new(decoded_auth), User.new(decoded_user)}}
       else
@@ -216,6 +216,10 @@ defmodule Store.FileSystem do
   @spec valid_data?(decoded_map :: map, fields :: [String.t()]) :: boolean()
   defp valid_data?(map, fields),
     do: not is_nil(map) and Enum.all?(fields, fn field -> not is_nil(Map.get(map, field)) end)
+
+  @spec valid_authorization?(decoded_auth :: any()) :: boolean()
+  defp valid_authorization?(%{"access_token" => token}), do: is_binary(token) and token != ""
+  defp valid_authorization?(_decoded_auth), do: false
 
   @spec build_absolute_path([String.t()], atom()) ::
           {:ok, String.t()} | {:error, :cannot_detect_store_application}

@@ -11,6 +11,7 @@ defmodule Shared.Data.Credentials do
   @type password :: String.t()
 
   @derive Jason.Encoder
+  @derive {Inspect, except: [:password]}
   typedstruct enforce: true do
     @typedoc "The credentials"
 

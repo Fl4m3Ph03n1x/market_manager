@@ -35,8 +35,7 @@ defmodule StoreTest do
     content =
       Jason.encode!(%{
         "authorization" => %{
-          "cookie" => "a_cookie",
-          "token" => "a_token"
+          "access_token" => "a_token"
         },
         "user" => %{
           "ingame_name" => "Fl4m3",
@@ -221,7 +220,7 @@ defmodule StoreTest do
 
     test "returns :ok if login data was saved successfully" do
       # Arrange
-      auth = Authorization.new(%{"cookie" => "new_cookie", "token" => "new_token"})
+      auth = Authorization.new(%{"access_token" => "new_token"})
       user = User.new(%{"ingame_name" => "Ph03n1x", "slug" => "ph03n1x", "patreon?" => true})
 
       # Act & Assert
@@ -232,7 +231,7 @@ defmodule StoreTest do
       assert Jason.decode!(content) ==
                %{
                  "user" => %{"ingame_name" => "Ph03n1x", "slug" => "ph03n1x", "patreon?" => true},
-                 "authorization" => %{"cookie" => "new_cookie", "token" => "new_token"}
+                 "authorization" => %{"access_token" => "new_token"}
                }
     end
   end
@@ -260,7 +259,7 @@ defmodule StoreTest do
 
     test "returns login data" do
       # Arrange
-      auth = Authorization.new(%{"cookie" => "a_cookie", "token" => "a_token"})
+      auth = Authorization.new(%{"access_token" => "a_token"})
       user = User.new(%{"ingame_name" => "Fl4m3", "slug" => "fl4m3", "patreon?" => false})
 
       # Act & Assert
