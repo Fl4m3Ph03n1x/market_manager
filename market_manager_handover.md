@@ -28,7 +28,7 @@
 
 ## Active Blockers
 
-1. **PROD login broken; the authentication flow must be reworked.**
+1. **Resolved on 2026-10-02: PROD login required an authentication-flow rework.**
    - The website sign-in path (`warframe.market/auth/signin`) is permanently blocked for the app (Cloudflare, 2026-10-02).
    - Replacement verified by hand: header-based v1 sign-in, then `Authorization: Bearer <token>` on v2 calls.
    - State: **Phases 1-4 implemented and confirmed in PROD (Phase 6, 2026-10-02)**. Commits: Phase 1 `8e10343`, Phases 2-3 `88bc577`, Phase 4 `a3f7c52`, store files reset `cb26090` (no token committed; `setup.json` is `{}` and `watch_list.json` is reformatted, both equivalent to `master`). Version bump (decision G) applied, uncommitted; tag and release by the user.
