@@ -48,9 +48,10 @@ defmodule Manager.Runtime.Worker do
 
   @impl GenServer
   @spec handle_call(request :: any, GenServer.from(), state) :: {:reply, response :: any, state}
-  def handle_call(:recover_login, _from, [store: store, auction_house: _auction_house] = state) do
+  def handle_call(:recover_login, _from, [store: store, auction_house: auction_house] = state) do
     case store.get_login_data() do
-      {:ok, {_auth, user}} ->
+      {:ok, {auth, user}} ->
+        :ok = auction_house.update_login(auth, user)
         {:reply, {:ok, user}, state}
 
       response ->

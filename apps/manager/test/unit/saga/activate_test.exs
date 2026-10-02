@@ -399,4 +399,20 @@ defmodule Manager.Saga.ActivateTest do
       end
     end
   end
+
+  describe "handle_info {:place_order, {:error, :unauthorized}}" do
+    test "stops normally, reports the expired session and keeps the syndicates active" do
+      state = %{
+        deps: %{store: Store, auction_house: AuctionHouse},
+        args: %{syndicates_with_strategy: %{new_loka: :top_five_average}},
+        from: self()
+      }
+
+      with_mock Store, deactivate_syndicates: fn _syndicate_ids -> :ok end do
+        assert Activate.handle_info({:place_order, {:error, :unauthorized}}, state) == {:stop, :normal, state}
+        assert_received({:activate, {:error, :unauthorized}})
+        assert_not_called(Store.deactivate_syndicates(:_))
+      end
+    end
+  end
 end

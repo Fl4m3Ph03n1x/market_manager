@@ -87,17 +87,23 @@ defmodule WebInterface.LoginLiveTest do
     end
 
     for {error, message} <- [
-          {:econnrefused, "Unable to connect to warframe.market. Please verify your internet connection."},
+          {:request_failed, "Unable to connect to warframe.market. Please verify your internet connection."},
           {:wrong_password, "Incorrect Password!"},
           {:wrong_email, "Your email is incorrect or does not exist!"},
           {:invalid_email, "Please provide a valid email!"},
-          {:timeout, "The request timed out, try again later!"},
+          {:unauthorized, "warframe.market rejected the login. Please try again."},
+          {:forbidden, "warframe.market denied access to this account. Please check your account on the website."},
+          {:bad_request, "warframe.market sent an unexpected response. Please try again later."},
+          {:not_found, "warframe.market sent an unexpected response. Please try again later."},
+          {{:missing_token, %{}}, "warframe.market sent an unexpected response. Please try again later."},
+          {{:invalid_token_format, %{"authorization" => "[REDACTED]"}},
+           "warframe.market sent an unexpected response. Please try again later."},
           {:unknown_error, "An unknown error occurred, please report it!"}
         ] do
-      test "it shows the expected flash for #{error}", %{conn: conn} do
+      test "it shows the expected flash for #{inspect(error)}", %{conn: conn} do
         {:ok, view, _html} = live(conn, ~p"/login")
 
-        send(view.pid, {:login, {:error, unquote(error)}})
+        send(view.pid, {:login, {:error, unquote(Macro.escape(error))}})
 
         assert render(view) =~ unquote(message)
       end
@@ -107,7 +113,7 @@ defmodule WebInterface.LoginLiveTest do
     test "it shows the fallback flash for an unhandled login error", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/login")
 
-      send(view.pid, {:login, {:error, :request_failed}})
+      send(view.pid, {:login, {:error, :internal_server_error}})
 
       assert render(view) =~ "Unknown message received, please check the logs and report it!"
     end

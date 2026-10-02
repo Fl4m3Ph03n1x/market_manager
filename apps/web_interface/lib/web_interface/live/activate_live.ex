@@ -226,6 +226,11 @@ defmodule WebInterface.ActivateLive do
     {:noreply, put_flash(updated_socket, :warning, "Failed to place an item order, please check the logs for details.")}
   end
 
+  def handle_info({:activate, {:error, :unauthorized}}, socket) do
+    Logger.warning("Activate: Session expired, logging out.")
+    expire_session(socket)
+  end
+
   # Fatal error, we cannot continue with the activation
   def handle_info({:activate, {:error, reason}}, socket) do
     Logger.error("Activate: Error occurred - #{inspect(reason)}")
@@ -271,5 +276,25 @@ defmodule WebInterface.ActivateLive do
       end
 
     {last_progress, progress}
+  end
+
+  @spec expire_session(LiveView.Socket.t()) :: {:noreply, LiveView.Socket.t()}
+  defp expire_session(socket) do
+    with :ok <- Manager.logout(),
+         :ok <- UserStore.set_user(nil) do
+      {:noreply,
+       socket
+       |> put_flash(:error, "Your session has expired. Please log in again.")
+       |> redirect(to: ~p"/login")}
+    else
+      error ->
+        Logger.error("Unable to logout correctly due to: #{inspect(error)}")
+        UserStore.set_user(nil)
+
+        {:noreply,
+         socket
+         |> put_flash(:error, "Unable to logout correctly. Redirecting to Login.")
+         |> redirect(to: ~p"/login")}
+    end
   end
 end

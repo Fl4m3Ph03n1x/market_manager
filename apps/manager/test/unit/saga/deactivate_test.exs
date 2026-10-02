@@ -78,4 +78,14 @@ defmodule Manager.Saga.DeactivateTest do
       end
     end
   end
+
+  describe "handle_info/2 delete_order unauthorized" do
+    test "stops normally, reports the expired session and keeps the syndicates active", %{state: state} do
+      with_mock Store, deactivate_syndicates: fn _syndicate_ids -> :ok end do
+        assert Deactivate.handle_info({:delete_order, {:error, :unauthorized}}, state) == {:stop, :normal, state}
+        assert_received({:deactivate, {:error, :unauthorized}})
+        assert_not_called(Store.deactivate_syndicates(:_))
+      end
+    end
+  end
 end

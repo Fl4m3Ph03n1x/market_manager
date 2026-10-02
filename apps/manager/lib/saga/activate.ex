@@ -273,6 +273,12 @@ defmodule Manager.Saga.Activate do
     end
   end
 
+  # an expired session fails every remaining order; :normal keeps the transient saga from restarting
+  def handle_info({:place_order, {:error, :unauthorized}}, %{from: from} = state) do
+    send(from, {:activate, {:error, :unauthorized}})
+    {:stop, :normal, state}
+  end
+
   # if we fail to place an order, we can still continue with the others
   def handle_info({:place_order, {:error, _msg}} = error, %{from: from} = state) do
     send(from, {:activate, {:error, error}})

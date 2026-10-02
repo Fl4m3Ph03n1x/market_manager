@@ -15,15 +15,15 @@
 
 | Item | Value |
 |---|---|
-| Branch | `fixing-auth-v2` at `8e10343 implementation of Phase 1 of auth rework` (1 commit ahead of `master`) |
-| Uncommitted | Phases 2-3 of the auth rework (`auction_house`, `config/*.exs`, tests in `auction_house` and `manager`) and this file |
+| Branch | `fixing-auth-v2` at `88bc577 implementation of phases 2 and 3` (2 commits ahead of `master`) |
+| Uncommitted | Phase 4 of the auth rework (`manager` sagas and `Worker`, `web_interface` LiveViews, their tests) and this file |
 | Version | `2.2.9` in `mix.exs`; latest tag `2.2.9`; README badge `v=2.2.9` |
 | Local toolchain | Elixir 1.20.1, Erlang/OTP 28.3.2 (ASDF) |
 | CI toolchain | Elixir 1.20.x, OTP 28.5.x on `windows-2022` (`.github/workflows/master.yml`) |
-| Compile | `mix compile --warnings-as-errors` (dev and test): clean; `mix credo --strict`: no issues; `mix dialyzer`: passed (2026-10-02) |
-| Tests | `mix coveralls -u`: **271 passed** across all apps (`shared` 29, `store` 41, `rate_limiter` 5, `auction_house` 84, `manager` 38, `web_interface` 74). Earlier "74 passed" entries counted only the last app's line. |
-| Coverage | **76.6%** total |
-| Active blocker | PROD login: header-based sign-in implemented (Phases 1-3, partly uncommitted); not yet checked against PROD; Phase 4 not started (see **Active Blockers**) |
+| Compile | `mix compile --warnings-as-errors` (dev and test): clean; `mix credo --strict`: no issues; `mix dialyzer`: passed (2026-10-02). `mix format --check-formatted` fails (not in CI): 3 test files from Phases 1-3 (`auction_house/.../use_case/login_test.exs`, `shared/test/data/authorization_test.exs`, `store/test/unit/file_system_test.exs`) and 3 files with older unformatted lines (`manager/test/unit/saga/deactivate_test.exs`, `web_interface/.../live/deactivate_live.ex`, `web_interface/test/.../deactivate_live_test.exs`). Phase 4 additions are formatted. |
+| Tests | `mix coveralls -u`: **284 passed** across all apps (`shared` 29, `store` 41, `rate_limiter` 5, `auction_house` 84, `manager` 41, `web_interface` 84). Earlier "74 passed" entries counted only the last app's line. |
+| Coverage | **77.2%** total |
+| Active blocker | PROD login: auth rework implemented (Phases 1-4; Phase 4 uncommitted); not yet checked against PROD (Phase 6) (see **Active Blockers**) |
 | Release build | Last known to fail (see **Known Issues**); not re-verified on 2026-10-01 |
 
 ## Active Blockers
@@ -31,7 +31,7 @@
 1. **PROD login broken; the authentication flow must be reworked.**
    - The website sign-in path (`warframe.market/auth/signin`) is permanently blocked for the app (Cloudflare, 2026-10-02).
    - Replacement verified by hand: header-based v1 sign-in, then `Authorization: Bearer <token>` on v2 calls.
-   - State: **Phases 1-3 implemented** (Phase 1 committed in `8e10343`; Phases 2-3 uncommitted). All checks pass. Pending: manual PROD check (Phase 6) and Phase 4, which needs decision D (scope and the session-expired message).
+   - State: **Phases 1-4 implemented** (Phase 1 in `8e10343`, Phases 2-3 in `88bc577`, Phase 4 uncommitted). All checks pass. Pending: manual PROD check (Phase 6), then the version bump (decision G).
    - Rule: do not implement any fix without explicit user approval.
    - Details: section **Header-Based Authentication (2026-10-02)**, subsection **Rework Plan**, plus background in **PROD Login Blocked by Cloudflare (2026-10-01)**.
 
@@ -111,6 +111,10 @@ Sources: `AGENTS.md` and recorded user preferences.
 - **Dialyzer map specs** are treated as closed. For GenServer state helper specs that receive extra fields, add `optional(any()) => any()`.
 - **`Manager.Saga.Activate.process_products/3`:** rollback failures carry `{:error, reason}` inside `{:failed_rollback_activation, ...}`, not the full `Store.Type.deactivate_syndicates_response()` union.
 - **Resource Hacker under Wine** works when invoked with `-res <ico>` and `-mask ICONGROUP,1,1033`.
+- **Tracked separately from the auth rework (found 2026-10-02):**
+  - Saga error paths other than the new 401 path stop with a non-`:normal` reason (e.g. `get_user_orders` errors, `{:continue, err}`). Sagas are `restart: :transient`, so they restart and rerun under `SagaSupervisor` (a `DynamicSupervisor`, default 3 restarts in 5 s); repeated failures can take `SagaSupervisor` down.
+  - If `setup.json` cannot be read (`{:error, :enoent}` etc.), `Manager.recover_login/0` returns an error and `WebInterface.Application.start/2` fails to start.
+  - If the `AuctionHouse.Runtime.Server` process restarts, it loses the token while the UI still shows the user as logged in.
 
 ## Test Coverage: Completed
 
@@ -254,7 +258,7 @@ Coverage numbers below were re-measured on 2026-10-01 and are unchanged from 202
 
 ### Rework Plan (2026-10-02)
 
-> Status: **Phases 1-3 implemented on 2026-10-02.** Phase 1 committed in `8e10343`; Phases 2-3 uncommitted. Compile (dev and test, `--warnings-as-errors`), `mix test` (271 passed), `mix credo --strict`, and `mix dialyzer` all pass. Pending: manual PROD check (Phase 6) and Phase 4 (decision D open).
+> Status: **Phases 1-4 implemented on 2026-10-02.** Phase 1 in `8e10343`, Phases 2-3 in `88bc577`, Phase 4 uncommitted. Compile (dev and test, `--warnings-as-errors`), `mix test` (284 passed), `mix credo --strict`, and `mix dialyzer` all pass. Pending: manual PROD check (Phase 6), then the version bump (G).
 
 Target flow:
 
@@ -290,7 +294,7 @@ Target flow:
 | B | Error atom for 401 | **Decided:** `:unauthorized` for every 401, without decoding the body. The user-facing message belongs to Phase 4 (open). |
 | C | How sign-in sends `Authorization: JWT` | **Decided (C-b):** no sign-in function; `HttpAsyncClient` must stay unaware of warframe.market. `post`'s 5th argument becomes `Authorization.t() \| headers()`; a private `build_headers/1` has two clauses (`%Authorization{}` → `Bearer`, list → `headers ++ @static_headers`). `Login` passes `[{"Authorization", "JWT"}]`. |
 | C1 | Extract the duplicated `call` / `updated_request` / `make_request` block of `post`, `delete`, and `get` into one helper | **Decided:** not now. C-b adds no new copy; focus stays on the rework. |
-| D | Scope of Phase 4 | Open, but **effectively required** because of defect D3 |
+| D | Scope of Phase 4 | **Decided** via P4-b and D-1 to D-5 below |
 | D6 | Where header names become case-insensitive | **Decided (D6-1):** `String.downcase/1` on each name in the success branch of `HttpAsyncClient.handle_response/3`, with a one-line comment on why (names are case-insensitive; the API mixes cases over HTTP/1.1). `Login` then reads `"authorization"`. |
 | E | Fix the `CaseClauseError` in `parse/1` (unmatched 400/403/404 JSON) | **Decided:** include. Valid JSON matching no known error returns `{:error, :bad_request}` (400), `{:error, :forbidden}` (403), or `{:error, :not_found}` (404). Existing specific atoms stay. Names follow HTTP status meanings so `HttpAsyncClient` stays unaware of warframe.market. |
 | F | Descriptive `User-Agent` | **Decided:** include, in `@static_headers`. Format `MarketManager/<version> (+https://github.com/Fl4m3Ph03n1x/market_manager)`; value in `config/config.exs`, updated on each version bump. `config/test.exs` overrides it with a fixed value (e.g. `MarketManager/test`) that tests assert literally. |
@@ -312,7 +316,17 @@ Target flow:
 | R2 | The lowercase header-name contract (D6-1) is not documented | **Decided:** Phase 2 documents it in `Response`'s `@typedoc`; Phase 3 unit tests build headers with lowercase names only |
 | R3 | `{:missing_token, headers}` can carry a token in `set-cookie` (sign-in without `auth_type: "header"` returns it only there) | **Decided:** obfuscate `set-cookie` too, in both token errors: keep the cookie name, redact the value (`"JWT=eyJ...; Path=/"` → `"JWT=[REDACTED]"`) |
 | P4-a | `LoginLive` handles `:econnrefused` and `:timeout`, which nothing produces; transport errors arrive as `:request_failed` | **Decided:** Phase 4 adds a `LoginLive` clause for `:request_failed` |
-| G | Version bump (`mix.exs` and README badge) | Open |
+| P4-b | "Remember me" does not survive a restart: `Manager.recover_login/0` only restores the user in the UI; nothing calls `AuctionHouse.update_login/2`, so `Activate` fails and `Deactivate` stops without notifying the UI | **Decided:** `Manager.Runtime.Worker` (`:recover_login`) also calls `auction_house.update_login(auth, user)` when stored login data exists |
+| D-1 | Who clears the session on 401 | **Decided (a):** the saga stops and reports; the LiveView calls `Manager.logout/0`, clears `UserStore`, and redirects to `/login` with a flash (same path as `LogoutLive`) |
+| D-2 | Saga message for 401 | **Decided:** `{:activate, {:error, :unauthorized}}` and `{:deactivate, {:error, :unauthorized}}` |
+| D-3 | Syndicates already marked active when `Activate` stops on 401 | **Decided (a):** leave them marked active (no rollback) |
+| D-4 | User-facing texts | **Decided:** the texts listed in the Phase 4 outline (approved 2026-10-02) |
+| D-5 | `LoginLive` clauses for `:econnrefused` and `:timeout` | **Decided:** remove. Verified unreachable: every HTTPoison transport error (including reasons `:econnrefused` and `:timeout`) becomes `:request_failed` in `HttpAsyncClient.parse/1`, and no other code sends `{:login, {:error, ...}}` with those atoms. The `:timeout` uses in `activate_live_test.exs`/`deactivate_live_test.exs` are arbitrary fatal reasons and stay. |
+| R4-1 | A 401 during reactivation arrives at `DeactivateLive` as `{:activate, {:error, :unauthorized}}`, because `Deactivate` starts `Activate` with `from` = the LiveView | **Decided:** `DeactivateLive` handles both `{:deactivate, {:error, :unauthorized}}` and `{:activate, {:error, :unauthorized}}` with the session-expired flow |
+| R4-2 | Sagas are `restart: :transient`; a non-`:normal` stop restarts and reruns them | **Decided:** both sagas stop with `{:stop, :normal, state}` on `:unauthorized` |
+| R4-3 | Clause order | **Decided:** `:unauthorized` clauses come before the generic `{:place_order, {:error, _}}` / `{:delete_order, {:error, _}}` (sagas) and `{:activate, {:error, reason}}` / `{:deactivate, {:error, reason}}` (LiveViews) clauses |
+| R4-4 | `Manager.logout/0` fails during the session-expired flow | **Decided:** still clear `UserStore` and redirect to `/login`, with an error flash, like `LogoutLive`'s error branch |
+| G | Version bump | **Decided:** umbrella `2.2.9` → **`2.2.10`**; strict semver per changed app; bump only **after Phase 6 is confirmed in PROD**. Update together: `mix.exs` (umbrella), the changed apps' `mix.exs`, the README badge (`v=`), and `user_agent` in `config/config.exs`. Tagging and the Windows release are done by the user. Per-app numbers are proposals to confirm at bump time: `shared` 2.1.0 → 3.0.0 (`Authorization` fields and `new/1` changed incompatibly), `auction_house` 5.1.0 → 6.0.0 (`HttpAsyncClient.post` argument, `Login.sign_in/2` removed, `Login` error values changed), `store` 5.0.6 → 6.0.0 if the saved login format counts as part of its contract (its function signatures are unchanged), `manager` and `web_interface` depending on Phase 4 (new messages are additions → minor). `rate_limiter` unchanged. |
 
 #### Phase 1 spec (final)
 
@@ -438,9 +452,21 @@ Validation after Phases 2 and 3: `mix compile --warnings-as-errors`, `mix test`,
 
 - **Phase 3:** see **Phase 3 spec (final)**.
 - **Phase 4 (session invalidation):**
-  - On 401 from an authenticated call, delete the stored login and send the user to `/login` with a clear message.
-  - `LoginLive` handles the new atoms: `:unauthorized`, `:bad_request`, `:forbidden`, `:not_found` (P2-3), and `:request_failed` (P4-a). Today `:econnrefused` and `:timeout` are handled but never produced, so "no internet" shows "Unknown message received".
-  - `Manager.Saga.Activate` and `Manager.Saga.Deactivate` stop on `:unauthorized` instead of continuing with the remaining orders (P2-3). Today `place_order` errors are treated as recoverable, so every remaining order would fail with 401.
+  - 401 only comes from authenticated calls: `place_order` (Activate) and `delete_order` (Deactivate, and the Activate it starts for reactivation). `get_user_orders` and `get_item_orders` are unauthenticated.
+  - `Manager.Saga.Activate` and `Manager.Saga.Deactivate` stop on `{:error, :unauthorized}` and send `{:activate | :deactivate, {:error, :unauthorized}}` (D-2). Syndicates already marked active stay active (D-3).
+  - `ActivateLive` and `DeactivateLive` handle that message before their generic fatal-error clause: `Manager.logout/0`, `UserStore.set_user(nil)`, redirect to `/login` with flash "Your session has expired. Please log in again." (D-1).
+  - `LoginLive`: remove the `:econnrefused` and `:timeout` clauses (D-5); add clauses with these flash texts (D-4):
+    - `:request_failed`: "Unable to connect to warframe.market. Please verify your internet connection." (the old `:econnrefused` text)
+    - `:unauthorized`: "warframe.market rejected the login. Please try again."
+    - `:forbidden`: "warframe.market denied access to this account. Please check your account on the website."
+    - `:bad_request`, `:not_found`, `{:missing_token, _}`, `{:invalid_token_format, _}`: "warframe.market sent an unexpected response. Please try again later."
+  - P4-b: `Worker` `:recover_login` also calls `auction_house.update_login(auth, user)` when stored login data exists, so a remembered session works after a restart.
+  - Accepted limitation: requests already queued in the rate limiter when a saga stops still run (each gets 401); their replies go to a stopped process.
+  - R4-1: `DeactivateLive` also handles `{:activate, {:error, :unauthorized}}` from the reactivation saga.
+  - R4-2: both sagas stop with `:normal` on `:unauthorized`, so `restart: :transient` does not rerun them.
+  - R4-3: `:unauthorized` clauses precede the generic error clauses in sagas and LiveViews.
+  - R4-4: if `Manager.logout/0` fails, still clear `UserStore` and redirect to `/login` with an error flash.
+  - Phase 4 tests: `activate_test.exs` and `deactivate_test.exs` (stop `:normal` on `:unauthorized`, message sent, syndicates left active); `manager_test.exs` (`recover_login` with saved data fills `AuctionHouse.get_saved_login/0`); `activate_live_test.exs` and `deactivate_live_test.exs` (logout, redirect, flash; `DeactivateLive` for both message shapes; logout failure branch); `login_live_test.exs` (new messages; `:econnrefused`/`:timeout` cases removed).
   - Logout only discards the token locally, because sign-out does not revoke v1 tokens.
 - **Phase 5 tests beyond Phase 1:** `http_async_client_test.exs` (Bearer header, 401, header-name case, sign-in headers), `use_case/login_test.exs` (single POST, prefix removal, 400 errors), `auction_house_test.exs` (remove the `GET /auth/signin` stub), `manager/test/unit/saga/login_test.exs` and `manager_test.exs` (new login stubs; 401 deletes the stored login), `login_live_test.exs` (new messages), and fixtures building `%Authorization{cookie:, token:}` in `server_test`, `delete_order_test`, `place_order_test`, and `activate_test`.
 - Not in scope: `GetUserOrders` calls `/v2/orders/user/{slug}` without auth, so it sees only visible orders. Decide separately whether that should change.
@@ -631,6 +657,9 @@ Proceed with B1 only if all three pass. Confirm with the maintainers that the un
   - Phase 2 decisions B, C (C-b), C1, D6 (D6-1), E, F, H, and P2-1 to P2-7; added **Phase 2 spec (final)**; carried P2-3 into Phase 4 and P2-4/P2-6 into Phase 3.
   - Phase 3 decisions L1 to L5, R1 to R3, and P4-a; added **Phase 3 spec (final)**; R2 added to Phase 2; `:request_failed` added to Phase 4.
   - Implemented Phases 2-3 as specified (`HttpAsyncClient`, `Response` typedoc, `Login`, `user_agent` config, `market_signin_url` and Floki removed from `auction_house`) plus tests. Full validation passes: 271 tests, 76.6% coverage, credo and dialyzer clean. Fixed a missing final newline in `authorization.ex` reported by credo.
+  - Phase 4 decisions P4-b, D-1 to D-5, and R4-1 to R4-4; Phase 4 outline completed with texts and tests. Three pre-existing issues added to **Known Issues**, tracked separately.
+  - Decision G: umbrella `2.2.10`, strict semver per app, bump after Phase 6 is confirmed; tagging and release by the user.
+  - Implemented Phase 4 as specified: sagas stop with `:normal` on `:unauthorized` and report it; `Worker` `:recover_login` calls `update_login/2`; `ActivateLive`/`DeactivateLive` expire the session (both message shapes in `DeactivateLive`, logout-failure branch); `LoginLive` new messages, `:econnrefused`/`:timeout` removed (`:econnrefused` text reused for `:request_failed`). Tests added in sagas, `manager_test`, and the three LiveViews. 284 tests, 77.2% coverage, credo and dialyzer clean.
   - Marked the Cloudflare section and Option B as superseded.
 - **2026-10-01:**
   - Renamed from `test_evaluation.md` and restructured for agent use.

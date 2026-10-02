@@ -45,11 +45,48 @@ defmodule WebInterface.LoginLive do
     {:noreply, socket}
   end
 
-  def handle_info({:login, {:error, :econnrefused}}, socket) do
+  def handle_info({:login, {:error, :request_failed}}, socket) do
     socket =
       socket
       |> assign(logging_in: false)
       |> put_flash(:error, "Unable to connect to warframe.market. Please verify your internet connection.")
+
+    {:noreply, socket}
+  end
+
+  def handle_info({:login, {:error, :unauthorized}}, socket) do
+    socket =
+      socket
+      |> assign(logging_in: false)
+      |> put_flash(:error, "warframe.market rejected the login. Please try again.")
+
+    {:noreply, socket}
+  end
+
+  def handle_info({:login, {:error, :forbidden}}, socket) do
+    socket =
+      socket
+      |> assign(logging_in: false)
+      |> put_flash(:error, "warframe.market denied access to this account. Please check your account on the website.")
+
+    {:noreply, socket}
+  end
+
+  def handle_info({:login, {:error, reason}}, socket) when reason in [:bad_request, :not_found] do
+    socket =
+      socket
+      |> assign(logging_in: false)
+      |> put_flash(:error, "warframe.market sent an unexpected response. Please try again later.")
+
+    {:noreply, socket}
+  end
+
+  def handle_info({:login, {:error, {reason, _headers}}}, socket)
+      when reason in [:missing_token, :invalid_token_format] do
+    socket =
+      socket
+      |> assign(logging_in: false)
+      |> put_flash(:error, "warframe.market sent an unexpected response. Please try again later.")
 
     {:noreply, socket}
   end
@@ -77,15 +114,6 @@ defmodule WebInterface.LoginLive do
       socket
       |> assign(logging_in: false)
       |> put_flash(:error, "Please provide a valid email!")
-
-    {:noreply, socket}
-  end
-
-  def handle_info({:login, {:error, :timeout}}, socket) do
-    socket =
-      socket
-      |> assign(logging_in: false)
-      |> put_flash(:error, "The request timed out, try again later!")
 
     {:noreply, socket}
   end

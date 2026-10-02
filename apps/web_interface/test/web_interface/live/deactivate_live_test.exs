@@ -507,6 +507,69 @@ defmodule WebInterface.DeactivateLiveTest do
       end
     end
 
+    for operation <- [:deactivate, :activate] do
+      @tag :capture_log
+      test "it logs out and redirects to login when the session expires during #{operation}", %{
+        conn: conn,
+        user: user,
+        syndicates: syndicates
+      } do
+        inactive_syndicates = Enum.filter(syndicates, &(&1.id == :steel_meridian))
+        selected_syndicates = Enum.filter(syndicates, &(&1.id == :red_veil))
+
+        with_mocks([
+          {UserStore, [], [get_user: fn -> {:ok, user} end, has_user?: fn -> true end, set_user: fn nil -> :ok end]},
+          {SyndicateStore, [],
+           [
+             get_syndicates: fn -> {:ok, syndicates} end,
+             get_inactive_syndicates: fn -> {:ok, inactive_syndicates} end,
+             get_selected_inactive_syndicates: fn -> {:ok, selected_syndicates} end
+           ]},
+          {Manager, [], [logout: fn -> :ok end]}
+        ]) do
+          {:ok, view, _html} = live(conn, ~p"/deactivate")
+
+          send(view.pid, {unquote(operation), {:error, :unauthorized}})
+
+          flash = assert_redirect(view, ~p"/login")
+
+          assert flash["error"] == "Your session has expired. Please log in again."
+          assert_called(Manager.logout())
+          assert_called(UserStore.set_user(nil))
+        end
+      end
+    end
+
+    @tag :capture_log
+    test "it still clears the user and redirects to login when logout fails after the session expires", %{
+      conn: conn,
+      user: user,
+      syndicates: syndicates
+    } do
+      inactive_syndicates = Enum.filter(syndicates, &(&1.id == :steel_meridian))
+      selected_syndicates = Enum.filter(syndicates, &(&1.id == :red_veil))
+
+      with_mocks([
+        {UserStore, [], [get_user: fn -> {:ok, user} end, has_user?: fn -> true end, set_user: fn nil -> :ok end]},
+        {SyndicateStore, [],
+         [
+           get_syndicates: fn -> {:ok, syndicates} end,
+           get_inactive_syndicates: fn -> {:ok, inactive_syndicates} end,
+           get_selected_inactive_syndicates: fn -> {:ok, selected_syndicates} end
+         ]},
+        {Manager, [], [logout: fn -> {:error, :enoent} end]}
+      ]) do
+        {:ok, view, _html} = live(conn, ~p"/deactivate")
+
+        send(view.pid, {:deactivate, {:error, :unauthorized}})
+
+        flash = assert_redirect(view, ~p"/login")
+
+        assert flash["error"] == "Unable to logout correctly. Redirecting to Login."
+        assert_called(UserStore.set_user(nil))
+      end
+    end
+
     @tag :capture_log
     test "it shows a fallback flash for an unknown backend message", %{
       conn: conn,

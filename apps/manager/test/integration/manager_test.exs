@@ -2110,6 +2110,14 @@ defmodule Manager.WorkerTest do
       assert Manager.recover_login() == {:ok, %User{patreon?: false, ingame_name: "Fl4m3", slug: "fl4m3"}}
     end
 
+    test "restores the saved session in the auction house", %{authorization: authorization, user: user} do
+      _manager_pid = start_supervised(ManagerSupervisor)
+
+      {:ok, ^user} = Manager.recover_login()
+
+      assert AuctionHouse.get_saved_login() == {:ok, {authorization, user}}
+    end
+
     test "returns nil if no login session is found" do
       reset_setup_file()
 
