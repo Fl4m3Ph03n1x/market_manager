@@ -2106,5 +2106,54 @@
     "default_price": 5,
     "quantity": 13,
     "type": "arcane"
+  },
+  {
+    "name": "Gastro",
+    "id": "66fd67e93a826eccf651cd51",
+    "min_price": 14,
+    "default_price": 16,
+    "type": "mod"
+  },
+  {
+    "name": "Prey Of Dynar",
+    "id": "66fd67b33a826eccf651cd4b",
+    "min_price": 14,
+    "default_price": 16,
+    "type": "mod"
+  },
+  {
+    "name": "Prismatic Companion",
+    "id": "685d4fcef41598dddb4cc2f6",
+    "min_price": 14,
+    "default_price": 16,
+    "type": "mod"
+  },
+  {
+    "name": "Cold Front",
+    "id": "6ab3ee697bf68b8584b4ff28",
+    "min_price": 14,
+    "default_price": 16,
+    "type": "mod"
+  },
+  {
+    "name": "Gastroparesis",
+    "id": "6ab3eea97bf68b8584b4ff2a",
+    "min_price": 14,
+    "default_price": 16,
+    "type": "mod"
+  },
+  {
+    "name": "Infernum",
+    "id": "6ab3ee527bf68b8584b4ff26",
+    "min_price": 14,
+    "default_price": 16,
+    "type": "mod"
+  },
+  {
+    "name": "Broods Oversurge",
+    "id": "6ab3edcf7bf68b8584b4ff24",
+    "min_price": 14,
+    "default_price": 16,
+    "type": "mod"
   }
 ]
