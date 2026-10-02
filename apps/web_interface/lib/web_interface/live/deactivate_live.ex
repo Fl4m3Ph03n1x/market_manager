@@ -255,7 +255,11 @@ defmodule WebInterface.DeactivateLive do
       |> assign(deactivation_progress: progress)
 
     {:noreply,
-     put_flash(updated_socket, :warning, "Failed to fetch item orders during reactivation, please check the logs for details.")}
+     put_flash(
+       updated_socket,
+       :warning,
+       "Failed to fetch item orders during reactivation, please check the logs for details."
+     )}
   end
 
   # Non fatal error, we can continue with the next item

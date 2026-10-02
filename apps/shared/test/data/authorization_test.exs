@@ -7,7 +7,9 @@ defmodule Shared.Data.AuthorizationTest do
 
   describe "new/1" do
     test "returns an Authorization" do
-      assert Authorization.new(%{"access_token" => "a_token"}) == %Authorization{access_token: "a_token"}
+      assert Authorization.new(%{"access_token" => "a_token"}) == %Authorization{
+               access_token: "a_token"
+             }
     end
 
     test "raises if access_token is empty" do

@@ -371,7 +371,8 @@ defmodule MarketManager.Store.FileSystemTest do
       assert FileSystem.get_login_data(deps) == {:ok, nil}
     end
 
-    test "returns nil if read succeeded but access_token is not a string", %{paths: paths} = deps do
+    test "returns nil if read succeeded but access_token is not a string",
+         %{paths: paths} = deps do
       # Arrange
       read_fn = fn filename ->
         assert filename == Path.join(paths[:setup])

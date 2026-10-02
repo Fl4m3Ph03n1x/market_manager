@@ -25,7 +25,6 @@ defmodule Manager.Saga.DeactivateTest do
   end
 
   describe "handle_info/2 get_user_orders success" do
-
     @tag :capture_log
     test "completes after one delete fails and the remaining delete succeeds", %{state: state} do
       failed_order = Helpers.create_placed_order(order_id: "failed-order", item_id: "failed-product")

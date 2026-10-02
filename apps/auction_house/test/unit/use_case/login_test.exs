@@ -92,8 +92,7 @@ defmodule AuctionHouse.Impl.UseCase.LoginTest do
       }
 
       assert Login.finish(response) ==
-               {:error,
-                {:missing_token, %{"content-type" => "application/json", "set-cookie" => "JWT=[REDACTED]"}}}
+               {:error, {:missing_token, %{"content-type" => "application/json", "set-cookie" => "JWT=[REDACTED]"}}}
     end
 
     test "returns error with redacted token if the authorization scheme is not JWT" do
@@ -115,8 +114,7 @@ defmodule AuctionHouse.Impl.UseCase.LoginTest do
 
       assert Login.finish(response) ==
                {:error,
-                {:invalid_token_format,
-                 %{"content-type" => "application/json", "authorization" => "Bearer [REDACTED]"}}}
+                {:invalid_token_format, %{"content-type" => "application/json", "authorization" => "Bearer [REDACTED]"}}}
     end
 
     test "returns error if the JWT token is empty" do
