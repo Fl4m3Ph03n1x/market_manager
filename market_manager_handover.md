@@ -23,7 +23,7 @@
 | Compile | `mix compile --warnings-as-errors` (dev and test): clean; `mix credo --strict`: no issues; `mix dialyzer`: passed (2026-10-02). `mix format --check-formatted` fails (not in CI): 3 test files from Phases 1-3 (`auction_house/.../use_case/login_test.exs`, `shared/test/data/authorization_test.exs`, `store/test/unit/file_system_test.exs`) and 3 files with older unformatted lines (`manager/test/unit/saga/deactivate_test.exs`, `web_interface/.../live/deactivate_live.ex`, `web_interface/test/.../deactivate_live_test.exs`). Phase 4 additions are formatted. |
 | Tests | `mix coveralls -u`: **284 passed** across all apps (`shared` 29, `store` 41, `rate_limiter` 5, `auction_house` 84, `manager` 41, `web_interface` 84). Earlier "74 passed" entries counted only the last app's line. |
 | Coverage | **77.2%** total |
-| Active blocker | PROD login: auth rework implemented (Phases 1-4; Phase 4 uncommitted); not yet checked against PROD (Phase 6) (see **Active Blockers**) |
+| Active blocker | None for login: auth rework implemented (Phases 1-4; Phase 4 uncommitted) and **confirmed in PROD on 2026-10-02** (Phase 6). Remaining: restore `apps/store/priv/setup.json` and `watch_list.json`, then the version bump (G). |
 | Release build | Last known to fail (see **Known Issues**); not re-verified on 2026-10-01 |
 
 ## Active Blockers
@@ -31,7 +31,7 @@
 1. **PROD login broken; the authentication flow must be reworked.**
    - The website sign-in path (`warframe.market/auth/signin`) is permanently blocked for the app (Cloudflare, 2026-10-02).
    - Replacement verified by hand: header-based v1 sign-in, then `Authorization: Bearer <token>` on v2 calls.
-   - State: **Phases 1-4 implemented** (Phase 1 in `8e10343`, Phases 2-3 in `88bc577`, Phase 4 uncommitted). All checks pass. Pending: manual PROD check (Phase 6), then the version bump (decision G).
+   - State: **Phases 1-4 implemented and confirmed in PROD (Phase 6, 2026-10-02)** (Phase 1 in `8e10343`, Phases 2-3 in `88bc577`, Phase 4 uncommitted). Pending: restore `apps/store/priv/setup.json` and `watch_list.json` (modified by the PROD check), commit Phase 4, then the version bump (decision G).
    - Rule: do not implement any fix without explicit user approval.
    - Details: section **Header-Based Authentication (2026-10-02)**, subsection **Rework Plan**, plus background in **PROD Login Blocked by Cloudflare (2026-10-01)**.
 
@@ -258,7 +258,21 @@ Coverage numbers below were re-measured on 2026-10-01 and are unchanged from 202
 
 ### Rework Plan (2026-10-02)
 
-> Status: **Phases 1-4 implemented on 2026-10-02.** Phase 1 in `8e10343`, Phases 2-3 in `88bc577`, Phase 4 uncommitted. Compile (dev and test, `--warnings-as-errors`), `mix test` (284 passed), `mix credo --strict`, and `mix dialyzer` all pass. Pending: manual PROD check (Phase 6), then the version bump (G).
+> Status: **Phases 1-4 implemented on 2026-10-02 and confirmed in PROD (Phase 6).** Phase 1 in `8e10343`, Phases 2-3 in `88bc577`, Phase 4 uncommitted. Compile (dev and test, `--warnings-as-errors`), `mix test` (284 passed), `mix credo --strict`, and `mix dialyzer` all pass. Pending: the version bump (G).
+
+Phase 6 PROD check (2026-10-02, `MIX_ENV=prod mix phx.server`, invisible test account):
+
+| Step | Result |
+|---|---|
+| Log in with "remember me" | OK; `setup.json` holds only `access_token`, a bare JWT |
+| Activate / deactivate (Cephalon Simaris 10 orders, The Hex 8 orders) | OK, all orders placed and deleted |
+| Restart, then activate / deactivate without logging in (P4-b) | OK (Conjunction Survival, 4 orders) |
+| `access_token` set to `"invalid"`, restart, activate | First order got 401 → `Activate: Session expired, logging out.` → redirect to `/login`; `setup.json` cleared; syndicate stays marked active (D-3) |
+| Log in again with credentials, activate / deactivate | OK; typed credentials used (defect D3 confirmed resolved) |
+| Log out | OK; `setup.json` cleared |
+
+- No errors and no tokens in the logs. The only personal data logged is the email in Phoenix's debug log of the login form event (password `[FILTERED]`); this predates the rework.
+- The PROD build symlinks `_build/prod/lib/store/priv` to the tracked `apps/store/priv`, so a PROD run with "remember me" writes a real token into a tracked file. Restore `setup.json` and `watch_list.json` with `git checkout` before committing.
 
 Target flow:
 
@@ -660,6 +674,7 @@ Proceed with B1 only if all three pass. Confirm with the maintainers that the un
   - Phase 4 decisions P4-b, D-1 to D-5, and R4-1 to R4-4; Phase 4 outline completed with texts and tests. Three pre-existing issues added to **Known Issues**, tracked separately.
   - Decision G: umbrella `2.2.10`, strict semver per app, bump after Phase 6 is confirmed; tagging and release by the user.
   - Implemented Phase 4 as specified: sagas stop with `:normal` on `:unauthorized` and report it; `Worker` `:recover_login` calls `update_login/2`; `ActivateLive`/`DeactivateLive` expire the session (both message shapes in `DeactivateLive`, logout-failure branch); `LoginLive` new messages, `:econnrefused`/`:timeout` removed (`:econnrefused` text reused for `:request_failed`). Tests added in sagas, `manager_test`, and the three LiveViews. 284 tests, 77.2% coverage, credo and dialyzer clean.
+  - Phase 6 PROD check passed (all 6 steps); details in **Rework Plan**.
   - Marked the Cloudflare section and Option B as superseded.
 - **2026-10-01:**
   - Renamed from `test_evaluation.md` and restructured for agent use.
