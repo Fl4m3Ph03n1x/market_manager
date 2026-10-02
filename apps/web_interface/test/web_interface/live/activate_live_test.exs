@@ -664,6 +664,73 @@ defmodule WebInterface.ActivateLiveTest do
         refute has_element?(view, "p", "Activation in progress...")
       end
     end
+
+    @tag :capture_log
+    test "it logs out and redirects to login when the session expires", %{
+      conn: conn,
+      user: user,
+      strategies: strategies,
+      syndicates: syndicates
+    } do
+      with_mocks([
+        {UserStore, [], [get_user: fn -> {:ok, user} end, has_user?: fn -> true end, set_user: fn nil -> :ok end]},
+        {StrategyStore, [],
+         [
+           get_strategies: fn -> {:ok, strategies} end,
+           get_selected_strategy: fn -> {:ok, nil} end
+         ]},
+        {SyndicateStore, [],
+         [
+           get_syndicates: fn -> {:ok, syndicates} end,
+           get_active_syndicates: fn -> {:ok, []} end,
+           get_selected_active_syndicates: fn -> {:ok, []} end
+         ]},
+        {Manager, [], [logout: fn -> :ok end]}
+      ]) do
+        {:ok, view, _html} = live(conn, ~p"/activate")
+
+        send(view.pid, {:activate, {:error, :unauthorized}})
+
+        flash = assert_redirect(view, ~p"/login")
+
+        assert flash["error"] == "Your session has expired. Please log in again."
+        assert_called(Manager.logout())
+        assert_called(UserStore.set_user(nil))
+      end
+    end
+
+    @tag :capture_log
+    test "it still clears the user and redirects to login when logout fails after the session expires", %{
+      conn: conn,
+      user: user,
+      strategies: strategies,
+      syndicates: syndicates
+    } do
+      with_mocks([
+        {UserStore, [], [get_user: fn -> {:ok, user} end, has_user?: fn -> true end, set_user: fn nil -> :ok end]},
+        {StrategyStore, [],
+         [
+           get_strategies: fn -> {:ok, strategies} end,
+           get_selected_strategy: fn -> {:ok, nil} end
+         ]},
+        {SyndicateStore, [],
+         [
+           get_syndicates: fn -> {:ok, syndicates} end,
+           get_active_syndicates: fn -> {:ok, []} end,
+           get_selected_active_syndicates: fn -> {:ok, []} end
+         ]},
+        {Manager, [], [logout: fn -> {:error, :enoent} end]}
+      ]) do
+        {:ok, view, _html} = live(conn, ~p"/activate")
+
+        send(view.pid, {:activate, {:error, :unauthorized}})
+
+        flash = assert_redirect(view, ~p"/login")
+
+        assert flash["error"] == "Unable to logout correctly. Redirecting to Login."
+        assert_called(UserStore.set_user(nil))
+      end
+    end
   end
 
   describe "Execute button state" do

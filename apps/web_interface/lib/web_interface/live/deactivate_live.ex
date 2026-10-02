@@ -255,7 +255,11 @@ defmodule WebInterface.DeactivateLive do
       |> assign(deactivation_progress: progress)
 
     {:noreply,
-     put_flash(updated_socket, :warning, "Failed to fetch item orders during reactivation, please check the logs for details.")}
+     put_flash(
+       updated_socket,
+       :warning,
+       "Failed to fetch item orders during reactivation, please check the logs for details."
+     )}
   end
 
   # Non fatal error, we can continue with the next item
@@ -276,6 +280,12 @@ defmodule WebInterface.DeactivateLive do
        :warning,
        "Failed to place an item order during reactivation, please check the logs for details."
      )}
+  end
+
+  # the reactivation saga reports as :activate, so both operations can expire the session
+  def handle_info({operation, {:error, :unauthorized}}, socket) when operation in [:activate, :deactivate] do
+    Logger.warning("Deactivate: Session expired, logging out.")
+    expire_session(socket)
   end
 
   def handle_info({:activate, {:error, reason}}, socket) do
@@ -327,5 +337,25 @@ defmodule WebInterface.DeactivateLive do
       end
 
     {last_progress, progress}
+  end
+
+  @spec expire_session(LiveView.Socket.t()) :: {:noreply, LiveView.Socket.t()}
+  defp expire_session(socket) do
+    with :ok <- Manager.logout(),
+         :ok <- UserStore.set_user(nil) do
+      {:noreply,
+       socket
+       |> put_flash(:error, "Your session has expired. Please log in again.")
+       |> redirect(to: ~p"/login")}
+    else
+      error ->
+        Logger.error("Unable to logout correctly due to: #{inspect(error)}")
+        UserStore.set_user(nil)
+
+        {:noreply,
+         socket
+         |> put_flash(:error, "Unable to logout correctly. Redirecting to Login.")
+         |> redirect(to: ~p"/login")}
+    end
   end
 end

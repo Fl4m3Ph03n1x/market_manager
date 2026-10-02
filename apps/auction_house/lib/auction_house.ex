@@ -135,7 +135,7 @@ defmodule AuctionHouse do
 
   The received messages will one of the following formats:
 
-  - {:login, {:ok, { %Authorization{cookie: "a_cookie", token: "a_token"}, %User{patreon?: false, slug: "f4lm3", ingame_name: "Fl4m3"}}}}
+  - {:login, {:ok, { %Authorization{access_token: "a_token"}, %User{patreon?: false, slug: "f4lm3", ingame_name: "Fl4m3"}}}}
   - {:login, {:error, {reason, err}}}
 
   ```
@@ -151,7 +151,7 @@ defmodule AuctionHouse do
   Example:
   ```
   > alias Shared.Data.{Authorization, User}
-  > auth = Authorization.new("a_cookie", "a_token")
+  > auth = Authorization.new(%{"access_token" => "a_token"})
   > user = User.new("fl4m3", false)
 
   > AuctionHouse.update_login(auth, user)
@@ -168,7 +168,7 @@ defmodule AuctionHouse do
   Example:
   ```
   > alias Shared.Data.{Authorization, User}
-  > auth = Authorization.new("a_cookie", "a_token")
+  > auth = Authorization.new(%{"access_token" => "a_token"})
   > user = User.new("fl4m3", false)
 
   > AuctionHouse.get_saved_login()

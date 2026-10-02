@@ -17,9 +17,9 @@ config :store,
     Path.expand("#{__DIR__}/../apps/store/test/fixtures/syndicates.json") |> Path.split()
 
 config :auction_house,
+  user_agent: "MarketManager/test",
   api_order_url: "http://localhost:8082/v2/order",
   api_item_orders_url: "http://localhost:8082/v2/orders/item",
-  market_signin_url: "http://localhost:8082/auth/signin",
   api_signin_url: "http://localhost:8082/v1/auth/signin",
   api_user_orders_url: "http://localhost:8082/v2/orders/user"
 

@@ -8,13 +8,19 @@ defmodule AuctionHouse.Impl.HttpAsyncClientTest do
   alias HTTPoison
   alias Shared.Data.Authorization
 
-  alias AuctionHouse.Impl.HttpAsyncClientTest.{DeleteClient, GetClient1, GetClient2, PostClient}
+  alias AuctionHouse.Impl.HttpAsyncClientTest.{
+    DeleteClient,
+    GetClient1,
+    GetClient2,
+    PostClient,
+    PostHeadersClient
+  }
 
   describe "post/6" do
     test "calls rate limiter correctly" do
       url = "www.warframe.market.com/api/v1"
       data = "{}"
-      auth = %Authorization{cookie: "a_cookie", token: "token"}
+      auth = %Authorization{access_token: "token"}
 
       req = %Request{
         metadata: %Metadata{send?: false, notify: [], operation: :login},
@@ -31,10 +37,10 @@ defmodule AuctionHouse.Impl.HttpAsyncClientTest do
                       "www.warframe.market.com/api/v1",
                       "{}",
                       [
-                        {"x-csrftoken", "token"},
-                        {"Cookie", "a_cookie"},
+                        {"Authorization", "Bearer token"},
                         {"Accept", "application/json"},
-                        {"Content-Type", "application/json"}
+                        {"Content-Type", "application/json"},
+                        {"User-Agent", "MarketManager/test"}
                       ]
                     ]}
 
@@ -48,10 +54,10 @@ defmodule AuctionHouse.Impl.HttpAsyncClientTest do
                       "www.warframe.market.com/api/v1",
                       "{}",
                       [
-                        {"x-csrftoken", "token"},
-                        {"Cookie", "a_cookie"},
+                        {"Authorization", "Bearer token"},
                         {"Accept", "application/json"},
-                        {"Content-Type", "application/json"}
+                        {"Content-Type", "application/json"},
+                        {"User-Agent", "MarketManager/test"}
                       ]
                     ]}
 
@@ -67,12 +73,54 @@ defmodule AuctionHouse.Impl.HttpAsyncClientTest do
 
       assert HttpAsyncClient.post(url, data, req, response_fn, auth, deps) == :ok
     end
+
+    test "calls rate limiter correctly with extra headers instead of authorization" do
+      url = "www.warframe.market.com/api/v1"
+      data = "{}"
+
+      req = %Request{
+        metadata: %Metadata{send?: false, notify: [], operation: :login},
+        args: %{name: "John"}
+      }
+
+      response_fn = fn -> nil end
+
+      defmodule PostHeadersLimiter do
+        def make_request(request, {_, {_response_handler, original_req}} = _handler) do
+          assert request ==
+                   {&PostHeadersClient.post/3,
+                    [
+                      "www.warframe.market.com/api/v1",
+                      "{}",
+                      [
+                        {"Authorization", "JWT"},
+                        {"Accept", "application/json"},
+                        {"Content-Type", "application/json"},
+                        {"User-Agent", "MarketManager/test"}
+                      ]
+                    ]}
+
+          assert original_req.args.call == request
+          assert original_req.args.retries == 0
+
+          :ok
+        end
+      end
+
+      defmodule PostHeadersClient do
+        def post(_url, _data, _headers), do: {:ok, nil}
+      end
+
+      deps = %{client: PostHeadersClient, rate_limiter: PostHeadersLimiter}
+
+      assert HttpAsyncClient.post(url, data, req, response_fn, [{"Authorization", "JWT"}], deps) == :ok
+    end
   end
 
   describe "delete/3" do
     test "calls rate limiter correctly" do
       url = "www.warframe.market.com/api/v1"
-      auth = %Authorization{cookie: "a_cookie", token: "token"}
+      auth = %Authorization{access_token: "token"}
 
       req = %Request{
         metadata: %Metadata{send?: false, notify: [], operation: :login},
@@ -88,10 +136,10 @@ defmodule AuctionHouse.Impl.HttpAsyncClientTest do
                     [
                       "www.warframe.market.com/api/v1",
                       [
-                        {"x-csrftoken", "token"},
-                        {"Cookie", "a_cookie"},
+                        {"Authorization", "Bearer token"},
                         {"Accept", "application/json"},
-                        {"Content-Type", "application/json"}
+                        {"Content-Type", "application/json"},
+                        {"User-Agent", "MarketManager/test"}
                       ]
                     ]}
 
@@ -104,10 +152,10 @@ defmodule AuctionHouse.Impl.HttpAsyncClientTest do
                     [
                       "www.warframe.market.com/api/v1",
                       [
-                        {"x-csrftoken", "token"},
-                        {"Cookie", "a_cookie"},
+                        {"Authorization", "Bearer token"},
                         {"Accept", "application/json"},
-                        {"Content-Type", "application/json"}
+                        {"Content-Type", "application/json"},
+                        {"User-Agent", "MarketManager/test"}
                       ]
                     ]}
 
@@ -128,7 +176,7 @@ defmodule AuctionHouse.Impl.HttpAsyncClientTest do
   describe "get/3" do
     test "calls rate limiter correctly with authorization" do
       url = "www.warframe.market.com/api/v1"
-      auth = %Authorization{cookie: "a_cookie", token: "token"}
+      auth = %Authorization{access_token: "token"}
 
       req = %Request{
         metadata: %Metadata{send?: false, notify: [], operation: :login},
@@ -144,10 +192,10 @@ defmodule AuctionHouse.Impl.HttpAsyncClientTest do
                     [
                       "www.warframe.market.com/api/v1",
                       [
-                        {"x-csrftoken", "token"},
-                        {"Cookie", "a_cookie"},
+                        {"Authorization", "Bearer token"},
                         {"Accept", "application/json"},
-                        {"Content-Type", "application/json"}
+                        {"Content-Type", "application/json"},
+                        {"User-Agent", "MarketManager/test"}
                       ]
                     ]}
 
@@ -160,10 +208,10 @@ defmodule AuctionHouse.Impl.HttpAsyncClientTest do
                     [
                       "www.warframe.market.com/api/v1",
                       [
-                        {"x-csrftoken", "token"},
-                        {"Cookie", "a_cookie"},
+                        {"Authorization", "Bearer token"},
                         {"Accept", "application/json"},
-                        {"Content-Type", "application/json"}
+                        {"Content-Type", "application/json"},
+                        {"User-Agent", "MarketManager/test"}
                       ]
                     ]}
 
@@ -196,7 +244,8 @@ defmodule AuctionHouse.Impl.HttpAsyncClientTest do
                       "www.warframe.market.com/api/v1",
                       [
                         {"Accept", "application/json"},
-                        {"Content-Type", "application/json"}
+                        {"Content-Type", "application/json"},
+                        {"User-Agent", "MarketManager/test"}
                       ]
                     ]}
 
@@ -207,7 +256,11 @@ defmodule AuctionHouse.Impl.HttpAsyncClientTest do
                    {&GetClient2.get/2,
                     [
                       "www.warframe.market.com/api/v1",
-                      [{"Accept", "application/json"}, {"Content-Type", "application/json"}]
+                      [
+                        {"Accept", "application/json"},
+                        {"Content-Type", "application/json"},
+                        {"User-Agent", "MarketManager/test"}
+                      ]
                     ]}
 
           assert original_req.args.retries == 0
@@ -1144,6 +1197,180 @@ defmodule AuctionHouse.Impl.HttpAsyncClientTest do
       refute_received(:response_fn_ok)
       assert_received(:retry_response_fn_ok)
       assert_received({:get_item_orders, {:ok, []}})
+    end
+
+    test "passes header names in lowercase to the next function" do
+      pid = self()
+
+      request = %Request{
+        metadata: %Metadata{send?: false, notify: [pid], operation: :login},
+        args: %{call: {nil, ["REQUEST_URL", []]}, retries: 0}
+      }
+
+      response =
+        {:ok,
+         %HTTPoison.Response{
+           status_code: 200,
+           body: "{}",
+           headers: [{"Authorization", "JWT a_token"}, {"Content-Type", "application/json"}]
+         }}
+
+      response_fn = fn response ->
+        send(pid, {:headers, response.headers})
+        {:ok, nil}
+      end
+
+      assert HttpAsyncClient.handle_response(response, {response_fn, request}) == :ok
+      assert_received({:headers, %{"authorization" => "JWT a_token", "content-type" => "application/json"}})
+    end
+
+    test "returns correct 401 error without retrying" do
+      pid = self()
+
+      request = %Request{
+        metadata: %Metadata{send?: false, notify: [pid], operation: :get_user_orders},
+        args: %{call: {nil, ["REQUEST_URL", []]}, retries: 0}
+      }
+
+      response =
+        {:ok,
+         %HTTPoison.Response{
+           status_code: 401,
+           body: "{\"apiVersion\":\"0.25.0\",\"data\":null,\"error\":{\"request\":[\"app.jwt.invalid\"]}}"
+         }}
+
+      response_fn = fn _response -> {:ok, nil} end
+
+      assert HttpAsyncClient.handle_response(response, {response_fn, request}, %{rate_limiter: nil}) == :ok
+      assert_received({:get_user_orders, {:error, :unauthorized}})
+    end
+
+    test "returns 400 bad request error for unknown error messages" do
+      pid = self()
+
+      request = %Request{
+        metadata: %Metadata{send?: false, notify: [pid], operation: :place_order},
+        args: %{call: {nil, ["REQUEST_URL", []]}, retries: 0}
+      }
+
+      response =
+        {:ok,
+         %HTTPoison.Response{
+           status_code: 400,
+           body: "{\"error\":{\"inputs\":{\"quantity\":\"app.field.tooSmall\",\"type\":\"app.field.required\"}}}"
+         }}
+
+      response_fn = fn _response -> {:ok, nil} end
+
+      ExUnit.CaptureLog.capture_log(fn ->
+        assert HttpAsyncClient.handle_response(response, {response_fn, request}) == :ok
+      end)
+
+      assert_received({:place_order, {:error, :bad_request}})
+    end
+
+    test "returns 403 forbidden error for unknown error messages" do
+      pid = self()
+
+      request = %Request{
+        metadata: %Metadata{send?: false, notify: [pid], operation: :place_order},
+        args: %{call: {nil, ["REQUEST_URL", []]}, retries: 0}
+      }
+
+      response =
+        {:ok,
+         %HTTPoison.Response{
+           status_code: 403,
+           body: "{\"error\":{\"request\":[\"app.errors.forbidden\"]}}"
+         }}
+
+      response_fn = fn _response -> {:ok, nil} end
+
+      ExUnit.CaptureLog.capture_log(fn ->
+        assert HttpAsyncClient.handle_response(response, {response_fn, request}) == :ok
+      end)
+
+      assert_received({:place_order, {:error, :forbidden}})
+    end
+
+    test "returns 404 not found error for unknown error messages" do
+      pid = self()
+
+      request = %Request{
+        metadata: %Metadata{send?: false, notify: [pid], operation: :get_user_orders},
+        args: %{call: {nil, ["REQUEST_URL", []]}, retries: 0}
+      }
+
+      response =
+        {:ok,
+         %HTTPoison.Response{
+           status_code: 404,
+           body: "{\"error\":{\"request\":[\"app.user.notFound\"]}}"
+         }}
+
+      response_fn = fn _response -> {:ok, nil} end
+
+      ExUnit.CaptureLog.capture_log(fn ->
+        assert HttpAsyncClient.handle_response(response, {response_fn, request}) == :ok
+      end)
+
+      assert_received({:get_user_orders, {:error, :not_found}})
+    end
+
+    test "returns decode error for non JSON error messages" do
+      pid = self()
+
+      request = %Request{
+        metadata: %Metadata{send?: false, notify: [pid], operation: :login},
+        args: %{call: {nil, ["REQUEST_URL", []]}, retries: 0}
+      }
+
+      response =
+        {:ok,
+         %HTTPoison.Response{
+           status_code: 403,
+           body: "<!DOCTYPE html><html lang=\"en-US\"><head><title>Just a moment...</title></head></html>"
+         }}
+
+      response_fn = fn _response -> {:ok, nil} end
+
+      ExUnit.CaptureLog.capture_log(fn ->
+        assert HttpAsyncClient.handle_response(response, {response_fn, request}) == :ok
+      end)
+
+      assert_received({:login, {:error, :unable_to_decode_error}})
+    end
+
+    test "logs only the status and the first 500 bytes of the body of an error" do
+      request = %Request{
+        metadata: %Metadata{send?: false, notify: [], operation: :login},
+        args: %{call: {nil, ["REQUEST_URL", []]}, retries: 0}
+      }
+
+      response =
+        {:ok,
+         %HTTPoison.Response{
+           status_code: 400,
+           body: String.duplicate("a", 1_000),
+           request: %HTTPoison.Request{
+             method: :post,
+             url: "https://api.warframe.market/v1/auth/signin",
+             headers: [{"Authorization", "Bearer a_token"}],
+             body: "{\"email\":\"an_email\",\"password\":\"a_password\"}"
+           }
+         }}
+
+      response_fn = fn _response -> {:ok, nil} end
+
+      log =
+        ExUnit.CaptureLog.capture_log(fn ->
+          HttpAsyncClient.handle_response(response, {response_fn, request})
+        end)
+
+      assert log =~ "with status 400: \"#{String.duplicate("a", 500)}\""
+      refute log =~ String.duplicate("a", 501)
+      refute log =~ "a_token"
+      refute log =~ "a_password"
     end
   end
 end

@@ -11,7 +11,9 @@ import Config
 
 config :manager, env: config_env()
 
-config :auction_house, env: config_env()
+config :auction_house,
+  env: config_env(),
+  user_agent: "MarketManager/2.2.10 (+https://github.com/Fl4m3Ph03n1x/market_manager)"
 
 config :store, env: config_env()
 

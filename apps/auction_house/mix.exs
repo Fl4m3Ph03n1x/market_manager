@@ -4,7 +4,7 @@ defmodule AuctionHouse.MixProject do
   def project do
     [
       app: :auction_house,
-      version: "5.1.0",
+      version: "6.0.0",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
@@ -41,7 +41,6 @@ defmodule AuctionHouse.MixProject do
       {:jason, "~> 1.2"},
       {:recase, "~> 0.7"},
       {:jobs, "~> 0.10.0"},
-      {:floki, "~> 0.34.0"},
       {:shared, in_umbrella: true},
       {:rate_limiter, in_umbrella: true},
 

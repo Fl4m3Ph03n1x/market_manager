@@ -280,12 +280,17 @@ defmodule MarketManager.Store.FileSystemTest do
   describe "save_login_data/3" do
     test "returns :ok if write was successful", %{paths: paths} = deps do
       # Arrange
-      auth = Authorization.new(%{"cookie" => "a_cookie", "token" => "a_token"})
+      auth = Authorization.new(%{"access_token" => "a_token"})
       user = User.new(%{"ingame_name" => "Fl4m3", "slug" => "fl4m3", "patreon?" => false})
 
       write_fn = fn filename, content ->
         assert filename == Path.join(paths[:setup])
-        assert content == Jason.encode!(%{authorization: auth, user: user})
+
+        assert Jason.decode!(content) == %{
+                 "authorization" => %{"access_token" => "a_token"},
+                 "user" => %{"ingame_name" => "Fl4m3", "slug" => "fl4m3", "patreon?" => false}
+               }
+
         :ok
       end
 
@@ -297,7 +302,7 @@ defmodule MarketManager.Store.FileSystemTest do
 
     test "returns error if write to file failed", %{paths: paths} = deps do
       # Arrange
-      auth = Authorization.new(%{"cookie" => "a_cookie", "token" => "a_token"})
+      auth = Authorization.new(%{"access_token" => "a_token"})
       user = User.new(%{"ingame_name" => "Fl4m3", "slug" => "fl4m3", "patreon?" => false})
 
       write_fn = fn filename, content ->
@@ -320,14 +325,14 @@ defmodule MarketManager.Store.FileSystemTest do
   describe "get_login_data/1" do
     test "returns login_data if read succeeded", %{paths: paths} = deps do
       # Arrange
-      auth = Authorization.new(%{"cookie" => "a_cookie", "token" => "a_token"})
+      auth = Authorization.new(%{"access_token" => "a_token"})
       user = User.new(%{"ingame_name" => "Fl4m3", "slug" => "fl4m3", "patreon?" => false})
 
       read_fn = fn filename ->
         assert filename == Path.join(paths[:setup])
 
         {:ok,
-         "{\"authorization\":{\"cookie\":\"a_cookie\",\"token\":\"a_token\"},\"user\":{\"ingame_name\":\"Fl4m3\",\"slug\":\"fl4m3\",\"patreon?\":false}}"}
+         "{\"authorization\":{\"access_token\":\"a_token\"},\"user\":{\"ingame_name\":\"Fl4m3\",\"slug\":\"fl4m3\",\"patreon?\":false}}"}
       end
 
       deps = Map.put(deps, :io, %{read: read_fn})
@@ -336,14 +341,13 @@ defmodule MarketManager.Store.FileSystemTest do
       assert FileSystem.get_login_data(deps) == {:ok, {auth, user}}
     end
 
-    test "returns nil if read succeeded but authorization cookie is null",
-         %{paths: paths} = deps do
+    test "returns nil if read succeeded but access_token is null", %{paths: paths} = deps do
       # Arrange
       read_fn = fn filename ->
         assert filename == Path.join(paths[:setup])
 
         {:ok,
-         "{\"authorization\":{\"cookie\": null,\"token\":\"a_token\"},\"user\":{\"ingame_name\":\"Fl4m3\",\"slug\":\"fl4m3\",\"patreon?\":false}}"}
+         "{\"authorization\":{\"access_token\": null},\"user\":{\"ingame_name\":\"Fl4m3\",\"slug\":\"fl4m3\",\"patreon?\":false}}"}
       end
 
       deps = Map.put(deps, :io, %{read: read_fn})
@@ -352,14 +356,44 @@ defmodule MarketManager.Store.FileSystemTest do
       assert FileSystem.get_login_data(deps) == {:ok, nil}
     end
 
-    test "returns nil if read succeeded but authorization token is null",
+    test "returns nil if read succeeded but access_token is empty", %{paths: paths} = deps do
+      # Arrange
+      read_fn = fn filename ->
+        assert filename == Path.join(paths[:setup])
+
+        {:ok,
+         "{\"authorization\":{\"access_token\": \"\"},\"user\":{\"ingame_name\":\"Fl4m3\",\"slug\":\"fl4m3\",\"patreon?\":false}}"}
+      end
+
+      deps = Map.put(deps, :io, %{read: read_fn})
+
+      # Act & Assert
+      assert FileSystem.get_login_data(deps) == {:ok, nil}
+    end
+
+    test "returns nil if read succeeded but access_token is not a string",
          %{paths: paths} = deps do
       # Arrange
       read_fn = fn filename ->
         assert filename == Path.join(paths[:setup])
 
         {:ok,
-         "{\"authorization\":{\"cookie\": \"a_cookie\",\"token\": null},\"user\":{\"ingame_name\":\"Fl4m3\",\"slug\":\"fl4m3\",\"patreon?\":false}}"}
+         "{\"authorization\":{\"access_token\": 123},\"user\":{\"ingame_name\":\"Fl4m3\",\"slug\":\"fl4m3\",\"patreon?\":false}}"}
+      end
+
+      deps = Map.put(deps, :io, %{read: read_fn})
+
+      # Act & Assert
+      assert FileSystem.get_login_data(deps) == {:ok, nil}
+    end
+
+    test "returns nil if read succeeded but access_token is missing", %{paths: paths} = deps do
+      # Arrange
+      read_fn = fn filename ->
+        assert filename == Path.join(paths[:setup])
+
+        {:ok,
+         "{\"authorization\":{\"cookie\": \"a_cookie\",\"token\": \"a_token\"},\"user\":{\"ingame_name\":\"Fl4m3\",\"slug\":\"fl4m3\",\"patreon?\":false}}"}
       end
 
       deps = Map.put(deps, :io, %{read: read_fn})
@@ -374,7 +408,7 @@ defmodule MarketManager.Store.FileSystemTest do
         assert filename == Path.join(paths[:setup])
 
         {:ok,
-         "{\"authorization\":{\"cookie\": \"a_cookie\",\"token\": \"a_token\"},\"user\":{\"ingame_name\": null,\"slug\": null,\"patreon?\":false}}"}
+         "{\"authorization\":{\"access_token\": \"a_token\"},\"user\":{\"ingame_name\": null,\"slug\": null,\"patreon?\":false}}"}
       end
 
       deps = Map.put(deps, :io, %{read: read_fn})
@@ -389,7 +423,7 @@ defmodule MarketManager.Store.FileSystemTest do
         assert filename == Path.join(paths[:setup])
 
         {:ok,
-         "{\"authorization\":{\"cookie\": \"a_cookie\",\"token\": \"a_token\"},\"user\":{\"ingame_name\": \"Fl4m3\",\"slug\":\"fl4m3\",\"patreon?\": null}}"}
+         "{\"authorization\":{\"access_token\": \"a_token\"},\"user\":{\"ingame_name\": \"Fl4m3\",\"slug\":\"fl4m3\",\"patreon?\": null}}"}
       end
 
       deps = Map.put(deps, :io, %{read: read_fn})
@@ -414,7 +448,7 @@ defmodule MarketManager.Store.FileSystemTest do
     test "returns nil if read succeeded but user is missing", %{paths: paths} = deps do
       read_fn = fn filename ->
         assert filename == Path.join(paths[:setup])
-        {:ok, "{\"authorization\":{\"cookie\": \"a_cookie\",\"token\": \"a_token\"}}"}
+        {:ok, "{\"authorization\":{\"access_token\": \"a_token\"}}"}
       end
 
       deps = Map.put(deps, :io, %{read: read_fn})

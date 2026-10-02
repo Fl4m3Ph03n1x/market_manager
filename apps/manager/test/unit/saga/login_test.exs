@@ -12,7 +12,7 @@ defmodule Manager.Saga.LoginTest do
 
   setup do
     credentials = %Credentials{email: "user@example.com", password: "password"}
-    authorization = %Authorization{cookie: "a_cookie", token: "a_token"}
+    authorization = %Authorization{access_token: "a_token"}
     user = %User{ingame_name: "Fl4m3", slug: "fl4m3", patreon?: false}
 
     state = %{

@@ -73,13 +73,13 @@ defmodule Store do
   > alias Shared.Data.{Authorization, User}
 
   > Store.save_login_data(
-    %Authorization{token: "a_token", cookie: "a_cookie"},
+    %Authorization{access_token: "a_token"},
     %User{ingame_name: "Username", slug: "username", patreon?: false}
   )
   :ok
 
   > Store.save_login_data(
-    %Authorization{token: "a_token", cookie: "a_cookie"},
+    %Authorization{access_token: "a_token"},
     %User{ingame_name: "Username",  slug: "username", patreon?: false}
   )
   {:error, :enoent}
@@ -104,7 +104,7 @@ defmodule Store do
   defdelegate delete_login_data, to: FileSystem
 
   @doc """
-  Retrieves the user's login data from Storage.
+  Retrieves the user's login data from Storage. If no data is present, returns `{:ok, nil}`.
 
   Example:
   ```
@@ -112,9 +112,12 @@ defmodule Store do
 
   > Store.get_login_data()
   {:ok, {
-    %Authorization{token: "a_token", cookie: "a_cookie"},
+    %Authorization{access_token: "a_token"},
     %User{ingame_name: "Username", slug: "username", patreon?: false}
   }}
+
+  > Store.get_login_data()
+  {:ok, nil}
 
   > Store.get_login_data()
   {:error, :enoent}

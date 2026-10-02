@@ -11,4 +11,9 @@ defmodule Shared.Data.CredentialsTest do
              password: "a_password"
            }
   end
+
+  test "inspect/1 hides the password" do
+    assert inspect(Credentials.new("an_email", "a_password")) ==
+             "#Shared.Data.Credentials<email: \"an_email\", ...>"
+  end
 end

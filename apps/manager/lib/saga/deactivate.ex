@@ -122,6 +122,12 @@ defmodule Manager.Saga.Deactivate do
     end
   end
 
+  # an expired session fails every remaining deletion; :normal keeps the transient saga from restarting
+  def handle_info({:delete_order, {:error, :unauthorized}}, %{from: from} = state) do
+    send(from, {:deactivate, {:error, :unauthorized}})
+    {:stop, :normal, state}
+  end
+
   # if we fail to delete a placed order, we can still continue to delete the others
   def handle_info(
         {:delete_order, {:error, _msg}} = error,
