@@ -15,23 +15,23 @@
 
 | Item | Value |
 |---|---|
-| Branch | `fixing-auth-v2` at `630d445 mix format` (7 commits ahead of `master`; 2 not pushed: `eaebc2a updated catalog`, `630d445 mix format`) |
-| Uncommitted | This file and the version bump (G): `mix.exs`, the 5 changed apps' `mix.exs`, `README.md`, `config/config.exs` |
-| Version | `2.2.10` in `mix.exs` (uncommitted, decision G); latest tag `2.2.9`; README badge `v=2.2.10`; `user_agent` `MarketManager/2.2.10`. Apps: `shared` 3.0.0, `auction_house` 6.0.0, `store` 6.0.0, `manager` 5.1.0, `web_interface` 2.4.0, `rate_limiter` 1.0.2 (unchanged) |
+| Branch | `master` at `55c6328 Fixing auth (#150)`, in sync with `origin/master` (auth rework, catalog, format, and version bump merged) |
+| Uncommitted | This file |
+| Version | `2.2.10` in `mix.exs` (decision G, merged); latest tag `2.2.9` (`2.2.10` not tagged yet); README badge `v=2.2.10`; `user_agent` `MarketManager/2.2.10`. Apps: `shared` 3.0.0, `auction_house` 6.0.0, `store` 6.0.0, `manager` 5.1.0, `web_interface` 2.4.0, `rate_limiter` 1.0.2 (unchanged) |
 | Local toolchain | Elixir 1.20.1, Erlang/OTP 28.3.2 (ASDF) |
 | CI toolchain | Elixir 1.20.x, OTP 28.5.x on `windows-2022` (`.github/workflows/master.yml`) |
 | Compile | Phase 6 automated re-run at `630d445` (2026-10-02): `mix compile --warnings-as-errors --force` (dev and test): clean; `mix credo --strict`: no issues; `mix dialyzer`: passed; `mix format --check-formatted`: passes (whole project formatted in `630d445`). |
 | Tests | `mix coveralls -u`: **284 passed** across all apps (`shared` 29, `store` 41, `rate_limiter` 5, `auction_house` 84, `manager` 41, `web_interface` 84). Earlier "74 passed" entries counted only the last app's line. |
 | Coverage | **77.2%** total |
-| Active blocker | None for login: auth rework implemented (Phases 1-4, committed) and **confirmed in PROD on 2026-10-02** (Phase 6). Version bump (G) applied, uncommitted. Remaining: commit, tag, and release (by the user). |
-| Release build | Last known to fail (see **Known Issues**); not re-verified on 2026-10-01 |
+| Active blocker | None: auth rework implemented, **confirmed in PROD on 2026-10-02** (Phase 6), version bumped (G), and merged to `master`. Remaining (user): tag `2.2.10`, smoke-test the `.exe` on Windows, publish. |
+| Release build | **Works** (2026-10-02, `master` `55c6328`): `burrito_out/market_manager_2.2.10.exe` (~25 MB, with icon). Must be built with `MIX_ENV=prod`; see **Commands**. Not yet run on Windows. |
 
 ## Active Blockers
 
 1. **Resolved on 2026-10-02: PROD login required an authentication-flow rework.**
    - The website sign-in path (`warframe.market/auth/signin`) is permanently blocked for the app (Cloudflare, 2026-10-02).
    - Replacement verified by hand: header-based v1 sign-in, then `Authorization: Bearer <token>` on v2 calls.
-   - State: **Phases 1-4 implemented and confirmed in PROD (Phase 6, 2026-10-02)**. Commits: Phase 1 `8e10343`, Phases 2-3 `88bc577`, Phase 4 `a3f7c52`, store files reset `cb26090` (no token committed; `setup.json` is `{}` and `watch_list.json` is reformatted, both equivalent to `master`). Version bump (decision G) applied, uncommitted; tag and release by the user.
+   - State: **Phases 1-4 implemented and confirmed in PROD (Phase 6, 2026-10-02)**. Commits: Phase 1 `8e10343`, Phases 2-3 `88bc577`, Phase 4 `a3f7c52`, store files reset `cb26090` (no token committed; `setup.json` is `{}` and `watch_list.json` is reformatted, both equivalent to `master`). Version bump (decision G) applied; merged to `master` in `55c6328`; release built; tag and publish by the user.
    - Rule: do not implement any fix without explicit user approval.
    - Details: section **Header-Based Authentication (2026-10-02)**, subsection **Rework Plan**, plus background in **PROD Login Blocked by Cloudflare (2026-10-01)**.
 
@@ -68,9 +68,17 @@ mix test
 mix coveralls -u
 mix credo --strict
 mix dialyzer
-mix release market_manager --overwrite
 (cd apps/web_interface && MIX_ENV=prod mix phx.server)
 ```
+
+Release (about 5 minutes; check first that `apps/store/priv/setup.json` is `{}`, because it ships in the release):
+
+```sh
+(cd apps/web_interface && MIX_ENV=prod mix assets.deploy)
+MIX_ENV=prod mix release market_manager --overwrite
+```
+
+Output: `burrito_out/market_manager_<version>.exe` (with icon) and `burrito_out/market_manager_windows.exe` (before the icon step).
 
 Focused suites:
 
@@ -105,7 +113,7 @@ Sources: `AGENTS.md` and recorded user preferences.
 
 ## Known Issues
 
-- **Release build** (last known, not re-verified): `mix release market_manager --overwrite` fails before the post-wrap steps, because the `web_interface` runtime config contains a regex that must be stored with the `/E` modifier.
+- **Release build must use `MIX_ENV=prod`:** in the default dev env, `mix release` fails before the post-wrap steps because the live-reload `~r` patterns in `config/dev.exs` would need the `/E` modifier. Resolved by building in prod (verified 2026-10-02).
 - **ASDF in sandboxed shells:** sandboxed terminals hide `~/.asdf` while `~/.asdf/shims` stays on `PATH`, which produces a misleading `mix: command not found`. Run Mix unsandboxed.
 - **Toolchain drift:** local OTP 28.3.2 vs CI OTP 28.5.x. Keep this in mind when behaviour differs between local and CI.
 - **Dialyzer map specs** are treated as closed. For GenServer state helper specs that receive extra fields, add `optional(any()) => any()`.
@@ -342,7 +350,7 @@ Target flow:
 | R4-2 | Sagas are `restart: :transient`; a non-`:normal` stop restarts and reruns them | **Decided:** both sagas stop with `{:stop, :normal, state}` on `:unauthorized` |
 | R4-3 | Clause order | **Decided:** `:unauthorized` clauses come before the generic `{:place_order, {:error, _}}` / `{:delete_order, {:error, _}}` (sagas) and `{:activate, {:error, reason}}` / `{:deactivate, {:error, reason}}` (LiveViews) clauses |
 | R4-4 | `Manager.logout/0` fails during the session-expired flow | **Decided:** still clear `UserStore` and redirect to `/login`, with an error flash, like `LogoutLive`'s error branch |
-| G | Version bump | **Done (2026-10-02, uncommitted):** umbrella `2.2.9` → `2.2.10`; `shared` 2.1.0 → 3.0.0, `auction_house` 5.1.0 → 6.0.0, `store` 5.0.6 → 6.0.0 (saved login format counted as contract), `manager` 5.0.5 → 5.1.0, `web_interface` 2.3.4 → 2.4.0, `rate_limiter` unchanged; README badge `v=2.2.10`; `user_agent` `MarketManager/2.2.10`. No inter-app version requirements to update. Tagging and the Windows release are done by the user. |
+| G | Version bump | **Done (2026-10-02, merged in `55c6328`):** umbrella `2.2.9` → `2.2.10`; `shared` 2.1.0 → 3.0.0, `auction_house` 5.1.0 → 6.0.0, `store` 5.0.6 → 6.0.0 (saved login format counted as contract), `manager` 5.0.5 → 5.1.0, `web_interface` 2.3.4 → 2.4.0, `rate_limiter` unchanged; README badge `v=2.2.10`; `user_agent` `MarketManager/2.2.10`. No inter-app version requirements to update. Tagging and the Windows release are done by the user. |
 
 #### Phase 1 spec (final)
 
@@ -681,6 +689,8 @@ Proceed with B1 only if all three pass. Confirm with the maintainers that the un
   - Catalog (`eaebc2a`): added Gastro, Prey Of Dynar, Prismatic Companion, Cold Front, Gastroparesis, Infernum, Broods Oversurge to `products.json` and the missing faction augments to `syndicates.json` (IDs from warframe.market `/v2/items`). Open: wiki renames Negation Armor, Sonic Siphon, Teleport Rush vs catalog Negation Swarm, Sonic Fracture, Fatal Teleport.
   - Ran `mix format` on the whole project (`630d445`); Phase 6 automated checks re-run and passing (284 tests).
   - Applied decision G (uncommitted): umbrella `2.2.10`, `shared` 3.0.0, `auction_house` 6.0.0, `store` 6.0.0, `manager` 5.1.0, `web_interface` 2.4.0, README badge, `user_agent`. Compile (dev and test), 284 tests, and the format check pass.
+  - Merged to `master` (`55c6328 Fixing auth (#150)`).
+  - Built the release on `master`: `MIX_ENV=prod mix assets.deploy`, then `MIX_ENV=prod mix release market_manager --overwrite` (exit 0) → `burrito_out/market_manager_2.2.10.exe`. The `/E` regex failure only affects dev builds; updated **Commands** and **Known Issues**.
 - **2026-10-01:**
   - Renamed from `test_evaluation.md` and restructured for agent use.
   - Added project state, map, working agreements, and known issues.
