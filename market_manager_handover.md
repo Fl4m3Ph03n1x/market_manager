@@ -1,7 +1,7 @@
 # Market Manager Handover
 
 > Handover context for agents working on the `market_manager` Elixir umbrella.
-> Local only (git-ignored). Last updated: **2026-10-02**.
+> Local only (git-ignored). Last updated: **2026-10-14**.
 
 ## How to Use This File
 
@@ -11,27 +11,27 @@
 - After finishing work, update **Status**, the affected section, and **Change Log**. Replace stale facts instead of appending contradicting ones.
 - Section headings are stable; refer to them by name.
 
-## Status (2026-10-02)
+## Status (2026-10-14)
 
 | Item | Value |
 |---|---|
-| Branch | `master` at `55c6328 Fixing auth (#150)`, in sync with `origin/master` (auth rework, catalog, format, and version bump merged) |
-| Uncommitted | This file |
-| Version | `2.2.10` in `mix.exs` (decision G, merged); latest tag `2.2.9` (`2.2.10` not tagged yet); README badge `v=2.2.10`; `user_agent` `MarketManager/2.2.10`. Apps: `shared` 3.0.0, `auction_house` 6.0.0, `store` 6.0.0, `manager` 5.1.0, `web_interface` 2.4.0, `rate_limiter` 1.0.2 (unchanged) |
+| Branch | `fixing-broken-catalog-and-progress-bar` from `master` (`d1aab6f`, tag `2.2.10`). Commits: `f436bef` (place-order item ID, fix A, A2, tests), `c1a3642` (catalog fixes), `6be35e5` (version bump). Not pushed |
+| Uncommitted | This file; doc review (`auction_house/lib/auction_house.ex`, `manager/lib/manager.ex`). `setup.json` and `watch_list.json` are clean; keep them that way before committing. See **Order Placement Failures (2026-10-14)** |
+| Version | `2.2.11` (bumped 2026-10-14 in `6be35e5`, not tagged); README badge `v=2.2.11`; `user_agent` `MarketManager/2.2.11`. Apps: `auction_house` 7.0.0 (was 6.0.0; breaking `place_order` error shape), `manager` 5.1.1 (was 5.1.0), `store` 6.0.1 (was 6.0.0; catalog data), `shared` 3.0.0, `web_interface` 2.4.0, `rate_limiter` 1.0.2 (unchanged). Previous release `2.2.10` tagged and deployed 2026-10-02 |
 | Local toolchain | Elixir 1.20.1, Erlang/OTP 28.3.2 (ASDF) |
 | CI toolchain | Elixir 1.20.x, OTP 28.5.x on `windows-2022` (`.github/workflows/master.yml`) |
-| Compile | Phase 6 automated re-run at `630d445` (2026-10-02): `mix compile --warnings-as-errors --force` (dev and test): clean; `mix credo --strict`: no issues; `mix dialyzer`: passed; `mix format --check-formatted`: passes (whole project formatted in `630d445`). |
-| Tests | `mix coveralls -u`: **284 passed** across all apps (`shared` 29, `store` 41, `rate_limiter` 5, `auction_house` 84, `manager` 41, `web_interface` 84). Earlier "74 passed" entries counted only the last app's line. |
-| Coverage | **77.2%** total |
-| Active blocker | None: auth rework implemented, **confirmed in PROD on 2026-10-02** (Phase 6), version bumped (G), and merged to `master`. Remaining (user): tag `2.2.10`, smoke-test the `.exe` on Windows, publish. |
-| Release build | **Works** (2026-10-02, `master` `55c6328`): `burrito_out/market_manager_2.2.10.exe` (~25 MB, with icon). Must be built with `MIX_ENV=prod`; see **Commands**. Not yet run on Windows. |
+| Compile | 2026-10-14 after the doc review: `mix compile --warnings-as-errors` clean; `mix format --check-formatted` passes; `mix dialyzer` passed after A2. `docs/` (ExDoc output) not regenerated. |
+| Tests | `mix test` (2026-10-14, after the version bump): **288 passed** (`shared` 29, `store` 41, `rate_limiter` 5, `auction_house` 85, `manager` 44, `web_interface` 84). Earlier "74 passed" entries counted only the last app's line. |
+| Coverage | **77.2%** total (2026-10-02; not re-measured) |
+| Active blocker | None. `2.2.11` ready to commit, merge, tag and release (by the user). Open activation/deactivation defects: **Order Placement Failures (2026-10-14)**. |
+| Release build | Last build `burrito_out/market_manager_2.2.10.exe` (2026-10-02), deployed. `2.2.11` not built yet. Must be built with `MIX_ENV=prod`; see **Commands**. |
 
 ## Active Blockers
 
 1. **Resolved on 2026-10-02: PROD login required an authentication-flow rework.**
    - The website sign-in path (`warframe.market/auth/signin`) is permanently blocked for the app (Cloudflare, 2026-10-02).
    - Replacement verified by hand: header-based v1 sign-in, then `Authorization: Bearer <token>` on v2 calls.
-   - State: **Phases 1-4 implemented and confirmed in PROD (Phase 6, 2026-10-02)**. Commits: Phase 1 `8e10343`, Phases 2-3 `88bc577`, Phase 4 `a3f7c52`, store files reset `cb26090` (no token committed; `setup.json` is `{}` and `watch_list.json` is reformatted, both equivalent to `master`). Version bump (decision G) applied; merged to `master` in `55c6328`; release built; tag and publish by the user.
+   - State: **Phases 1-4 implemented and confirmed in PROD (Phase 6, 2026-10-02)**. Commits: Phase 1 `8e10343`, Phases 2-3 `88bc577`, Phase 4 `a3f7c52`, store files reset `cb26090` (no token committed; `setup.json` is `{}` and `watch_list.json` is reformatted, both equivalent to `master`). Version bump (decision G) applied; merged to `master` in `55c6328`; released and deployed as `2.2.10` (tag on `d1aab6f`).
    - Rule: do not implement any fix without explicit user approval.
    - Details: section **Header-Based Authentication (2026-10-02)**, subsection **Rework Plan**, plus background in **PROD Login Blocked by Cloudflare (2026-10-01)**.
 
@@ -123,6 +123,45 @@ Sources: `AGENTS.md` and recorded user preferences.
   - Saga error paths other than the new 401 path stop with a non-`:normal` reason (e.g. `get_user_orders` errors, `{:continue, err}`). Sagas are `restart: :transient`, so they restart and rerun under `SagaSupervisor` (a `DynamicSupervisor`, default 3 restarts in 5 s); repeated failures can take `SagaSupervisor` down.
   - If `setup.json` cannot be read (`{:error, :enoent}` etc.), `Manager.recover_login/0` returns an error and `WebInterface.Application.start/2` fails to start.
   - If the `AuctionHouse.Runtime.Server` process restarts, it loses the token while the UI still shows the user as logged in.
+- **Cloudflare on the API (2026-10-14):** public `GET`s to `api.warframe.market` (`/v2/item/<slug>`, `/v2/orders/item/<slug>`) returned 403 `cf-mitigated: challenge` from `curl` and Python, even with the app's `User-Agent`. The running app was not affected. Diagnose PROD issues from the app logs instead.
+
+## Order Placement Failures (2026-10-14)
+
+### Root cause found
+
+- Activating Perrin Sequence placed 69 of 70 orders. The market rejected **Savage Silence** (`54a74455e779892d5e515690`) with 400 `{"error":{"inputs":{"subtype":"app.field.required"}}}`.
+- It is not shared with New Loka; it is in the Perrin Sequence and Cephalon Suda catalogs.
+- Fix: `"subtype": "regular"` added to its `products.json` entry. Confirmed in PROD by the user.
+- Activating New Loka placed 70 of 71 orders: **Reactive Storm** (`5e4145917b0275011bc5b7d2`, New Loka and Arbiters of Hexis) failed the same way; the user added `"subtype": "regular"` to it too. Other mods may need a `subtype`; they only surface when their syndicate is activated.
+- Activating Red Veil: **Jades Judgement** got 404 on `get_item_orders` (catalog name did not match the market slug; renamed by the user to "Jades Judgment", now priced and placed). Four orders failed with the same `subtype` 400 error: Dread Ward, Smoke Shadow, Seeking Shuriken, Blood Forge; `"subtype": "regular"` added to all four.
+- The progress bar then stuck at 99% (item A, now fixed).
+
+### Done (uncommitted)
+
+- `HttpAsyncClient.maybe_add_item_id/2`: a failed `place_order` now sends `{:place_order, {:error, {reason, item_id}}}`. Other operations are unchanged. `@spec` narrowed to `{:error, parse_error()}` (T1, done by the user).
+- `PlaceOrder.finish/1` errors carry the item ID too: `{:error, {{:missing_order, body} | Jason.DecodeError.t(), item_id}}`. The dead `{:missing_id, body()}` was dropped from the `@spec`.
+- `Activate` unauthorized clause matches `{:place_order, {:error, {:unauthorized, _item_id}}}`.
+- **Fix A (implemented by the user):** a failed order is stored in `orders_placed` as its `{:error, {reason, item_id}}` value (not `:failed`), counts toward progress, and `:done` is sent once every value is non-`nil`, whichever result arrives last. The catch-all `{:place_order, {:error, _}}` clause was removed, because every `place_order` error now carries an item ID.
+- **A2 (refactor, no behaviour change):** `Activate` uses `find_order_key/2`, `record_order_result/3`, `processed_orders_count/1` and `continue_or_finish/1` (shared by the success and error clauses), all with `@spec`s; they replace `update_orders_placed/2` and `check_count/1`. Added private types `order_key`, `order_result` and `state` (keys set in `start_link/1` are `required`, later ones `optional`); `state()` replaces the inline map in the `process_products/3` spec. The unauthorized clause's comment was kept as the user wrote it. Compile, format, 44 manager tests and `mix dialyzer` pass.
+- Retries: the saga only ever sees the final result per order. Statuses 429/500/502/503/520 are retried up to 2 times with no message in between; other statuses and transport errors are not retried.
+- Tests: `activate_test.exs` unauthorized input updated; new tests for a failure with orders still pending, a failure on the last pending order (`:done`), and a success after a failure (progress includes the failure, `:done`). `place_order_test.exs` `finish/2` error expectations include the item ID. `http_async_client_test.exs` adds "adds the order's item id to a failed place_order error".
+
+### Open
+
+For any item that changes a message shape, confirm the shape with the user first.
+
+| # | Item | Where | Severity |
+|---|---|---|---|
+| A3 | If a `LeakyBucket` task crashes (e.g. an exception in `handle_response/3`), only a log line is written; the saga gets no message and still hangs | `rate_limiter/lib/rate_limiter/leaky_bucket.ex` | Low |
+| B | HTTP failures of `get_item_orders` arrive as `{:error, reason}` (no item name); the saga records nothing, so `:all_prices_calculated` is never sent. Option: send them as `{:error, item_name, reason}` so they take the existing default-price path | `manager/lib/saga/activate.ex` `{:get_item_orders, {:error, _}}` clause | High |
+| C | No matching orders to delete: no deletions run and `handle_all_orders_deleted` is never called | `manager/lib/saga/deactivate.ex` `{:get_user_orders, {:ok, _}}` clause | High |
+| D | `handle_continue` failure stops without notifying the UI | `manager/lib/saga/deactivate.ex` | Medium |
+| E | `DeactivateLive` has no handler for `{:deactivate, {:error, {:get_user_orders, _}}}`; falls into the catch-all and stays in progress | `web_interface/lib/web_interface/live/deactivate_live.ex` | Medium |
+| F | `DeactivateLive` has no handler for `{:activate, {:ok, :no_slots_free}}` during reactivation | `web_interface/lib/web_interface/live/deactivate_live.ex` | Medium |
+| G | Store errors in `with` blocks without `else` become the `handle_info` return (bad return, crash, no UI message) | `activate.ex` `{:get_item_orders, {tag, item_name, data}}`; `deactivate.ex` `{:get_user_orders, {:ok, _}}` and `{:delete_order, {:ok, _}}` | Medium |
+| H | Fatal stops with non-`:normal` reasons restart the transient sagas (see **Known Issues**) | Both sagas | Medium |
+| I | The fatal "products could not be loaded" error is sent as `{:activate, {:error, {:get_item_orders, {:error, reason}}}}`, the same shape as the non-fatal per-item error. `ActivateLive`/`DeactivateLive` treat it as non-fatal, so the UI keeps waiting after the saga has stopped | `manager/lib/saga/activate.ex` `{:get_user_orders, {:ok, _}}` clause | Medium |
+| J | `AuctionHouse.Runtime.Server` ignores the result of `PlaceOrder.start/1` and `DeleteOrder.start/1`; with no authorization (`{:error, :missing_authorization}`) no message is sent and the saga waits forever | `auction_house/lib/runtime/server.ex` | Low |
 
 ## Test Coverage: Completed
 
@@ -670,6 +709,17 @@ Proceed with B1 only if all three pass. Confirm with the maintainers that the un
 
 ## Change Log
 
+- **2026-10-14:**
+  - Found the failing Perrin Sequence order from the app logs: Savage Silence needs a `subtype`; added `"subtype": "regular"` to `products.json` (confirmed in PROD by the user).
+  - `api.warframe.market` public `GET`s return a Cloudflare challenge outside the app; added to **Known Issues**.
+  - User implemented the place-order item ID (`maybe_add_item_id/2`) and the matching `Activate` unauthorized clause; tests updated and added. `mix test`: 285 passed.
+  - Reviewed saga/LiveView message flows and docs; open items in **Order Placement Failures (2026-10-14)**.
+  - Reactive Storm (New Loka) needed a `subtype` as well; fixed in `products.json` by the user.
+  - Fix A implemented by the user (failed orders recorded, `:done` always sent); `PlaceOrder.finish/1` errors carry the item ID. Tests fixed and added; `mix test`: 288 passed.
+  - A2: refactored the `place_order` clauses in `Activate` into shared helpers and added private `state`/`order_key`/`order_result` types; Dialyzer passes.
+  - Red Veil: Jades Judgement renamed to Jades Judgment by the user (404 on `get_item_orders`); `subtype` added to Dread Ward, Smoke Shadow, Seeking Shuriken, Blood Forge. Committed by the user in `f436bef` and `c1a3642` on `fixing-broken-catalog-and-progress-bar`.
+  - Version bump: umbrella `2.2.11`, `auction_house` 7.0.0, `manager` 5.1.1, `store` 6.0.1, README badge, `user_agent`. Compile clean, 288 tests pass. Committed by the user in `6be35e5` together with the `activate.ex` format fix.
+  - Doc review (D1-D3): `AuctionHouse` docs now show the real error shapes (`place_order` with item ID; `{:error, reason}` for `delete_order`, `get_user_orders`, `login`; both `get_item_orders` error shapes) and a valid `OrderInfo` example. `Manager.activate`/`deactivate` docs list every message, including `:no_slots_free`, fatal vs non-fatal errors, `:unauthorized`, and that progress counts failures; fixed the "not complete" typo and `MarketManager.` examples. Found I and J.
 - **2026-10-02:**
   - Discord: Cloudflare restrictions on the website are permanent; third parties must use header-based v1 sign-in.
   - Verified header-based sign-in and `Bearer` usage on `GET /v2/orders/my`; added **Header-Based Authentication (2026-10-02)**.
@@ -691,6 +741,7 @@ Proceed with B1 only if all three pass. Confirm with the maintainers that the un
   - Applied decision G (uncommitted): umbrella `2.2.10`, `shared` 3.0.0, `auction_house` 6.0.0, `store` 6.0.0, `manager` 5.1.0, `web_interface` 2.4.0, README badge, `user_agent`. Compile (dev and test), 284 tests, and the format check pass.
   - Merged to `master` (`55c6328 Fixing auth (#150)`).
   - Built the release on `master`: `MIX_ENV=prod mix assets.deploy`, then `MIX_ENV=prod mix release market_manager --overwrite` (exit 0) → `burrito_out/market_manager_2.2.10.exe`. The `/E` regex failure only affects dev builds; updated **Commands** and **Known Issues**.
+  - `2.2.10` tagged (`d1aab6f`) and deployed by the user.
 - **2026-10-01:**
   - Renamed from `test_evaluation.md` and restructured for agent use.
   - Added project state, map, working agreements, and known issues.

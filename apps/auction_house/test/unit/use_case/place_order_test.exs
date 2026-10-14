@@ -115,7 +115,7 @@ defmodule AuctionHouse.Impl.UseCase.PlaceOrderTest do
                 }}
     end
 
-    test "returns error if there is no order", %{request: req} do
+    test "returns error with the item id if there is no order", %{request: req} do
       response = %Response{
         metadata: req.metadata,
         request_args: req.args,
@@ -125,10 +125,11 @@ defmodule AuctionHouse.Impl.UseCase.PlaceOrderTest do
         """
       }
 
-      assert PlaceOrder.finish(response) == {:error, {:missing_order, %{"data" => %{}}}}
+      assert PlaceOrder.finish(response) ==
+               {:error, {{:missing_order, %{"data" => %{}}}, "54e644ffe779897594fa68cd"}}
     end
 
-    test "returns error if it fails to decode", %{request: req} do
+    test "returns error with the item id if it fails to decode", %{request: req} do
       response = %Response{
         metadata: req.metadata,
         request_args: req.args,
@@ -137,7 +138,7 @@ defmodule AuctionHouse.Impl.UseCase.PlaceOrderTest do
       }
 
       assert PlaceOrder.finish(response) ==
-               {:error, %Jason.DecodeError{position: 0, token: nil, data: ""}}
+               {:error, {%Jason.DecodeError{position: 0, token: nil, data: ""}, "54e644ffe779897594fa68cd"}}
     end
   end
 end

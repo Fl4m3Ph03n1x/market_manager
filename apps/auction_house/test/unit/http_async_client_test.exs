@@ -1293,6 +1293,34 @@ defmodule AuctionHouse.Impl.HttpAsyncClientTest do
       assert_received({:place_order, {:error, :forbidden}})
     end
 
+    test "adds the order's item id to a failed place_order error" do
+      pid = self()
+
+      request = %Request{
+        metadata: %Metadata{send?: false, notify: [pid], operation: :place_order},
+        args: %{
+          call: {nil, ["REQUEST_URL", []]},
+          retries: 0,
+          order: %{itemId: "54a74455e779892d5e515690", type: "sell", platinum: 16, quantity: 1, rank: 0}
+        }
+      }
+
+      response =
+        {:ok,
+         %HTTPoison.Response{
+           status_code: 400,
+           body: "{\"apiVersion\":\"0.25.0\",\"data\":null,\"error\":{\"inputs\":{\"subtype\":\"app.field.required\"}}}"
+         }}
+
+      response_fn = fn _response -> {:ok, nil} end
+
+      ExUnit.CaptureLog.capture_log(fn ->
+        assert HttpAsyncClient.handle_response(response, {response_fn, request}) == :ok
+      end)
+
+      assert_received({:place_order, {:error, {:bad_request, "54a74455e779892d5e515690"}}})
+    end
+
     test "returns 404 not found error for unknown error messages" do
       pid = self()
 

@@ -197,7 +197,7 @@ defmodule AuctionHouse.Impl.HttpAsyncClient do
         )
 
       true ->
-        Enum.each(meta.notify, &send(&1, {meta.operation, parsed_response}))
+        Enum.each(meta.notify, &send(&1, {meta.operation, maybe_add_item_id(parsed_response, args)}))
     end
 
     :ok
@@ -316,4 +316,8 @@ defmodule AuctionHouse.Impl.HttpAsyncClient do
     Logger.error("Failed to make request to market: #{inspect(error)}")
     {:error, :request_failed}
   end
+
+  @spec maybe_add_item_id({:error, parse_error()}, map()) :: {:error, parse_error() | {parse_error(), String.t()}}
+  defp maybe_add_item_id({:error, reason}, %{order: %{itemId: item_id}}), do: {:error, {reason, item_id}}
+  defp maybe_add_item_id(response, _args), do: response
 end

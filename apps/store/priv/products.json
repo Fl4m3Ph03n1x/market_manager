@@ -32,14 +32,16 @@
     "id": "54e0c9eee7798903744178aa",
     "min_price": 14,
     "default_price": 16,
-    "type": "mod"
+    "type": "mod",
+    "subtype": "regular"
   },
   {
     "name": "Smoke Shadow",
     "id": "54a74454e779892d5e515685",
     "min_price": 14,
     "default_price": 16,
-    "type": "mod"
+    "type": "mod",
+    "subtype": "regular"
   },
   {
     "name": "Fatal Teleport",
@@ -123,14 +125,16 @@
     "id": "5cb04868fc2db2068006980d",
     "min_price": 14,
     "default_price": 16,
-    "type": "mod"
+    "type": "mod",
+    "subtype": "regular"
   },
   {
     "name": "Blood Forge",
     "id": "5e4145907b0275011bc5b7cd",
     "min_price": 14,
     "default_price": 16,
-    "type": "mod"
+    "type": "mod",
+    "subtype": "regular"
   },
   {
     "name": "Blending Talons",
@@ -445,7 +449,8 @@
     "id": "5e4145917b0275011bc5b7d2",
     "min_price": 14,
     "default_price": 16,
-    "type": "mod"
+    "type": "mod",
+    "subtype": "regular"
   },
   {
     "name": "Duality",
@@ -767,7 +772,8 @@
     "id": "54a74455e779892d5e515690",
     "min_price": 14,
     "default_price": 16,
-    "type": "mod"
+    "type": "mod",
+    "subtype": "regular"
   },
   {
     "name": "Resonating Quake",
@@ -1760,7 +1766,7 @@
     "type": "mod"
   },
   {
-    "name": "Jades Judgement",
+    "name": "Jades Judgment",
     "id": "685d4ff2f41598dddb4cc2fa",
     "min_price": 14,
     "default_price": 16,

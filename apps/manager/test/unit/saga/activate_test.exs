@@ -9,7 +9,7 @@ defmodule Manager.Saga.ActivateTest do
   alias Helpers
   alias Manager.Saga.Activate
 
-  alias Shared.Data.{Authorization, User}
+  alias Shared.Data.{Authorization, PlacedOrder, User}
   alias Shared.Data.Product.{Arcane, Mod, ModWithoutRank}
 
   alias Store
@@ -400,7 +400,7 @@ defmodule Manager.Saga.ActivateTest do
     end
   end
 
-  describe "handle_info {:place_order, {:error, :unauthorized}}" do
+  describe "handle_info {:place_order, {:error, {:unauthorized, item_id}}}" do
     test "stops normally, reports the expired session and keeps the syndicates active" do
       state = %{
         deps: %{store: Store, auction_house: AuctionHouse},
@@ -409,10 +409,77 @@ defmodule Manager.Saga.ActivateTest do
       }
 
       with_mock Store, deactivate_syndicates: fn _syndicate_ids -> :ok end do
-        assert Activate.handle_info({:place_order, {:error, :unauthorized}}, state) == {:stop, :normal, state}
+        assert Activate.handle_info({:place_order, {:error, {:unauthorized, "54a74454e779892d5e5155c5"}}}, state) ==
+                 {:stop, :normal, state}
+
         assert_received({:activate, {:error, :unauthorized}})
         assert_not_called(Store.deactivate_syndicates(:_))
       end
+    end
+  end
+
+  describe "handle_info {:place_order, {:error, {reason, item_id}}}" do
+    test "records the failed order and keeps waiting for the pending ones" do
+      savage_silence = %Mod{id: "54a74455e779892d5e515690", name: "Savage Silence", min_price: 14, default_price: 16}
+      pool_of_life = %Mod{id: "54a74454e779892d5e51564c", name: "Pool of Life", min_price: 14, default_price: 16}
+      error = {:error, {:bad_request, "54a74455e779892d5e515690"}}
+
+      state = %{
+        from: self(),
+        orders_placed: %{{savage_silence, 16} => nil, {pool_of_life, 22} => nil}
+      }
+
+      assert Activate.handle_info({:place_order, error}, state) ==
+               {:noreply, %{state | orders_placed: %{{savage_silence, 16} => error, {pool_of_life, 22} => nil}}}
+
+      assert_received({:activate, {:error, {:place_order, {:error, {:bad_request, "54a74455e779892d5e515690"}}}}})
+      refute_received({:activate, {:ok, :done}})
+    end
+
+    test "finishes the activation when the last pending order fails" do
+      savage_silence = %Mod{id: "54a74455e779892d5e515690", name: "Savage Silence", min_price: 14, default_price: 16}
+      pool_of_life = %Mod{id: "54a74454e779892d5e51564c", name: "Pool of Life", min_price: 14, default_price: 16}
+      pool_of_life_order = %PlacedOrder{item_id: "54a74454e779892d5e51564c", order_id: "66b9c7aa6b17410a57974e4b"}
+      error = {:error, {:bad_request, "54a74455e779892d5e515690"}}
+
+      state = %{
+        from: self(),
+        orders_placed: %{{savage_silence, 16} => nil, {pool_of_life, 22} => pool_of_life_order}
+      }
+
+      assert Activate.handle_info({:place_order, error}, state) ==
+               {:stop, :normal,
+                %{state | orders_placed: %{{savage_silence, 16} => error, {pool_of_life, 22} => pool_of_life_order}}}
+
+      assert_received({:activate, {:error, {:place_order, {:error, {:bad_request, "54a74455e779892d5e515690"}}}}})
+      assert_received({:activate, {:ok, :done}})
+    end
+  end
+
+  describe "handle_info {:place_order, {:ok, placed_order}}" do
+    test "counts a failed order in the progress and finishes the activation" do
+      savage_silence = %Mod{id: "54a74455e779892d5e515690", name: "Savage Silence", min_price: 14, default_price: 16}
+      pool_of_life = %Mod{id: "54a74454e779892d5e51564c", name: "Pool of Life", min_price: 14, default_price: 16}
+      pool_of_life_order = %PlacedOrder{item_id: "54a74454e779892d5e51564c", order_id: "66b9c7aa6b17410a57974e4b"}
+      error = {:error, {:bad_request, "54a74455e779892d5e515690"}}
+
+      state = %{
+        deps: %{store: Store, auction_house: AuctionHouse},
+        args: %{syndicates_with_strategy: %{perrin_sequence: :top_five_average}},
+        product_prices: %{savage_silence => 16, pool_of_life => 22},
+        non_patreon_order_limit: 100,
+        user: %User{ingame_name: "Username", slug: "username", patreon?: false},
+        order_number_limit: 2,
+        orders_placed: %{{savage_silence, 16} => error, {pool_of_life, 22} => nil},
+        from: self()
+      }
+
+      assert Activate.handle_info({:place_order, {:ok, pool_of_life_order}}, state) ==
+               {:stop, :normal,
+                %{state | orders_placed: %{{savage_silence, 16} => error, {pool_of_life, 22} => pool_of_life_order}}}
+
+      assert_received({:activate, {:ok, {:order_placed, "Pool of Life", 2, 2}}})
+      assert_received({:activate, {:ok, :done}})
     end
   end
 end

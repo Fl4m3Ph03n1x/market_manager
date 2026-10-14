@@ -36,8 +36,12 @@ defmodule AuctionHouse do
   The received messages will have one of the following formats:
 
   - {:place_order, {:ok, %PlacedOrder{item_id: "5cb04868fc2db2068006980e", order_id: "66b9c7aa6b17410a57974e4b"}}}
-  - {:place_order, {:error, {reason, err}}}
+  - {:place_order, {:error, {reason, "5cb04868fc2db2068006980e"}}}
   ```
+
+  Every error carries the `itemId` of the order that failed. `reason` is an atom such as `:bad_request` or
+  `:unauthorized` when the request fails, or `{:missing_order, body}` / `%Jason.DecodeError{}` when the response
+  cannot be read.
   """
   @spec place_order(Product.sell_order()) :: Type.place_order_response()
   defdelegate place_order(order), to: Server
@@ -57,10 +61,10 @@ defmodule AuctionHouse do
   > AuctionHouse.delete_order(placed_order)
   :ok
 
-  The received messages will one of the following formats:
+  The received messages will have one of the following formats:
 
   - {:delete_order, {:ok, %PlacedOrder{item_id: "54e644ffe779897594fa68cd", order_id: "626127cbc984ac033cd2bbd2"}}}
-  - {:delete_order, {:error, {reason, err}}}
+  - {:delete_order, {:error, reason}}
   ```
   """
   @spec delete_order(PlacedOrder.t()) :: Type.delete_order_response()
@@ -80,12 +84,17 @@ defmodule AuctionHouse do
   > AuctionHouse.get_item_orders(item_name)
   > :ok
 
-  The received messages will one of the following formats:
+  The received messages will have one of the following formats:
 
-  - {:get_item_orders,  {:ok, "Despoil", [%OrderInfo{"visible" => true, "order_type" => "sell", "platform" => "pc",
-    "platinum" => 20, "user" => %OrderInfo.User{"ingame_name" => "user_name_1", "status" => "ingame"}}]}
-  - {:get_item_orders, {:error, "Despoil", {reason, err}}}
+  - {:get_item_orders, {:ok, "Despoil", [%OrderInfo{visible: true, order_type: :sell, platinum: 20, rank: 0,
+    user: %OrderInfo.User{ingame_name: "user_name_1", slug: "user_name_1", status: :ingame, platform: :pc,
+    crossplay: true}}]}}
+  - {:get_item_orders, {:error, "Despoil", reason}}
+  - {:get_item_orders, {:error, reason}}
   ```
+
+  The error with the item name is sent when the response cannot be decoded. The error without it is sent when the
+  request fails, for example `:item_not_found` when the item's name does not match any item in warframe market.
   """
   @spec get_item_orders(Type.item_name()) :: Type.get_item_orders_response()
   defdelegate get_item_orders(item_name), to: Server
@@ -99,7 +108,7 @@ defmodule AuctionHouse do
   > AuctionHouse.get_user_orders("fl4m3")
   > :ok
 
-  The received messages will one of the following formats:
+  The received messages will have one of the following formats:
 
   - {:get_user_orders, {:ok,
     [
@@ -114,7 +123,7 @@ defmodule AuctionHouse do
     ]
   }}
 
-  - {:get_user_orders, {:error, {reason, err}}}
+  - {:get_user_orders, {:error, reason}}
   ```
   """
   @spec get_user_orders(Type.username_slug()) :: Type.get_user_orders_response()
@@ -133,12 +142,14 @@ defmodule AuctionHouse do
   > AuctionHouse.login(credentials)
   :ok
 
-  The received messages will one of the following formats:
+  The received messages will have one of the following formats:
 
   - {:login, {:ok, { %Authorization{access_token: "a_token"}, %User{patreon?: false, slug: "f4lm3", ingame_name: "Fl4m3"}}}}
-  - {:login, {:error, {reason, err}}}
-
+  - {:login, {:error, reason}}
   ```
+
+  `reason` is an atom such as `:wrong_password` or `:wrong_email` when the request fails, or a tuple such as
+  `{:missing_token, headers}` when the response cannot be read.
   """
   @spec login(Credentials.t()) :: Type.login_response()
   defdelegate login(credentials), to: Server

@@ -25,14 +25,25 @@ defmodule Manager do
   following format:
 
   - `{:activate, {:ok, :get_user_orders}}`: Informs that a request was made to get current user orders.
+  - `{:activate, {:ok, :no_slots_free}}`: Informs that the user has no free order slots. The selected syndicates are deactivated again and the process ends.
   - `{:activate, {:ok, :calculating_item_prices}}`: Informs that the Manager is now calculating prices for all the items of the selected syndicates.
-  - `{:activate, {:ok, {:price_calculated, item_name, price, current_progress, total_progress}}}`: Informs that "price" was successfully calculated for "item_name". It also give the "current_progress" and "total_progress" for the caller to know how long the operation will take.
+  - `{:activate, {:ok, {:price_calculated, item_name, price, current_progress, total_progress}}}`: Informs that "price" was successfully calculated for "item_name". It also gives the "current_progress" and "total_progress" for the caller to know how long the operation will take.
   - `{:activate, {:ok, :placing_orders}}`: Informs that the final stage, of placing orders, has now begun.
-  - `{:activate, {:ok, {:order_placed, item_name, current_progress, total_progress}}}`: Informs that an order with "price" was successfully posted in Warframe Market for "item_name". It also gives the "current_progress" and "total_progress" for the caller to know how long the operation will take.
-  - `{:activate, {:ok, :done}}`: Informs the process is now complete.
+  - `{:activate, {:ok, {:order_placed, item_name, current_progress, total_progress}}}`: Informs that an order was successfully posted in Warframe Market for "item_name". "current_progress" counts every order processed so far, including the ones that failed, out of "total_progress".
+  - `{:activate, {:ok, :done}}`: Informs the process is now complete. It is sent once every order has either been placed or failed.
 
-  Any other received messages will be of the format `{:error, any()}` and mean that something has failed during the activation process.
+  Errors have the format `{:activate, {:error, reason}}`. The following ones do not stop the process:
 
+  - `{:activate, {:error, {:place_order, {:error, {reason, item_id}}}}}`: The order for the item with "item_id" could not be placed. It still counts towards the progress.
+  - `{:activate, {:error, {:get_item_orders, {:error, reason}}}}`: The Warframe Market orders for an item could not be fetched.
+
+  The following ones end the process:
+
+  - `{:activate, {:error, :unauthorized}}`: The session has expired. The user needs to log in again.
+  - `{:activate, {:error, {:continue, reason}}}`: The process could not start, for example because there is no saved login.
+  - `{:activate, {:error, {:get_user_orders, {:error, reason}}}}`: The current user orders could not be fetched.
+  - `{:activate, {:error, {:get_item_orders, {:error, reason}}}}`: Also sent when the products of the selected syndicates cannot be loaded. In this case it ends the process.
+  - `{:activate, {:error, {:failed_rollback_activation, reason}}}`: The user has no free order slots and the selected syndicates could not be deactivated again.
 
   Example:
   ```
@@ -53,13 +64,19 @@ defmodule Manager do
 
   - `{:deactivate, {:ok, :get_user_orders}}`: Informs that a request was made to get current user orders.
   - `{:deactivate, {:ok, :deleting_orders}}`: Informs that the Manager started deleting orders.
-  - `{:deactivate, {:ok, {:order_deleted, item_name, current_progress, total_progress}}}`: Informs that the order for "item_name" was successfully deleted in Warframe Market. It also gives the "current_progress" and "total_progress" for the caller to know how long the operation will take.
-  - `{:deactivate, {:ok, :done}}`: Informs the process is not complete.
+  - `{:deactivate, {:ok, {:order_deleted, item_name, current_progress, total_progress}}}`: Informs that the order for "item_name" was successfully deleted in Warframe Market. "current_progress" counts every deletion attempted so far, including the ones that failed, out of "total_progress".
+  - `{:deactivate, {:ok, :done}}`: Informs the process is now complete.
 
   Optionally, if the deactivation was partial, meaning there are still some syndicates active, instead of receiving `{:deactivate, {:ok, :done}}`, the caller will instead receive:
   - `{:deactivate, {:ok, :reactivating_remaining_syndicates}}`
 
   Which informs that the activation process for the remaining syndicates will now begin, in order to update the selection of current items on sale and their prices. Consequently, all messages from the Activation process also need to be handled by the caller.
+
+  Errors have the format `{:deactivate, {:error, reason}}`:
+
+  - `{:deactivate, {:error, {:delete_order, {:error, reason}}}}`: An order could not be deleted. The process continues and the order still counts towards the progress.
+  - `{:deactivate, {:error, :unauthorized}}`: The session has expired. The user needs to log in again. Ends the process.
+  - `{:deactivate, {:error, {:get_user_orders, {:error, reason}}}}`: The current user orders could not be fetched. Ends the process.
 
   Example:
   ```
@@ -156,7 +173,7 @@ defmodule Manager do
   ```
   > alias Shared.Data.Syndicate
 
-  > MarketManager.syndicates()
+  > Manager.syndicates()
   {:ok, [%Syndicate{name: "Red Veil", id: :red_veil, catalog: []}]}
 
   > Manager.syndicates()
@@ -175,7 +192,7 @@ defmodule Manager do
   ```
   > alias Shared.Data.Syndicate
 
-  > MarketManager.active_syndicates()
+  > Manager.active_syndicates()
   {:ok, %{red_veil: :top_five_average, new_loka: :top_five_average}}
 
   > Manager.active_syndicates()
