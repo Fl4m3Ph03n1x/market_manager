@@ -281,7 +281,7 @@ defmodule Manager.Saga.Activate do
         %{orders_placed: orders_placed, from: from} = state
       ) do
     send(from, {:activate, {:error, message}})
-    
+
     orders_placed_key = find_order_key(orders_placed, item_id)
 
     state
