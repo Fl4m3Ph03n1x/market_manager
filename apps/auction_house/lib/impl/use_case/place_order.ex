@@ -44,12 +44,14 @@ defmodule AuctionHouse.Impl.UseCase.PlaceOrder do
 
   @impl UseCase
   @spec finish(Response.t()) ::
-          {:error, {:missing_id, body()} | {:missing_order, body()} | Jason.DecodeError.t()}
-          | {:ok, PlacedOrder.t()}
+          {:ok, PlacedOrder.t()}
+          | {:error, {{:missing_order, body()} | Jason.DecodeError.t(), Type.item_id()}}
   def finish(%Response{body: body, request_args: %{order: order}}) do
     with {:ok, content} <- Jason.decode(body),
          {:ok, id} <- get_id(content) do
       {:ok, PlacedOrder.new(%{"item_id" => order.itemId, "order_id" => id})}
+    else
+      {:error, reason} -> {:error, {reason, order.itemId}}
     end
   end
 

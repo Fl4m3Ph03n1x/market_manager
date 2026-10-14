@@ -10,6 +10,8 @@ defmodule Manager.Saga.Activate do
 
   alias Shared.Data.{
     PlacedOrder,
+    Strategy,
+    Syndicate,
     User
   }
 
@@ -17,6 +19,21 @@ defmodule Manager.Saga.Activate do
   alias Store
 
   @type price :: pos_integer()
+
+  @typep order_key :: {Product.t(), price()}
+  @typep order_result :: PlacedOrder.t() | {:error, {any(), Product.id()}}
+
+  @typep state :: %{
+           required(:deps) => %{store: module(), auction_house: module()},
+           required(:args) => %{syndicates_with_strategy: %{Syndicate.id() => Strategy.id()}},
+           required(:non_patreon_order_limit) => pos_integer(),
+           required(:from) => pid(),
+           optional(:user) => User.t(),
+           optional(:total_products_count) => non_neg_integer(),
+           optional(:product_prices) => %{Product.t() => price() | nil},
+           optional(:order_number_limit) => non_neg_integer(),
+           optional(:orders_placed) => %{order_key() => order_result() | nil}
+         }
 
   @default_deps %{
     store: Store,
@@ -240,49 +257,36 @@ defmodule Manager.Saga.Activate do
           from: from
         } = state
       ) do
-    product_price =
-      orders_placed
-      |> Map.keys()
-      |> Enum.find(fn {product, _price} -> product.id == placed_order.item_id end)
-
-    updated_orders_placed = Map.put(orders_placed, product_price, placed_order)
-    updated_state = Map.put(state, :orders_placed, updated_orders_placed)
-
-    placed_orders_count =
-      updated_orders_placed
-      |> Map.values()
-      |> Enum.count(&(&1 != nil))
-
-    all_orders_placed? =
-      placed_orders_count ==
-        updated_orders_placed |> Map.to_list() |> length()
-
-    product = elem(product_price, 0)
+    {product, _price} = order_key = find_order_key(orders_placed, placed_order.item_id)
+    updated_state = record_order_result(state, order_key, placed_order)
+    current_processed_count = processed_orders_count(updated_state)
 
     send(
       from,
-      {:activate, {:ok, {:order_placed, product.name, placed_orders_count, order_number_limit}}}
+      {:activate, {:ok, {:order_placed, product.name, current_processed_count, order_number_limit}}}
     )
 
-    if all_orders_placed? do
-      send(from, {:activate, {:ok, :done}})
-
-      {:stop, :normal, state}
-    else
-      {:noreply, updated_state}
-    end
+    continue_or_finish(updated_state)
   end
 
-  # an expired session fails every remaining order; :normal keeps the transient saga from restarting
-  def handle_info({:place_order, {:error, :unauthorized}}, %{from: from} = state) do
+  # an expired session fails every remaining order; so we stop the saga when unauthorized occurs
+  def handle_info({:place_order, {:error, {:unauthorized, _item_id}}}, %{from: from} = state) do
     send(from, {:activate, {:error, :unauthorized}})
     {:stop, :normal, state}
   end
 
-  # if we fail to place an order, we can still continue with the others
-  def handle_info({:place_order, {:error, _msg}} = error, %{from: from} = state) do
-    send(from, {:activate, {:error, error}})
-    {:noreply, state}
+  # a failed order still counts as processed, so the activation can finish
+  def handle_info(
+        {:place_order, {:error, {_reason, item_id}} = error} = message,
+        %{orders_placed: orders_placed, from: from} = state
+      ) do
+    send(from, {:activate, {:error, message}})
+    
+    orders_placed_key = find_order_key(orders_placed, item_id)
+
+    state
+    |> record_order_result(orders_placed_key, error)
+    |> continue_or_finish()
   end
 
   ###########
@@ -296,23 +300,8 @@ defmodule Manager.Saga.Activate do
     |> store.list_products()
   end
 
-  @spec process_products(
-          non_neg_integer(),
-          [Product.t()],
-          %{
-            deps: %{
-              store: module(),
-              auction_house: module()
-            },
-            args: %{
-              syndicates_with_strategy: map()
-            },
-            from: pid(),
-            non_patreon_order_limit: pos_integer(),
-            user: User.t()
-          }
-        ) ::
-          {:ok, map()}
+  @spec process_products(non_neg_integer(), [Product.t()], state()) ::
+          {:ok, state()}
           | {:error, :no_slots_free}
           | {:error, {:failed_rollback_activation, Store.Type.deactivate_syndicates_response()}}
   defp process_products(0, _total_products, %{
@@ -361,4 +350,28 @@ defmodule Manager.Saga.Activate do
 
   defp calculate_order_limit(_placed_orders, total_products, _limit, true),
     do: length(total_products)
+
+  @spec find_order_key(%{order_key() => order_result() | nil}, Product.id()) :: order_key()
+  defp find_order_key(orders_placed, item_id),
+    do: orders_placed |> Map.keys() |> Enum.find(fn {product, _price} -> product.id == item_id end)
+
+  @spec record_order_result(state(), order_key(), order_result()) :: state()
+  defp record_order_result(%{orders_placed: orders_placed} = state, order_key, result) do
+    updated_orders = Map.put(orders_placed, order_key, result)
+    Map.put(state, :orders_placed, updated_orders)
+  end
+
+  @spec processed_orders_count(state()) :: non_neg_integer()
+  defp processed_orders_count(%{orders_placed: orders_placed}),
+    do: orders_placed |> Map.values() |> Enum.count(&(&1 != nil))
+
+  @spec continue_or_finish(state()) :: {:noreply, state()} | {:stop, :normal, state()}
+  defp continue_or_finish(%{orders_placed: orders_placed, from: from} = state) do
+    if processed_orders_count(state) == map_size(orders_placed) do
+      send(from, {:activate, {:ok, :done}})
+      {:stop, :normal, state}
+    else
+      {:noreply, state}
+    end
+  end
 end
