@@ -15,12 +15,12 @@
 
 | Item | Value |
 |---|---|
-| Branch | `fixing-broken-catalog-and-progress-bar` from `master` (`d1aab6f`, tag `2.2.10`). Commits: `f436bef` (place-order item ID, fix A, A2, tests), `c1a3642` (catalog fixes). Not pushed |
-| Uncommitted | This file; version bump (`mix.exs` files, `README.md` badge, `config/config.exs` `user_agent`). `setup.json` and `watch_list.json` are clean; keep them that way before committing. See **Order Placement Failures (2026-10-14)** |
-| Version | `2.2.11` (bumped 2026-10-14, uncommitted, not tagged); README badge `v=2.2.11`; `user_agent` `MarketManager/2.2.11`. Apps: `auction_house` 7.0.0 (was 6.0.0; breaking `place_order` error shape), `manager` 5.1.1 (was 5.1.0), `store` 6.0.1 (was 6.0.0; catalog data), `shared` 3.0.0, `web_interface` 2.4.0, `rate_limiter` 1.0.2 (unchanged). Previous release `2.2.10` tagged and deployed 2026-10-02 |
+| Branch | `fixing-broken-catalog-and-progress-bar` from `master` (`d1aab6f`, tag `2.2.10`). Commits: `f436bef` (place-order item ID, fix A, A2, tests), `c1a3642` (catalog fixes), `6be35e5` (version bump). Not pushed |
+| Uncommitted | This file; doc review (`auction_house/lib/auction_house.ex`, `manager/lib/manager.ex`). `setup.json` and `watch_list.json` are clean; keep them that way before committing. See **Order Placement Failures (2026-10-14)** |
+| Version | `2.2.11` (bumped 2026-10-14 in `6be35e5`, not tagged); README badge `v=2.2.11`; `user_agent` `MarketManager/2.2.11`. Apps: `auction_house` 7.0.0 (was 6.0.0; breaking `place_order` error shape), `manager` 5.1.1 (was 5.1.0), `store` 6.0.1 (was 6.0.0; catalog data), `shared` 3.0.0, `web_interface` 2.4.0, `rate_limiter` 1.0.2 (unchanged). Previous release `2.2.10` tagged and deployed 2026-10-02 |
 | Local toolchain | Elixir 1.20.1, Erlang/OTP 28.3.2 (ASDF) |
 | CI toolchain | Elixir 1.20.x, OTP 28.5.x on `windows-2022` (`.github/workflows/master.yml`) |
-| Compile | 2026-10-14 after the version bump: `mix compile --warnings-as-errors` clean; `mix dialyzer` passed after A2. `mix format --check-formatted` **fails** on `apps/manager/lib/saga/activate.ex` line 284 (trailing whitespace in the error clause, from a user edit committed in `f436bef`); fix with `mix format`. |
+| Compile | 2026-10-14 after the doc review: `mix compile --warnings-as-errors` clean; `mix format --check-formatted` passes; `mix dialyzer` passed after A2. `docs/` (ExDoc output) not regenerated. |
 | Tests | `mix test` (2026-10-14, after the version bump): **288 passed** (`shared` 29, `store` 41, `rate_limiter` 5, `auction_house` 85, `manager` 44, `web_interface` 84). Earlier "74 passed" entries counted only the last app's line. |
 | Coverage | **77.2%** total (2026-10-02; not re-measured) |
 | Active blocker | None. `2.2.11` ready to commit, merge, tag and release (by the user). Open activation/deactivation defects: **Order Placement Failures (2026-10-14)**. |
@@ -160,10 +160,8 @@ For any item that changes a message shape, confirm the shape with the user first
 | F | `DeactivateLive` has no handler for `{:activate, {:ok, :no_slots_free}}` during reactivation | `web_interface/lib/web_interface/live/deactivate_live.ex` | Medium |
 | G | Store errors in `with` blocks without `else` become the `handle_info` return (bad return, crash, no UI message) | `activate.ex` `{:get_item_orders, {tag, item_name, data}}`; `deactivate.ex` `{:get_user_orders, {:ok, _}}` and `{:delete_order, {:ok, _}}` | Medium |
 | H | Fatal stops with non-`:normal` reasons restart the transient sagas (see **Known Issues**) | Both sagas | Medium |
-| D1 | `AuctionHouse` docs: `place_order` error is now `{reason, item_id}`; `delete_order`, `get_user_orders`, `login` document `{:error, {reason, err}}` but send `{:error, reason}`; `get_item_orders` HTTP failures undocumented | `auction_house/lib/auction_house.ex` | Low |
-| D2 | `Manager.activate` docs: missing `:no_slots_free`, `:unauthorized`, fatal vs non-fatal errors, real `{:activate, {:error, ...}}` shape | `manager/lib/manager.ex` | Low |
-| D3 | `Manager.deactivate` docs: "not complete" typo; errors undocumented | `manager/lib/manager.ex` | Low |
-| V2 | `mix format` fails on `activate.ex` (trailing whitespace, line 284) | `manager/lib/saga/activate.ex` | Low |
+| I | The fatal "products could not be loaded" error is sent as `{:activate, {:error, {:get_item_orders, {:error, reason}}}}`, the same shape as the non-fatal per-item error. `ActivateLive`/`DeactivateLive` treat it as non-fatal, so the UI keeps waiting after the saga has stopped | `manager/lib/saga/activate.ex` `{:get_user_orders, {:ok, _}}` clause | Medium |
+| J | `AuctionHouse.Runtime.Server` ignores the result of `PlaceOrder.start/1` and `DeleteOrder.start/1`; with no authorization (`{:error, :missing_authorization}`) no message is sent and the saga waits forever | `auction_house/lib/runtime/server.ex` | Low |
 
 ## Test Coverage: Completed
 
@@ -720,7 +718,8 @@ Proceed with B1 only if all three pass. Confirm with the maintainers that the un
   - Fix A implemented by the user (failed orders recorded, `:done` always sent); `PlaceOrder.finish/1` errors carry the item ID. Tests fixed and added; `mix test`: 288 passed.
   - A2: refactored the `place_order` clauses in `Activate` into shared helpers and added private `state`/`order_key`/`order_result` types; Dialyzer passes.
   - Red Veil: Jades Judgement renamed to Jades Judgment by the user (404 on `get_item_orders`); `subtype` added to Dread Ward, Smoke Shadow, Seeking Shuriken, Blood Forge. Committed by the user in `f436bef` and `c1a3642` on `fixing-broken-catalog-and-progress-bar`.
-  - Version bump (uncommitted): umbrella `2.2.11`, `auction_house` 7.0.0, `manager` 5.1.1, `store` 6.0.1, README badge, `user_agent`. Compile clean, 288 tests pass.
+  - Version bump: umbrella `2.2.11`, `auction_house` 7.0.0, `manager` 5.1.1, `store` 6.0.1, README badge, `user_agent`. Compile clean, 288 tests pass. Committed by the user in `6be35e5` together with the `activate.ex` format fix.
+  - Doc review (D1-D3): `AuctionHouse` docs now show the real error shapes (`place_order` with item ID; `{:error, reason}` for `delete_order`, `get_user_orders`, `login`; both `get_item_orders` error shapes) and a valid `OrderInfo` example. `Manager.activate`/`deactivate` docs list every message, including `:no_slots_free`, fatal vs non-fatal errors, `:unauthorized`, and that progress counts failures; fixed the "not complete" typo and `MarketManager.` examples. Found I and J.
 - **2026-10-02:**
   - Discord: Cloudflare restrictions on the website are permanent; third parties must use header-based v1 sign-in.
   - Verified header-based sign-in and `Bearer` usage on `GET /v2/orders/my`; added **Header-Based Authentication (2026-10-02)**.
