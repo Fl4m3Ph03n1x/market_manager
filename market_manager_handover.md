@@ -1,7 +1,7 @@
 # Market Manager Handover
 
 > Handover context for agents working on the `market_manager` Elixir umbrella.
-> Local only (git-ignored). Last updated: **2026-10-14**.
+> Tracked in git (committed with #151). Last updated: **2026-10-14**.
 
 ## How to Use This File
 
@@ -15,16 +15,16 @@
 
 | Item | Value |
 |---|---|
-| Branch | `fixing-broken-catalog-and-progress-bar` from `master` (`d1aab6f`, tag `2.2.10`). Commits: `f436bef` (place-order item ID, fix A, A2, tests), `c1a3642` (catalog fixes), `6be35e5` (version bump). Not pushed |
-| Uncommitted | This file; doc review (`auction_house/lib/auction_house.ex`, `manager/lib/manager.ex`). `setup.json` and `watch_list.json` are clean; keep them that way before committing. See **Order Placement Failures (2026-10-14)** |
-| Version | `2.2.11` (bumped 2026-10-14 in `6be35e5`, not tagged); README badge `v=2.2.11`; `user_agent` `MarketManager/2.2.11`. Apps: `auction_house` 7.0.0 (was 6.0.0; breaking `place_order` error shape), `manager` 5.1.1 (was 5.1.0), `store` 6.0.1 (was 6.0.0; catalog data), `shared` 3.0.0, `web_interface` 2.4.0, `rate_limiter` 1.0.2 (unchanged). Previous release `2.2.10` tagged and deployed 2026-10-02 |
+| Branch | `master` at `ae920e4 Fixing broken catalog and progress bar (#151)` (tag `2.2.11`), in sync with `origin/master`. The `2.2.11` tag is on `origin`; run `git fetch --tags` to get it locally |
+| Uncommitted | None besides this status update. `setup.json` is `{}` and `watch_list.json` is clean |
+| Version | `2.2.11`, **tagged and released (2026-10-14)**; README badge `v=2.2.11`; `user_agent` `MarketManager/2.2.11`. Apps: `auction_house` 7.0.0 (was 6.0.0; breaking `place_order` error shape), `manager` 5.1.1 (was 5.1.0), `store` 6.0.1 (was 6.0.0; catalog data), `shared` 3.0.0, `web_interface` 2.4.0, `rate_limiter` 1.0.2 (unchanged) |
 | Local toolchain | Elixir 1.20.1, Erlang/OTP 28.3.2 (ASDF) |
 | CI toolchain | Elixir 1.20.x, OTP 28.5.x on `windows-2022` (`.github/workflows/master.yml`) |
 | Compile | 2026-10-14 after the doc review: `mix compile --warnings-as-errors` clean; `mix format --check-formatted` passes; `mix dialyzer` passed after A2. `docs/` (ExDoc output) not regenerated. |
 | Tests | `mix test` (2026-10-14, after the version bump): **288 passed** (`shared` 29, `store` 41, `rate_limiter` 5, `auction_house` 85, `manager` 44, `web_interface` 84). Earlier "74 passed" entries counted only the last app's line. |
 | Coverage | **77.2%** total (2026-10-02; not re-measured) |
-| Active blocker | None. `2.2.11` ready to commit, merge, tag and release (by the user). Open activation/deactivation defects: **Order Placement Failures (2026-10-14)**. |
-| Release build | Last build `burrito_out/market_manager_2.2.10.exe` (2026-10-02), deployed. `2.2.11` not built yet. Must be built with `MIX_ENV=prod`; see **Commands**. |
+| Active blocker | None. `2.2.11` released (2026-10-14). Open activation/deactivation defects: **Order Placement Failures (2026-10-14)**. |
+| Release build | **Works** (2026-10-14): `burrito_out/market_manager_2.2.11.exe` (~25 MB, with icon), released. Must be built with `MIX_ENV=prod`; see **Commands**. |
 
 ## Active Blockers
 
@@ -720,6 +720,7 @@ Proceed with B1 only if all three pass. Confirm with the maintainers that the un
   - Red Veil: Jades Judgement renamed to Jades Judgment by the user (404 on `get_item_orders`); `subtype` added to Dread Ward, Smoke Shadow, Seeking Shuriken, Blood Forge. Committed by the user in `f436bef` and `c1a3642` on `fixing-broken-catalog-and-progress-bar`.
   - Version bump: umbrella `2.2.11`, `auction_house` 7.0.0, `manager` 5.1.1, `store` 6.0.1, README badge, `user_agent`. Compile clean, 288 tests pass. Committed by the user in `6be35e5` together with the `activate.ex` format fix.
   - Doc review (D1-D3): `AuctionHouse` docs now show the real error shapes (`place_order` with item ID; `{:error, reason}` for `delete_order`, `get_user_orders`, `login`; both `get_item_orders` error shapes) and a valid `OrderInfo` example. `Manager.activate`/`deactivate` docs list every message, including `:no_slots_free`, fatal vs non-fatal errors, `:unauthorized`, and that progress counts failures; fixed the "not complete" typo and `MarketManager.` examples. Found I and J.
+  - Merged to `master` as `ae920e4 Fixing broken catalog and progress bar (#151)`, which includes the doc review and this file. Tagged `2.2.11` on `ae920e4`; built `burrito_out/market_manager_2.2.11.exe` with `setup.json` = `{}`; released by the user.
 - **2026-10-02:**
   - Discord: Cloudflare restrictions on the website are permanent; third parties must use header-based v1 sign-in.
   - Verified header-based sign-in and `Bearer` usage on `GET /v2/orders/my`; added **Header-Based Authentication (2026-10-02)**.
